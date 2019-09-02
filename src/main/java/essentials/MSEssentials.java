@@ -7,6 +7,9 @@ import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import essentials.discordbridge.Bridge;
+import essentials.discordbridge.velocity.MSEssentialsChatListener;
+import essentials.discordbridge.velocity.VelocityListener;
 import essentials.modules.Config.NicknameConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.StaffChat.StaffChat;
@@ -37,6 +40,7 @@ public class MSEssentials {
     public static Path defaultConfigPath;
 
     public static LuckPermsApi api;
+    public static Bridge bridge;
 
 
     @Subscribe
@@ -50,6 +54,11 @@ public class MSEssentials {
         server.getCommandManager().register(new MessageCommand(), "msg", "message", "pm");
         server.getCommandManager().register(new NickNameCommand(), "nick", "nickname");
         server.getCommandManager().register(new StaffList(this), "stafflist");
+        server.getEventManager().register(this, new MSEssentialsChatListener());
+        server.getEventManager().register(this, new VelocityListener());
+
+
+        Bridge.enable();
 
 
         StaffChat.toggledSet = new HashSet<UUID>();
