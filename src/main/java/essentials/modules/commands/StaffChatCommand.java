@@ -25,22 +25,23 @@ public class StaffChatCommand implements Command
             {
                 if(args.length == 0)
                 {
-                    if(StaffChat.toggledSet.contains(pUUID))
+                    if(StaffChat.toggledSet.isEmpty() || (!StaffChat.toggledSet.contains(pUUID)))
                     {
-                        StaffChat.toggledSet.remove(pUUID);
+                        StaffChat.toggledSet.add(pUUID);
+                        player.sendMessage(PluginMessages.enabledStaffChat);
                         return;
                     }
                     else
                     {
-                        StaffChat.toggledSet.add(pUUID);
-                        StaffChat.enable(player);
+                        StaffChat.toggledSet.remove(pUUID);
+                        StaffChat.disable(player);
                         return;
                     }
 
                 }
                 else
                 {
-                    StaffChat.sendMessage(player, String.join(" ", args));
+                    StaffChat.sendMessage(player.getUsername(), String.join(" ", args));
                     return;
                 }
             }

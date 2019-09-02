@@ -15,11 +15,6 @@ import java.util.UUID;
 public class StaffChat {
     public static Set<UUID> toggledSet;
 
-    public static TextComponent enabled = TextComponent.builder()
-            .content(PluginMessages.prefix)
-            .append("Staff Chat Enabled")
-            .color(TextColor.BLUE)
-            .build();
     public static TextComponent disabled = TextComponent.builder()
             .content("Staff Chat Disabled")
             .color(TextColor.BLUE)
@@ -32,7 +27,7 @@ public class StaffChat {
 
     public static void enable(Player player)
     {
-        player.sendMessage(enabled);
+        player.sendMessage(PluginMessages.enabledStaffChat);
     }
 
 
@@ -41,19 +36,17 @@ public class StaffChat {
         player.sendMessage(disabled);
     }
 
-    public static void sendMessage(Player player, String mess){
+    public static void sendMessage(String username, String mess){
         MSEssentials.server.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
-                .forEach(target -> { target.sendMessage(legacyColor("&b[STAFF]&r " + "&5 " + player.getUsername() + "&r:" + mess));
+                .forEach(target -> { target.sendMessage(PluginMessages.legacyColor("&b[STAFF]&r " + "&5" + username + "&r: &6" + mess));
         });
     }
 
     public static void sendConsoleMessage(String mess){
         MSEssentials.server.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
-                .forEach(target -> { target.sendMessage(legacyColor("&b[STAFF]&r " + "&5 " + "CONSOLE" + "&r:" + mess));
+                .forEach(target -> { target.sendMessage(PluginMessages.legacyColor("&b[STAFF]&r " + "&5 " + "CONSOLE" + "&r:" + mess));
                 });
     }
 
-    public static TextComponent legacyColor(String text){
-        return LegacyComponentSerializer.INSTANCE.deserialize(text, '&');
-    }
+
 }
