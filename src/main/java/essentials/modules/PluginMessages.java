@@ -31,6 +31,15 @@ public class PluginMessages {
 
         return nickmsg;
     }
+    public static TextComponent nickColorized(String nick)
+    {
+        TextComponent nickColor = TextComponent.builder()
+                .append(legacyColor(prefix))
+                .append("Your current nick: ")
+                .append(legacyColor(nick))
+                .build();
+        return nickColor;
+    }
 
     public static TextComponent legacyColor(String text){
         return LegacyComponentSerializer.INSTANCE.deserialize(text, '&');

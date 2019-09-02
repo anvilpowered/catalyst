@@ -15,6 +15,7 @@ import me.lucko.luckperms.api.User;
 import me.lucko.luckperms.api.caching.MetaData;
 import me.lucko.luckperms.api.caching.UserData;
 import net.kyori.text.TextComponent;
+import net.kyori.text.event.HoverEvent;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -60,7 +61,11 @@ public class ProxyChatEvent {
 
          for(Player p : MSEssentials.server.getAllPlayers())
          {
-             p.sendMessage(ProxyChat.legacyColor(prefix).append(name).append(TextComponent.of(" : ").append(ProxyChat.legacyColor(message))));
+             p.sendMessage(ProxyChat.legacyColor(prefix)
+                     .append(name)
+                     .append(TextComponent.of(": ")
+                             .append(ProxyChat.legacyColor(message)))
+                     .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()))));
          }
         }
         else {

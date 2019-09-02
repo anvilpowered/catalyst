@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'rocks.milspecsg'
-version '1.0-chat-53'
+version '0.1-beta'
 
 sourceCompatibility = 1.8
 
@@ -28,4 +28,5 @@ dependencies {
     compile 'org.spongepowered:configurate-hocon:3.6'
     compile 'org.spongepowered:configurate-gson:3.6'
     compileOnly 'me.lucko.luckperms:luckperms-api:4.4'
+    implementation 'org.javacord:javacord:3.0.4'
 }
