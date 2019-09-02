@@ -1,11 +1,14 @@
-package modules.commands;
+package essentials.modules.commands;
 
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import modules.PluginMessages;
-import modules.PluginPermissions;
+import essentials.MSEssentials;
+import essentials.modules.PluginMessages;
+import essentials.modules.PluginPermissions;
+import essentials.modules.google.MSGoogle;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 
 public class SendGoogleCommand implements Command {
     @Override
@@ -14,7 +17,17 @@ public class SendGoogleCommand implements Command {
         if(source.hasPermission(PluginPermissions.SENDGOOGLE))
         {
             String playerName = args[0];
-            Player player = 
+
+            Player player = MSEssentials.server.getPlayer(playerName).get();
+            if(source instanceof Player)
+            {
+
+                Player src = (Player) source;
+
+                player.sendMessage(MSGoogle.senderName(src.getUsername()));
+                player.sendMessage(MSGoogle.sendGoogleLink(args, playerName));
+
+            }
         }
         else
         {

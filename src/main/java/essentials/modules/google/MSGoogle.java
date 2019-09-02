@@ -1,12 +1,11 @@
-package modules.google;
+package essentials.modules.google;
 
-import modules.PluginMessages;
+import essentials.modules.PluginMessages;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
 import net.kyori.text.format.TextColor;
 
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,6 +44,13 @@ public class MSGoogle {
                 .build();
 
         return urlFinal;
+    }
+    public static TextComponent senderName(String name){
+        TextComponent finalMessage = TextComponent.builder()
+                .content(name + " has sent you a google link!")
+                .color(TextColor.GREEN)
+                .build();
+        return finalMessage;
     }
 
     public static TextComponent youtubeLink(String[] args){

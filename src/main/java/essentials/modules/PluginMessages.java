@@ -1,4 +1,4 @@
-package modules;
+package essentials.modules;
 
 
 import net.kyori.text.TextComponent;

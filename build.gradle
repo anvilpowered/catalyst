@@ -4,12 +4,10 @@ plugins {
 }
 
 group 'rocks.milspecsg'
-version '1.0'
+version '1.0-sc-1'
 
 sourceCompatibility = 1.8
 
-
-sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -21,9 +19,6 @@ repositories {
         name = 'sponge'
         url = 'https://repo.spongepowered.org/maven'
     }
-    flatDir {
-        dir 'libs'
-    }
 }
 
 dependencies {
@@ -32,6 +27,4 @@ dependencies {
     compile group: 'com.cedarsoftware', name: 'json-io', version: '4.5.0'
     compile 'org.spongepowered:configurate-hocon:3.6'
     compile 'org.spongepowered:configurate-gson:3.6'
-    implementation files('libs/gChat-Velocity.jar')
-
 }

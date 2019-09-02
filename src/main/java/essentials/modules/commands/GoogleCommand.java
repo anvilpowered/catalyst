@@ -1,10 +1,10 @@
-package modules.commands;
+package essentials.modules.commands;
 
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
-import modules.PluginMessages;
-import modules.PluginPermissions;
-import modules.google.MSGoogle;
+import essentials.modules.PluginMessages;
+import essentials.modules.PluginPermissions;
+import essentials.modules.google.MSGoogle;
 
 import javax.annotation.Nonnull;
 
