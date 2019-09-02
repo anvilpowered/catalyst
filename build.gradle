@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+}
+
+group 'rocks.milspecsg'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'velocity'
+        url = 'https://repo.velocitypowered.com/snapshots/'
+    }
+    maven{
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+    flatDir {
+        dir 'libs'
+    }
+}
+
+dependencies {
+    compileOnly 'com.velocitypowered:velocity-api:1.0.1-SNAPSHOT'
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+    compile group: 'com.cedarsoftware', name: 'json-io', version: '4.5.0'
+    compile 'org.spongepowered:configurate-hocon:3.6'
+    compile 'org.spongepowered:configurate-gson:3.6'
+    implementation files('libs/gChat-Velocity.jar')
+
+}
