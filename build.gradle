@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'rocks.milspecsg'
-version '1.0-sc-1'
+version '1.0-chat-13'
 
 sourceCompatibility = 1.8
 
@@ -27,4 +27,5 @@ dependencies {
     compile group: 'com.cedarsoftware', name: 'json-io', version: '4.5.0'
     compile 'org.spongepowered:configurate-hocon:3.6'
     compile 'org.spongepowered:configurate-gson:3.6'
+    compileOnly 'me.lucko.luckperms:luckperms-api:4.4'
 }

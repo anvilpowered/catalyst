@@ -14,8 +14,6 @@ import java.util.UUID;
 
 public class StaffChat {
     public static Set<UUID> toggledSet;
-    public static String format;
-
 
     public static TextComponent enabled = TextComponent.builder()
             .content(PluginMessages.prefix)
@@ -36,6 +34,7 @@ public class StaffChat {
     {
         player.sendMessage(enabled);
     }
+
 
     public static void disable(Player player)
     {

@@ -1,32 +1,54 @@
 package essentials;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import essentials.modules.PluginMessages;
 import essentials.modules.commands.GoogleCommand;
 import essentials.modules.commands.SendGoogleCommand;
 import essentials.modules.commands.StaffChatCommand;
+import essentials.modules.proxychat.ProxyChatEvent;
 import org.slf4j.Logger;
+import me.lucko.luckperms.*;
+import me.lucko.luckperms.api.*;
 
 import javax.inject.Inject;
 
 
-@Plugin(description = "your one stop velocity plugin!", authors = "STG_Allen", version = "1.0", id = "msessentials")
+@Plugin(description = "your one stop velocity plugin!",
+        authors = "STG_Allen",
+        version = "1.0",
+        id = "msessentials",
+        dependencies = {
+        @Dependency(id = "luckperms")
+        })
 public class MSEssentials {
 
     public static ProxyServer server;
     public static Logger logger;
     private static SendGoogleCommand sendGoogleCommand;
 
+    public static LuckPermsApi api;
+
+
     @Subscribe
     public void onInit(ProxyInitializeEvent event){
         logger.info(PluginMessages.prefix + "is now starting!");
         server.getCommandManager().register(new SendGoogleCommand(),"sendgoogle");
         server.getCommandManager().register(new GoogleCommand(), "google");
-        server.getCommandManager().register(new StaffChatCommand(), "staffchat");
+        server.getCommandManager().register(new StaffChatCommand(), "staffchat", "sc");
+        server.getEventManager().register(this, new ProxyChatEvent());
+        if(server.getPluginManager().isLoaded("luckperms")) {
+            reload();
+        }
+    }
 
+    public void reload(){
+        api = LuckPerms.getApi();
+        logger.info("luckperms api loaded");
     }
 
     @Inject
