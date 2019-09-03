@@ -10,7 +10,6 @@ import essentials.modules.PluginMessages;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
 import essentials.modules.events.SendMessage;
-import essentials.modules.language.WordCatch;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
 import me.lucko.luckperms.api.caching.MetaData;
@@ -30,6 +29,7 @@ public class ProxyChatEvent {
     {
         String message = e.getMessage();
         Player player = e.getPlayer();
+        e.setResult(PlayerChatEvent.ChatResult.denied());
 
         if(StaffChat.toggledSet.contains(player.getUniqueId())){
             e.setResult(PlayerChatEvent.ChatResult.denied());
@@ -58,7 +58,7 @@ public class ProxyChatEvent {
     {
         for (Player onlinePlayer : MSEssentials.getServer().getAllPlayers()) {
             if (message.contains(onlinePlayer.getUsername())) {
-                message = message.replaceAll(onlinePlayer.getUsername(), "@" + onlinePlayer.getUsername());
+                message = message.replaceAll(onlinePlayer.getUsername(), "&b@" + onlinePlayer.getUsername() + "&r");
             }
         }
         return message;
@@ -66,6 +66,7 @@ public class ProxyChatEvent {
 
     public static void sendMessage(PlayerChatEvent e, String message)
     {
+        e.setResult(PlayerChatEvent.ChatResult.denied());
         Player player = e.getPlayer();
         User user = MSEssentials.api.getUser(player.getUniqueId());
 
@@ -75,7 +76,6 @@ public class ProxyChatEvent {
         MetaData userMeta = cachedData.getMetaData(contextsOptional.get());
 
         String prefix = userMeta.getPrefix();
-
         e.setResult(PlayerChatEvent.ChatResult.denied());
 
 

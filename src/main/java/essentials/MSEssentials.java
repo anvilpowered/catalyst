@@ -54,6 +54,7 @@ public class MSEssentials {
         //server.getCommandManager().register(new MessageCommand(), "msg", "message", "pm");
         server.getCommandManager().register(new NickNameCommand(), "nick", "nickname");
         server.getCommandManager().register(new StaffList(this), "stafflist");
+        server.getCommandManager().register(new langcommand(this), "mslang", "lang", "language");
 
         logger.info("initializing listeners");
         initListeners();
