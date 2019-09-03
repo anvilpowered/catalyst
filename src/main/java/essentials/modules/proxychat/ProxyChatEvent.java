@@ -5,12 +5,14 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
+import essentials.discordbridge.Bridge;
 import essentials.discordbridge.velocity.MSEssentialsChatListener;
 import essentials.modules.Config.NicknameConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.commands.NickNameCommand;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
+import essentials.modules.events.SendMessage;
 import essentials.modules.language.MSLang;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
@@ -57,10 +59,12 @@ public class ProxyChatEvent {
         {
             name = TextComponent.of(player.getUsername());
         }
+        MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, ProxyChat.legacyColor(message));
 
+        MSEssentials.server.getEventManager().fire(formedEvent).join();
+        MSEssentials.logger.info("fired and joined that shiiiit");
         if(prefix != null)
         {
-
          for(Player p : MSEssentials.server.getAllPlayers())
          {
              p.sendMessage(ProxyChat.legacyColor(prefix)
@@ -71,11 +75,20 @@ public class ProxyChatEvent {
          }
         }
         else {
-            MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, ProxyChat.legacyColor(message));
+            MSEssentials.server.getEventManager().fire(formedEvent).join();
+            MSEssentials.logger.info("fired and joined that shiiiit");
+
             for (Player p : MSEssentials.server.getAllPlayers())
             {
                 p.sendMessage(name.append(TextComponent.of(" : ")).append(ProxyChat.legacyColor(message)));
+                boolean cancelled = false;
+                SendMessage sendMessage = new SendMessage(player, p, message, cancelled);
+
+                p.sendMessage(TextComponent.of(message));
+                MSEssentials.logger.info(formedEvent.getRawMessage());
             }
+            Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(name + message));
+
         }
     }
 }

@@ -2,6 +2,7 @@ package essentials.modules.events;
 
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.Component;
+import net.kyori.text.TextComponent;
 
 public class MSEssentialsChatFormedEvent {
 
@@ -12,7 +13,7 @@ public class MSEssentialsChatFormedEvent {
     public MSEssentialsChatFormedEvent(Player sender, String rawMessage, Component message) {
         this.sender = sender;
         this.rawMessage = rawMessage;
-        this.message = message;
+        this.message = TextComponent.of(": ").append( message);
     }
 
     public Component getMessage() {

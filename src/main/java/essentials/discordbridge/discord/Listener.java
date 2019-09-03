@@ -22,7 +22,8 @@ public class Listener {
     public void onMessage(MessageCreateEvent event)
     {
         MessageAuthor author = event.getMessageAuthor();
-        String message = event.getReadableMessageContent();
+        String message = "[Discord] " + author.getDisplayName() + " " + event.getReadableMessageContent();
+
 
 
         MSEssentials.server.getAllPlayers().stream()
