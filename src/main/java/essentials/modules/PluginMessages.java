@@ -44,4 +44,26 @@ public class PluginMessages {
     public static TextComponent legacyColor(String text){
         return LegacyComponentSerializer.INSTANCE.deserialize(text, '&');
     }
+
+    public static String removeColor(String text){
+
+        //text = text.replaceAll("&", "");
+        text = text.replaceAll("&4", "");
+        text = text.replaceAll("&c", "");
+        text = text.replaceAll("&6", "");
+        text = text.replaceAll("&e", "");
+        text = text.replaceAll("&2", "");
+        text = text.replaceAll("&a", "");
+        text = text.replaceAll("&b", "");
+        text = text.replaceAll("&3", "");
+        text = text.replaceAll("&1", "");
+        text = text.replaceAll("&9", "");
+        text = text.replaceAll("&d", "");
+        text = text.replaceAll("&5", "");
+        text = text.replaceAll("&f", "");
+        text = text.replaceAll("&7", "");
+        text = text.replaceAll("&8", "");
+        text = text.replaceAll("&0", "");
+        return text;
+    }
 }

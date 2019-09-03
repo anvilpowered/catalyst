@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
 import essentials.discordbridge.discord.TextUtil;
+import essentials.modules.PluginMessages;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
@@ -32,11 +33,14 @@ public class ProxyChatListener {
         UserData cachedData = user.getCachedData();
         MetaData userMeta = cachedData.getMetaData(contextsOptional.get());
 
-        String prefix = TextUtil.stripString(userMeta.getPrefix());
+        String prefix = PluginMessages.removeColor(userMeta.getPrefix());
+
+        String finalPrefix = TextUtil.stripString(prefix);
+
         final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
         final String sender = TextUtil.stripString(TextUtil.toMarkdown(TextComponent.of(event.getSender().getUsername())));
 
         Bridge.getConfig().getOutChannels(Bridge.getDiscordApi())
-                .forEach(textChannel -> textChannel.sendMessage(prefix + sender + msg));
+                .forEach(textChannel -> textChannel.sendMessage(finalPrefix + sender + msg));
     }
 }

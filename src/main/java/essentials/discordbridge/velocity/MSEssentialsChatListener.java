@@ -2,6 +2,8 @@ package essentials.discordbridge.velocity;
 
 import com.velocitypowered.api.event.Subscribe;
 import essentials.MSEssentials;
+import essentials.discordbridge.Bridge;
+import essentials.discordbridge.MSDBConfig;
 import essentials.discordbridge.discord.TextUtil;
 import essentials.modules.PluginMessages;
 import me.lucko.luckperms.api.Contexts;
@@ -25,12 +27,14 @@ public class MSEssentialsChatListener {
 
     public void onMessage(MessageCreateEvent event)
     {
+
+        if(!Bridge.getConfig().getInChannels(event.getApi()).contains(event.getChannel())) return;
         if(event.getMessageAuthor().isYourself()) return;
 
         String message = event.getReadableMessageContent();
 
         String author = event.getMessageAuthor().getDisplayName();
-        message = "&6[Discord] &r" + author + " " + message;
+        message = "&6[Discord] &7" + author + " " + message;
 
 
        TextComponent component = TextComponent.builder()
