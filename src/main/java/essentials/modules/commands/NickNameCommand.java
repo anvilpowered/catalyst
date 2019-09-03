@@ -3,10 +3,9 @@ package essentials.modules.commands;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import essentials.modules.Config.NicknameConfig;
+import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
-import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -24,9 +23,9 @@ public class NickNameCommand implements Command {
 
             if(args.length == 0)
             {
-                if(NicknameConfig.hasNickName(playerUUID))
+                if(PlayerConfig.hasNickName(playerUUID))
                 {
-                    player.sendMessage(PluginMessages.nickColorized(NicknameConfig.getNickName(playerUUID)));
+                    player.sendMessage(PluginMessages.nickColorized(PlayerConfig.getNickName(playerUUID)));
                     return;
                 }
             }
@@ -34,14 +33,14 @@ public class NickNameCommand implements Command {
                     .replaceAll("\\[", "")
                     .replaceAll("]", ""));
             player.sendMessage(PluginMessages.setNickName(nick));
-            NicknameConfig.addNick(nick, player.getUniqueId());
+            PlayerConfig.addNick(nick, player.getUniqueId());
             return;
         }
         player.sendMessage(PluginMessages.noPermissions);
     }
 
     public static String getNick(UUID uuid) {
-        return NicknameConfig.getNickName(uuid);
+        return PlayerConfig.getNickName(uuid);
     }
 
     public void setNick(String nick) {

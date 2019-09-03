@@ -1,19 +1,15 @@
 package essentials.modules.proxychat;
 
-import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
-import essentials.discordbridge.velocity.MSEssentialsChatListener;
-import essentials.modules.Config.NicknameConfig;
+import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.StaffChat.StaffChat;
-import essentials.modules.commands.NickNameCommand;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
 import essentials.modules.events.SendMessage;
-import essentials.modules.language.MSLang;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
 import me.lucko.luckperms.api.caching.MetaData;
@@ -51,10 +47,10 @@ public class ProxyChatEvent {
 
         TextComponent name;
 
-        if(NicknameConfig.hasNickName(player.getUniqueId()))
+        if(PlayerConfig.hasNickName(player.getUniqueId()))
         {
             UUID playedID = player.getUniqueId();
-            name = PluginMessages.legacyColor(NicknameConfig.getNickName(playedID));
+            name = PluginMessages.legacyColor(PlayerConfig.getNickName(playedID));
         }else
         {
             name = TextComponent.of(player.getUsername());

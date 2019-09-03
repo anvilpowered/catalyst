@@ -2,6 +2,7 @@ package essentials.discordbridge;
 
 import essentials.MSEssentials;
 import essentials.discordbridge.discord.ConnectionListener;
+import essentials.discordbridge.velocity.DiscordStaffChat;
 import essentials.discordbridge.velocity.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.StaffChatListener;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -90,7 +91,7 @@ public class Bridge {
         }
 
         ConnectionListener connectionListener = new ConnectionListener();
-        StaffChatListener staffChatListener = new StaffChatListener();
+        DiscordStaffChat discordStaffChat = new DiscordStaffChat();
         MSEssentialsChatListener chatListener = new MSEssentialsChatListener();
 
         new DiscordApiBuilder()
@@ -98,6 +99,7 @@ public class Bridge {
                 .addLostConnectionListener(connectionListener::onConnectionLost)
                 .addReconnectListener(connectionListener::onReconnect)
                 .addResumeListener(connectionListener::onResume)
+                .addMessageCreateListener(discordStaffChat::onMessage)
                 .addMessageCreateListener(chatListener::onMessage)
                 .login().thenAccept(discordApi1 ->
         {

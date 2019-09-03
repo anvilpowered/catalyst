@@ -1,6 +1,8 @@
 package essentials.modules.Config;
 
 import essentials.MSEssentials;
+import essentials.modules.PluginMessages;
+import net.kyori.text.TextComponent;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -10,20 +12,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class NicknameConfig {
+public class PlayerConfig {
 
     static MSEssentials plugin;
     static List<String> playerUUID;
     static Path configPath;
 
+    public static SimpleDateFormat formatter = new SimpleDateFormat("mm-dd-yyyy HH:mm:ss");
+    public static Date date = new Date(System.currentTimeMillis());
+
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     private static CommentedConfigurationNode config;
 
-    public NicknameConfig(MSEssentials main)
+    public PlayerConfig(MSEssentials main)
     {
         plugin = main;
     }
@@ -43,7 +48,17 @@ public class NicknameConfig {
             loader = HoconConfigurationLoader.builder().setPath(configPath).build();
             config = loader.load();
 
-            config.getNode("Nicknames").setComment("Do not change anything in this file.");
+            String message = config.getNode("Welcome", "message").getString();
+
+            if(message == null)
+            {
+                config.getNode("Welcome", "message").setValue("Welcome to the server, ");
+                config.getNode("Welcome", "name-color").setValue("&r");
+                save();
+                load();
+            }
+            config.setComment("Changes made in this file can cause problems. \nDon't change any values if you aren't sure of what you are doing");
+
             save();
             load();
         }
@@ -121,5 +136,66 @@ public class NicknameConfig {
             return false;
         }
 
+    }
+
+    public static List<String> getPlayerUUID() {
+        Set<Object> objectSet = config.getNode("players").getChildrenMap().keySet();
+
+        List<String> uuids = new ArrayList();
+
+        for(Object object : objectSet)
+        {
+            String uu = (String) object;
+
+            uuids.add(uu);
+        }
+
+        return uuids;
+    }
+
+    public static void setMessage(String text) throws IOException
+    {
+        config.getNode("Welcome", "message").setValue(text);
+        save();
+        load();
+    }
+
+    public static String getMessage()
+    {
+        String text = config.getNode("Welcome", "message").getString();
+        return text;
+    }
+
+    public static String getPlayerColor(String name)
+    {
+        String color = config.getNode("Welcome", "name-color").getString();
+        name = color+name;
+        return name;
+    }
+
+    public static void addPlayer(String playerid, String name)
+    {
+        config.getNode("players", playerid, "name").setValue(name);
+        config.getNode("players", playerid, "joined").setValue(formatter.format(date));
+        save();
+        load();
+    }
+
+    public static void setLastSeen(String uuid)
+    {
+        config.getNode("players", uuid, "last-seen").setValue(formatter.format(date));
+        save();
+        load();
+    }
+
+    public static void getPlayerFromFile(UUID uuid, String name)
+    {
+        if(getPlayerUUID().contains(uuid.toString()))
+        {
+            return;
+        }
+        MSEssentials.server.broadcast(PluginMessages.legacyColor(getMessage()).append(TextComponent.of(getPlayerColor(name))));
+        String playerid = uuid.toString();
+        addPlayer(playerid, name);
     }
 }

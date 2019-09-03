@@ -21,6 +21,8 @@ public class StaffChatListener {
     @Subscribe
     public void onStaffChat(StaffChatFormedEvent event)
     {
+        MSEssentials.logger.info("StaffChatFormedEvent");
+
         Player player = event.getSender();
 
         User user = MSEssentials.api.getUser(player.getUniqueId());
@@ -38,5 +40,7 @@ public class StaffChatListener {
 
         Bridge.getConfig().getStaffChannel(Bridge.getDiscordApi())
                 .forEach(textChannel -> textChannel.sendMessage(finalPrefix + sender + msg));
+
+        MSEssentials.logger.info(finalPrefix + sender + msg);
     }
 }

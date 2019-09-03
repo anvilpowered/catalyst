@@ -82,7 +82,7 @@ public class MSDBConfig {
 
     public List<TextChannel> getStaffChannel(DiscordApi api)
     {
-        return outChannels.stream()
+        return staffChannel.stream()
                 .map(api::getTextChannelById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
