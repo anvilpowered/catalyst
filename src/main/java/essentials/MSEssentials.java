@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import essentials.discordbridge.Bridge;
 import essentials.discordbridge.velocity.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.ProxyChatListener;
+import essentials.discordbridge.velocity.StaffChatListener;
 import essentials.discordbridge.velocity.VelocityListener;
 import essentials.modules.Config.NicknameConfig;
 import essentials.modules.PluginMessages;
@@ -58,6 +59,7 @@ public class MSEssentials {
         server.getEventManager().register(this, new MSEssentialsChatListener());
         server.getEventManager().register(this, new VelocityListener());
         server.getEventManager().register(this, new ProxyChatListener());
+        server.getEventManager().register(this, new StaffChatListener());
 
 
         Bridge.enable();

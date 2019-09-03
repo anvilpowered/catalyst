@@ -16,6 +16,7 @@ public class MSDBConfig {
     private final String token;
     private final List<Long> inChannels;
     private final List<Long> outChannels;
+    private final List<Long> staffChannel;
     private final boolean playerlistEnabled;
     private final String playerlistFormat;
     private final String playerlistSeperator;
@@ -34,6 +35,8 @@ public class MSDBConfig {
 
         inChannels = node.getNode("discord", "in-channels").getList(TypeToken.of(Long.class));
         outChannels = node.getNode("discord", "out-channels").getList(TypeToken.of(Long.class));
+
+        staffChannel = node.getNode("discord", "staff-channel").getList(TypeToken.of(Long.class));
 
         playerlistEnabled = node.getNode("discord", "playerlist", "enabled").getBoolean(true);
         playerlistFormat = node.getNode("discord", "playerlist", "format").getString("**{count} players online:** ```\n{players}\n```");
@@ -69,6 +72,15 @@ public class MSDBConfig {
     }
 
     public List<TextChannel> getOutChannels(DiscordApi api)
+    {
+        return outChannels.stream()
+                .map(api::getTextChannelById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    public List<TextChannel> getStaffChannel(DiscordApi api)
     {
         return outChannels.stream()
                 .map(api::getTextChannelById)

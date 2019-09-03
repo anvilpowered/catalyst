@@ -40,6 +40,8 @@ public class StaffChat {
         MSEssentials.server.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
                 .forEach(target -> { target.sendMessage(PluginMessages.legacyColor("&b[STAFF]&r " + "&5" + username + "&r: &6" + mess));
         });
+
+
     }
 
     public static void sendConsoleMessage(String mess){

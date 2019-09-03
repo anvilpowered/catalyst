@@ -6,6 +6,7 @@ import essentials.discordbridge.Bridge;
 import essentials.discordbridge.MSDBConfig;
 import essentials.discordbridge.discord.TextUtil;
 import essentials.modules.PluginMessages;
+import essentials.modules.PluginPermissions;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
 import me.lucko.luckperms.api.caching.MetaData;
@@ -31,18 +32,28 @@ public class MSEssentialsChatListener {
         if(!Bridge.getConfig().getInChannels(event.getApi()).contains(event.getChannel())) return;
         if(event.getMessageAuthor().isYourself()) return;
 
+
         String message = event.getReadableMessageContent();
 
         String author = event.getMessageAuthor().getDisplayName();
         message = "&6[Discord] &7" + author + " " + message;
 
 
-       TextComponent component = TextComponent.builder()
+        TextComponent component = TextComponent.builder()
                .content("")
                .append(PluginMessages.legacyColor(message))
                .hoverEvent(HoverEvent.showText(TextComponent.of("Click here to join the discord!")))
                .clickEvent(ClickEvent.openUrl("https://www.google.com/"))
                .build();
+
+        if(Bridge.getConfig().getStaffChannel(event.getApi()).contains(event.getChannel()))
+        {
+            MSEssentials.server.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
+                    .forEach(target -> {target.sendMessage(component);});
+
+            return;
+
+        }
 
         MSEssentials.getServer().getAllPlayers().stream()
                 .forEach(player -> player.sendMessage(component));
