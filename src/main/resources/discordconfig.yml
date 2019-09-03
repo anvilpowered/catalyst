@@ -1,16 +1,11 @@
-# gCV-Bridge config
-# =================
-
-# Discord bot settings
 discord:
   # The bot token, used to log into Discord.
   token: ""
   # The IDs of the channels to receive messages from.
-  # You can specify multiple channels here by separating the IDs with a comma.
   in-channels: []
   # The IDs of the channels to send messages to.
-  # You can specify multiple channels here by separating the IDs with a comma.
   out-channels: []
+  staff-channel: []
   # Settings for the playerlist command
   playerlist:
     # Whether to enable the playerlist command.
@@ -39,18 +34,3 @@ velocity:
   require-see-permission: false
   # Whether or not players need the "gcvb.send" permission for their messages to be sent to Discord.
   require-send-permission: false
-
-
-# gChat integration settings
-gchat:
-  # The name of the gChat format to use for incoming messages from Discord.
-  # This should be defined in the gChat config.yml, then the name set below.
-  # You can create a format just for Discord if you want.
-  in-format: default
-
-# Neutron integration settings
-neutron:
-  # The format for sending Neutron /alert messages to Discord.
-  # Use {message} for the message and {author} for the sender's name.
-  # Leave blank ("") to disable sending alerts to Discord.
-  alert-format: "**BROADCAST** {message}"

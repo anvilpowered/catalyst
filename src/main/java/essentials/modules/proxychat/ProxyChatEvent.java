@@ -10,6 +10,7 @@ import essentials.modules.PluginMessages;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
 import essentials.modules.events.SendMessage;
+import essentials.modules.language.WordCatch;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
 import me.lucko.luckperms.api.caching.MetaData;
@@ -17,6 +18,7 @@ import me.lucko.luckperms.api.caching.UserData;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.HoverEvent;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,12 +28,45 @@ public class ProxyChatEvent {
     @Subscribe
     public void onChat(PlayerChatEvent e)
     {
+        String message = e.getMessage();
         Player player = e.getPlayer();
 
         if(StaffChat.toggledSet.contains(player.getUniqueId())){
             e.setResult(PlayerChatEvent.ChatResult.denied());
             return;
         }
+
+        List<String> swearlist = MSEssentials.wordCatch.isswear(message);
+        if(swearlist != null)
+        {
+
+            for(String swear: swearlist)
+            {
+                message = message.replace(swear ,"****");
+            }
+            sendMessage(e, checkPlayerName(message));
+
+        }else {
+
+            sendMessage(e, checkPlayerName(message));
+
+        }
+
+
+    }
+    public static String checkPlayerName(String message)
+    {
+        for (Player onlinePlayer : MSEssentials.getServer().getAllPlayers()) {
+            if (message.contains(onlinePlayer.getUsername())) {
+                message = message.replaceAll(onlinePlayer.getUsername(), "@" + onlinePlayer.getUsername());
+            }
+        }
+        return message;
+    }
+
+    public static void sendMessage(PlayerChatEvent e, String message)
+    {
+        Player player = e.getPlayer();
         User user = MSEssentials.api.getUser(player.getUniqueId());
 
         Optional<Contexts> contextsOptional = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
@@ -41,7 +76,6 @@ public class ProxyChatEvent {
 
         String prefix = userMeta.getPrefix();
 
-        String message = e.getMessage();
         e.setResult(PlayerChatEvent.ChatResult.denied());
 
 
@@ -61,14 +95,14 @@ public class ProxyChatEvent {
         MSEssentials.logger.info("fired and joined that shiiiit");
         if(prefix != null)
         {
-         for(Player p : MSEssentials.server.getAllPlayers())
-         {
-             p.sendMessage(ProxyChat.legacyColor(prefix)
-                     .append(name)
-                     .append(TextComponent.of(": ")
-                             .append(ProxyChat.legacyColor(message)))
-                     .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()))));
-         }
+            for(Player p : MSEssentials.server.getAllPlayers())
+            {
+                p.sendMessage(ProxyChat.legacyColor(prefix)
+                        .append(name)
+                        .append(TextComponent.of(": ")
+                                .append(ProxyChat.legacyColor(message)))
+                        .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()))));
+            }
         }
         else {
             MSEssentials.server.getEventManager().fire(formedEvent).join();

@@ -58,8 +58,9 @@ public class Bridge {
 
     private static MSDBConfig loadConfig() throws Exception
     {
+        MSEssentials.getLogger().info("load config line 61");
         ConfigurationNode config = YAMLConfigurationLoader.builder()
-                .setFile(getBundledFile("config.yml"))
+                .setFile(getBundledFile("discordconfig.yml"))
                 .build()
                 .load();
         return new MSDBConfig(config);

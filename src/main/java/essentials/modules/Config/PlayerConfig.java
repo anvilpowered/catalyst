@@ -194,7 +194,7 @@ public class PlayerConfig {
         {
             return;
         }
-        MSEssentials.server.broadcast(PluginMessages.legacyColor(getMessage()).append(TextComponent.of(getPlayerColor(name))));
+        MSEssentials.server.broadcast(PluginMessages.legacyColor(getMessage()).append(PluginMessages.legacyColor(getPlayerColor(name))));
         String playerid = uuid.toString();
         addPlayer(playerid, name);
     }
