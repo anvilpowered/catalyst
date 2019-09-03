@@ -4,6 +4,10 @@ import com.velocitypowered.api.event.Subscribe;
 import essentials.MSEssentials;
 import essentials.discordbridge.discord.TextUtil;
 import essentials.modules.PluginMessages;
+import me.lucko.luckperms.api.Contexts;
+import me.lucko.luckperms.api.User;
+import me.lucko.luckperms.api.caching.MetaData;
+import me.lucko.luckperms.api.caching.UserData;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
@@ -12,6 +16,8 @@ import net.kyori.text.serializer.plain.PlainComponentSerializer;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.event.message.MessageEvent;
+
+import java.util.Optional;
 
 
 public class MSEssentialsChatListener {
@@ -25,6 +31,7 @@ public class MSEssentialsChatListener {
 
         String author = event.getMessageAuthor().getDisplayName();
         message = "&6[Discord] &r" + author + " " + message;
+
 
        TextComponent component = TextComponent.builder()
                .content("")
