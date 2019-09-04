@@ -2,11 +2,13 @@ package essentials;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import essentials.discordbridge.Bridge;
+import essentials.discordbridge.discord.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.*;
 import essentials.modules.Config.MSLangConfig;
 import essentials.modules.Config.PlayerConfig;
@@ -43,6 +45,14 @@ public class MSEssentials {
     public static WordCatch wordCatch;
      MSLangConfig msLangConfig;
 
+    public static MSEssentials instance = null;
+
+
+    @Subscribe
+    public void onShutdown(ProxyShutdownEvent e)
+    {
+        Bridge.onProxyShutdown();
+    }
     @Subscribe
     public void onInit(ProxyInitializeEvent event){
         logger.info("is now starting!");
@@ -50,7 +60,7 @@ public class MSEssentials {
         logger.info("Loading commands");
         server.getCommandManager().register(new SendGoogleCommand(),"sendgoogle");
         server.getCommandManager().register(new GoogleCommand(), "google");
-        //server.getCommandManager().register(new StaffChatCommand(), "staffchat", "sc");
+        server.getCommandManager().register(new StaffChatCommand(), "staffchat", "sc");
         //server.getCommandManager().register(new MessageCommand(), "msg", "message", "pm");
         server.getCommandManager().register(new NickNameCommand(), "nick", "nickname");
         server.getCommandManager().register(new StaffList(this), "stafflist");
@@ -58,6 +68,8 @@ public class MSEssentials {
 
         logger.info("initializing listeners");
         initListeners();
+
+        instance = this;
 
         Bridge.enable();
 

@@ -21,6 +21,11 @@ public class PluginMessages {
             .append("enabled.")
             .build();
 
+    public static TextComponent noNickColorPermission = TextComponent.builder()
+            .content(prefix + " You do not have permission to have a colored nickname!")
+            .color(TextColor.RED)
+            .build();
+
     public static TextComponent setNickName(String nick)
     {
         TextComponent nickmsg = TextComponent.builder()

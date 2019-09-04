@@ -1,4 +1,4 @@
-package essentials.discordbridge.velocity;
+package essentials.discordbridge.discord;
 
 import com.velocitypowered.api.event.Subscribe;
 import essentials.MSEssentials;
@@ -45,7 +45,7 @@ public class MSEssentialsChatListener {
                .hoverEvent(HoverEvent.showText(TextComponent.of("Click here to join the discord!")))
                .clickEvent(ClickEvent.openUrl("https://www.google.com/"))
                .build();
-
+/*
         if(Bridge.getConfig().getStaffChannel(event.getApi()).contains(event.getChannel()))
         {
             MSEssentials.server.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
@@ -53,7 +53,7 @@ public class MSEssentialsChatListener {
 
             return;
 
-        }
+        }*/
 
         MSEssentials.getServer().getAllPlayers().stream()
                 .forEach(player -> player.sendMessage(component));

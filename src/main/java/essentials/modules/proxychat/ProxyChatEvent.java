@@ -92,7 +92,6 @@ public class ProxyChatEvent {
         MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, ProxyChat.legacyColor(message));
 
         MSEssentials.server.getEventManager().fire(formedEvent).join();
-        MSEssentials.logger.info("fired and joined that shiiiit");
         if(prefix != null)
         {
             for(Player p : MSEssentials.server.getAllPlayers())
@@ -106,16 +105,14 @@ public class ProxyChatEvent {
         }
         else {
             MSEssentials.server.getEventManager().fire(formedEvent).join();
-            MSEssentials.logger.info("fired and joined that shiiiit");
 
             for (Player p : MSEssentials.server.getAllPlayers())
             {
-                p.sendMessage(name.append(TextComponent.of(" : ")).append(ProxyChat.legacyColor(message)));
+                p.sendMessage(name.append(TextComponent.of(": ")).append(ProxyChat.legacyColor(message)));
                 boolean cancelled = false;
                 SendMessage sendMessage = new SendMessage(player, p, message, cancelled);
 
                 p.sendMessage(TextComponent.of(message));
-                MSEssentials.logger.info(formedEvent.getRawMessage());
             }
             Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(name + message));
 

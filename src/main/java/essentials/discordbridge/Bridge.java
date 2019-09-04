@@ -3,8 +3,7 @@ package essentials.discordbridge;
 import essentials.MSEssentials;
 import essentials.discordbridge.discord.ConnectionListener;
 import essentials.discordbridge.velocity.DiscordStaffChat;
-import essentials.discordbridge.velocity.MSEssentialsChatListener;
-import essentials.discordbridge.velocity.StaffChatListener;
+import essentials.discordbridge.discord.MSEssentialsChatListener;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.javacord.api.DiscordApi;
@@ -39,6 +38,14 @@ public class Bridge {
 
     }
 
+    public static void onProxyShutdown() {
+        MSEssentials.getServer().getScheduler().buildTask(MSEssentials.instance, () -> {
+            MSEssentials.logger.info("Disconnecting the bridge");
+            discordApi.disconnect();
+            MSEssentials.logger.info("Successfully disconnected!");
+        }).schedule();
+    }
+
     private Bridge(DiscordApi dAPI, MSDBConfig configuration){
         config = configuration;
         discordApi = dAPI;
@@ -58,7 +65,6 @@ public class Bridge {
 
     private static MSDBConfig loadConfig() throws Exception
     {
-        MSEssentials.getLogger().info("load config line 61");
         ConfigurationNode config = YAMLConfigurationLoader.builder()
                 .setFile(getBundledFile("discordconfig.yml"))
                 .build()
@@ -100,7 +106,7 @@ public class Bridge {
                 .addLostConnectionListener(connectionListener::onConnectionLost)
                 .addReconnectListener(connectionListener::onReconnect)
                 .addResumeListener(connectionListener::onResume)
-                .addMessageCreateListener(discordStaffChat::onMessage)
+               // .addMessageCreateListener(discordStaffChat::onMessage)
                 .addMessageCreateListener(chatListener::onMessage)
                 .login().thenAccept(discordApi1 ->
         {

@@ -3,9 +3,11 @@ package essentials.modules.commands;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import essentials.MSEssentials;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
+import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -32,9 +34,30 @@ public class NickNameCommand implements Command {
             nick = player.getUsername().replace(player.getUsername(), "~" + Arrays.toString(args)
                     .replaceAll("\\[", "")
                     .replaceAll("]", ""));
-            player.sendMessage(PluginMessages.setNickName(nick));
-            PlayerConfig.addNick(nick, player.getUniqueId());
-            return;
+            if(!player.hasPermission(PluginPermissions.NICKNAMECOLOR))
+            {
+                if(nick.contains("&"))
+                {
+                    player.sendMessage(PluginMessages.noNickColorPermission);
+                    return;
+                }else
+                {
+                    player.sendMessage(PluginMessages.setNickName(nick));
+                    PlayerConfig.addNick(nick, player.getUniqueId());
+                }
+            }
+            if(nick.contains("&k") )
+            {
+                player.sendMessage(TextComponent.of(PluginMessages.prefix + " No fancy nicknames!"));
+                return;
+            }else
+            {
+
+
+                player.sendMessage(PluginMessages.setNickName(nick));
+                PlayerConfig.addNick(nick, player.getUniqueId());
+                return;
+            }
         }
         player.sendMessage(PluginMessages.noPermissions);
     }

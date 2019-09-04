@@ -22,7 +22,7 @@ public class DiscordStaffChat {
         String message = event.getReadableMessageContent();
 
         String author = event.getMessageAuthor().getDisplayName();
-        message = "&6[Discord] &7" + author + " " + message;
+        message = "&b[STAFF] &6[Discord] &7" + author + " " + message;
 
 
         TextComponent component = TextComponent.builder()
