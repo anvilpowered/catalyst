@@ -6,5 +6,6 @@ public abstract class PluginPermissions {
     public static final String STAFFCHAT = "msessentials.command.admin.staffchat";
     public static final String NICKNAME = "msessentials.command.nickname";
     public static final String NICKNAMECOLOR = "msessentials.command.nickname.color";
+    public static final String NICKNAMEMAGIC = "msessentials.command.nickname.magic";
 
 }

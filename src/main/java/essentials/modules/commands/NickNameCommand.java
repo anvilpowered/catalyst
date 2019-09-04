@@ -3,11 +3,9 @@ package essentials.modules.commands;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import essentials.MSEssentials;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
-import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -46,9 +44,9 @@ public class NickNameCommand implements Command {
                     PlayerConfig.addNick(nick, player.getUniqueId());
                 }
             }
-            if(nick.contains("&k") )
+            if(nick.contains("&k") && !(player.hasPermission(PluginPermissions.NICKNAMEMAGIC)))
             {
-                player.sendMessage(TextComponent.of(PluginMessages.prefix + " No fancy nicknames!"));
+                player.sendMessage(PluginMessages.noNickMagicPermissions);
                 return;
             }else
             {
@@ -64,9 +62,5 @@ public class NickNameCommand implements Command {
 
     public static String getNick(UUID uuid) {
         return PlayerConfig.getNickName(uuid);
-    }
-
-    public void setNick(String nick) {
-        this.nick = nick;
     }
 }

@@ -1,7 +1,7 @@
 package essentials.modules;
 
 
-import essentials.modules.commands.NickNameCommand;
+
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
@@ -22,7 +22,11 @@ public class PluginMessages {
             .build();
 
     public static TextComponent noNickColorPermission = TextComponent.builder()
-            .content(prefix + " You do not have permission to have a colored nickname!")
+            .content(prefix + "You do not have permission to have a colored nickname!")
+            .color(TextColor.RED)
+            .build();
+    public static TextComponent noNickMagicPermissions = TextComponent.builder()
+            .content(prefix + "You do not have permission to have a magical nickname!")
             .color(TextColor.RED)
             .build();
 
