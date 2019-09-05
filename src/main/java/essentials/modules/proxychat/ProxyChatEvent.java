@@ -7,6 +7,7 @@ import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
+import essentials.modules.PluginPermissions;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
 import essentials.modules.events.SendMessage;
@@ -80,11 +81,24 @@ public class ProxyChatEvent {
 
 
         TextComponent name;
+        if(message.contains("&"))
+        {
+            MSEssentials.logger.info("line 86");
+            if(!player.hasPermission(PluginPermissions.CHATCOLOR))
+            {
+                e.setResult(PlayerChatEvent.ChatResult.denied());
+                message = message.replaceAll("&", "");
+            }
+        }
 
         if(PlayerConfig.hasNickName(player.getUniqueId()))
         {
             UUID playedID = player.getUniqueId();
             name = PluginMessages.legacyColor(PlayerConfig.getNickName(playedID));
+            if(name.equals(""))
+            {
+                name = TextComponent.of(e.getPlayer().getUsername());
+            }
         }else
         {
             name = TextComponent.of(player.getUsername());
@@ -114,7 +128,9 @@ public class ProxyChatEvent {
 
                 p.sendMessage(TextComponent.of(message));
             }
-            Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(name + message));
+            TextComponent finalName = name;
+            String finalMessage = message;
+            Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(finalName + finalMessage));
 
         }
     }

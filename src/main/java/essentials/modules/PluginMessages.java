@@ -8,7 +8,7 @@ import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 
 public class PluginMessages {
 
-    public static String prefix = "[MSEssentials] ";
+    public static String prefix = "&a[MSEssentials] ";
     public static String staffPrefix = "&b[STAFF] &r";
 
     public static TextComponent noPermissions = TextComponent.builder()
@@ -22,7 +22,8 @@ public class PluginMessages {
             .build();
 
     public static TextComponent noNickColorPermission = TextComponent.builder()
-            .content(prefix + "You do not have permission to have a colored nickname!")
+            .append(legacyColor(prefix))
+            .content("You do not have permission to have a colored nickname!")
             .color(TextColor.RED)
             .build();
     public static TextComponent noNickMagicPermissions = TextComponent.builder()
@@ -39,6 +40,24 @@ public class PluginMessages {
                 .build();
 
         return nickmsg;
+    }
+    public static TextComponent deleteNick()
+    {
+        TextComponent deleteNickMsg = TextComponent.builder()
+                .append(legacyColor(prefix))
+                .append("Successfully deleted your nickname!")
+                .color(TextColor.GREEN)
+                .build();
+        return deleteNickMsg;
+    }
+
+    public static TextComponent nickUsage()
+    {
+        TextComponent nickUsage = TextComponent.builder()
+                .append(legacyColor(prefix))
+                .append("usage: /nick <nickname>")
+                .build();
+        return nickUsage;
     }
     public static TextComponent nickColorized(String nick)
     {

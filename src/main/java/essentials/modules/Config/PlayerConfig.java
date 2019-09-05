@@ -92,6 +92,21 @@ public class PlayerConfig {
         }
     }
 
+    public static void deleteNick(UUID uuid)
+    {
+        MSEssentials.logger.info("line 100");
+
+            if(config.getNode("players", uuid.toString(), "nickname").getString() != null)
+            {
+                MSEssentials.logger.info("line 104");
+                config.getNode("players", uuid.toString(), "nickname").setValue(null);
+                return;
+            }else
+            {
+                MSEssentials.logger.info("line 108");
+                return;
+            }
+    }
     public static void addNick(String nick, UUID uuid){
         MSEssentials.logger.info("addNick 81");
         if(!playerUUID.contains(uuid.toString()))

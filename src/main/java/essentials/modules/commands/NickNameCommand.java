@@ -27,6 +27,10 @@ public class NickNameCommand implements Command {
                 {
                     player.sendMessage(PluginMessages.nickColorized(PlayerConfig.getNickName(playerUUID)));
                     return;
+                }else
+                {
+                    player.sendMessage(PluginMessages.nickUsage());
+                    return;
                 }
             }
             nick = player.getUsername().replace(player.getUsername(), "~" + Arrays.toString(args)
@@ -42,6 +46,7 @@ public class NickNameCommand implements Command {
                 {
                     player.sendMessage(PluginMessages.setNickName(nick));
                     PlayerConfig.addNick(nick, player.getUniqueId());
+                    return;
                 }
             }
             if(nick.contains("&k") && !(player.hasPermission(PluginPermissions.NICKNAMEMAGIC)))
