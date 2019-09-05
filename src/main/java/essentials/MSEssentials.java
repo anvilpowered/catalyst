@@ -57,6 +57,8 @@ public class MSEssentials {
     @Subscribe
     public void onInit(ProxyInitializeEvent event){
         logger.info("is now starting!");
+        this.msLangConfig = new MSLangConfig(this);
+        this.wordCatch = new WordCatch(this, server);
 
         logger.info("Loading commands");
         server.getCommandManager().register(new SendGoogleCommand(),"sendgoogle");
@@ -67,9 +69,13 @@ public class MSEssentials {
         server.getCommandManager().register(new StaffList(this), "stafflist");
         server.getCommandManager().register(new LanguageCommand(this), "mslang", "lang", "language");
         server.getCommandManager().register(new DeleteNicknameCommand(), "deletenick", "delnick", "nickdel", "nickdelete");
+        server.getCommandManager().register(new KickCommand(), "kick");
 
-        logger.info("initializing listeners");
-        initListeners();
+        logger.info("enabling configs");
+        MSLangConfig.enable();
+        PlayerConfig.enable();
+        MSEssentialsConfig.enable();
+
 
         instance = this;
 
@@ -77,17 +83,13 @@ public class MSEssentials {
 
         StaffChat.toggledSet = new HashSet<UUID>();
 
-        this.msLangConfig = new MSLangConfig(this);
-        this.wordCatch = new WordCatch(this, server);
 
-        logger.info("enabling configs");
-        MSLangConfig.enable();
-        PlayerConfig.enable();
-        MSEssentialsConfig.enable();
 
         if(server.getPluginManager().isLoaded("luckperms")) {
             reload();
         }
+        logger.info("initializing listeners");
+        initListeners();
     }
 
     public void reload(){
@@ -119,11 +121,11 @@ public class MSEssentials {
 
 
     public  void initListeners(){
-        if(MSEssentialsConfig.getProxyChatBoolean() == true)
-        {
+        /*if(MSEssentialsConfig.getProxyChatBoolean() == true)
+        {*/
             server.getEventManager().register(this, new ProxyChatListener());
 
-        }
+        /*}*/
 
         server.getEventManager().register(this, new StaffChatEvent());
         server.getEventManager().register(this,new MSEssentialsChatListener());
