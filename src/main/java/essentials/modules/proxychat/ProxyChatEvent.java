@@ -58,7 +58,7 @@ public class ProxyChatEvent {
     public static String checkPlayerName(String message)
     {
         for (Player onlinePlayer : MSEssentials.getServer().getAllPlayers()) {
-            if (message.contains(onlinePlayer.getUsername())) {
+            if (message.toLowerCase().contains(onlinePlayer.getUsername().toLowerCase())) {
                 message = message.replaceAll(onlinePlayer.getUsername(), "&b@" + onlinePlayer.getUsername() + "&r");
             }
         }
