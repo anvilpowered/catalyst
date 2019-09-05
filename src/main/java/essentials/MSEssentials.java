@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import essentials.discordbridge.Bridge;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.*;
+import essentials.modules.Config.MSEssentialsConfig;
 import essentials.modules.Config.MSLangConfig;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.StaffChat.StaffChat;
@@ -82,6 +83,7 @@ public class MSEssentials {
         logger.info("enabling configs");
         MSLangConfig.enable();
         PlayerConfig.enable();
+        MSEssentialsConfig.enable();
 
         if(server.getPluginManager().isLoaded("luckperms")) {
             reload();
@@ -117,10 +119,15 @@ public class MSEssentials {
 
 
     public  void initListeners(){
+        if(MSEssentialsConfig.getProxyChatBoolean() == true)
+        {
+            server.getEventManager().register(this, new ProxyChatListener());
+
+        }
+
         server.getEventManager().register(this, new StaffChatEvent());
         server.getEventManager().register(this,new MSEssentialsChatListener());
         server.getEventManager().register(this, new VelocityListener());
-        server.getEventManager().register(this, new ProxyChatListener());
         //server.getEventManager().register(this, new StaffChatListener());
        // server.getEventManager().register(this, new DiscordStaffChat());
         server.getEventManager().register(this, new ProxyChatEvent());

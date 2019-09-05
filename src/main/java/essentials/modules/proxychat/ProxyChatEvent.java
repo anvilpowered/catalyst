@@ -82,9 +82,7 @@ public class ProxyChatEvent {
 
         TextComponent name;
         if(message.contains("&"))
-        {
-            MSEssentials.logger.info("line 86");
-            if(!player.hasPermission(PluginPermissions.CHATCOLOR))
+        { if(!player.hasPermission(PluginPermissions.CHATCOLOR))
             {
                 e.setResult(PlayerChatEvent.ChatResult.denied());
                 message = Utils.removeColorCodes(message);

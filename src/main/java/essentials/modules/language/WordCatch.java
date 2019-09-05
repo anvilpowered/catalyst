@@ -34,8 +34,6 @@ public class WordCatch {
 
         String message = swear.toLowerCase();
 
-        MSEssentials.logger.info("aggressiveMode + " + swear);
-
         List<String> finalwords = new ArrayList<>();
 
         String mess = message.replace("*", " ");
@@ -68,8 +66,6 @@ public class WordCatch {
         finalwords.add(finalchecko);
         finalwords.add(finalchecka);
         finalwords.add(message);
-
-        MSEssentials.logger.info("finalwords + " + finalwords);
         return finalwords;
 
     }
@@ -154,11 +150,7 @@ public class WordCatch {
 
     public String containsPlayerName(String s){return checkPlayerName(aggressiveMode(s));}
 
-    public List<String> isswear(String s){
-        MSEssentials.logger.info("isswear + "+ s);
-        return checkswear(aggressiveMode(s));
-
-    }
+    public List<String> isswear(String s){ return checkswear(aggressiveMode(s));}
 
     public List<String> isforbidden(String s){
         return checkforforbidden(aggressiveMode(s));

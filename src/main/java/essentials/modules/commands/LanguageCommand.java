@@ -4,6 +4,7 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
+import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
@@ -46,9 +47,11 @@ public class LanguageCommand implements Command {
                 argument = argument.replace("addswear", "").replaceAll(", ", "").replaceAll("]", "").replaceAll("\\[", "").replaceAll(" ", "");
 
                 TextComponent success = TextComponent.builder()
+                        .append(PluginMessages.legacyColor(PluginMessages.prefix))
                         .content("Successfully added " + argument + " to the filter!")
                         .build();
                 TextComponent existing = TextComponent.builder()
+                        .append(PluginMessages.legacyColor(PluginMessages.prefix))
                         .content("That word is already existing!")
                         .build();
 
@@ -124,9 +127,11 @@ public class LanguageCommand implements Command {
                 argument = argument.replace("removeswear", "").replaceAll(", ", "").replaceAll("]", "").replaceAll("\\[", "").replaceAll(" ", "");
 
                 TextComponent success = TextComponent.builder()
+                        .append(PluginMessages.legacyColor(PluginMessages.prefix))
                         .content("Successfully removed " + argument + " from the swear list")
                         .build();
                 TextComponent nonExisting = TextComponent.builder()
+                        .append(PluginMessages.legacyColor(PluginMessages.prefix))
                         .content(argument + " isn't part of the swears list")
                         .build();
 
@@ -141,10 +146,12 @@ public class LanguageCommand implements Command {
                 argument = argument.replace("removeexception", "").replaceAll(", ", "").replaceAll("]", "").replaceAll("\\[", "").replaceAll(" ", "");
 
                 TextComponent success = TextComponent.builder()
+                        .append(PluginMessages.legacyColor(PluginMessages.prefix))
                         .content("Successfully removed " + argument + " from the exception list")
                         .build();
 
                 TextComponent nonExisting = TextComponent.builder()
+                        .append(PluginMessages.legacyColor(PluginMessages.prefix))
                         .content(argument + " isn't part of the exception list")
                         .build();
 
