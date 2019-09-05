@@ -87,7 +87,7 @@ public class ProxyChatEvent {
             if(!player.hasPermission(PluginPermissions.CHATCOLOR))
             {
                 e.setResult(PlayerChatEvent.ChatResult.denied());
-                message = message.replaceAll("&", "");
+                message = Utils.removeColorCodes(message);
             }
         }
 
