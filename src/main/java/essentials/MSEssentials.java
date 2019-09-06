@@ -121,11 +121,11 @@ public class MSEssentials {
 
 
     public  void initListeners(){
-        /*if(MSEssentialsConfig.getProxyChatBoolean() == true)
-        {*/
+        if(MSEssentialsConfig.getProxyChatBoolean() == true)
+        {
             server.getEventManager().register(this, new ProxyChatListener());
 
-        /*}*/
+        }
 
         server.getEventManager().register(this, new StaffChatEvent());
         server.getEventManager().register(this,new MSEssentialsChatListener());
