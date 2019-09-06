@@ -20,7 +20,6 @@ public class VelocityListener {
                 .replaceAll("\\{player}", event.getPlayer().getUsername());
         UUID playerUUID = event.getPlayer().getUniqueId();
         String name = event.getPlayer().getGameProfile().getName();
-        PlayerConfig.getPlayerFromFile(playerUUID, name);
 
         Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(message));
 }

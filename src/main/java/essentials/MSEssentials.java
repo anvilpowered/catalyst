@@ -14,12 +14,14 @@ import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import essentials.discordbridge.Bridge;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.*;
+import essentials.modules.BanListener;
 import essentials.modules.Config.MSEssentialsConfig;
 import essentials.modules.Config.MSLangConfig;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.StaffChat.StaffChatEvent;
 import essentials.modules.commands.*;
+import essentials.modules.events.PlayerJoin;
 import essentials.modules.language.WordCatch;
 import essentials.modules.proxychat.ProxyChatEvent;
 import essentials.modules.tab.ConfigManager;
@@ -82,6 +84,8 @@ public class MSEssentials {
         server.getCommandManager().register(new LanguageCommand(this), "mslang", "lang", "language");
         server.getCommandManager().register(new DeleteNicknameCommand(), "deletenick", "delnick", "nickdel", "nickdelete");
         server.getCommandManager().register(new KickCommand(), "kick");
+        server.getCommandManager().register(new BanCommand(), "ban");
+        server.getCommandManager().register(new UnBanCommand(), "unban", "pardon");
         logger.info("enabling configs");
         MSLangConfig.enable();
         PlayerConfig.enable();
@@ -91,7 +95,7 @@ public class MSEssentials {
 
         instance = this;
 
-        Bridge.enable();
+        //Bridge.enable();
 
         StaffChat.toggledSet = new HashSet<UUID>();
 
@@ -148,6 +152,8 @@ public class MSEssentials {
        // server.getEventManager().register(this, new DiscordStaffChat());
         server.getEventManager().register(this, new ProxyChatEvent());
         server.getEventManager().register(this, new TabPlayerLeave());
+        server.getEventManager().register(this, new PlayerJoin());
+        server.getEventManager().register(this, new BanListener());
     }
 
     @Subscribe

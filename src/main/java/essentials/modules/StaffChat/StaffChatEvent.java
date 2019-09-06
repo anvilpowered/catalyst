@@ -23,7 +23,7 @@ public class StaffChatEvent {
             MSEssentials.server.getEventManager().fire(formedEvent).join();
 
             event.setResult(PlayerChatEvent.ChatResult.denied());
-            StaffChat.sendMessage(NickNameCommand.getNick(player.getUniqueId()), event.getMessage());
+            StaffChat.sendMessage(NickNameCommand.getNick(player.getUsername()), event.getMessage());
 
 
         }

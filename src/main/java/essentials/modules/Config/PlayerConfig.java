@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class PlayerConfig {
 
     static MSEssentials plugin;
-    static List<String> playerUUID;
     static Path configPath;
 
     public static SimpleDateFormat formatter = new SimpleDateFormat("mm-dd-yyyy HH:mm:ss");
@@ -38,7 +37,7 @@ public class PlayerConfig {
     public static void enable(){
         try
         {
-            configPath = Paths.get(MSEssentials.defaultConfigPath + "/nicknames.json");
+            configPath = Paths.get(MSEssentials.defaultConfigPath + "/players.json");
             if(!Files.exists(configPath))
             {
                 Files.createDirectories(MSEssentials.defaultConfigPath);
@@ -84,7 +83,6 @@ public class PlayerConfig {
         try
         {
             config = loader.load();
-            playerUUID = config.getNode("players").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
         }
         catch (IOException e)
         {
@@ -92,59 +90,29 @@ public class PlayerConfig {
         }
     }
 
-    public static void deleteNick(UUID uuid)
+    public static void deleteNick(String name)
     {
-        MSEssentials.logger.info("line 100");
-
-            if(config.getNode("players", uuid.toString(), "nickname").getString() != null)
-            {
-                MSEssentials.logger.info("line 104");
-                config.getNode("players", uuid.toString(), "nickname").setValue(null);
-                return;
-            }else
-            {
-                MSEssentials.logger.info("line 108");
-                return;
-            }
+      if(hasNickName(name) == true)
+      {
+          config.getNode("players", name, "nickname").setValue(null);
+          save();
+          load();
+      }
     }
-    public static void addNick(String nick, UUID uuid){
-        MSEssentials.logger.info("addNick 81");
-        if(!playerUUID.contains(uuid.toString()))
-        {
-            MSEssentials.logger.info("addNick 84");
-            if(!playerUUID.isEmpty())
-            {
-                if(config.getNode("players", uuid).equals(true))
-                {
-                    MSEssentials.logger.info("nick existing");
-                }else
-                {
-                    MSEssentials.logger.info("addNick 92");
-                    playerUUID.add(uuid.toString());
-                    config.getNode("players",uuid.toString(), "nickname").setValue(nick);
-                    save();
-                    load();
-                }
-            }
-            else
-                {
-                    MSEssentials.logger.info("addNick 99");
-                    playerUUID.add(uuid.toString());
-                    config.getNode("players", uuid.toString(), "nickname").setValue(nick);
-                    save();
-                    load();
-                    return;
-                }
-        }
+    public static void addNick(String nick, String name){
+        MSEssentials.logger.info("addNick 92");
+        config.getNode("players",name, "nickname").setValue(nick);
+        save();
+        load();
     }
-    public static String getNickName(UUID uuid){
-       String nick = config.getNode("players", uuid.toString(), "nickname").getString();
+    public static String getNickName(String name){
+       String nick = config.getNode("players", name, "nickname").getString();
        MSEssentials.logger.info(nick);
        return nick;
     }
 
-    public static boolean hasNickName(UUID uuid) {
-        if (config.getNode("players", uuid.toString(), "nickname").getValue() != null) {
+    public static boolean hasNickName(String name) {
+        if (config.getNode("players", name, "nickname").getValue() != null) {
             return true;
         } else
         {
@@ -190,8 +158,9 @@ public class PlayerConfig {
 
     public static void addPlayer(String playerid, String name)
     {
-        config.getNode("players", playerid, "name").setValue(name);
-        config.getNode("players", playerid, "joined").setValue(formatter.format(date));
+        config.getNode("players", name, "uuid").setValue(playerid);
+        config.getNode("players", name, "joined").setValue(formatter.format(date));
+        config.getNode("players", name, "banned", "value").setValue(false);
         save();
         load();
     }
@@ -212,5 +181,33 @@ public class PlayerConfig {
         MSEssentials.server.broadcast(PluginMessages.legacyColor(getMessage()).append(PluginMessages.legacyColor(getPlayerColor(name))));
         String playerid = uuid.toString();
         addPlayer(playerid, name);
+    }
+
+    public static void addBan(String name, String reason)
+    {
+            config.getNode("players", name, "banned", "value").setValue(true);
+            if(reason == null) reason = "The ban hammer has spoken!";
+            config.getNode("players", name, "banned", "reason").setValue(reason);
+            save();
+            load();
+    }
+
+    public static boolean checkBan(String name)
+    {
+           boolean x =  config.getNode("players", name, "banned", "value").getBoolean();
+           return x;
+    }
+    public static String getBanReason(String name)
+    {
+        String reason = config.getNode("players", name, "banned", "reason").getString();
+
+        return reason = "&4&lYou are banned! &r" + reason;
+    }
+
+    public static void unBan(String name)
+    {
+        config.getNode("players", name, "banned", "value").setValue(false);
+        save();
+        load();
     }
 }

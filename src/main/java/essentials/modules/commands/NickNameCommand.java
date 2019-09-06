@@ -23,12 +23,12 @@ public class NickNameCommand implements Command {
     @Override
     public void execute(CommandSource source,  @NonNull String[] args) {
         Player player = (Player) source;
-        UUID playerUUID = player.getUniqueId();
+        String playerName = player.getUsername();
         if (player.hasPermission(PluginPermissions.NICKNAME)) {
 
             if (args.length == 0) {
-                if (PlayerConfig.hasNickName(playerUUID)) {
-                    player.sendMessage(PluginMessages.nickColorized(PlayerConfig.getNickName(playerUUID)));
+                if (PlayerConfig.hasNickName(playerName)) {
+                    player.sendMessage(PluginMessages.nickColorized(PlayerConfig.getNickName(playerName)));
                     return;
                 } else {
                     player.sendMessage(PluginMessages.nickUsage());
@@ -45,7 +45,7 @@ public class NickNameCommand implements Command {
                         player.sendMessage(PluginMessages.noNickColorPermission);
                     } else {
                         player.sendMessage(PluginMessages.setNickName(nick));
-                        PlayerConfig.addNick(nick, player.getUniqueId());
+                        PlayerConfig.addNick(nick, playerName);
                         return;
                     }
                 }
@@ -56,7 +56,7 @@ public class NickNameCommand implements Command {
 
 
                     player.sendMessage(PluginMessages.setNickName(nick));
-                    PlayerConfig.addNick(nick, player.getUniqueId());
+                    PlayerConfig.addNick(nick, playerName);
                     return;
                 }
             } else {
@@ -70,7 +70,7 @@ public class NickNameCommand implements Command {
         }
     }
 
-    public static String getNick(UUID uuid) {
-        return PlayerConfig.getNickName(uuid);
+    public static String getNick(String name) {
+        return PlayerConfig.getNickName(name);
     }
 }

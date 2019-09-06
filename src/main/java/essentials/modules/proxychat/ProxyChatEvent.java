@@ -92,10 +92,9 @@ public class ProxyChatEvent {
         }
         }
 
-        if(PlayerConfig.hasNickName(player.getUniqueId()))
+        if(PlayerConfig.hasNickName(player.getUsername()))
         {
-            UUID playedID = player.getUniqueId();
-            name = PluginMessages.legacyColor(PlayerConfig.getNickName(playedID));
+            name = PluginMessages.legacyColor(PlayerConfig.getNickName(player.getUsername()));
             if(name.equals(""))
             {
                 name = TextComponent.of(e.getPlayer().getUsername());

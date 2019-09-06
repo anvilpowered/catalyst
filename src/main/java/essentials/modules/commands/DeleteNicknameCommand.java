@@ -24,8 +24,8 @@ public class DeleteNicknameCommand implements Command {
             {
                 if(args.length == 0)
                 {
-                    String nick = PlayerConfig.getNickName(playerUUID);
-                    PlayerConfig.deleteNick(playerUUID);
+                    String nick = PlayerConfig.getNickName(player.getUsername());
+                    PlayerConfig.deleteNick(player.getUsername());
                     player.sendMessage(PluginMessages.deleteNick());
                 }
             }
