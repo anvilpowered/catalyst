@@ -142,6 +142,7 @@ public class ProxyChatEvent {
 
             if(chatColor != null)
             {
+                prefix = "";
                 for (Player p : MSEssentials.server.getAllPlayers()) {
                     p.sendMessage(
                             name

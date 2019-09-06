@@ -19,14 +19,14 @@ import static java.lang.System.in;
 public class Bridge {
 
     private static DiscordApi discordApi;
-    private static MSDBConfig config;
+    private static DiscordConfig config;
 
 
     public static void enable(){
         MSEssentials.logger.info("Enabling Discord Bridge!");
 
         try{
-            config = loadConfig();
+            DiscordConfig.enable();
         }catch (Exception e)
         {
             throw new RuntimeException("Failed to load config", e);
@@ -46,7 +46,7 @@ public class Bridge {
         }).schedule();
     }
 
-    private Bridge(DiscordApi dAPI, MSDBConfig configuration){
+    private Bridge(DiscordApi dAPI, DiscordConfig configuration){
         config = configuration;
         discordApi = dAPI;
     }
@@ -55,7 +55,7 @@ public class Bridge {
         final String oldToken = config.getToken();
         try
         {
-            config = loadConfig();
+            DiscordConfig.enable();
         }catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -63,32 +63,6 @@ public class Bridge {
         return true;
     }
 
-    private static MSDBConfig loadConfig() throws Exception
-    {
-        ConfigurationNode config = YAMLConfigurationLoader.builder()
-                .setFile(getBundledFile("discordconfig.yml"))
-                .build()
-                .load();
-        return new MSDBConfig(config);
-    }
-
-    private static File getBundledFile(String name)
-    {
-        File file = new File(MSEssentials.defaultConfigPath.toFile(), name);
-
-        if(!file.exists())
-        {
-            MSEssentials.defaultConfigPath.toFile().mkdir();
-            try(InputStream n = MSEssentials.class.getResourceAsStream("/" + name))
-            {
-                Files.copy(in, file.toPath());
-            }catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        return file;
-    }
 
     private static void startBot() {
         if(discordApi != null)
@@ -115,7 +89,7 @@ public class Bridge {
         });
     }
 
-    public static MSDBConfig getConfig()
+    public static DiscordConfig getConfig()
     {
         return config;
     }
