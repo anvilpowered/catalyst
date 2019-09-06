@@ -9,6 +9,7 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -122,7 +123,7 @@ public class PlayerConfig {
     }
 
     public static List<String> getPlayerUUID() {
-        Set<Object> objectSet = config.getNode("players").getChildrenMap().keySet();
+        Set<Object> objectSet = config.getNode("players", "uuid").getChildrenMap().keySet();
 
         List<String> uuids = new ArrayList();
 
@@ -156,11 +157,12 @@ public class PlayerConfig {
         return name;
     }
 
-    public static void addPlayer(String playerid, String name)
+    public static void addPlayer(String playerid, String name, String address)
     {
         config.getNode("players", name, "uuid").setValue(playerid);
         config.getNode("players", name, "joined").setValue(formatter.format(date));
         config.getNode("players", name, "banned", "value").setValue(false);
+        config.getNode("players", name, "ip").setValue(address);
         save();
         load();
     }
@@ -172,15 +174,22 @@ public class PlayerConfig {
         load();
     }
 
-    public static void getPlayerFromFile(UUID uuid, String name)
+    public static void getPlayerFromFile(UUID uuid, String name, InetSocketAddress address)
     {
-        if(getPlayerUUID().contains(uuid.toString()))
+        String uuidFromConfig = config.getNode("players", name, "uuid").getString();
+        MSEssentials.logger.info(uuidFromConfig);
+        MSEssentials.logger.info(uuid.toString());
+        if(uuidFromConfig.equalsIgnoreCase(uuid.toString()))
         {
+            MSEssentials.logger.info("Player existing");
             return;
+        }else
+        {
+            MSEssentials.logger.info("Player not existing?");
         }
         MSEssentials.server.broadcast(PluginMessages.legacyColor(getMessage()).append(PluginMessages.legacyColor(getPlayerColor(name))));
         String playerid = uuid.toString();
-        addPlayer(playerid, name);
+        addPlayer(playerid, name, address.toString());
     }
 
     public static void addBan(String name, String reason)
@@ -209,5 +218,10 @@ public class PlayerConfig {
         config.getNode("players", name, "banned", "value").setValue(false);
         save();
         load();
+    }
+    public static String getIP(String name)
+    {
+        String ip = config.getNode("players", name, "ip").getString();
+        return ip;
     }
 }

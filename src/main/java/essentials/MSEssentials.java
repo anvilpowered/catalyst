@@ -86,6 +86,7 @@ public class MSEssentials {
         server.getCommandManager().register(new KickCommand(), "kick");
         server.getCommandManager().register(new BanCommand(), "ban");
         server.getCommandManager().register(new UnBanCommand(), "unban", "pardon");
+        server.getCommandManager().register(new PlayerInfoCommand(), "playerinfo", "pinfo");
         logger.info("enabling configs");
         MSLangConfig.enable();
         PlayerConfig.enable();
@@ -154,6 +155,7 @@ public class MSEssentials {
         server.getEventManager().register(this, new TabPlayerLeave());
         server.getEventManager().register(this, new PlayerJoin());
         server.getEventManager().register(this, new BanListener());
+
     }
 
     @Subscribe
