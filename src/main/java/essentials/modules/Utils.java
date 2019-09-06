@@ -1,4 +1,7 @@
-package essentials.modules.proxychat;
+package essentials.modules;
+
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 
 public class Utils {
     static String newMSG;
@@ -31,5 +34,23 @@ public class Utils {
     {
         newMSG = message.replace("&k", "");
         return newMSG;
+    }
+
+    public static String getCurrentServer(Player player)
+    {
+        if(player.getCurrentServer().isPresent())
+        {
+            return player.getCurrentServer().get().getServerInfo().getName();
+        }else
+            return "null";
+    }
+
+    public static String getServerPlayerCount(Player player)
+    {
+        RegisteredServer server = null;
+        if(player.getCurrentServer().isPresent())
+        {
+            return String.valueOf(player.getCurrentServer().get().getServer().getPlayersConnected().size());
+        }return "null";
     }
 }

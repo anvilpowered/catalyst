@@ -6,7 +6,7 @@ import com.velocitypowered.api.proxy.Player;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
-import essentials.modules.proxychat.Utils;
+import essentials.modules.Utils;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;

@@ -1,7 +1,6 @@
 package essentials.modules.proxychat;
 
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
@@ -10,8 +9,8 @@ import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
 import essentials.modules.StaffChat.StaffChat;
+import essentials.modules.Utils;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
-import essentials.modules.events.SendMessage;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
 import me.lucko.luckperms.api.caching.MetaData;
