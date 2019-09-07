@@ -35,8 +35,10 @@ public class KickCommand implements Command
                     source.sendMessage(PluginMessages.noPermissions);
                 }
             }
-            target.disconnect(TextComponent.of("You have been kicked by console!"));
+            source.sendMessage(TextComponent.of("Kicked " + target.getUsername()));
+                    target.disconnect(TextComponent.of("You have been kicked by console!"));
             return;
         }
+
     }
 }

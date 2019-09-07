@@ -9,6 +9,7 @@ import essentials.MSEssentials;
 import essentials.modules.commands.NickNameCommand;
 import essentials.modules.events.StaffChatFormedEvent;
 import essentials.modules.proxychat.ProxyChat;
+import net.kyori.text.TextComponent;
 
 public class StaffChatEvent {
 
@@ -19,13 +20,14 @@ public class StaffChatEvent {
         if(StaffChat.toggledSet.contains(player.getUniqueId()))
         {
             String message = event.getMessage();
-            StaffChatFormedEvent formedEvent = new StaffChatFormedEvent(player, event.getMessage(), ProxyChat.legacyColor(message));
-            MSEssentials.server.getEventManager().fire(formedEvent).join();
+
+            StaffChatFormedEvent formedEvent = new StaffChatFormedEvent(player, event.getMessage(), TextComponent.of(message));
 
             event.setResult(PlayerChatEvent.ChatResult.denied());
+
             StaffChat.sendMessage(NickNameCommand.getNick(player.getUsername()), event.getMessage());
 
-
+            MSEssentials.server.getEventManager().fire(formedEvent).join();
         }
     }
 

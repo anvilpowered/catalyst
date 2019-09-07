@@ -12,6 +12,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import essentials.discordbridge.Bridge;
+import essentials.discordbridge.discord.DiscordStaffChat;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.*;
 import essentials.modules.BanListener;
@@ -60,15 +61,13 @@ public class MSEssentials {
     public static MSEssentials instance = null;
     public static Map<String, Double> playerBalances = new HashMap<String, Double>();
 
-
-
     @Subscribe
     public void onShutdown(ProxyShutdownEvent e)
     {
         Bridge.onProxyShutdown();
     }
     @Subscribe
-    public void onInit(ProxyInitializeEvent event){
+    public void onInit(ProxyInitializeEvent event) {
         logger.info("is now starting!");
         this.msLangConfig = new MSLangConfig(this);
         this.wordCatch = new WordCatch(this, server);
@@ -95,7 +94,6 @@ public class MSEssentials {
         ConfigManager.setupConfig();
         logger.info("registering globaltab channel");
         server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
-
 
         instance = this;
 
@@ -152,8 +150,8 @@ public class MSEssentials {
         server.getEventManager().register(this, new StaffChatEvent());
         server.getEventManager().register(this,new MSEssentialsChatListener());
         server.getEventManager().register(this, new VelocityListener());
-        //server.getEventManager().register(this, new StaffChatListener());
-       // server.getEventManager().register(this, new DiscordStaffChat());
+        server.getEventManager().register(this, new StaffChatListener());
+        server.getEventManager().register(this, new DiscordStaffChat());
         server.getEventManager().register(this, new ProxyChatEvent());
         server.getEventManager().register(this, new TabPlayerLeave());
         server.getEventManager().register(this, new PlayerJoin());

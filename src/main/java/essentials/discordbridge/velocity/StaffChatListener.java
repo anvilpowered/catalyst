@@ -24,14 +24,24 @@ public class StaffChatListener {
         MSEssentials.logger.info("StaffChatFormedEvent");
 
         Player player = event.getSender();
+        MSEssentials.logger.info(player.getUsername());
 
         User user = MSEssentials.api.getUser(player.getUniqueId());
+        MSEssentials.logger.info(user.getName().toString());
 
         Optional<Contexts> contextsOptional = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
         UserData cachedData = user.getCachedData();
         MetaData userMeta = cachedData.getMetaData(contextsOptional.get());
 
-        String prefix = PluginMessages.removeColor(userMeta.getPrefix());
+        String prefix;
+        if(userMeta.getPrefix() != null)
+        {
+            prefix = userMeta.getPrefix();
+        }
+        else
+        {
+            prefix = "[]";
+        }
 
         String finalPrefix = TextUtil.stripString(prefix);
 

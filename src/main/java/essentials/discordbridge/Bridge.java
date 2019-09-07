@@ -1,14 +1,12 @@
 package essentials.discordbridge;
 
 import essentials.MSEssentials;
+import essentials.discordbridge.discord.CommandListener;
 import essentials.discordbridge.discord.ConnectionListener;
-import essentials.discordbridge.velocity.DiscordStaffChat;
+import essentials.discordbridge.discord.DiscordStaffChat;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.channel.Channel;
-
-import java.util.Optional;
 
 public class Bridge {
 
@@ -16,7 +14,7 @@ public class Bridge {
     private static DiscordConfig config;
 
 
-    public static void enable(){
+    public static void enable() {
         MSEssentials.logger.info("Enabling Discord Bridge!");
 
         try{
@@ -68,14 +66,15 @@ public class Bridge {
         ConnectionListener connectionListener = new ConnectionListener();
         DiscordStaffChat discordStaffChat = new DiscordStaffChat();
         MSEssentialsChatListener chatListener = new MSEssentialsChatListener();
-        MSEssentials.logger.info("line 77");
+        CommandListener commandListener = new CommandListener();
         new DiscordApiBuilder()
                 .setToken(DiscordConfig.getToken())
                 .addLostConnectionListener(connectionListener::onConnectionLost)
                 .addReconnectListener(connectionListener::onReconnect)
                 .addResumeListener(connectionListener::onResume)
-               // .addMessageCreateListener(discordStaffChat::onMessage)
+                .addMessageCreateListener(discordStaffChat::onMessage)
                 .addMessageCreateListener(chatListener::onMessage)
+                .addMessageCreateListener(commandListener::onCmd)
                 .login().thenAccept(discordApi1 ->
         {
             discordApi = discordApi1;

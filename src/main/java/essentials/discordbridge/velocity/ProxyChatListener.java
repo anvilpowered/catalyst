@@ -25,8 +25,6 @@ public class ProxyChatListener {
     @Subscribe
     public void onProxyChat(MSEssentialsChatFormedEvent event)
     {
-        MSEssentials.logger.info("MSEssentialsChatFormed");
-
         Player player = event.getSender();
 
         User user = MSEssentials.api.getUser(player.getUniqueId());
