@@ -4,6 +4,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
+import essentials.discordbridge.DiscordConfig;
 import essentials.discordbridge.discord.TextUtil;
 import essentials.modules.PluginMessages;
 import essentials.modules.StaffChat.StaffChatEvent;
@@ -27,7 +28,7 @@ public class StaffChatListener {
         MSEssentials.logger.info(player.getUsername());
 
         User user = MSEssentials.api.getUser(player.getUniqueId());
-        MSEssentials.logger.info(user.getName().toString());
+        MSEssentials.logger.info(user.getName());
 
         Optional<Contexts> contextsOptional = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
         UserData cachedData = user.getCachedData();
@@ -48,7 +49,7 @@ public class StaffChatListener {
         final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
         final String sender = TextUtil.stripString(TextUtil.toMarkdown(TextComponent.of(event.getSender().getUsername())));
 
-        Bridge.getConfig().getStaffChannel(Bridge.getDiscordApi())
+        DiscordConfig.getStaffChannel(Bridge.getDiscordApi())
                 .forEach(textChannel -> textChannel.sendMessage(finalPrefix + sender + msg));
 
         MSEssentials.logger.info(finalPrefix + sender + msg);

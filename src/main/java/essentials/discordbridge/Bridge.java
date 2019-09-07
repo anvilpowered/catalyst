@@ -44,7 +44,7 @@ public class Bridge {
     }
 
     public static boolean reloadConfig(){
-        final String oldToken = config.getToken();
+        final String oldToken = DiscordConfig.getToken();
         try
         {
             DiscordConfig.enable();

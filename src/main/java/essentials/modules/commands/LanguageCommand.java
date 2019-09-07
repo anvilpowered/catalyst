@@ -4,6 +4,7 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
+import essentials.modules.Config.MSLangConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
 import net.kyori.text.TextComponent;
@@ -58,7 +59,7 @@ public class LanguageCommand implements Command {
                 if (source instanceof Player) {
                     Player player = (Player) source;
                     if (player.hasPermission(PluginPermissions.LANGUAGEADMIN)) {
-                        if (!plugin.getMSLangConfig().addSwear(argument, source)) {
+                        if (!MSLangConfig.addSwear(argument, source)) {
                             player.sendMessage(existing);
                             return;
                         }
@@ -69,7 +70,7 @@ public class LanguageCommand implements Command {
                         return;
                     }
                 } else {
-                    plugin.getMSLangConfig().addSwear(argument, source);
+                    MSLangConfig.addSwear(argument, source);
                     source.sendMessage(success);
                     return;
                 }

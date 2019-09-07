@@ -20,7 +20,7 @@ public class MuteCommand implements Command {
             {
                 return;
             }
-        Player player = (Player) MSEssentials.getServer().getPlayer(args[0]).get();
+        Player player = MSEssentials.getServer().getPlayer(args[0]).get();
         if(player.isActive())
         {
             String name = player.getUsername();

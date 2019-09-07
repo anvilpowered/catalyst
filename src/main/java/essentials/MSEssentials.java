@@ -70,7 +70,7 @@ public class MSEssentials {
     public void onInit(ProxyInitializeEvent event) {
         logger.info("is now starting!");
         this.msLangConfig = new MSLangConfig(this);
-        this.wordCatch = new WordCatch(this, server);
+        wordCatch = new WordCatch(this, server);
         server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
 
         logger.info("Loading commands");
@@ -175,7 +175,7 @@ public class MSEssentials {
         String subChannel = in.readUTF();
 
         if (subChannel.equals("Balance")) {
-            String packet[] = in.readUTF().split(":");
+            String[] packet = in.readUTF().split(":");
             String username = packet[0];
             Double balance = Double.parseDouble(packet[1]);
             if (playerBalances.containsKey(username))

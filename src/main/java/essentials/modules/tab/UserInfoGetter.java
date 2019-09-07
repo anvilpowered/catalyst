@@ -17,7 +17,7 @@ public class UserInfoGetter {
             Contexts contexts = MSEssentials.api.getContextForUser(MSEssentials.api.getUser(username)).get();
             if(MSEssentials.api.getUser(username).getCachedData().getMetaData(contexts).getPrefix() != null)
             {
-                return MSEssentials.api.getUser(username).getCachedData().getMetaData(contexts).getPrefix().toString();
+                return MSEssentials.api.getUser(username).getCachedData().getMetaData(contexts).getPrefix();
             }else
                 return "";
         }else return "";

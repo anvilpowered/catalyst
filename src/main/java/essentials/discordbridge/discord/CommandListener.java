@@ -22,7 +22,7 @@ public class CommandListener {
             if (!commandMsg.getReadableContent().toLowerCase().startsWith("!cmd")) {
                 return;
             }
-            String command = commandMsg.getReadableContent().toString();
+            String command = commandMsg.getReadableContent();
             command = command.replace("!cmd", "");
             MSEssentials.server.getCommandManager().execute(MSEssentials.getServer().getConsoleCommandSource(), command);
 

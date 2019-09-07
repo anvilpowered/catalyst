@@ -59,9 +59,12 @@ public class DiscordConfig {
         token = config.getNode("discord", "token").getString();
         MSEssentials.logger.info(token);
 
+        //noinspection UnstableApiUsage
         inChannels = config.getNode("discord", "in-channels").getList(TypeToken.of(Long.class));
+        //noinspection UnstableApiUsage
         outChannels = config.getNode("discord", "out-channels").getList(TypeToken.of(Long.class));
 
+        //noinspection UnstableApiUsage
         staffChannel = config.getNode("discord", "staff-channel").getList(TypeToken.of(Long.class));
 
         playerlistEnabled = config.getNode("discord", "playerlist", "enabled").getBoolean(true);

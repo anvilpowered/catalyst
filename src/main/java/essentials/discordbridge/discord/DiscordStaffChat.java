@@ -2,6 +2,7 @@ package essentials.discordbridge.discord;
 
 import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
+import essentials.discordbridge.DiscordConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
 import net.kyori.text.TextComponent;
@@ -14,7 +15,7 @@ public class DiscordStaffChat {
 
     public void onMessage(MessageCreateEvent event)
     {
-        if(!Bridge.getConfig().getStaffChannel(event.getApi()).contains(event.getChannel())) return;
+        if(!DiscordConfig.getStaffChannel(event.getApi()).contains(event.getChannel())) return;
         if(event.getMessageAuthor().isYourself()) return;
 
 

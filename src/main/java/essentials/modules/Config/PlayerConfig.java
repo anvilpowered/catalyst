@@ -2,8 +2,6 @@ package essentials.modules.Config;
 
 import essentials.MSEssentials;
 import essentials.modules.PluginMessages;
-import net.kyori.text.TextComponent;
-import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -15,9 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PlayerConfig {
 
@@ -114,19 +110,14 @@ public class PlayerConfig {
     }
 
     public static boolean hasNickName(String name) {
-        if (config.getNode("players", name, "nickname").getValue() != null) {
-            return true;
-        } else
-        {
-            return false;
-        }
+        return config.getNode("players", name, "nickname").getValue() != null;
 
     }
 
     public static List<String> getPlayerUUID() {
         Set<Object> objectSet = config.getNode("players", "uuid").getChildrenMap().keySet();
 
-        List<String> uuids = new ArrayList();
+        List<String> uuids = new ArrayList<>();
 
         for(Object object : objectSet)
         {

@@ -22,7 +22,7 @@ public class PlayerInfoCommand implements Command {
             return;
         }
 
-        Player target = (Player) MSEssentials.getServer().getPlayer(args[0]).get();
+        Player target = MSEssentials.getServer().getPlayer(args[0]).get();
         if(target == null)
         {
             source.sendMessage(TextComponent.of("The selected player is not online!"));

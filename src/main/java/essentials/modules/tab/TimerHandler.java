@@ -49,7 +49,7 @@ public class TimerHandler extends TimerTask {
                             List<String> customtabs = ConfigManager.getCustomTabs();
 
                             for (int i3 = 0; i3 < customtabs.size(); i3++) {
-                                GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + String.valueOf(i3));
+                                GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
 
                                 TabListEntry currentEntry = TabListEntry.builder().profile(tabProfile)
                                         .displayName(
