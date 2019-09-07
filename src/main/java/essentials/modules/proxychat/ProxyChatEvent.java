@@ -72,8 +72,7 @@ public class ProxyChatEvent {
         return message;
     }
 
-    public static void sendMessage(PlayerChatEvent e, String message)
-    {
+    public static void sendMessage(PlayerChatEvent e, String message) {
         e.setResult(PlayerChatEvent.ChatResult.denied());
         Player player = e.getPlayer();
         User user = MSEssentials.api.getUser(player.getUniqueId());
@@ -90,78 +89,35 @@ public class ProxyChatEvent {
         e.setResult(PlayerChatEvent.ChatResult.denied());
 
 
-        TextComponent name;
-        if(message.contains("&"))
-        { if(!player.hasPermission(PluginPermissions.CHATCOLOR))
-        {
-            e.setResult(PlayerChatEvent.ChatResult.denied());
-            message = Utils.removeColorCodes(message);
-        }
-        }
-
-        if(PlayerConfig.hasNickName(player.getUsername()))
-        {
-            name = PluginMessages.legacyColor(PlayerConfig.getNickName(player.getUsername()));
-            if(name.equals(""))
-            {
-                name = TextComponent.of(e.getPlayer().getUsername());
+        TextComponent name = TextComponent.of(player.getUsername());
+        if (message.contains("&")) {
+            if (!player.hasPermission(PluginPermissions.CHATCOLOR)) {
+                message = Utils.removeColorCodes(message);
             }
-        }else
-        {
-            name = TextComponent.of(player.getUsername());
         }
-
-
-        MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, ProxyChat.legacyColor(message));
-        MSEssentials.server.getEventManager().fire(formedEvent).join();
-        if(nameColor != null)
-        {
+        if (PlayerConfig.hasNickName(player.getUsername())) {
+            name = PluginMessages.legacyColor(PlayerConfig.getNickName(player.getUsername()));
+        }
+        if (nameColor != null) {
             name = ProxyChat.legacyColor(nameColor + player.getUsername());
         }
+        if (chatColor != null) {
+            message = chatColor + message;
+        }
 
-        if(prefix != null)
+        if (prefix == null)
         {
-            if(chatColor != null)
-            {
-                for (Player p : MSEssentials.server.getAllPlayers()) {
-                    p.sendMessage(ProxyChat.legacyColor(prefix)
-                            .append(name)
-                            .append(TextComponent.of(": ")
-                                    .append(ProxyChat.legacyColor(chatColor + message)))
-                            .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()))));
-                }
-            }
-            else
-            {
-                for (Player p : MSEssentials.server.getAllPlayers())
-                {
-                    p.sendMessage(ProxyChat.legacyColor(prefix)
-                            .append(name)
-                            .append(TextComponent.of(": ")
-                                    .append(ProxyChat.legacyColor(message)))
-                            .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()))));
-                }
-            }
+            prefix = "";
         }
-        else {
-
-            if(chatColor != null)
-            {
-                prefix = "";
-                for (Player p : MSEssentials.server.getAllPlayers()) {
-                    p.sendMessage(
-                            name
-                            .append(TextComponent.of(": ")
-                                    .append(ProxyChat.legacyColor(chatColor))
-                                    .append(ProxyChat.legacyColor(message))
-                            .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername())))));
-                }
-            }
-            TextComponent finalName = name;
-            String finalMessage = message;
-            MSEssentials.server.getEventManager().fire(formedEvent).join();
-            Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(finalName + finalMessage));
-
+        for(Player p : MSEssentials.server.getAllPlayers())
+        {
+            p.sendMessage(ProxyChat.legacyColor(prefix)
+                    .append(name).append(TextComponent.of(": "))
+                            .append(ProxyChat.legacyColor(message))
+                    .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()))));
         }
+        String finalMessage = message;
+        MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, finalMessage, ProxyChat.legacyColor(message));
+        MSEssentials.server.getEventManager().fire(formedEvent).join();
     }
 }

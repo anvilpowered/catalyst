@@ -1,6 +1,7 @@
 package essentials.discordbridge.velocity;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
@@ -34,11 +35,21 @@ public class ProxyChatListener {
         UserData cachedData = user.getCachedData();
         MetaData userMeta = cachedData.getMetaData(contextsOptional.get());
 
-        String prefix = PluginMessages.removeColor(userMeta.getPrefix());
+        String prefix;
+        if(userMeta.getPrefix() == null)
+        {
+            prefix = "";
+        }
+        else
+        {
+            prefix = PluginMessages.removeColor(userMeta.getPrefix());
+        }
 
-        String finalPrefix = TextUtil.stripString(prefix);
 
-        final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
+            String finalPrefix = TextUtil.stripString(prefix);
+
+
+            final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
         final String sender = TextUtil.stripString(TextUtil.toMarkdown(TextComponent.of(event.getSender().getUsername())));
 
         MSEssentials.logger.info(DiscordConfig.getOutChannels(Bridge.getDiscordApi()).toString());

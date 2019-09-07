@@ -93,6 +93,8 @@ public class MSEssentials {
         PlayerConfig.enable();
         MSEssentialsConfig.enable();
         ConfigManager.setupConfig();
+        logger.info("registering globaltab channel");
+        server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
 
 
         instance = this;

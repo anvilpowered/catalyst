@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,7 +26,7 @@ public class PlayerConfig {
     public static List<String> muted = new ArrayList<>();
 
     public static SimpleDateFormat formatter = new SimpleDateFormat("mm-dd-yyyy HH:mm:ss");
-    public static Date date = new Date(System.currentTimeMillis());
+    public static LocalDate date = LocalDate.now();
 
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     private static CommentedConfigurationNode config;
@@ -159,7 +161,7 @@ public class PlayerConfig {
     public static void addPlayer(String playerid, String name, String address)
     {
         config.getNode("players", name, "uuid").setValue(playerid);
-        config.getNode("players", name, "joined").setValue(formatter.format(date));
+        config.getNode("players", name, "joined").setValue(date.toString());
         config.getNode("players", name, "banned", "value").setValue(false);
         config.getNode("players", name, "ip").setValue(address);
         save();
@@ -168,7 +170,7 @@ public class PlayerConfig {
 
     public static void setLastSeen(String uuid)
     {
-        config.getNode("players", uuid, "last-seen").setValue(formatter.format(date));
+        config.getNode("players", uuid, "last-seen").setValue(date.toString());
         save();
         load();
     }
