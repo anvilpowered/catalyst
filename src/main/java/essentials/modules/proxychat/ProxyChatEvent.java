@@ -144,7 +144,6 @@ public class ProxyChatEvent {
             }
         }
         else {
-            MSEssentials.server.getEventManager().fire(formedEvent).join();
 
             if(chatColor != null)
             {
@@ -160,6 +159,7 @@ public class ProxyChatEvent {
             }
             TextComponent finalName = name;
             String finalMessage = message;
+            MSEssentials.server.getEventManager().fire(formedEvent).join();
             Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(finalName + finalMessage));
 
         }

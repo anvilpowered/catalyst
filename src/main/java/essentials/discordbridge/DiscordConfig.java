@@ -111,7 +111,7 @@ public class DiscordConfig {
         config.getNode("discord", "playerlist", "seperator").setValue("").setComment("player name seperator");
         config.getNode("discord", "join-format").setValue("**{player} joined the game");
         config.getNode("discord", "quit-format").setValue("**{player} left the game");
-        config.getNode("discord", "url").setValue("discord.gg");
+        config.getNode("discord", "url").setValue("https://www.milspecsg.rocks");
         save();
         load();
         startup();
@@ -196,7 +196,7 @@ public class DiscordConfig {
         return token;
     }
 
-    public String getQuitFormat() {
+    public static String getQuitFormat() {
         return quitFormat;
     }
 

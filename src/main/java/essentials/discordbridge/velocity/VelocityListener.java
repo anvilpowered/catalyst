@@ -17,7 +17,7 @@ public class VelocityListener {
     @Subscribe
     public void onPlayerJoin(PostLoginEvent event)
     {
-        String message = Bridge.getConfig().getJoinFormat()
+        String message = DiscordConfig.getJoinFormat()
                 .replaceAll("\\{player}", event.getPlayer().getUsername());
         UUID playerUUID = event.getPlayer().getUniqueId();
         String name = event.getPlayer().getGameProfile().getName();
@@ -27,7 +27,7 @@ public class VelocityListener {
     @Subscribe
     public void onPlayerQuit(DisconnectEvent event)
     {
-        String message = Bridge.getConfig().getQuitFormat()
+        String message = DiscordConfig.getQuitFormat()
                 .replace("{player}", event.getPlayer().getUsername());
         String playerid = event.getPlayer().getUniqueId().toString();
         PlayerConfig.setLastSeen(playerid);

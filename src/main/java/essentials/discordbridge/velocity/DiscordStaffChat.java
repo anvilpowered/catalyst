@@ -43,8 +43,6 @@ public class DiscordStaffChat {
 
         MSEssentials.getServer().getAllPlayers().stream()
                 .forEach(player -> player.sendMessage(component));
-
-        MSEssentials.getLogger().info(PlainComponentSerializer.INSTANCE.serialize(component));
     }
 
 }

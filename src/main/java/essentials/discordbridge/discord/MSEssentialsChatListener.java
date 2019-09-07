@@ -29,11 +29,7 @@ public class MSEssentialsChatListener {
 
     public void onMessage(MessageCreateEvent event)
     {
-        MSEssentials.logger.info(event.getChannel().getIdAsString());
-        MSEssentials.logger.info(DiscordConfig.getInChannels(event.getApi()).toString());
-        MSEssentials.logger.info(event.getChannel().toString());
         if(!DiscordConfig.getInChannels(event.getApi()).contains(event.getChannel())) return;
-        MSEssentials.logger.info(event.getMessageContent().toString());
         if(event.getMessageAuthor().isYourself()) return;
 
 
