@@ -4,17 +4,11 @@ import essentials.MSEssentials;
 import essentials.discordbridge.discord.ConnectionListener;
 import essentials.discordbridge.velocity.DiscordStaffChat;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.channel.Channel;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-
-import static java.lang.System.in;
+import java.util.Optional;
 
 public class Bridge {
 

@@ -102,14 +102,12 @@ public class PlayerConfig {
       }
     }
     public static void addNick(String nick, String name){
-        MSEssentials.logger.info("addNick 92");
         config.getNode("players",name, "nickname").setValue(nick);
         save();
         load();
     }
     public static String getNickName(String name){
        String nick = config.getNode("players", name, "nickname").getString();
-       MSEssentials.logger.info(nick);
        return nick;
     }
 
@@ -180,11 +178,7 @@ public class PlayerConfig {
 
         if(config.getNode("players", name, "uuid").getValue() != null)
         {
-            MSEssentials.logger.info("Player existing");
             return;
-        }else
-        {
-            MSEssentials.logger.info("Player not existing?");
         }
         MSEssentials.server.broadcast(PluginMessages.legacyColor(getMessage()).append(PluginMessages.legacyColor(getPlayerColor(name))));
         String playerid = uuid.toString();
@@ -225,7 +219,6 @@ public class PlayerConfig {
     }
     public static void addMute(String name)
     {
-        MSEssentials.logger.info(muted.toString());
         muted.add(name);
     }
     public static void removeMute(String name)
