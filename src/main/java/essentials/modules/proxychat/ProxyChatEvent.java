@@ -26,35 +26,42 @@ public class ProxyChatEvent {
 
 
     @Subscribe
-    public void onChat(PlayerChatEvent e)
-    {
+    public void onChat(PlayerChatEvent e) {
         String message = e.getMessage();
         Player player = e.getPlayer();
-        e.setResult(PlayerChatEvent.ChatResult.denied());
 
-        if(StaffChat.toggledSet.contains(player.getUniqueId())){
+        if (PlayerConfig.muted.contains(player.getUsername())) {
+            player.sendMessage(PluginMessages.prefix.append(TextComponent.of("You are currently muted!")));
+            e.setResult(PlayerChatEvent.ChatResult.denied());
+            return;
+        }
+
+        if (StaffChat.toggledSet.contains(player.getUniqueId())) {
             e.setResult(PlayerChatEvent.ChatResult.denied());
             return;
         }
 
         List<String> swearlist = MSEssentials.wordCatch.isswear(message);
-        if(swearlist != null)
-        {
+        if (swearlist != null) {
+            if (e.getResult().isAllowed()) {
 
-            for(String swear: swearlist)
-            {
-                message = message.replace(swear ,"****");
+                for (String swear : swearlist) {
+                    message = message.replace(swear, "****");
+                }
+                sendMessage(e, checkPlayerName(message));
+
             }
-            sendMessage(e, checkPlayerName(message));
+            else
+            {
+                e.setResult(PlayerChatEvent.ChatResult.denied());
+            }
 
-        }else {
-
-            sendMessage(e, checkPlayerName(message));
-
+        } else {
+            if (e.getResult().isAllowed())
+                sendMessage(e, checkPlayerName(message));
         }
-
-
     }
+
     public static String checkPlayerName(String message)
     {
         for (Player onlinePlayer : MSEssentials.getServer().getAllPlayers()) {

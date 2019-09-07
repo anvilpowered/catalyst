@@ -60,7 +60,7 @@ public class NickNameCommand implements Command {
                     return;
                 }
             } else {
-                player.sendMessage(PluginMessages.legacyColor(prefix).append(TextComponent.of("nicknames must be longer than 2 characters!").color(TextColor.YELLOW)));
+                player.sendMessage(prefix.append(TextComponent.of("nicknames must be longer than 2 characters!").color(TextColor.YELLOW)));
             }
         }
         else

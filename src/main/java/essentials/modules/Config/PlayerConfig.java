@@ -21,6 +21,7 @@ public class PlayerConfig {
 
     static MSEssentials plugin;
     static Path configPath;
+    public static List<String> muted = new ArrayList<>();
 
     public static SimpleDateFormat formatter = new SimpleDateFormat("mm-dd-yyyy HH:mm:ss");
     public static Date date = new Date(System.currentTimeMillis());
@@ -223,5 +224,14 @@ public class PlayerConfig {
     {
         String ip = config.getNode("players", name, "ip").getString();
         return ip;
+    }
+    public static void addMute(String name)
+    {
+        MSEssentials.logger.info(muted.toString());
+        muted.add(name);
+    }
+    public static void removeMute(String name)
+    {
+        muted.remove(name);
     }
 }

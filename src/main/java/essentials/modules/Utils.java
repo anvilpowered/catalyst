@@ -2,9 +2,15 @@ package essentials.modules;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.scheduler.ScheduledTask;
+import essentials.MSEssentials;
+import essentials.modules.Config.PlayerConfig;
+
+import java.util.concurrent.TimeUnit;
 
 public class Utils {
     static String newMSG;
+    static ScheduledTask task;
 
     public static  String removeColorCodes(String message)
     {
@@ -52,5 +58,14 @@ public class Utils {
         {
             return String.valueOf(player.getCurrentServer().get().getServer().getPlayersConnected().size());
         }return "null";
+    }
+
+    public static void muteTask(String name, int time)
+    {
+        MSEssentials.logger.info("Started");
+        task = MSEssentials.getServer().getScheduler().buildTask(MSEssentials.instance, () ->{
+            PlayerConfig.removeMute(name);
+            MSEssentials.logger.info("Finished.");
+        }).delay(time, TimeUnit.MINUTES).schedule();
     }
 }

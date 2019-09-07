@@ -87,6 +87,7 @@ public class MSEssentials {
         server.getCommandManager().register(new BanCommand(), "ban");
         server.getCommandManager().register(new UnBanCommand(), "unban", "pardon");
         server.getCommandManager().register(new PlayerInfoCommand(), "playerinfo", "pinfo");
+        server.getCommandManager().register(new MuteCommand(), "mute");
         logger.info("enabling configs");
         MSLangConfig.enable();
         PlayerConfig.enable();
@@ -96,7 +97,7 @@ public class MSEssentials {
 
         instance = this;
 
-        //Bridge.enable();
+        Bridge.enable();
 
         StaffChat.toggledSet = new HashSet<UUID>();
 

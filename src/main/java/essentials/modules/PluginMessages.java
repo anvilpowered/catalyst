@@ -8,8 +8,12 @@ import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 
 public class PluginMessages {
 
-    public static String prefix = "&a[MSEssentials] ";
+    public static String noColorPrefix = "&a[MSEssentials] ";
     public static String staffPrefix = "&b[STAFF] &r";
+
+    public static TextComponent prefix = TextComponent.builder()
+            .append(legacyColor(noColorPrefix))
+            .build();
 
     public static TextComponent noPermissions = TextComponent.builder()
             .content(prefix + "You do not have permissions for this command!")
@@ -22,7 +26,7 @@ public class PluginMessages {
             .build();
 
     public static TextComponent noNickColorPermission = TextComponent.builder()
-            .append(legacyColor(prefix))
+            .append(prefix)
             .content("You do not have permission to have a colored nickname!")
             .color(TextColor.RED)
             .build();
@@ -34,7 +38,7 @@ public class PluginMessages {
     public static TextComponent setNickName(String nick)
     {
         TextComponent nickmsg = TextComponent.builder()
-                .append(legacyColor(prefix))
+                .append(prefix)
                 .append("Nickname set to : ")
                 .append(legacyColor(nick))
                 .build();
@@ -44,7 +48,7 @@ public class PluginMessages {
     public static TextComponent deleteNick()
     {
         TextComponent deleteNickMsg = TextComponent.builder()
-                .append(legacyColor(prefix))
+                .append(prefix)
                 .append("Successfully deleted your nickname!")
                 .color(TextColor.GREEN)
                 .build();
@@ -54,7 +58,7 @@ public class PluginMessages {
     public static TextComponent nickUsage()
     {
         TextComponent nickUsage = TextComponent.builder()
-                .append(legacyColor(prefix))
+                .append(prefix)
                 .append("usage: /nick <nickname>")
                 .build();
         return nickUsage;
@@ -62,7 +66,7 @@ public class PluginMessages {
     public static TextComponent nickColorized(String nick)
     {
         TextComponent nickColor = TextComponent.builder()
-                .append(legacyColor(prefix))
+                .append(prefix)
                 .append("Your current nick: ")
                 .append(legacyColor(nick))
                 .build();

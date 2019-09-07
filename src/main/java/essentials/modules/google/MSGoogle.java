@@ -23,7 +23,7 @@ public class MSGoogle {
 */
         String url = "https://www.google.com/search?q=" + Stream.of(args).collect(Collectors.joining("+"));
         TextComponent urlFinal = TextComponent.builder()
-                .content(PluginMessages.prefix)
+                .append(PluginMessages.prefix)
                 .append(url)
                 .clickEvent(ClickEvent.openUrl(url))
                 .hoverEvent(HoverEvent.showText(clickMe))
@@ -37,7 +37,7 @@ public class MSGoogle {
         String url = "https://www.google.com/search?q=" + Stream.of(args).collect(Collectors.joining("+")).replace(playerName, "");
 
         TextComponent urlFinal = TextComponent.builder()
-                .content(PluginMessages.prefix)
+                .append(PluginMessages.prefix)
                 .append(url)
                 .color(TextColor.GOLD)
                 .clickEvent(ClickEvent.openUrl(url))

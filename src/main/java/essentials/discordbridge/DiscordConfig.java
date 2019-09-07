@@ -2,6 +2,7 @@ package essentials.discordbridge;
 
 import com.google.common.reflect.TypeToken;
 import essentials.MSEssentials;
+import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -21,28 +22,42 @@ public class DiscordConfig {
     static MSEssentials plugin;
     static Path configPath;
 
-    private final String token;
-    private final List<Long> inChannels;
-    private final List<Long> outChannels;
-    private final List<Long> staffChannel;
-    private final boolean playerlistEnabled;
-    private final String playerlistFormat;
-    private final String playerlistSeperator;
-    private final int playerlistCommandRemoveDelay;
-    private final int playerlistResponseRemoveDelay;
+    private static String token;
+    private static List<Long> inChannels;
+    private static List<Long> outChannels;
+    private static List<Long> staffChannel;
+    private static boolean playerlistEnabled;
+    private static String playerlistFormat;
+    private static String playerlistSeperator;
+    private static int playerlistCommandRemoveDelay;
+    private static int playerlistResponseRemoveDelay;
 
-    private final String joinFormat;
-    private final String quitFormat;
+    private static String joinFormat;
+    private static String quitFormat;
 
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
     private static CommentedConfigurationNode config;
-    public static CommentedConfigurationNode getConfig(){return config;}
 
-    public DiscordConfig(MSEssentials main) throws Exception {
+    public static CommentedConfigurationNode getConfig() {
+        return config;
+    }
+
+    public DiscordConfig(MSEssentials main) {
         plugin = main;
+    }
+
+    public static class InvalidConfigException extends Exception {
+        InvalidConfigException(String message) {
+            super(message);
+        }
+    }
+
+    public static void startup() throws Exception {
+        if(config.getNode("discord", "token").getString() == null)
+            MSEssentials.logger.info("token == null");
         token = config.getNode("discord", "token").getString();
 
-        inChannels = config.getNode("discord", "in-channels").getList(TypeToken.of(Long.class));
+        inChannels = config.getNode("discord", "in-channels").getChildrenList().stream().map(ConfigurationNode::getLong).collect(Collectors.toList());
         outChannels = config.getNode("discord", "out-channels").getList(TypeToken.of(Long.class));
 
         staffChannel = config.getNode("discord", "staff-channel").getList(TypeToken.of(Long.class));
@@ -53,8 +68,7 @@ public class DiscordConfig {
         playerlistCommandRemoveDelay = config.getNode("discord", "playerlist", "command-remove-delay").getInt(0);
         playerlistResponseRemoveDelay = config.getNode("discord", "playerlist", "response-remove-delay").getInt(10);
 
-        if(token == null || token.isEmpty())
-        {
+        if (token == null || token.isEmpty()) {
             throw new DiscordConfig.InvalidConfigException("You need to set a bot token!");
         }
 
@@ -63,26 +77,36 @@ public class DiscordConfig {
 
 
     }
-    public class InvalidConfigException extends Exception
-    {
-        InvalidConfigException(String message){super(message);}
-    }
 
-    public static void enable()
-    {
-        try
-        {
+    public static void enable() throws Exception {
+        try {
             configPath = Paths.get(MSEssentials.defaultConfigPath + "/discordconfig.json");
-            if(!Files.exists(configPath))
-            {
+            if (!Files.exists(configPath)) {
                 Files.createFile(configPath);
+                loader = HoconConfigurationLoader.builder().setPath(configPath).build();
+                config = loader.load();
+                setup();
+                return;
             }
+
             loader = HoconConfigurationLoader.builder().setPath(configPath).build();
             config = loader.load();
-        }catch (IOException e)
-        {
+            startup();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setup() throws Exception
+    {
+        config.getNode("discord", "token").setValue("").setComment("The discord bot token");
+        config.getNode("discord", "out-channels").setValue("").setComment("Channels you'd like to send discord messages to");
+        config.getNode("discord", "in-channels").setValue("").setComment("Channels you'd like to receive discord messages from");
+        config.getNode("discord", "staff-channel").setValue("").setComment("Your staff discord channel for /staffchat");
+        config.getNode("discord", "playerlist", "enabled").setValue(true);
+        config.getNode("discord", "playerlist", "format").setValue("").setComment("Format for playerlist, this is not yet implemented");
+        config.getNode("discord", "playerlist", "seperator").setValue("").setComment("player name seperator");
+        startup();
     }
 
     public static void save()
