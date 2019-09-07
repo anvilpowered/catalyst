@@ -3,6 +3,7 @@ package essentials.discordbridge.discord;
 import com.velocitypowered.api.event.Subscribe;
 import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
+import essentials.discordbridge.DiscordConfig;
 import essentials.discordbridge.MSDBConfig;
 import essentials.discordbridge.discord.TextUtil;
 import essentials.modules.PluginMessages;
@@ -28,8 +29,11 @@ public class MSEssentialsChatListener {
 
     public void onMessage(MessageCreateEvent event)
     {
-
-        if(!Bridge.getConfig().getInChannels(event.getApi()).contains(event.getChannel())) return;
+        MSEssentials.logger.info(event.getChannel().getIdAsString());
+        MSEssentials.logger.info(DiscordConfig.getInChannels(event.getApi()).toString());
+        MSEssentials.logger.info(event.getChannel().toString());
+        if(!DiscordConfig.getInChannels(event.getApi()).contains(event.getChannel())) return;
+        MSEssentials.logger.info(event.getMessageContent().toString());
         if(event.getMessageAuthor().isYourself()) return;
 
 
@@ -43,7 +47,7 @@ public class MSEssentialsChatListener {
                .content("")
                .append(PluginMessages.legacyColor(message))
                .hoverEvent(HoverEvent.showText(TextComponent.of("Click here to join the discord!")))
-               .clickEvent(ClickEvent.openUrl("https://www.google.com/"))
+               .clickEvent(ClickEvent.openUrl(DiscordConfig.url))
                .build();
 /*
         if(Bridge.getConfig().getStaffChannel(event.getApi()).contains(event.getChannel()))

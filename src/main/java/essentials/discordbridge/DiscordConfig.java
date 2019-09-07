@@ -23,6 +23,7 @@ public class DiscordConfig {
     static Path configPath;
 
     private static String token;
+    public static String url;
     private static List<Long> inChannels;
     private static List<Long> outChannels;
     private static List<Long> staffChannel;
@@ -56,8 +57,9 @@ public class DiscordConfig {
         if(config.getNode("discord", "token").getString() == null)
             MSEssentials.logger.info("token == null");
         token = config.getNode("discord", "token").getString();
+        MSEssentials.logger.info(token);
 
-        inChannels = config.getNode("discord", "in-channels").getChildrenList().stream().map(ConfigurationNode::getLong).collect(Collectors.toList());
+        inChannels = config.getNode("discord", "in-channels").getList(TypeToken.of(Long.class));
         outChannels = config.getNode("discord", "out-channels").getList(TypeToken.of(Long.class));
 
         staffChannel = config.getNode("discord", "staff-channel").getList(TypeToken.of(Long.class));
@@ -67,6 +69,7 @@ public class DiscordConfig {
         playerlistSeperator = config.getNode("discord", "playerlist", "seperator").getString(", ");
         playerlistCommandRemoveDelay = config.getNode("discord", "playerlist", "command-remove-delay").getInt(0);
         playerlistResponseRemoveDelay = config.getNode("discord", "playerlist", "response-remove-delay").getInt(10);
+        url = config.getNode("discord", "url").getString();
 
         if (token == null || token.isEmpty()) {
             throw new DiscordConfig.InvalidConfigException("You need to set a bot token!");
@@ -106,6 +109,11 @@ public class DiscordConfig {
         config.getNode("discord", "playerlist", "enabled").setValue(true);
         config.getNode("discord", "playerlist", "format").setValue("").setComment("Format for playerlist, this is not yet implemented");
         config.getNode("discord", "playerlist", "seperator").setValue("").setComment("player name seperator");
+        config.getNode("discord", "join-format").setValue("**{player} joined the game");
+        config.getNode("discord", "quit-format").setValue("**{player} left the game");
+        config.getNode("discord", "url").setValue("discord.gg");
+        save();
+        load();
         startup();
     }
 
@@ -133,7 +141,7 @@ public class DiscordConfig {
         }
     }
 
-    public List<TextChannel> getInChannels(DiscordApi api)
+    public static List<TextChannel> getInChannels(DiscordApi api)
     {
         return inChannels.stream()
                 .map(api::getTextChannelById)
@@ -142,7 +150,7 @@ public class DiscordConfig {
                 .collect(Collectors.toList());
     }
 
-    public  List<TextChannel> getOutChannels(DiscordApi api)
+    public static List<TextChannel> getOutChannels(DiscordApi api)
     {
         return outChannels.stream()
                 .map(api::getTextChannelById)
@@ -151,7 +159,7 @@ public class DiscordConfig {
                 .collect(Collectors.toList());
     }
 
-    public List<TextChannel> getStaffChannel(DiscordApi api)
+    public static List<TextChannel> getStaffChannel(DiscordApi api)
     {
         return staffChannel.stream()
                 .map(api::getTextChannelById)
@@ -164,7 +172,7 @@ public class DiscordConfig {
         return playerlistEnabled;
     }
 
-    public String getJoinFormat() {
+    public static String getJoinFormat() {
         return joinFormat;
     }
 
@@ -184,7 +192,7 @@ public class DiscordConfig {
         return playerlistResponseRemoveDelay;
     }
 
-    public String getToken() {
+    public static String getToken() {
         return token;
     }
 

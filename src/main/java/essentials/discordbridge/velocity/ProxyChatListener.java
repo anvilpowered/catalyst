@@ -4,6 +4,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
+import essentials.discordbridge.DiscordConfig;
 import essentials.discordbridge.discord.TextUtil;
 import essentials.modules.PluginMessages;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
@@ -40,7 +41,9 @@ public class ProxyChatListener {
         final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
         final String sender = TextUtil.stripString(TextUtil.toMarkdown(TextComponent.of(event.getSender().getUsername())));
 
-        Bridge.getConfig().getOutChannels(Bridge.getDiscordApi())
+        MSEssentials.logger.info(DiscordConfig.getOutChannels(Bridge.getDiscordApi()).toString());
+
+        DiscordConfig.getOutChannels(Bridge.getDiscordApi())
                 .forEach(textChannel -> textChannel.sendMessage(finalPrefix + sender + msg));
     }
 }

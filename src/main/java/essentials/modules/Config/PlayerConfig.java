@@ -177,10 +177,8 @@ public class PlayerConfig {
 
     public static void getPlayerFromFile(UUID uuid, String name, InetSocketAddress address)
     {
-        String uuidFromConfig = config.getNode("players", name, "uuid").getString();
-        MSEssentials.logger.info(uuidFromConfig);
-        MSEssentials.logger.info(uuid.toString());
-        if(uuidFromConfig.equalsIgnoreCase(uuid.toString()))
+
+        if(config.getNode("players", name, "uuid").getValue() != null)
         {
             MSEssentials.logger.info("Player existing");
             return;

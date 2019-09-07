@@ -6,6 +6,7 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import essentials.discordbridge.Bridge;
+import essentials.discordbridge.DiscordConfig;
 import essentials.modules.Config.PlayerConfig;
 
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class VelocityListener {
         UUID playerUUID = event.getPlayer().getUniqueId();
         String name = event.getPlayer().getGameProfile().getName();
 
-        Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(message));
+        DiscordConfig.getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(message));
 }
     @Subscribe
     public void onPlayerQuit(DisconnectEvent event)
@@ -31,7 +32,7 @@ public class VelocityListener {
         String playerid = event.getPlayer().getUniqueId().toString();
         PlayerConfig.setLastSeen(playerid);
 
-        Bridge.getConfig().getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(message));
+        DiscordConfig.getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(message));
     }
 
 

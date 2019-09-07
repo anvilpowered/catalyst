@@ -74,9 +74,9 @@ public class Bridge {
         ConnectionListener connectionListener = new ConnectionListener();
         DiscordStaffChat discordStaffChat = new DiscordStaffChat();
         MSEssentialsChatListener chatListener = new MSEssentialsChatListener();
-
+        MSEssentials.logger.info("line 77");
         new DiscordApiBuilder()
-                .setToken(config.getToken())
+                .setToken(DiscordConfig.getToken())
                 .addLostConnectionListener(connectionListener::onConnectionLost)
                 .addReconnectListener(connectionListener::onReconnect)
                 .addResumeListener(connectionListener::onResume)
