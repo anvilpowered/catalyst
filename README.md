@@ -9,13 +9,20 @@ If you have any requests, please submit them as an Issue and describe what you'd
 
 ## Planned Features
 player /msg
+
 cross-server teleportation (just like /tpa)
-full discord intergration
 
 ## Current Features
 Proxy-wide chat with luckperms support (Chat Color, Name Color, Prefix)
+
 Nicknames
+
 Proxy-wide staff chat
+
 Chat Filter
+
 Welcome messaging
+
 stafflist
+
+discord intergration (Still in dev, missing topic updater and webhook)
