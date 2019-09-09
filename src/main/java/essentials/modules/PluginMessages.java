@@ -10,9 +10,13 @@ public class PluginMessages {
 
     public static String noColorPrefix = "&a[MSEssentials] ";
     public static String staffPrefix = "&b[STAFF] &r";
+    public static String noColorBroadcast = "&8[&4Broadcast&8] ";
 
     public static TextComponent prefix = TextComponent.builder()
             .append(legacyColor(noColorPrefix))
+            .build();
+    public static TextComponent broadcastPrefix = TextComponent.builder()
+            .append(legacyColor(noColorBroadcast))
             .build();
 
     public static TextComponent noPermissions = TextComponent.builder()
@@ -32,6 +36,11 @@ public class PluginMessages {
             .build();
     public static TextComponent noNickMagicPermissions = TextComponent.builder()
             .content(prefix + "You do not have permission to have a magical nickname!")
+            .color(TextColor.RED)
+            .build();
+    public static TextComponent notEnoughArgs = TextComponent.builder()
+            .append(prefix)
+            .append("Not Enough Args")
             .color(TextColor.RED)
             .build();
 

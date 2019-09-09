@@ -5,6 +5,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
 import essentials.modules.Config.PlayerConfig;
+import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -29,6 +30,7 @@ public class BanCommand implements Command {
         }
         if(args.length == 0)
         {
+            source.sendMessage(PluginMessages.notEnoughArgs);
             return;
         }
 
