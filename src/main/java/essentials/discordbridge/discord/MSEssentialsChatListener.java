@@ -26,8 +26,7 @@ public class MSEssentialsChatListener {
         Server server = event.getServer().get();
         String author = event.getMessageAuthor().getDisplayName();
         MessageAuthor author1 = event.getMessageAuthor();
-        MSEssentials.logger.info(new DiscordCommandSource().toString());
-       // MSEssentials.logger.info(event.getMessage().getUserAuthor().get().getRoles(server).toString());
+
         if (author1.isServerAdmin()) {
             if (!commandMsg.getReadableContent().toLowerCase().contains("!cmd")) {
                 return;
@@ -42,22 +41,12 @@ public class MSEssentialsChatListener {
 
         message = "&6[Discord] &7" + author + " " + message;
 
-
         TextComponent component = TextComponent.builder()
                .content("")
                .append(PluginMessages.legacyColor(message))
                .hoverEvent(HoverEvent.showText(TextComponent.of("Click here to join the discord!")))
                .clickEvent(ClickEvent.openUrl(DiscordConfig.url))
                .build();
-/*
-        if(Bridge.getConfig().getStaffChannel(event.getApi()).contains(event.getChannel()))
-        {
-            MSEssentials.server.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
-                    .forEach(target -> {target.sendMessage(component);});
-
-            return;
-
-        }*/
 
         MSEssentials.getServer().getAllPlayers().stream()
                 .forEach(player -> player.sendMessage(component));

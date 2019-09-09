@@ -32,7 +32,7 @@ public class StaffList implements Command {
         if(!(source instanceof Player))
         {
 
-            MSEssentials.getLogger().info("You arent a player");
+            MSEssentials.getLogger().info("You aren't a player");
         }
 
         if(source instanceof Player)

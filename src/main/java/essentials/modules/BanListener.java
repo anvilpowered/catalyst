@@ -26,7 +26,7 @@ public class BanListener {
                 .color(TextColor.DARK_RED)
                 .build();
 
-        if(PlayerConfig.checkBan(playerName) == true)
+        if(PlayerConfig.checkBan(playerName))
         {
             event.setResult(LoginEvent.ComponentResult.denied(PluginMessages.legacyColor(PlayerConfig.getBanReason(playerName))));
         }
