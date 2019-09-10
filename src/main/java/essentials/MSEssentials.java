@@ -68,10 +68,11 @@ public class MSEssentials {
     }
     @Subscribe
     public void onInit(ProxyInitializeEvent event) {
+        server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
         logger.info("is now starting!");
         this.msLangConfig = new MSLangConfig(this);
         wordCatch = new WordCatch(this, server);
-        server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
+        //server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
 
         logger.info("Loading commands");
         server.getCommandManager().register(new SendGoogleCommand(),"sendgoogle");
@@ -87,6 +88,7 @@ public class MSEssentials {
         server.getCommandManager().register(new UnBanCommand(), "unban", "pardon");
         server.getCommandManager().register(new PlayerInfoCommand(), "playerinfo", "pinfo");
         server.getCommandManager().register(new MuteCommand(), "mute");
+        server.getCommandManager().register(new Broadcast(), "broadcast", "say");
         logger.info("enabling configs");
         MSLangConfig.enable();
         PlayerConfig.enable();
@@ -157,10 +159,12 @@ public class MSEssentials {
         server.getEventManager().register(this, new PlayerJoin());
         server.getEventManager().register(this, new BanListener());
 
+
     }
 
     @Subscribe
-    public void onPluginMessage(PluginMessageEvent event) {
+    public void onGlobalTabMessage(PluginMessageEvent event) {
+        logger.info(event.getIdentifier().toString());
         if (!event.getIdentifier().equals(new LegacyChannelIdentifier("GlobalTab"))) {
             return;
         }
@@ -184,4 +188,23 @@ public class MSEssentials {
                 playerBalances.put(username, balance);
         }
     }
+
+   /* @Subscribe
+    public void onPluginMessage(PluginMessageEvent event)
+    {
+        logger.info(event.getIdentifier().toString());
+        if(event.getIdentifier().equals(new LegacyChannelIdentifier("MSEssentials")))
+        {
+            ByteArrayDataInput in = event.dataAsDataStream();
+            logger.info(in.readUTF());
+            logger.info(event.toString());
+            String subChannel = in.readUTF();
+            if(subChannel.contains("Test"))
+            {
+                logger.info("Plugin message recieved. move to the next phase!");
+            }
+            }
+        }*/
+
+
 }
