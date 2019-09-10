@@ -1,6 +1,7 @@
 package essentials.modules.Config;
 
 import essentials.MSEssentials;
+import net.kyori.text.TextComponent;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -57,6 +58,8 @@ public class MSEssentialsConfig {
             mainNode.getNode("ProxyChat").setComment("To disable proxy-wide chat, change true to false");
             mainNode.getNode("Chat-Filter").setComment("To disable the proxy-wide chat filter, change true to false");
             mainNode.getNode("Discord-Bridge").setComment("To disable the discord bridge, change true to false");
+            mainNode.getNode("Prefix").setComment("Prefix used for all msessentials commands");
+            mainNode.getNode("Broadcast-Prefix").setComment("Prefixed used for /broadcast");
 
             if(mainNode.getNode("Discord-Bridge", "enabled:").getValue() == null)
             {
@@ -71,6 +74,8 @@ public class MSEssentialsConfig {
         mainNode.getNode("ProxyChat", "enabled:").setValue(true);
         mainNode.getNode("Chat-Filter", "enabled:").setValue(true);
         mainNode.getNode("Discord-Bridge", "enabled:").setValue(true);
+        mainNode.getNode("Prefix").setValue("[MSEssentials]");
+        mainNode.getNode("Broadcast-Prefix").setValue("[Broadcast]");
         save();
         load();
 
@@ -92,5 +97,15 @@ public class MSEssentialsConfig {
     {
         boolean v = mainNode.getNode("Discord-Bridge", "enabled:").getBoolean();
         return v;
+    }
+    public static String getBroadcastPrefix()
+    {
+        String prefix = mainNode.getNode("Broadcast-Prefix").getString();
+        return prefix;
+    }
+    public static String getPrefix()
+    {
+        String prefix = mainNode.getNode("Prefix").getString();
+        return prefix;
     }
 }
