@@ -68,7 +68,7 @@ public class MSEssentials {
     }
     @Subscribe
     public void onInit(ProxyInitializeEvent event) {
-        server.getChannelRegistrar().register(new LegacyChannelIdentifier("MSEssentials"));
+        server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
         logger.info("is now starting!");
         this.msLangConfig = new MSLangConfig(this);
         wordCatch = new WordCatch(this, server);
@@ -189,7 +189,7 @@ public class MSEssentials {
         }
     }
 
-    @Subscribe
+   /* @Subscribe
     public void onPluginMessage(PluginMessageEvent event)
     {
         logger.info(event.getIdentifier().toString());
@@ -203,7 +203,8 @@ public class MSEssentials {
             {
                 logger.info("Plugin message recieved. move to the next phase!");
             }
-        }
-    }
+            }
+        }*/
+
 
 }
