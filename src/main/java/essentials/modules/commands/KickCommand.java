@@ -20,6 +20,7 @@ public class KickCommand implements Command
         Player target = MSEssentials.getServer().getPlayer(args[0]).get();
         if(args.length == 0)
         {
+            source.sendMessage(PluginMessages.notEnoughArgs);
             return;
         }
         if(args[0].equalsIgnoreCase(target.getUsername()))
