@@ -18,7 +18,7 @@ public class VelocityListener {
     public void onPlayerJoin(PostLoginEvent event)
     {
         String message = DiscordConfig.getJoinFormat()
-                .replaceAll("\\{player}", event.getPlayer().getUsername());
+                .replaceAll("{player}", event.getPlayer().getUsername());
         UUID playerUUID = event.getPlayer().getUniqueId();
         String name = event.getPlayer().getGameProfile().getName();
 

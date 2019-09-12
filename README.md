@@ -26,3 +26,15 @@ Welcome messaging
 stafflist
 
 discord intergration (Still in dev, missing topic updater and webhook)
+
+
+| Command        | Argument     | Permission|
+| ------------- |:-------------:| -----:|
+| /ban          | [name] [reason]| msessentials.command.admin.ban|
+| /kick      | [name] [reason]      |   msessentials.command.admin.kick |
+| /broadcast| [message]      |    msessentials.command.admin.broadcast |
+|/staffchat | | msessentials.command.admin.staffchat|
+|/google|[search entry]|msessentials.command.google|
+|/sendgoogle|[player] [search entry]|msessentials.command.admin.sendgoogle|
+|/nick|[nickname]|msessentials.command.nickname, msessentials.command.nickname.color, msessentials.command.nickname.magic|
+|/playerinfo|[playername]|msessentials.command.admin.playerinfo|

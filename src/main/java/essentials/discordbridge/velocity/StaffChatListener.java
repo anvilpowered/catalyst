@@ -41,10 +41,12 @@ public class StaffChatListener {
         }
         else
         {
-            prefix = "[]";
+            prefix = "";
         }
 
-        String finalPrefix = TextUtil.stripString(prefix);
+        prefix = TextUtil.stripString(prefix);
+
+        String finalPrefix = PluginMessages.removeColor(prefix);
 
         final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
         final String sender = TextUtil.stripString(TextUtil.toMarkdown(TextComponent.of(event.getSender().getUsername())));
