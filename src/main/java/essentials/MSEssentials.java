@@ -189,23 +189,4 @@ public class MSEssentials {
                 playerBalances.put(username, balance);
         }
     }
-
-   /* @Subscribe
-    public void onPluginMessage(PluginMessageEvent event)
-    {
-        logger.info(event.getIdentifier().toString());
-        if(event.getIdentifier().equals(new LegacyChannelIdentifier("MSEssentials")))
-        {
-            ByteArrayDataInput in = event.dataAsDataStream();
-            logger.info(in.readUTF());
-            logger.info(event.toString());
-            String subChannel = in.readUTF();
-            if(subChannel.contains("Test"))
-            {
-                logger.info("Plugin message recieved. move to the next phase!");
-            }
-            }
-        }*/
-
-
 }
