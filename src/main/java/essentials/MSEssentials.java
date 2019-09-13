@@ -88,6 +88,7 @@ public class MSEssentials {
         server.getCommandManager().register(new UnBanCommand(), "unban", "pardon");
         server.getCommandManager().register(new PlayerInfoCommand(), "playerinfo", "pinfo");
         server.getCommandManager().register(new MuteCommand(), "mute");
+        server.getCommandManager().register(new UnMuteCommand(), "unmute");
         server.getCommandManager().register(new Broadcast(), "broadcast", "say");
         logger.info("enabling configs");
         MSLangConfig.enable();
