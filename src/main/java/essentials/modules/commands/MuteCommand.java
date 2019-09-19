@@ -27,7 +27,7 @@ public class MuteCommand implements Command {
             PlayerConfig.addMute(name);
             if(args.length != 2)
             {
-                Utils.muteTask(name, 1000000000);
+                PlayerConfig.permMuteAdd(name);
                 source.sendMessage(PluginMessages.prefix.append(TextComponent.of("Muted ").append(PluginMessages.legacyColor(name))));
                 return;
             }

@@ -21,7 +21,7 @@ public class GlobalTab {
     public static void insertIntoTab(TabList list, TabListEntry entry, List<UUID> toKeep)
     {
         UUID in = entry.getProfile().getId();
-        List<UUID> contained = new ArrayList<>();
+        List<UUID> contained = new ArrayList<UUID>();
         Map<UUID, TabListEntry> cache = new HashMap<UUID, TabListEntry>();
         for(TabListEntry current : list.getEntries())
         {

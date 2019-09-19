@@ -218,4 +218,16 @@ public class PlayerConfig {
     {
         muted.remove(name);
     }
+    public static void permMuteAdd(String name)
+    {
+        config.getNode("players", name, "perm-mute").setValue(true);
+        save();
+        load();
+    }
+    public static void permMuteRemove(String name)
+    {
+        config.getNode("players", name, "perm-mute").setValue(false);
+        save();
+        load();
+    }
 }
