@@ -20,34 +20,32 @@ public class GlobalTab {
 
     public static void insertIntoTab(TabList list, TabListEntry entry, List<UUID> toKeep)
     {
-
-        UUID player = entry.getProfile().getId();
-        List<UUID> existing = new ArrayList<>();
-        Map<UUID, TabListEntry> precache = new HashMap<>();
-
-        for(TabListEntry curr : list.getEntries())
+        UUID in = entry.getProfile().getId();
+        List<UUID> contained = new ArrayList<UUID>();
+        Map<UUID, TabListEntry> cache = new HashMap<UUID, TabListEntry>();
+        for(TabListEntry current : list.getEntries())
         {
-            if(!existing.contains(player))
+            contained.add(current.getProfile().getId());
+            cache.put(current.getProfile().getId(), current);
+        }
+
+        if(!contained.contains(in))
+        {
+            list.addEntry(entry);
+            toKeep.add(in);
+            return;
+        }
+        else
+        {
+            TabListEntry currentEntry = cache.get(in);
+            if(!currentEntry.getDisplayName().equals(entry.getDisplayName()))
             {
+                list.removeEntry(in);
                 list.addEntry(entry);
-                toKeep.add(player);
-                return;
-            }
-            else
+                toKeep.add(in);
+            }else
             {
-                TabListEntry currentEntry = precache.get(player);
-                if(!currentEntry.getDisplayName().equals(entry.getDisplayName()))
-                {
-                    list.removeEntry(player);
-                    list.addEntry(entry);
-                    toKeep.add(player);
-                    return;
-                }
-                else
-                {
-                    toKeep.add(player);
-                    return;
-                }
+                toKeep.add(in);
             }
         }
     }
@@ -63,7 +61,7 @@ public class GlobalTab {
                     Integer.parseInt((String) ConfigManager.config.get("updatedelay")) * 1000);
 
 
-        }).repeat(30, TimeUnit.SECONDS).schedule();
+        }).repeat(10, TimeUnit.MINUTES).schedule();
     }
 
 }
