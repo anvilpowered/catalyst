@@ -7,6 +7,7 @@ import essentials.MSEssentials;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
+import essentials.modules.Utils;
 import essentials.modules.server.MSServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -16,32 +17,23 @@ public class PlayerInfoCommand implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if(args.length == 0)
-        {
-            source.sendMessage( PluginMessages.notEnoughArgs);
+        if (args.length == 0) {
+
             return;
         }
 
-        Player target = MSEssentials.getServer().getPlayer(args[0]).get();
-        if(target == null)
+        if(MSEssentials.getServer().getPlayer(args[0]).isPresent())
         {
-            source.sendMessage(TextComponent.of("The selected player is not online!"));
-        }
-        if(source instanceof Player)
-        {
-            if(!source.hasPermission(PluginPermissions.PLAYERINFO))
+            Player player = (Player) source;
+            if(source.hasPermission(PluginPermissions.PLAYERINFO))
             {
-                source.sendMessage(PluginMessages.noPermissions);
+                source.sendMessage(Utils.getOnlinePlayerInfo(MSEssentials.getServer().getPlayer(args[0]).get()));
                 return;
             }
         }
-
-            source.sendMessage(TextComponent.of("Banned: ").append(TextComponent.of(String.valueOf(PlayerConfig.checkBan(target.getUsername())))));
-            if(PlayerConfig.getNickName(target.getUsername()) != null) {
-                source.sendMessage(TextComponent.of(PlayerConfig.getNickName(target.getUsername())));
-            }
-            source.sendMessage(TextComponent.of("IP Address: ").append(TextComponent.of(PlayerConfig.getIP(target.getUsername()))));
-            String currentServer = target.getCurrentServer().get().getServer().getServerInfo().getName();
-            source.sendMessage(TextComponent.of("Current Server " + currentServer));
+        else
+        {
+            source.sendMessage(Utils.getOfflinePlayerInfo(args[0]));
+        }
     }
 }
