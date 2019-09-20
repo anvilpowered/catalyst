@@ -27,38 +27,13 @@ public class PlayerInfoCommand implements Command {
             Player player = (Player) source;
             if(source.hasPermission(PluginPermissions.PLAYERINFO))
             {
-                //Check player online shit
                 source.sendMessage(Utils.getOnlinePlayerInfo(MSEssentials.getServer().getPlayer(args[0]).get()));
                 return;
             }
         }
         else
         {
-            //check offline shit...
             source.sendMessage(Utils.getOfflinePlayerInfo(args[0]));
         }
-
-        /*Player target = MSEssentials.getServer().getPlayer(args[0]).get();
-        if(target == null)
-        {
-            source.sendMessage(TextComponent.of("The selected player is not online!"));
-        }
-        if(source instanceof Player)
-        {
-            if(!source.hasPermission(PluginPermissions.PLAYERINFO))
-            {
-                source.sendMessage(PluginMessages.noPermissions);
-                return;
-            }
-        }
-
-            source.sendMessage(TextComponent.of("Banned: ").append(TextComponent.of(String.valueOf(PlayerConfig.checkBan(target.getUsername())))));
-            if(PlayerConfig.getNickName(target.getUsername()) != null) {
-                source.sendMessage(TextComponent.of(PlayerConfig.getNickName(target.getUsername())));
-            }
-            source.sendMessage(TextComponent.of("IP Address: ").append(TextComponent.of(PlayerConfig.getIP(target.getUsername()))));
-            String currentServer = target.getCurrentServer().get().getServer().getServerInfo().getName();
-            source.sendMessage(TextComponent.of("Current Server " + currentServer));
-    */
     }
 }

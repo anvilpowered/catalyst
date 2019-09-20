@@ -77,10 +77,16 @@ public class Utils {
         boolean banned = PlayerConfig.checkBan(username);
         String ip = PlayerConfig.getIP(username);
         String joined = PlayerConfig.getJoined(username);
-       // String seen = PlayerConfig.getLastSeen(username);
+        String nickname = "No nickname.";
+        if(PlayerConfig.hasNickName(username))
+        {
+            nickname = PlayerConfig.getNickName(username);
+        }
 
         TextComponent finalComponent = TextComponent.builder()
             .append(PluginMessages.legacyColor("&b----------------Player Info----------------"))
+            .append("\nName : " + username)
+            .append("\nNickname : " + PluginMessages.legacyColor(nickname))
             .append("\nCurrent Server : " + currentServer )
             .append("\nBanned : " + banned)
             .append("\nIP : " + ip)
@@ -96,9 +102,16 @@ public class Utils {
         String ip = PlayerConfig.getIP(username);
         String joined = PlayerConfig.getJoined(username);
         String seen = PlayerConfig.getLastSeen(username);
+        String nickname = "No nickname.";
+        if(PlayerConfig.hasNickName(username))
+        {
+            nickname = PlayerConfig.getNickName(username);
+        }
 
         TextComponent finalComponent = TextComponent.builder()
                 .append(PluginMessages.legacyColor("&b----------------Player Info----------------"))
+                .append("\nName : " + username)
+                .append("\nNickname : " + PluginMessages.legacyColor(nickname))
                 .append("\nBanned : " + banned)
                 .append("\nIP : " + ip)
                 .append("\nJoined Date : " + joined)
