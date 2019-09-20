@@ -18,7 +18,7 @@ public class PlayerInfoCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (args.length == 0) {
-
+            source.sendMessage(PluginMessages.notEnoughArgs);
             return;
         }
 
