@@ -30,7 +30,7 @@ public class VelocityListener {
         String message = DiscordConfig.getQuitFormat()
                 .replace("{player}", event.getPlayer().getUsername());
         String playerid = event.getPlayer().getUniqueId().toString();
-        PlayerConfig.setLastSeen(playerid);
+        PlayerConfig.setLastSeen(event.getPlayer().getUsername());
 
         DiscordConfig.getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(message));
     }

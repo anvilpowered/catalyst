@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import essentials.MSEssentials;
 import essentials.modules.Config.PlayerConfig;
+import net.kyori.text.TextComponent;
 
 import java.util.concurrent.TimeUnit;
 
@@ -67,5 +68,43 @@ public class Utils {
             PlayerConfig.removeMute(name);
             MSEssentials.logger.info("Finished.");
         }).delay(time, TimeUnit.MINUTES).schedule();
+    }
+
+    public static TextComponent getOnlinePlayerInfo(Player p)
+    {
+        String username = p.getUsername();
+        String currentServer = p.getCurrentServer().get().getServerInfo().getName();
+        boolean banned = PlayerConfig.checkBan(username);
+        String ip = PlayerConfig.getIP(username);
+        String joined = PlayerConfig.getJoined(username);
+       // String seen = PlayerConfig.getLastSeen(username);
+
+        TextComponent finalComponent = TextComponent.builder()
+            .append(PluginMessages.legacyColor("&b----------------Player Info----------------"))
+            .append("\nCurrent Server : " + currentServer )
+            .append("\nBanned : " + banned)
+            .append("\nIP : " + ip)
+            .append("\nJoined Date : " + joined)
+            .build();
+
+        return finalComponent;
+    }
+
+    public static TextComponent getOfflinePlayerInfo(String username)
+    {
+        boolean banned = PlayerConfig.checkBan(username);
+        String ip = PlayerConfig.getIP(username);
+        String joined = PlayerConfig.getJoined(username);
+        String seen = PlayerConfig.getLastSeen(username);
+
+        TextComponent finalComponent = TextComponent.builder()
+                .append(PluginMessages.legacyColor("&b----------------Player Info----------------"))
+                .append("\nBanned : " + banned)
+                .append("\nIP : " + ip)
+                .append("\nJoined Date : " + joined)
+                .append("\nLast Seen : " + seen)
+                .build();
+
+        return finalComponent;
     }
 }

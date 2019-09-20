@@ -114,8 +114,8 @@ public class PlayerConfig {
 
     }
 
-    public static List<String> getPlayerUUID() {
-        Set<Object> objectSet = config.getNode("players", "uuid").getChildrenMap().keySet();
+    public static List<String> getPlayerUUID(String name) {
+        Set<Object> objectSet = config.getNode("players", name, "uuid").getChildrenMap().keySet();
 
         List<String> uuids = new ArrayList<>();
 
@@ -164,6 +164,16 @@ public class PlayerConfig {
         config.getNode("players", uuid, "last-seen").setValue(date.toString());
         save();
         load();
+    }
+    public static String getJoined(String name)
+    {
+        String joined = config.getNode("players", name, "joined").getString();
+        return joined;
+    }
+    public static String getLastSeen(String name)
+    {
+        String seen = config.getNode("players", name, "last-seen").getString();
+        return seen;
     }
 
     public static void getPlayerFromFile(UUID uuid, String name, InetSocketAddress address)

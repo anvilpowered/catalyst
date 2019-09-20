@@ -7,6 +7,7 @@ import essentials.MSEssentials;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
+import essentials.modules.Utils;
 import essentials.modules.server.MSServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -16,13 +17,28 @@ public class PlayerInfoCommand implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if(args.length == 0)
-        {
+        if (args.length == 0) {
 
             return;
         }
 
-        Player target = MSEssentials.getServer().getPlayer(args[0]).get();
+        if(MSEssentials.getServer().getPlayer(args[0]).isPresent())
+        {
+            Player player = (Player) source;
+            if(source.hasPermission(PluginPermissions.PLAYERINFO))
+            {
+                //Check player online shit
+                source.sendMessage(Utils.getOnlinePlayerInfo(MSEssentials.getServer().getPlayer(args[0]).get()));
+                return;
+            }
+        }
+        else
+        {
+            //check offline shit...
+            source.sendMessage(Utils.getOfflinePlayerInfo(args[0]));
+        }
+
+        /*Player target = MSEssentials.getServer().getPlayer(args[0]).get();
         if(target == null)
         {
             source.sendMessage(TextComponent.of("The selected player is not online!"));
@@ -43,5 +59,6 @@ public class PlayerInfoCommand implements Command {
             source.sendMessage(TextComponent.of("IP Address: ").append(TextComponent.of(PlayerConfig.getIP(target.getUsername()))));
             String currentServer = target.getCurrentServer().get().getServer().getServerInfo().getName();
             source.sendMessage(TextComponent.of("Current Server " + currentServer));
+    */
     }
 }
