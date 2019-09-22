@@ -1,9 +1,10 @@
-package essentials.modules;
+package essentials.modules.events;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.proxy.Player;
 import essentials.modules.Config.PlayerConfig;
+import essentials.modules.PluginMessages;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 

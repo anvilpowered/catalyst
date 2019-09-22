@@ -15,7 +15,7 @@ import essentials.discordbridge.Bridge;
 import essentials.discordbridge.discord.DiscordStaffChat;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.*;
-import essentials.modules.BanListener;
+import essentials.modules.events.BanListener;
 import essentials.modules.Config.MSEssentialsConfig;
 import essentials.modules.Config.MSLangConfig;
 import essentials.modules.Config.PlayerConfig;
@@ -78,7 +78,7 @@ public class MSEssentials {
         server.getCommandManager().register(new SendGoogleCommand(),"sendgoogle");
         server.getCommandManager().register(new GoogleCommand(), "google");
         server.getCommandManager().register(new StaffChatCommand(), "staffchat", "sc");
-        server.getCommandManager().register(new MessageCommand(), "msg", "message", "pm");
+        //server.getCommandManager().register(new MessageCommand(), "msg", "message", "pm");
         server.getCommandManager().register(new NickNameCommand(), "nick", "nickname");
         server.getCommandManager().register(new StaffList(this), "stafflist");
         server.getCommandManager().register(new LanguageCommand(this), "mslang", "lang", "language");
