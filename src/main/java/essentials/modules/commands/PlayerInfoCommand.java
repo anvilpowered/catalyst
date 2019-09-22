@@ -21,6 +21,11 @@ public class PlayerInfoCommand implements Command {
             source.sendMessage(PluginMessages.notEnoughArgs);
             return;
         }
+        if(source instanceof Player)
+        {
+            if (!source.hasPermission(PluginPermissions.PLAYERINFO))
+                return;
+        }
 
         if(MSEssentials.getServer().getPlayer(args[0]).isPresent())
         {

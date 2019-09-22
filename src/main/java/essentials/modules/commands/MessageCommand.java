@@ -2,53 +2,47 @@ package essentials.modules.commands;
 
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
+import essentials.modules.PluginMessages;
 import essentials.modules.server.MSServer;
 import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
-import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MessageCommand implements Command {
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if(source instanceof Player)
-        {
-            String message = Arrays.toString(args);
-            Player src = (Player) source;
+        Player target = MSEssentials.getServer().getPlayer(args[0]).get();
+        String sourceName = source instanceof Player ? ((Player) source).getUsername() : "Console";
+        String targetName = target.getUsername();
 
-            if(args.length == 0)
-            {
-                src.sendMessage(returnUsage(src));
-                return;
-            }
-        if(MSEssentials.server.getPlayer(args[0]).isPresent())
-            {
+        String msg = Stream.of(args).collect(Collectors.joining(" ")).replace(targetName, "");
 
-                message =  message.replace(src.getUsername(), "").replace(",", "").replaceAll("\\[", "")
-                .replaceAll("]", "");
+        Component content = TextComponent.of(msg);
+        String srcMsg = "&b" + sourceName + " -> " + targetName + " : " + msg;
+        String reciMsg = "&b" + sourceName + " -> " + " me " + ": " + msg;
+        Component sourceMessage = PluginMessages.legacyColor(srcMsg);
+        Component targetMessage = PluginMessages.legacyColor(reciMsg);
 
-                Player recipeant = MSEssentials.server.getPlayer(args[0]).get();
-
-                MSEssentials.logger.info("[" + src.getUsername() + "]" + " -> " + "[" + recipeant.getUsername() + "]" + message);
-                source.sendMessage(TextComponent.of("[" + src.getUsername() + "]" + "->" + "[" + recipeant.getUsername() + "]" + message));
-            }
-
-
-        }
+        source.sendMessage(sourceMessage);
+        target.sendMessage(targetMessage);
     }
-
-    public static TextComponent returnUsage(Player player)
+    @Override
+    public List<String> suggest(CommandSource source, String[] args)
     {
-        TextComponent usage = TextComponent.builder()
-                .content("Usage:")
-                .append("\n/message <recipient> <message>")
-                .color(TextColor.RED)
-                .build();
-        return usage;
-
+        if(args.length == 1)
+        {
+            return MSEssentials.getServer().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+        }
+        return Arrays.asList();
     }
+
 }
