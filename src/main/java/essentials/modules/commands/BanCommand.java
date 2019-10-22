@@ -11,7 +11,10 @@ import essentials.modules.PluginPermissions;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BanCommand implements Command {
 
@@ -57,5 +60,15 @@ public class BanCommand implements Command {
         PlayerConfig.addBan(args[0], reason);
         return;
 
+    }
+
+    @Override
+    public List<String> suggest(CommandSource src, String[] args)
+    {
+        if(args.length ==1)
+        {
+            return MSEssentials.getServer().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+        }
+        return Arrays.asList();
     }
 }

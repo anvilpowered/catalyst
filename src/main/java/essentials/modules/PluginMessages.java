@@ -2,16 +2,16 @@ package essentials.modules;
 
 
 
-import essentials.modules.Config.MSEssentialsConfig;
+import essentials.modules.Config.MainConfig;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 
 public class PluginMessages {
 
-    public static String noColorPrefix = MSEssentialsConfig.getPrefix() + " ";
+    public static String noColorPrefix = MainConfig.getPrefix() + " ";
     public static String staffPrefix = "&b[STAFF] &r";
-    public static String noColorBroadcast = MSEssentialsConfig.getBroadcastPrefix() + " ";
+    public static String noColorBroadcast = MainConfig.getBroadcastPrefix() + " ";
 
     public static TextComponent prefix = TextComponent.builder()
             .append(legacyColor(noColorPrefix))

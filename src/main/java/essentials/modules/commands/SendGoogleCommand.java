@@ -9,6 +9,10 @@ import essentials.modules.PluginPermissions;
 import essentials.modules.google.MSGoogle;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class SendGoogleCommand implements Command {
     @Override
@@ -41,8 +45,13 @@ public class SendGoogleCommand implements Command {
         }
     }
 
-    /*@Override
-    public List<String> suggest(CommandSource source, @NonNull @NonNull String[] currentArgs) {
-        return null;
-    }*/
+    @Override
+    public List<String> suggest(CommandSource src, String[] args)
+    {
+        if(args.length ==1)
+        {
+            return MSEssentials.getServer().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+        }
+        return Arrays.asList();
+    }
 }

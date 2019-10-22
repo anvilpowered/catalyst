@@ -16,19 +16,19 @@ import essentials.discordbridge.discord.DiscordStaffChat;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.*;
 import essentials.modules.events.BanListener;
-import essentials.modules.Config.MSEssentialsConfig;
+import essentials.modules.Config.MainConfig;
 import essentials.modules.Config.MSLangConfig;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.StaffChat.StaffChatEvent;
 import essentials.modules.commands.*;
 import essentials.modules.events.PlayerJoin;
+import essentials.modules.events.PlayerLeave;
 import essentials.modules.language.WordCatch;
-import essentials.modules.proxychat.ProxyChatEvent;
+import essentials.modules.events.ProxyChatEvent;
 import essentials.modules.server.MSServer;
 import essentials.modules.tab.ConfigManager;
 import essentials.modules.tab.GlobalTab;
-import essentials.modules.tab.TabPlayerLeave;
 import org.slf4j.Logger;
 import me.lucko.luckperms.*;
 import me.lucko.luckperms.api.*;
@@ -93,7 +93,7 @@ public class MSEssentials {
         logger.info("enabling configs");
         MSLangConfig.enable();
         PlayerConfig.enable();
-        MSEssentialsConfig.enable();
+        MainConfig.enable();
         ConfigManager.setupConfig();
         logger.info("registering globaltab channel");
         server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
@@ -144,7 +144,7 @@ public class MSEssentials {
 
 
     public  void initListeners(){
-        if(MSEssentialsConfig.getProxyChatBoolean() == true)
+        if(MainConfig.getProxyChatBoolean() == true)
         {
             server.getEventManager().register(this, new ProxyChatListener());
 
@@ -156,8 +156,8 @@ public class MSEssentials {
         server.getEventManager().register(this, new StaffChatListener());
         server.getEventManager().register(this, new DiscordStaffChat());
         server.getEventManager().register(this, new ProxyChatEvent());
-        server.getEventManager().register(this, new TabPlayerLeave());
         server.getEventManager().register(this, new PlayerJoin());
+        server.getEventManager().register(this, new PlayerLeave());
         server.getEventManager().register(this, new BanListener());
 
 

@@ -3,7 +3,7 @@ package essentials.modules.events;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import essentials.MSEssentials;
-import essentials.modules.Config.MSEssentialsConfig;
+import essentials.modules.Config.MainConfig;
 import essentials.modules.Config.PlayerConfig;
 import net.kyori.text.TextComponent;
 
@@ -20,7 +20,7 @@ public class PlayerJoin {
         String name = event.getPlayer().getUsername();
         PlayerConfig.getPlayerFromFile(playerUUID, name, ipAddress);
         MSEssentials.getServer().broadcast(
-                TextComponent.of(MSEssentialsConfig.getJoinMessage().replace("{Player}", name))
+                TextComponent.of(MainConfig.getJoinMessage().replace("{Player}", name))
         );
     }
 }

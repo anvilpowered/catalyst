@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 //Main essentials.Config, Will be used to toggle essentials.Config.modules on and off
-public class MSEssentialsConfig {
+public class MainConfig {
 
     static Path configPath;
 
