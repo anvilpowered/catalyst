@@ -70,54 +70,46 @@ public class Utils {
         }).delay(time, TimeUnit.MINUTES).schedule();
     }
 
-    public static TextComponent getOnlinePlayerInfo(Player p)
-    {
+    public static TextComponent getOnlinePlayerInfo(Player p) {
         String username = p.getUsername();
-        String currentServer = p.getCurrentServer().get().getServerInfo().getName();
-        boolean banned = PlayerConfig.checkBan(username);
-        String ip = PlayerConfig.getIP(username);
-        String joined = PlayerConfig.getJoined(username);
-        String nickname = "No nickname.";
-        if(PlayerConfig.hasNickName(username))
-        {
-            nickname = PlayerConfig.getNickName(username);
-        }
-
-        TextComponent finalComponent = TextComponent.builder()
-            .append(PluginMessages.legacyColor("&b----------------Player Info----------------"))
-            .append("\nName : " + username)
-            .append("\nNickname : " + PluginMessages.legacyColor(nickname))
-            .append("\nCurrent Server : " + currentServer )
-            .append("\nBanned : " + banned)
-            .append("\nIP : " + ip)
-            .append("\nJoined Date : " + joined)
-            .build();
-
-        return finalComponent;
+        String currentServer = p.getCurrentServer().map(server -> server.getServerInfo().getName()).orElse("n/a");
+        System.out.println(username + currentServer);
+        return printInfo(username, currentServer);
     }
 
-    public static TextComponent getOfflinePlayerInfo(String username)
-    {
+    public static TextComponent getOfflinePlayerInfo(String username) {
+        if(PlayerConfig.getLastSeen(username) == null)
+        {
+            return TextComponent.of("Unknown player!");
+        }
+        return printInfo(username, "n/a");
+    }
+
+    private static TextComponent printInfo(String username, String currentServer) {
         boolean banned = PlayerConfig.checkBan(username);
         String ip = PlayerConfig.getIP(username);
         String joined = PlayerConfig.getJoined(username);
         String seen = PlayerConfig.getLastSeen(username);
-        String nickname = "No nickname.";
-        if(PlayerConfig.hasNickName(username))
-        {
+        String nickname = "No Nickname.";
+        if (PlayerConfig.hasNickName(username))
             nickname = PlayerConfig.getNickName(username);
-        }
 
-        TextComponent finalComponent = TextComponent.builder()
+        return TextComponent.builder()
                 .append(PluginMessages.legacyColor("&b----------------Player Info----------------"))
-                .append("\nName : " + username)
-                .append("\nNickname : " + PluginMessages.legacyColor(nickname))
-                .append("\nBanned : " + banned)
-                .append("\nIP : " + ip)
-                .append("\nJoined Date : " + joined)
-                .append("\nLast Seen : " + seen)
+                .append(PluginMessages.legacyColor(("\n&bName : &r")))
+                .append(username)
+                .append(PluginMessages.legacyColor("\n&bNickname : &r"))
+                .append(PluginMessages.legacyColor(nickname))
+                .append(PluginMessages.legacyColor("\n&bCurrent Server : &r"))
+                .append(currentServer)
+                .append(PluginMessages.legacyColor("\n&bBanned : &r"))
+                .append(String.valueOf(banned))
+                .append(PluginMessages.legacyColor("\n&bIP : &r"))
+                .append(ip)
+                .append(PluginMessages.legacyColor("\n&bJoined Date : &r" ))
+                .append(joined)
+                .append(PluginMessages.legacyColor("\n&bLast Seen : &r"))
+                .append(seen)
                 .build();
-
-        return finalComponent;
     }
 }

@@ -2,8 +2,10 @@ package essentials.modules.commands;
 
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
+import essentials.discordbridge.discord.DiscordCommandSource;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
@@ -21,24 +23,43 @@ public class PlayerInfoCommand implements Command {
             source.sendMessage(PluginMessages.notEnoughArgs);
             return;
         }
+        if(source instanceof ConsoleCommandSource || source instanceof DiscordCommandSource)
+        {
+            if(MSEssentials.getServer().getPlayer(args[0]).isPresent())
+            {
+                source.sendMessage( Utils.getOnlinePlayerInfo(MSEssentials.getServer().getPlayer(args[0]).get()));
+                return;
+            }
+            source.sendMessage(Utils.getOfflinePlayerInfo(args[0]));
+            return;
+        }
         if(source instanceof Player)
         {
             if (!source.hasPermission(PluginPermissions.PLAYERINFO))
                 return;
         }
 
+        Player player = (Player) source;
         if(MSEssentials.getServer().getPlayer(args[0]).isPresent())
         {
-            Player player = (Player) source;
+
             if(source.hasPermission(PluginPermissions.PLAYERINFO))
             {
-                source.sendMessage(Utils.getOnlinePlayerInfo(MSEssentials.getServer().getPlayer(args[0]).get()));
+                player.sendMessage(TextComponent.of("Getting playerinfo"));
+                player.sendMessage(Utils.getOnlinePlayerInfo(MSEssentials.getServer().getPlayer(args[0]).get()));
                 return;
             }
         }
         else
         {
+            if(source.hasPermission(PluginPermissions.PLAYERINFO))
+            {
             source.sendMessage(Utils.getOfflinePlayerInfo(args[0]));
+        }
+            else
+                player.sendMessage(PluginMessages.noPermissions);
+            return;
+
         }
     }
 }

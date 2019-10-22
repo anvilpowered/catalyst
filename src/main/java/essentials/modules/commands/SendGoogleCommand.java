@@ -31,6 +31,12 @@ public class SendGoogleCommand implements Command {
         }
         else
         {
+            if(source instanceof Player)
+            {
+                Player player = (Player) source;
+                player.sendMessage(PluginMessages.noPermissions);
+                return;
+            }
             source.sendMessage(PluginMessages.noPermissions);
         }
     }

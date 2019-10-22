@@ -21,6 +21,7 @@ public class PluginMessages {
             .build();
 
     public static TextComponent noPermissions = TextComponent.builder()
+            .append(prefix)
             .content(prefix + "You do not have permissions for this command!")
             .color(TextColor.RED)
             .build();
