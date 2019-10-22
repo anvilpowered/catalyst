@@ -108,4 +108,29 @@ public class MSEssentialsConfig {
         String prefix = mainNode.getNode("Prefix").getString();
         return prefix;
     }
+
+    public static String getJoinMessage() {
+        String join = mainNode.getNode("Join-Message").getString();
+        if (join.isEmpty()) {
+            mainNode.getNode("Join-Message").setValue("{Player} has joined the proxy!");
+            mainNode.setComment("{Player} is required for the player's name, more placeholders to come.");
+            return mainNode.getNode("Join-Message").getString();
+        } else {
+            return join;
+        }
+    }
+    public static String getLeaveMessage()
+    {
+        String leave = mainNode.getNode("Leave-Message").getString();
+        if(leave.isEmpty() || leave == null)
+        {
+            mainNode.getNode("Leave-Message").setValue("{Player} has left the proxy.");
+            mainNode.setComment("{Player} is required for the player's name, more placeholders to come.");
+            return mainNode.getNode("Leave-Message").getString();
+        }
+        else
+        {
+            return leave;
+        }
+    }
 }

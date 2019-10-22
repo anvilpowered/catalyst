@@ -25,6 +25,7 @@ import essentials.modules.commands.*;
 import essentials.modules.events.PlayerJoin;
 import essentials.modules.language.WordCatch;
 import essentials.modules.proxychat.ProxyChatEvent;
+import essentials.modules.server.MSServer;
 import essentials.modules.tab.ConfigManager;
 import essentials.modules.tab.GlobalTab;
 import essentials.modules.tab.TabPlayerLeave;
@@ -72,13 +73,11 @@ public class MSEssentials {
         logger.info("is now starting!");
         this.msLangConfig = new MSLangConfig(this);
         wordCatch = new WordCatch(this, server);
-        //server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
 
         logger.info("Loading commands");
         server.getCommandManager().register(new SendGoogleCommand(),"sendgoogle");
         server.getCommandManager().register(new GoogleCommand(), "google");
         server.getCommandManager().register(new StaffChatCommand(), "staffchat", "sc");
-        //server.getCommandManager().register(new MessageCommand(), "msg", "message", "pm");
         server.getCommandManager().register(new NickNameCommand(), "nick", "nickname");
         server.getCommandManager().register(new StaffList(this), "stafflist");
         server.getCommandManager().register(new LanguageCommand(this), "mslang", "lang", "language");
@@ -90,6 +89,7 @@ public class MSEssentials {
         server.getCommandManager().register(new MuteCommand(), "mute");
         server.getCommandManager().register(new UnMuteCommand(), "unmute");
         server.getCommandManager().register(new Broadcast(), "broadcast", "say");
+        MSServer.initializeServerCommands();
         logger.info("enabling configs");
         MSLangConfig.enable();
         PlayerConfig.enable();
