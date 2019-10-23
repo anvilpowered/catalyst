@@ -89,6 +89,7 @@ public class MSEssentials {
         server.getCommandManager().register(new MuteCommand(), "mute");
         server.getCommandManager().register(new UnMuteCommand(), "unmute");
         server.getCommandManager().register(new Broadcast(), "broadcast", "say");
+        server.getCommandManager().register(new ListCommand(), "list");
         MSServer.initializeServerCommands();
         logger.info("enabling configs");
         MSLangConfig.enable();

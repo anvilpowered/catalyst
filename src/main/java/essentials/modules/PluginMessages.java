@@ -30,6 +30,10 @@ public class PluginMessages {
             .append(legacyColor(staffPrefix))
             .append("enabled.")
             .build();
+    public static TextComponent disableStaffChat = TextComponent.builder()
+            .append(legacyColor(staffPrefix))
+            .append("disabled.")
+            .build();
 
     public static TextComponent noNickColorPermission = TextComponent.builder()
             .append(prefix)
@@ -85,12 +89,11 @@ public class PluginMessages {
     }
 
     public static TextComponent legacyColor(String text){
-        return LegacyComponentSerializer.INSTANCE.deserialize(text, '&');
+        return LegacyComponentSerializer.legacy().deserialize(text, '&');
     }
 
     public static String removeColor(String text){
 
-        //text = text.replaceAll("&", "");
         text = text.replaceAll("&4", "");
         text = text.replaceAll("&c", "");
         text = text.replaceAll("&6", "");

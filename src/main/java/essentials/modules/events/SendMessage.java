@@ -21,11 +21,11 @@ public class SendMessage implements ResultedEvent<PlayerChatEvent.ChatResult>
 
     @Override
     public PlayerChatEvent.ChatResult getResult() {
-        return null;
+        return result;
     }
 
     @Override
     public void setResult(PlayerChatEvent.ChatResult result) {
-
+        this.result = result;
     }
 }
