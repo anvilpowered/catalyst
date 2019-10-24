@@ -90,6 +90,7 @@ public class MSEssentials {
         server.getCommandManager().register(new UnMuteCommand(), "unmute");
         server.getCommandManager().register(new Broadcast(), "broadcast", "say");
         server.getCommandManager().register(new ListCommand(), "list");
+        server.getCommandManager().register(new PlayerMessage(), "msg", "pm", "tell", "whisper");
         MSServer.initializeServerCommands();
         logger.info("enabling configs");
         MSLangConfig.enable();

@@ -12,6 +12,9 @@ import essentials.modules.proxychat.ProxyChat;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ListCommand implements Command {
 
 
@@ -52,14 +55,20 @@ public class ListCommand implements Command {
             source.sendMessage(PluginMessages.prefix.append(TextComponent.of("There are no players online!")));
             return;
         }
-        source.sendMessage(PluginMessages.legacyColor("&b----------------Player List----------------"));
-        source.sendMessage(PluginMessages.legacyColor("Player Count: ").append(PluginMessages.legacyColor("&a" + playerCount())));
-        source.sendMessage(TextComponent.of("Staff Count: ").append(TextComponent.of(staffCount())));
+        source.sendMessage(PluginMessages.legacyColor("&b----------------Online Players----------------"));
+        source.sendMessage(PluginMessages.legacyColor("&bPlayer Count: ").append(PluginMessages.legacyColor("&a" + playerCount())));
+        List<TextComponent> adminList = new ArrayList<>();
+
         for(Player onlinePlayer : MSEssentials.getServer().getAllPlayers())
         {
+            if(onlinePlayer.hasPermission("msessentials.group.admin"))
+                adminList.add(PluginMessages.legacyColor(ProxyChatEvent.getRank(onlinePlayer)));
+            source.sendMessage(TextComponent.of("Admin ").append(TextComponent.of(adminList.toString().join(", ", " "))));
             source.sendMessage(PluginMessages.legacyColor(ProxyChatEvent.getRank(onlinePlayer))
                     .append(TextComponent.of(onlinePlayer.getUsername())));
         }
+
     }
+
 
 }
