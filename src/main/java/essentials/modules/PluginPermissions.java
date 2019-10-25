@@ -14,5 +14,8 @@ public abstract class PluginPermissions {
     public static final String KICK = "msessentials.command.admin.kick";
     public static final String BROADCAST = "msessentials.command.admin.broadcast";
     public static final String MUTE =  "msessentials.command.admin.mute";
+    public static final String MESSAGE = "msessentials.command.message";
+    public static final String SOCIALSPYONJOIN = "msessentials.socialspy.onjoin";
+    public static final String SOCIALSPY = "msessentials.socialspy.base";
 
 }

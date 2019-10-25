@@ -15,17 +15,14 @@ import essentials.discordbridge.Bridge;
 import essentials.discordbridge.discord.DiscordStaffChat;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.*;
-import essentials.modules.events.BanListener;
+import essentials.modules.events.*;
 import essentials.modules.Config.MainConfig;
 import essentials.modules.Config.MSLangConfig;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.StaffChat.StaffChatEvent;
 import essentials.modules.commands.*;
-import essentials.modules.events.PlayerJoin;
-import essentials.modules.events.PlayerLeave;
 import essentials.modules.language.WordCatch;
-import essentials.modules.events.ProxyChatEvent;
 import essentials.modules.server.MSServer;
 import essentials.modules.tab.ConfigManager;
 import essentials.modules.tab.GlobalTab;
@@ -91,6 +88,8 @@ public class MSEssentials {
         server.getCommandManager().register(new Broadcast(), "broadcast", "say");
         server.getCommandManager().register(new ListCommand(), "list");
         server.getCommandManager().register(new PlayerMessage(), "msg", "pm", "tell", "whisper");
+        server.getCommandManager().register(new SocialSpyCommand(), "socialspy");
+        server.getCommandManager().register(new ReplyCommand(), "r", "reply");
         MSServer.initializeServerCommands();
         logger.info("enabling configs");
         MSLangConfig.enable();
@@ -104,7 +103,10 @@ public class MSEssentials {
 
         Bridge.enable();
 
-        StaffChat.toggledSet = new HashSet<UUID>();
+        StaffChat.toggledSet = new HashSet<>();
+
+        PlayerMessageEvent.toggledSet = new HashSet<>();
+        PlayerMessageEvent.replyMap = new HashMap<>();
 
 
 
