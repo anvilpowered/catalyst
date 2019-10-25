@@ -11,6 +11,10 @@ import essentials.modules.Utils;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class UnMuteCommand implements Command {
 
 
@@ -40,5 +44,15 @@ public class UnMuteCommand implements Command {
             source.sendMessage(PluginMessages.prefix.append(TextComponent.of("Unmuted: " + player.getUsername())));
             return;
         }
+    }
+
+    @Override
+    public List<String> suggest(CommandSource src, String[] args)
+    {
+        if(args.length ==1)
+        {
+            return MSEssentials.getServer().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+        }
+        return Arrays.asList();
     }
 }

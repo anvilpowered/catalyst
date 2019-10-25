@@ -16,18 +16,19 @@ import essentials.discordbridge.discord.DiscordStaffChat;
 import essentials.discordbridge.discord.MSEssentialsChatListener;
 import essentials.discordbridge.velocity.*;
 import essentials.modules.events.BanListener;
-import essentials.modules.Config.MSEssentialsConfig;
+import essentials.modules.Config.MainConfig;
 import essentials.modules.Config.MSLangConfig;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.StaffChat.StaffChatEvent;
 import essentials.modules.commands.*;
 import essentials.modules.events.PlayerJoin;
+import essentials.modules.events.PlayerLeave;
 import essentials.modules.language.WordCatch;
-import essentials.modules.proxychat.ProxyChatEvent;
+import essentials.modules.events.ProxyChatEvent;
+import essentials.modules.server.MSServer;
 import essentials.modules.tab.ConfigManager;
 import essentials.modules.tab.GlobalTab;
-import essentials.modules.tab.TabPlayerLeave;
 import org.slf4j.Logger;
 import me.lucko.luckperms.*;
 import me.lucko.luckperms.api.*;
@@ -72,13 +73,11 @@ public class MSEssentials {
         logger.info("is now starting!");
         this.msLangConfig = new MSLangConfig(this);
         wordCatch = new WordCatch(this, server);
-        //server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
 
         logger.info("Loading commands");
         server.getCommandManager().register(new SendGoogleCommand(),"sendgoogle");
         server.getCommandManager().register(new GoogleCommand(), "google");
         server.getCommandManager().register(new StaffChatCommand(), "staffchat", "sc");
-        //server.getCommandManager().register(new MessageCommand(), "msg", "message", "pm");
         server.getCommandManager().register(new NickNameCommand(), "nick", "nickname");
         server.getCommandManager().register(new StaffList(this), "stafflist");
         server.getCommandManager().register(new LanguageCommand(this), "mslang", "lang", "language");
@@ -90,10 +89,13 @@ public class MSEssentials {
         server.getCommandManager().register(new MuteCommand(), "mute");
         server.getCommandManager().register(new UnMuteCommand(), "unmute");
         server.getCommandManager().register(new Broadcast(), "broadcast", "say");
+        server.getCommandManager().register(new ListCommand(), "list");
+        server.getCommandManager().register(new PlayerMessage(), "msg", "pm", "tell", "whisper");
+        MSServer.initializeServerCommands();
         logger.info("enabling configs");
         MSLangConfig.enable();
         PlayerConfig.enable();
-        MSEssentialsConfig.enable();
+        MainConfig.enable();
         ConfigManager.setupConfig();
         logger.info("registering globaltab channel");
         server.getChannelRegistrar().register(new LegacyChannelIdentifier("GlobalTab"));
@@ -144,7 +146,7 @@ public class MSEssentials {
 
 
     public  void initListeners(){
-        if(MSEssentialsConfig.getProxyChatBoolean() == true)
+        if(MainConfig.getProxyChatBoolean() == true)
         {
             server.getEventManager().register(this, new ProxyChatListener());
 
@@ -156,8 +158,8 @@ public class MSEssentials {
         server.getEventManager().register(this, new StaffChatListener());
         server.getEventManager().register(this, new DiscordStaffChat());
         server.getEventManager().register(this, new ProxyChatEvent());
-        server.getEventManager().register(this, new TabPlayerLeave());
         server.getEventManager().register(this, new PlayerJoin());
+        server.getEventManager().register(this, new PlayerLeave());
         server.getEventManager().register(this, new BanListener());
 
 

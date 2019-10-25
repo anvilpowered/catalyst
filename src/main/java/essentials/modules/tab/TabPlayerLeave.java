@@ -13,13 +13,6 @@ public class TabPlayerLeave {
     @Subscribe
     public void onLeave(DisconnectEvent e)
     {
-        if(MSEssentials.server.getPlayerCount() > 0)
-        {
-            for(int i = 0; i< MSEssentials.server.getPlayerCount(); i++)
-            {
-                Player p = (Player) MSEssentials.server.getAllPlayers().toArray()[i];
-                p.getTabList().removeEntry(e.getPlayer().getUniqueId());
-            }
-        }
+
     }
 }

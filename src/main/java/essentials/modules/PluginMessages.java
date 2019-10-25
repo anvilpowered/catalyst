@@ -2,16 +2,16 @@ package essentials.modules;
 
 
 
-import essentials.modules.Config.MSEssentialsConfig;
+import essentials.modules.Config.MainConfig;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 
 public class PluginMessages {
 
-    public static String noColorPrefix = MSEssentialsConfig.getPrefix() + " ";
+    public static String noColorPrefix = MainConfig.getPrefix() + " ";
     public static String staffPrefix = "&b[STAFF] &r";
-    public static String noColorBroadcast = MSEssentialsConfig.getBroadcastPrefix() + " ";
+    public static String noColorBroadcast = MainConfig.getBroadcastPrefix() + " ";
 
     public static TextComponent prefix = TextComponent.builder()
             .append(legacyColor(noColorPrefix))
@@ -29,6 +29,10 @@ public class PluginMessages {
     public static TextComponent enabledStaffChat = TextComponent.builder()
             .append(legacyColor(staffPrefix))
             .append("enabled.")
+            .build();
+    public static TextComponent disableStaffChat = TextComponent.builder()
+            .append(legacyColor(staffPrefix))
+            .append("disabled.")
             .build();
 
     public static TextComponent noNickColorPermission = TextComponent.builder()
@@ -85,12 +89,11 @@ public class PluginMessages {
     }
 
     public static TextComponent legacyColor(String text){
-        return LegacyComponentSerializer.INSTANCE.deserialize(text, '&');
+        return LegacyComponentSerializer.legacy().deserialize(text, '&');
     }
 
     public static String removeColor(String text){
 
-        //text = text.replaceAll("&", "");
         text = text.replaceAll("&4", "");
         text = text.replaceAll("&c", "");
         text = text.replaceAll("&6", "");

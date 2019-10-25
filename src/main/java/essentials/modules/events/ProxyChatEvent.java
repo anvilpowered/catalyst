@@ -1,4 +1,4 @@
-package essentials.modules.proxychat;
+package essentials.modules.events;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
@@ -11,6 +11,7 @@ import essentials.modules.PluginPermissions;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.Utils;
 import essentials.modules.events.MSEssentialsChatFormedEvent;
+import essentials.modules.proxychat.ProxyChat;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
 import me.lucko.luckperms.api.caching.MetaData;
@@ -72,6 +73,17 @@ public class ProxyChatEvent {
         return message;
     }
 
+    public static String getRank(Player player)
+    {
+        User user = MSEssentials.api.getUser(player.getUniqueId());
+        Optional<Contexts> context = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
+        UserData userData = user.getCachedData();
+        MetaData userMeta = userData.getMetaData(context.get());
+        String prefix = userMeta.getPrefix();
+
+        return prefix;
+    }
+
     public static void sendMessage(PlayerChatEvent e, String message) {
         e.setResult(PlayerChatEvent.ChatResult.denied());
         Player player = e.getPlayer();
@@ -82,7 +94,7 @@ public class ProxyChatEvent {
         UserData cachedData = user.getCachedData();
         MetaData userMeta = cachedData.getMetaData(contextsOptional.get());
 
-        String prefix = userMeta.getPrefix();
+        String prefix = getRank(player);
         String chatColor = userMeta.getMeta().get("chat-color");
         String nameColor = userMeta.getMeta().get("name-color");
 
@@ -100,6 +112,10 @@ public class ProxyChatEvent {
         }
         if (nameColor != null) {
             name = ProxyChat.legacyColor(nameColor + player.getUsername());
+            if(PlayerConfig.hasNickName(player.getUsername()))
+            {
+                name = PluginMessages.legacyColor(nameColor + PlayerConfig.getNickName(player.getUsername()));
+            }
         }
         if (chatColor != null) {
             message = chatColor + message;
