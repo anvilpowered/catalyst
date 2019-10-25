@@ -13,6 +13,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MuteCommand implements Command {
@@ -24,10 +25,10 @@ public class MuteCommand implements Command {
             {
                 return;
             }
-        Player player = MSEssentials.getServer().getPlayer(args[0]).get();
-        if(player.isActive())
+        Optional<Player> player = MSEssentials.getServer().getPlayer(args[0]);
+        if(player.isPresent())
         {
-            String name = player.getUsername();
+            String name = player.get().getUsername();
             PlayerConfig.addMute(name);
             if(args.length != 2)
             {
@@ -39,7 +40,7 @@ public class MuteCommand implements Command {
             source.sendMessage(PluginMessages.prefix.append(PluginMessages.legacyColor(name).append(TextComponent.of(args[1]))));
             return;
         }
-        source.sendMessage(PluginMessages.prefix.append(TextComponent.of("Cannot find a player with that specified name!")));
+        source.sendMessage(PluginMessages.prefix.append(TextComponent.of("Cannot find a player.get() with that specified name!")));
     }
 
     @Override

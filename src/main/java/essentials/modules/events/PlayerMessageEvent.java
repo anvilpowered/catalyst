@@ -1,12 +1,12 @@
 package essentials.modules.events;
 
-import com.google.common.collect.BiMap;
 import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.proxy.Player;
+import essentials.MSEssentials;
 import essentials.modules.PluginMessages;
+import essentials.modules.PluginPermissions;
 import net.kyori.text.TextComponent;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -15,7 +15,7 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
 {
     private final Player sender;
 
-    public static Set<UUID> toggledSet;
+    public static Set<UUID> socialSpySet;
     public static Map<UUID, UUID> replyMap;
 
     public Player getSender() {
@@ -62,7 +62,7 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
                 .append(PluginMessages.legacyColor("&8] "))
                 .append(PluginMessages.legacyColor("&7" + rawMessage))
                 .build();
-
+        socialSpy(msg);
         return msg;
     }
 
@@ -72,13 +72,19 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
         recipient.sendMessage(message(sender.getUsername(), "Me", message));
     }
 
-    public static TextComponent socialSpy(String sender, String reciever, String rawMessage)
+    public static void socialSpy(TextComponent rawMessage)
     {
         TextComponent msg = TextComponent.builder()
                 .append(PluginMessages.legacyColor("&7[SocialSpy] "))
-                .append(message(sender, reciever, rawMessage))
+                .append(rawMessage)
                 .build();
-        return msg;
+        for(Player player : MSEssentials.getServer().getAllPlayers())
+        {
+            if(player.hasPermission(PluginPermissions.SOCIALSPY))
+            {
+                player.sendMessage(msg);
+            }
+        }
     }
 
 

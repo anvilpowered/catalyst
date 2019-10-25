@@ -35,7 +35,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.UUID;
 
 
 @Plugin(description = "your one stop velocity plugin!",
@@ -76,7 +75,7 @@ public class MSEssentials {
         server.getCommandManager().register(new GoogleCommand(), "google");
         server.getCommandManager().register(new StaffChatCommand(), "staffchat", "sc");
         server.getCommandManager().register(new NickNameCommand(), "nick", "nickname");
-        server.getCommandManager().register(new StaffList(this), "stafflist");
+        server.getCommandManager().register(new StaffListCommand(this), "stafflist");
         server.getCommandManager().register(new LanguageCommand(this), "mslang", "lang", "language");
         server.getCommandManager().register(new DeleteNicknameCommand(), "deletenick", "delnick", "nickdel", "nickdelete");
         server.getCommandManager().register(new KickCommand(), "kick");
@@ -86,8 +85,8 @@ public class MSEssentials {
         server.getCommandManager().register(new MuteCommand(), "mute");
         server.getCommandManager().register(new UnMuteCommand(), "unmute");
         server.getCommandManager().register(new Broadcast(), "broadcast", "say");
-        server.getCommandManager().register(new ListCommand(), "list");
-        server.getCommandManager().register(new PlayerMessage(), "msg", "pm", "tell", "whisper");
+       //server.getCommandManager().register(new ListCommand(), "list");
+        server.getCommandManager().register(new PlayerMessageCommand(), "msg", "pm", "tell", "whisper");
         server.getCommandManager().register(new SocialSpyCommand(), "socialspy");
         server.getCommandManager().register(new ReplyCommand(), "r", "reply");
         MSServer.initializeServerCommands();
@@ -105,7 +104,7 @@ public class MSEssentials {
 
         StaffChat.toggledSet = new HashSet<>();
 
-        PlayerMessageEvent.toggledSet = new HashSet<>();
+        PlayerMessageEvent.socialSpySet = new HashSet<>();
         PlayerMessageEvent.replyMap = new HashMap<>();
 
 

@@ -13,6 +13,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,22 +35,22 @@ public class BanCommand implements Command {
         }
 
         if(MSEssentials.getServer().getPlayer(args[0]).isPresent()) {
-            Player target = MSEssentials.getServer().getPlayer(args[0]).get();
-            UUID targetID = target.getUniqueId();
+            Optional<Player> target = MSEssentials.getServer().getPlayer(args[0]);
+            UUID targetID = target.get().getUniqueId();
 
-            if (args[0].equalsIgnoreCase(target.getUsername())) {
+            if (args[0].equalsIgnoreCase(target.get().getUsername())) {
                 if (source instanceof Player) {
                     Player src = (Player) source;
                     if (src.hasPermission(PluginPermissions.BAN)) {
-                        PlayerConfig.addBan(target.getUsername(), reason);
-                        src.sendMessage(TextComponent.of("Successfully banned " + target.getUsername()));
-                        target.disconnect(TextComponent.of(PlayerConfig.getBanReason(target.getUsername())));
+                        PlayerConfig.addBan(target.get().getUsername(), reason);
+                        src.sendMessage(TextComponent.of("Successfully banned " + target.get().getUsername()));
+                        target.get().disconnect(TextComponent.of(PlayerConfig.getBanReason(target.get().getUsername())));
                     }
 
                 }
-                source.sendMessage(TextComponent.of("Successfully banned " + target.getUsername()));
-                PlayerConfig.addBan(target.getUsername(), reason);
-                target.disconnect(TextComponent.of(PlayerConfig.getBanReason(target.getUsername())));
+                source.sendMessage(TextComponent.of("Successfully banned " + target.get().getUsername()));
+                PlayerConfig.addBan(target.get().getUsername(), reason);
+                target.get().disconnect(TextComponent.of(PlayerConfig.getBanReason(target.get().getUsername())));
                 return;
             }
             return;

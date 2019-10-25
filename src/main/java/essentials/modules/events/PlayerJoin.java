@@ -18,7 +18,7 @@ public class PlayerJoin {
     {
         if(event.getPlayer().hasPermission(PluginPermissions.SOCIALSPY) && event.getPlayer().hasPermission(PluginPermissions.SOCIALSPYONJOIN) || event.getPlayer().hasPermission("*"))
         {
-            PlayerMessageEvent.toggledSet.add(event.getPlayer().getUniqueId());
+            PlayerMessageEvent.socialSpySet.add(event.getPlayer().getUniqueId());
         }
         InetSocketAddress ipAddress = event.getPlayer().getRemoteAddress();
         UUID playerUUID = event.getPlayer().getUniqueId();

@@ -13,6 +13,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class KickCommand implements Command
@@ -21,20 +22,20 @@ public class KickCommand implements Command
     @Override
     public void execute(CommandSource source, @NonNull String[] args)
     {
-        Player target = MSEssentials.getServer().getPlayer(args[0]).get();
+        Optional<Player> target = MSEssentials.getServer().getPlayer(args[0]);
         if(args.length == 0)
         {
             source.sendMessage(PluginMessages.notEnoughArgs);
             return;
         }
-        if(args[0].equalsIgnoreCase(target.getUsername()))
+        if(args[0].equalsIgnoreCase(target.get().getUsername()))
         {
             if(source instanceof Player)
             {
                 Player src = (Player) source;
                 if(source.hasPermission(PluginPermissions.KICK)){
 
-                target.disconnect(TextComponent.of("You have been kicked by " + src.getUsername()));
+                target.get().disconnect(TextComponent.of("You have been kicked by " + src.getUsername()));
                 return;
             }else
                 {
@@ -43,8 +44,8 @@ public class KickCommand implements Command
             }
             else
                 if(source instanceof DiscordCommandSource || source instanceof ConsoleCommandSource) {
-                    source.sendMessage(TextComponent.of("Kicked " + target.getUsername()));
-                    target.disconnect(TextComponent.of("You have been kicked by console!"));
+                    source.sendMessage(TextComponent.of("Kicked " + target.get().getUsername()));
+                    target.get().disconnect(TextComponent.of("You have been kicked by console!"));
                 }
             return;
 

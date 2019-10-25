@@ -45,15 +45,16 @@ public class ProxyChatEvent {
         List<String> swearlist = MSEssentials.wordCatch.isswear(message);
         if (swearlist != null) {
             if (e.getResult().isAllowed()) {
+                if (!player.hasPermission(PluginPermissions.LANGUAGEADMIN)) {
 
-                for (String swear : swearlist) {
-                    message = message.replace(swear, "****");
+                    for (String swear : swearlist) {
+                        message = message.replace(swear, "****");
+                    }
+                    sendMessage(e, checkPlayerName(message));
+
                 }
                 sendMessage(e, checkPlayerName(message));
-
-            }
-            else
-            {
+            } else {
                 e.setResult(PlayerChatEvent.ChatResult.denied());
             }
 
@@ -63,8 +64,7 @@ public class ProxyChatEvent {
         }
     }
 
-    public static String checkPlayerName(String message)
-    {
+    public static String checkPlayerName(String message) {
         for (Player onlinePlayer : MSEssentials.getServer().getAllPlayers()) {
             if (message.toLowerCase().contains(onlinePlayer.getUsername().toLowerCase())) {
                 message = message.replaceAll(onlinePlayer.getUsername().toLowerCase(), "&b@" + onlinePlayer.getUsername() + "&r");
@@ -73,8 +73,7 @@ public class ProxyChatEvent {
         return message;
     }
 
-    public static String getRank(Player player)
-    {
+    public static String getRank(Player player) {
         User user = MSEssentials.api.getUser(player.getUniqueId());
         Optional<Contexts> context = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
         UserData userData = user.getCachedData();
@@ -112,8 +111,7 @@ public class ProxyChatEvent {
         }
         if (nameColor != null) {
             name = ProxyChat.legacyColor(nameColor + player.getUsername());
-            if(PlayerConfig.hasNickName(player.getUsername()))
-            {
+            if (PlayerConfig.hasNickName(player.getUsername())) {
                 name = PluginMessages.legacyColor(nameColor + PlayerConfig.getNickName(player.getUsername()));
             }
         }
@@ -121,16 +119,14 @@ public class ProxyChatEvent {
             message = chatColor + message;
         }
 
-        if (prefix == null)
-        {
+        if (prefix == null) {
             prefix = "";
         }
-        for(Player p : MSEssentials.server.getAllPlayers())
-        {
+        for (Player p : MSEssentials.server.getAllPlayers()) {
             p.sendMessage(ProxyChat.legacyColor(prefix)
                     .append(name).append(TextComponent.of(": "))
-                            .append(ProxyChat.legacyColor(message))
-                    .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()))));
+                    .append(ProxyChat.legacyColor(message))
+                    .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()).append(TextComponent.of("\n" + player.getCurrentServer().get().getServerInfo().getName())))));
         }
         String finalMessage = message;
         MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, finalMessage, ProxyChat.legacyColor(message));

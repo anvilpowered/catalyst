@@ -50,7 +50,7 @@ public class ProxyChatListener {
             final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
         final String sender = TextUtil.stripString(TextUtil.toMarkdown(TextComponent.of(event.getSender().getUsername())));
 
-        MSEssentials.logger.info(DiscordConfig.getOutChannels(Bridge.getDiscordApi()).toString());
+      //  MSEssentials.logger.info(DiscordConfig.getOutChannels(Bridge.getDiscordApi()).toString());
 
         DiscordConfig.getOutChannels(Bridge.getDiscordApi())
                 .forEach(textChannel -> textChannel.sendMessage(finalPrefix + sender + msg));

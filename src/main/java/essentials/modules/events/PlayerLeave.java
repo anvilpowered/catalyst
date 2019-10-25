@@ -11,15 +11,21 @@ import net.kyori.text.TextComponent;
 public class PlayerLeave {
 
     @Subscribe
-    public void onPlayerLeave(DisconnectEvent event)
-    {
+    public void onPlayerLeave(DisconnectEvent event) {
         StaffChat.toggledSet.remove(event.getPlayer());
+        PlayerMessageEvent.replyMap.remove(event.getPlayer().getUniqueId());
+
+        if (PlayerMessageEvent.socialSpySet.contains(event.getPlayer().getUniqueId()))
+            PlayerMessageEvent.socialSpySet.remove(event.getPlayer().getUniqueId());
+
+        if (PlayerMessageEvent.replyMap.containsKey(event.getPlayer().getUniqueId()))
+            PlayerMessageEvent.replyMap.remove(event.getPlayer().getUniqueId());
+
         MSEssentials.getServer().broadcast(
                 TextComponent.of(MainConfig.getLeaveMessage().replace("{Player}", event.getPlayer().getUsername())));
-        if(MSEssentials.server.getPlayerCount() > 0)
-        {
-            for(int i = 0; i< MSEssentials.server.getPlayerCount(); i++)
-            {
+
+        if (MSEssentials.server.getPlayerCount() > 0) {
+            for (int i = 0; i < MSEssentials.server.getPlayerCount(); i++) {
                 Player p = (Player) MSEssentials.server.getAllPlayers().toArray()[i];
                 p.getTabList().removeEntry(event.getPlayer().getUniqueId());
             }

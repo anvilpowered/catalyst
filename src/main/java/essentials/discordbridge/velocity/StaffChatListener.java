@@ -54,6 +54,6 @@ public class StaffChatListener {
         DiscordConfig.getStaffChannel(Bridge.getDiscordApi())
                 .forEach(textChannel -> textChannel.sendMessage(finalPrefix + sender + msg));
 
-        MSEssentials.logger.info(finalPrefix + sender + msg);
+     //   MSEssentials.logger.info(finalPrefix + sender + msg);
     }
 }
