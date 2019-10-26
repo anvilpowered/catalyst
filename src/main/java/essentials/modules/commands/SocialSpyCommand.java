@@ -3,6 +3,7 @@ package essentials.modules.commands;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import essentials.MSEssentials;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
 import essentials.modules.events.PlayerMessageEvent;
@@ -14,6 +15,18 @@ import java.util.UUID;
 public class SocialSpyCommand implements Command {
     @Override
     public void execute(CommandSource source,  @NonNull String[] args) {
+
+        if(args[0].contains("list"))
+        {
+            for (Player player2 : MSEssentials.getServer().getAllPlayers())
+            {
+                if(PlayerMessageEvent.socialSpySet.contains(player2.getUniqueId()))
+                {
+                    source.sendMessage(TextComponent.of(player2.getUsername()));
+                }
+            }
+            return;
+        }
         if(source instanceof Player)
         {
             Player player = (Player) source;
@@ -32,6 +45,9 @@ public class SocialSpyCommand implements Command {
             else {
                 player.sendMessage(PluginMessages.noPermissions);
             }
+
+
+
 
         }
     }

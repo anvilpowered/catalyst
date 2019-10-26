@@ -6,6 +6,7 @@ import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
 import essentials.modules.Config.PlayerConfig;
 import essentials.modules.PluginMessages;
+import essentials.modules.PluginPermissions;
 import essentials.modules.Utils;
 import essentials.modules.server.MSServer;
 import net.kyori.text.TextComponent;
@@ -19,28 +20,28 @@ import java.util.stream.Collectors;
 public class MuteCommand implements Command {
 
     @Override
-    public void execute(CommandSource source, @NonNull String[] args)
-    {
-        if(args.length == 0)
-            {
+    public void execute(CommandSource source, @NonNull String[] args) {
+        if (source.hasPermission(PluginPermissions.MUTE)) {
+            if (args.length == 0) {
                 return;
             }
-        Optional<Player> player = MSEssentials.getServer().getPlayer(args[0]);
-        if(player.isPresent())
-        {
-            String name = player.get().getUsername();
-            PlayerConfig.addMute(name);
-            if(args.length != 2)
-            {
-                PlayerConfig.permMuteAdd(name);
-                source.sendMessage(PluginMessages.prefix.append(TextComponent.of("Muted ").append(PluginMessages.legacyColor(name))));
+            Optional<Player> player = MSEssentials.getServer().getPlayer(args[0]);
+            if (player.isPresent()) {
+                String name = player.get().getUsername();
+                PlayerConfig.addMute(name);
+                if (args.length != 2) {
+
+                    PlayerConfig.permMuteAdd(name);
+                    source.sendMessage(PluginMessages.prefix.append(TextComponent.of("Muted ").append(PluginMessages.legacyColor(name))));
+                    return;
+                }
+                Utils.muteTask(name, Integer.parseInt(args[1]));
+                source.sendMessage(PluginMessages.prefix.append(PluginMessages.legacyColor(name).append(TextComponent.of(args[1]))));
                 return;
             }
-            Utils.muteTask(name, Integer.parseInt(args[1]));
-            source.sendMessage(PluginMessages.prefix.append(PluginMessages.legacyColor(name).append(TextComponent.of(args[1]))));
-            return;
+            source.sendMessage(PluginMessages.prefix.append(TextComponent.of("Cannot find a player.get() with that specified name!")));
         }
-        source.sendMessage(PluginMessages.prefix.append(TextComponent.of("Cannot find a player.get() with that specified name!")));
+        source.sendMessage(PluginMessages.noPermissions);
     }
 
     @Override

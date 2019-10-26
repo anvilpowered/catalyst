@@ -45,9 +45,9 @@ public class ServerCommand implements Command {
                     source.sendMessage(TextComponent.of("[MSEssentials] ")
                             .append(TextComponent.of("Connection failed! Please try again in a few moments!").color(TextColor.RED)));                return;
                 } else {
-                    // player.createConnectionRequest(server).fireAndForget();
+                    player.createConnectionRequest(server).fireAndForget();
                     source.sendMessage(TextComponent.of("[MSEssentials] ")
-                            .append(TextComponent.of("Connection failed! Please try again in a few moments!")).color(TextColor.RED));            }
+                            .append(TextComponent.of("Connecting to ").append(TextComponent.of(connection.get().getServerInfo().getName()))).color(TextColor.GREEN));            }
             }
         } else {
             source.sendMessage(TextComponent.of(

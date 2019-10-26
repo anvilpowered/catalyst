@@ -11,8 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.MessageResult>
-{
+public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.MessageResult> {
     private final Player sender;
 
     public static Set<UUID> socialSpySet;
@@ -45,43 +44,45 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
 
     private static MessageResult result;
 
-    public PlayerMessageEvent(Player sender, Player recipient, String rawMessage, boolean cancelled){
+    public PlayerMessageEvent(Player sender, Player recipient, String rawMessage, boolean cancelled) {
         this.sender = sender;
         this.recipient = recipient;
         this.rawMessage = rawMessage;
         this.result = MessageResult.create(cancelled, rawMessage);
     }
 
-    public static TextComponent message(String sender, String reciever, String rawMessage)
-    {
+    public static TextComponent message(String sender, String reciever, String rawMessage) {
         TextComponent msg = TextComponent.builder()
                 .append(PluginMessages.legacyColor("&8["))
                 .append(PluginMessages.legacyColor("&b" + sender))
                 .append(PluginMessages.legacyColor("&6 -> "))
-                .append(PluginMessages.legacyColor("&b" + reciever ))
+                .append(PluginMessages.legacyColor("&b" + reciever))
                 .append(PluginMessages.legacyColor("&8] "))
                 .append(PluginMessages.legacyColor("&7" + rawMessage))
                 .build();
-        socialSpy(msg);
         return msg;
     }
 
-    public static void sendMessage(Player sender, Player recipient, String message)
-    {
+    public static void sendMessage(Player sender, Player recipient, String message) {
         sender.sendMessage(message("Me", recipient.getUsername(), message));
         recipient.sendMessage(message(sender.getUsername(), "Me", message));
+        socialSpy(sender, recipient, message);
     }
 
-    public static void socialSpy(TextComponent rawMessage)
-    {
+    public static void socialSpy(Player sender, Player reciever, String rawMessage) {
         TextComponent msg = TextComponent.builder()
                 .append(PluginMessages.legacyColor("&7[SocialSpy] "))
-                .append(rawMessage)
+                .append(PluginMessages.legacyColor("&8["))
+                .append(PluginMessages.legacyColor("&b" + sender.getUsername()))
+                .append(PluginMessages.legacyColor("&6 -> "))
+                .append(PluginMessages.legacyColor("&b" + reciever.getUsername()))
+                .append(PluginMessages.legacyColor("&8] "))
+                .append(PluginMessages.legacyColor("&7" + rawMessage))
                 .build();
-        for(Player player : MSEssentials.getServer().getAllPlayers())
-        {
-            if(player.hasPermission(PluginPermissions.SOCIALSPY))
-            {
+
+
+        for (Player player : MSEssentials.getServer().getAllPlayers()) {
+            if (socialSpySet.contains(player.getUniqueId())) {
                 player.sendMessage(msg);
             }
         }
@@ -89,15 +90,11 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
 
 
     public void setResult(MessageResult result) {
-        this.result = result;
+        PlayerMessageEvent.result = result;
     }
 
 
-
-
-
-    public static final class MessageResult implements ResultedEvent.Result
-    {
+    public static final class MessageResult implements ResultedEvent.Result {
 
         private static boolean allowed = false;
 
@@ -111,7 +108,6 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
         public static final MessageResult create(boolean allowed2, String reason2) {
             allowed = allowed2;
             reason = reason2;
-            System.out.println(reason);
             return new MessageResult(reason, allowed);
         }
 
@@ -130,8 +126,7 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
             return allowed;
         }
 
-        public static void deny(String reason2)
-        {
+        public static void deny(String reason2) {
             reason = reason2;
             allowed = false;
         }

@@ -60,7 +60,8 @@ public class MainConfig {
             mainNode.getNode("Discord-Bridge").setComment("To disable the discord bridge, change true to false");
             mainNode.getNode("Prefix").setComment("Prefix used for all msessentials commands");
             mainNode.getNode("Broadcast-Prefix").setComment("Prefixed used for /broadcast");
-
+            mainNode.getNode("Join-Message").setValue("{Player} has joined the proxy!");
+            mainNode.getNode("Leave-Message").setValue("{Player} has left the proxy.");
             if(mainNode.getNode("Discord-Bridge", "enabled:").getValue() == null)
             {
                 setupDefaultConfig();
@@ -76,6 +77,8 @@ public class MainConfig {
         mainNode.getNode("Discord-Bridge", "enabled:").setValue(true);
         mainNode.getNode("Prefix").setValue("[MSEssentials]");
         mainNode.getNode("Broadcast-Prefix").setValue("[Broadcast]");
+        mainNode.getNode("Join-Message").setValue("{Player} has joined the proxy!");
+        mainNode.getNode("Leave-Message").setValue("{Player} has left the proxy.");
         save();
         load();
 

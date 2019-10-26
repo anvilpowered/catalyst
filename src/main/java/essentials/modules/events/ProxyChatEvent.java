@@ -52,8 +52,10 @@ public class ProxyChatEvent {
                     }
                     sendMessage(e, checkPlayerName(message));
 
+                }else
+                {
+                    sendMessage(e, checkPlayerName(message));
                 }
-                sendMessage(e, checkPlayerName(message));
             } else {
                 e.setResult(PlayerChatEvent.ChatResult.denied());
             }
