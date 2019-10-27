@@ -51,12 +51,12 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
         this.result = MessageResult.create(cancelled, rawMessage);
     }
 
-    public static TextComponent message(String sender, String reciever, String rawMessage) {
+    public static TextComponent message(String sender, String receiver, String rawMessage) {
         TextComponent msg = TextComponent.builder()
                 .append(PluginMessages.legacyColor("&8["))
                 .append(PluginMessages.legacyColor("&b" + sender))
                 .append(PluginMessages.legacyColor("&6 -> "))
-                .append(PluginMessages.legacyColor("&b" + reciever))
+                .append(PluginMessages.legacyColor("&b" + receiver))
                 .append(PluginMessages.legacyColor("&8] "))
                 .append(PluginMessages.legacyColor("&7" + rawMessage))
                 .build();
@@ -69,21 +69,28 @@ public class PlayerMessageEvent implements ResultedEvent<PlayerMessageEvent.Mess
         socialSpy(sender, recipient, message);
     }
 
-    public static void socialSpy(Player sender, Player reciever, String rawMessage) {
+    public static void socialSpy(Player sender, Player receiver, String rawMessage) {
         TextComponent msg = TextComponent.builder()
                 .append(PluginMessages.legacyColor("&7[SocialSpy] "))
                 .append(PluginMessages.legacyColor("&8["))
                 .append(PluginMessages.legacyColor("&b" + sender.getUsername()))
                 .append(PluginMessages.legacyColor("&6 -> "))
-                .append(PluginMessages.legacyColor("&b" + reciever.getUsername()))
+                .append(PluginMessages.legacyColor("&b" + receiver.getUsername()))
                 .append(PluginMessages.legacyColor("&8] "))
                 .append(PluginMessages.legacyColor("&7" + rawMessage))
                 .build();
 
 
         for (Player player : MSEssentials.getServer().getAllPlayers()) {
-            if (socialSpySet.contains(player.getUniqueId())) {
+            if (socialSpySet.contains(player.getUniqueId())
+                    && !(
+                    sender.getUniqueId().equals(player.getUniqueId())
+                            && receiver.getUniqueId().equals(player.getUniqueId())
+            )
+            ) {
+
                 player.sendMessage(msg);
+
             }
         }
     }

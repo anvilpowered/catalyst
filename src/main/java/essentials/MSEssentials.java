@@ -89,6 +89,7 @@ public class MSEssentials {
         server.getCommandManager().register(new PlayerMessageCommand(), "msg", "pm", "tell", "whisper");
         server.getCommandManager().register(new SocialSpyCommand(), "socialspy");
         server.getCommandManager().register(new ReplyCommand(), "r", "reply");
+        server.getCommandManager().register(new FindCommand(), "find");
         MSServer.initializeServerCommands();
         logger.info("enabling configs");
         MSLangConfig.enable();
@@ -182,7 +183,7 @@ public class MSEssentials {
         ByteArrayDataInput in = event.dataAsDataStream();
         String subChannel = in.readUTF();
 
-        if (subChannel.equals("Balance")) {
+        if (subChannel.equals("balance")) {
             String[] packet = in.readUTF().split(":");
             String username = packet[0];
             Double balance = Double.parseDouble(packet[1]);

@@ -31,10 +31,5 @@ public class BanListener {
         {
             event.setResult(LoginEvent.ComponentResult.denied(PluginMessages.legacyColor(PlayerConfig.getBanReason(playerName))));
         }
-        /*if(config.getIPList.contains(pIP))
-        {
-            event.setResult(LoginEvent.ComponentResult.denied(reason));
-        }*/
-
     }
 }
