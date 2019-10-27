@@ -17,7 +17,10 @@ import me.lucko.luckperms.api.User;
 import me.lucko.luckperms.api.caching.MetaData;
 import me.lucko.luckperms.api.caching.UserData;
 import net.kyori.text.TextComponent;
+import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
+import net.kyori.text.format.TextColor;
+import net.kyori.text.format.TextDecoration;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,8 +55,7 @@ public class ProxyChatEvent {
                     }
                     sendMessage(e, checkPlayerName(message));
 
-                }else
-                {
+                } else {
                     sendMessage(e, checkPlayerName(message));
                 }
             } else {
@@ -101,6 +103,26 @@ public class ProxyChatEvent {
 
         e.setResult(PlayerChatEvent.ChatResult.denied());
 
+        TextComponent.Builder messageBuilder = TextComponent.builder();
+        String[] words = message.split("//s+");
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].matches("@^(https?|ftp)://[^\\s/$.?#].[^\\s]*$@iS")) {
+                // is url
+                messageBuilder.append(TextComponent.builder()
+                    .append(words[i])
+                    .color(TextColor.BLUE)
+                    .decoration(TextDecoration.UNDERLINED, true)
+                    .clickEvent(ClickEvent.openUrl(words[i]))
+                );
+            } else {
+                messageBuilder.append(ProxyChat.legacyColor(words[i]));
+            }
+
+            // add space between each word
+            if (i != words.length - 1) {
+                messageBuilder.append(" ");
+            }
+        }
 
         TextComponent name = TextComponent.of(player.getUsername());
         if (message.contains("&")) {
@@ -126,12 +148,12 @@ public class ProxyChatEvent {
         }
         for (Player p : MSEssentials.server.getAllPlayers()) {
             p.sendMessage(ProxyChat.legacyColor(prefix)
-                    .append(name).append(TextComponent.of(": "))
-                    .append(ProxyChat.legacyColor(message))
-                    .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername()).append(TextComponent.of("\n" + player.getCurrentServer().get().getServerInfo().getName())))));
+                .append(name).append(TextComponent.of(": "))
+                .append(ProxyChat.legacyColor(message))
+                .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername())
+                    .append(TextComponent.of("\n" + player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("error"))))));
         }
-        String finalMessage = message;
-        MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, finalMessage, ProxyChat.legacyColor(message));
+        MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, messageBuilder.build());
         MSEssentials.server.getEventManager().fire(formedEvent).join();
     }
 }
