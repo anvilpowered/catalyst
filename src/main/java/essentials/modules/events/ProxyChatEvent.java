@@ -106,7 +106,7 @@ public class ProxyChatEvent {
         TextComponent.Builder messageBuilder = TextComponent.builder();
         String[] words = message.split("//s+");
         for (int i = 0; i < words.length; i++) {
-            if (words[i].matches("@^(https?|ftp)://[^\\s/$.?#].[^\\s]*$@iS")) {
+            if (words[i].matches("[^\\s]+\\.[^.\\s/]{2,}[^\\s,]*")) {
                 // is url
                 messageBuilder.append(TextComponent.builder()
                     .append(words[i])
