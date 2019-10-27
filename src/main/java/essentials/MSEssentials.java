@@ -183,7 +183,7 @@ public class MSEssentials {
         ByteArrayDataInput in = event.dataAsDataStream();
         String subChannel = in.readUTF();
 
-        if (subChannel.equals("balance")) {
+        if (subChannel.equals("Balance")) {
             String[] packet = in.readUTF().split(":");
             String username = packet[0];
             Double balance = Double.parseDouble(packet[1]);

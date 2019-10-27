@@ -37,10 +37,21 @@ public class TabBuilder {
         raw = raw.replace("%motd%", MSEssentials.server.getConfiguration().getMotdComponent().toString());
         raw = raw.replace("%uuid%", player.getUniqueId().toString());
         raw = raw.replace("%ip%", player.getRemoteAddress().toString());
-        //raw = raw.replace("%balance%", getBalance(player));
+        raw = raw.replace("%balance%", getBalance(player));
 
         return PluginMessages.legacyColor(raw);
 
     }
+
+    private static String getBalance(Player player)
+    {
+        if(MSEssentials.playerBalances.containsKey(player.getUsername()))
+        {
+            return String.valueOf(MSEssentials.playerBalances.get(player.getUsername()));
+        }
+        else
+            return "null";
+    }
+
 
 }
