@@ -109,10 +109,10 @@ public class ProxyChatEvent {
             if (words[i].matches("@^(https?|ftp)://[^\\s/$.?#].[^\\s]*$@iS")) {
                 // is url
                 messageBuilder.append(TextComponent.builder()
-                        .append(words[i])
-                        .color(TextColor.BLUE)
-                        .decoration(TextDecoration.UNDERLINED, true)
-                        .clickEvent(ClickEvent.openUrl(words[i]))
+                    .append(words[i])
+                    .color(TextColor.BLUE)
+                    .decoration(TextDecoration.UNDERLINED, true)
+                    .clickEvent(ClickEvent.openUrl(words[i]))
                 );
             } else {
                 messageBuilder.append(ProxyChat.legacyColor(words[i]));
@@ -149,10 +149,10 @@ public class ProxyChatEvent {
         TextComponent messageToSend = messageBuilder.build();
         for (Player p : MSEssentials.server.getAllPlayers()) {
             p.sendMessage(ProxyChat.legacyColor(prefix)
-                    .append(name).append(TextComponent.of(": "))
-                    .append(messageToSend)
-                    .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername())
-                            .append(TextComponent.of("\n" + player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("error"))))));
+                .append(name).append(TextComponent.of(": "))
+                .append(messageToSend)
+                .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername())
+                    .append(TextComponent.of("\n" + player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("error"))))));
         }
         MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, messageToSend);
         MSEssentials.server.getEventManager().fire(formedEvent).join();
