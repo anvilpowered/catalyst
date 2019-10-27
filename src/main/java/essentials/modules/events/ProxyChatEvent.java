@@ -146,14 +146,15 @@ public class ProxyChatEvent {
         if (prefix == null) {
             prefix = "";
         }
+        TextComponent messageToSend = messageBuilder.build();
         for (Player p : MSEssentials.server.getAllPlayers()) {
             p.sendMessage(ProxyChat.legacyColor(prefix)
                 .append(name).append(TextComponent.of(": "))
-                .append(ProxyChat.legacyColor(message))
+                .append(messageToSend)
                 .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername())
                     .append(TextComponent.of("\n" + player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("error"))))));
         }
-        MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, messageBuilder.build());
+        MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, messageToSend);
         MSEssentials.server.getEventManager().fire(formedEvent).join();
     }
 }
