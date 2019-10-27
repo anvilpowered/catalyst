@@ -106,13 +106,20 @@ public class ProxyChatEvent {
         TextComponent.Builder messageBuilder = TextComponent.builder();
         String[] words = message.split("\\s+");
         for (int i = 0; i < words.length; i++) {
-            if (words[i].matches("[^\\s]+\\.[^.\\s/]{2,}[^\\s,]*")) {
+            if (words[i].matches("[^\\s]+\\.[^.\\s/]{2,}[^\\s,.]*")) {
                 // is url
+                TextComponent hoverMessage = TextComponent.builder()
+                    .append(TextComponent.of("Click to open ", TextColor.GRAY))
+                    .append(TextComponent.of(words[i], TextColor.AQUA))
+                    .append(TextComponent.of(" in your browser", TextColor.GRAY))
+                    .build();
+
                 messageBuilder.append(TextComponent.builder()
                     .append(words[i])
                     .color(TextColor.BLUE)
                     .decoration(TextDecoration.UNDERLINED, true)
                     .clickEvent(ClickEvent.openUrl(words[i]))
+                    .hoverEvent(HoverEvent.showText(hoverMessage))
                 );
             } else {
                 messageBuilder.append(ProxyChat.legacyColor(words[i]));
