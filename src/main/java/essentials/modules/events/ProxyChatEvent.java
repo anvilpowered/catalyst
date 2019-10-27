@@ -106,7 +106,7 @@ public class ProxyChatEvent {
         TextComponent.Builder messageBuilder = TextComponent.builder();
         String[] words = message.split("\\s+");
         for (int i = 0; i < words.length; i++) {
-            if (words[i].matches("[^\\s]+\\.[^.\\s/]{2,}[^\\s,.]*")) {
+            if (words[i].matches("[^\\s,]+\\.[a-zA-Z1-9]{2,}(/[^\\s,.]*)*")) {
                 // is url
                 TextComponent hoverMessage = TextComponent.builder()
                     .append(TextComponent.of("Click to open ", TextColor.GRAY))
