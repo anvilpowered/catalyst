@@ -104,7 +104,7 @@ public class ProxyChatEvent {
         e.setResult(PlayerChatEvent.ChatResult.denied());
 
         TextComponent.Builder messageBuilder = TextComponent.builder();
-        String[] words = message.split("//s+");
+        String[] words = message.split("\\s+");
         for (int i = 0; i < words.length; i++) {
             if (words[i].matches("[^\\s]+\\.[^.\\s/]{2,}[^\\s,]*")) {
                 // is url
