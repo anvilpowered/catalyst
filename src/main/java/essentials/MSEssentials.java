@@ -85,7 +85,6 @@ public class MSEssentials {
         server.getCommandManager().register(new MuteCommand(), "mute");
         server.getCommandManager().register(new UnMuteCommand(), "unmute");
         server.getCommandManager().register(new Broadcast(), "broadcast", "say");
-       //server.getCommandManager().register(new ListCommand(), "list");
         server.getCommandManager().register(new PlayerMessageCommand(), "msg", "pm", "tell", "whisper");
         server.getCommandManager().register(new SocialSpyCommand(), "socialspy");
         server.getCommandManager().register(new ReplyCommand(), "r", "reply");

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'rocks.milspecsg'
-version '0.0.3-HOTFIX'
+version '1.0'
 
 sourceCompatibility = 1.8
 
