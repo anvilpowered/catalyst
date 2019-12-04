@@ -88,6 +88,7 @@ public class ProxyChatEvent {
     }
 
     public static void sendMessage(PlayerChatEvent e, String message) {
+
         e.setResult(PlayerChatEvent.ChatResult.denied());
         Player player = e.getPlayer();
         User user = MSEssentials.api.getUser(player.getUniqueId());
@@ -153,15 +154,20 @@ public class ProxyChatEvent {
         if (prefix == null) {
             prefix = "";
         }
-        TextComponent messageToSend = messageBuilder.build();
-        for (Player p : MSEssentials.server.getAllPlayers()) {
-            p.sendMessage(ProxyChat.legacyColor(prefix)
+        TextComponent messageToSend = TextComponent.builder()
+                .append(ProxyChat.legacyColor(prefix))
                 .append(name).append(TextComponent.of(": "))
-                .append(messageToSend)
+                .append(PluginMessages.legacyColor(message))
                 .hoverEvent(HoverEvent.showText(TextComponent.of(player.getUsername())
-                    .append(TextComponent.of("\n" + player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("error"))))));
+                        .append(TextComponent.of("\n" + player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("error")))))
+                .build();
+        for (Player p : MSEssentials.server.getAllPlayers()) {
+            p.sendMessage(messageToSend);
         }
+        System.out.println(messageToSend);
+        System.out.println(message);
         MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, messageToSend);
-        MSEssentials.server.getEventManager().fire(formedEvent).join();
+        MSEssentials.server.getEventManager().fireAndForget(formedEvent);
+
     }
 }

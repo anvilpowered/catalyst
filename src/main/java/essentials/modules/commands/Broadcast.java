@@ -6,7 +6,11 @@ import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
+import essentials.modules.proxychat.ProxyChat;
 import net.kyori.text.TextComponent;
+import net.kyori.text.event.ClickEvent;
+import net.kyori.text.format.TextColor;
+import net.kyori.text.format.TextDecoration;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
@@ -27,9 +31,31 @@ public class Broadcast implements Command {
             if(player.hasPermission(PluginPermissions.BROADCAST))
             {
                 String message = Stream.of(args).collect(Collectors.joining(" "));
+                TextComponent.Builder messageBuilder = TextComponent.builder();
+
+                String[] words = message.split("\\s+");
+                for (int i = 0; i < words.length; i++) {
+                    if (words[i].matches("[^\\s]+\\.[^.\\s/]{2,}[^\\s,]*")) {
+                        // is url
+                        messageBuilder.append(TextComponent.builder()
+                                .append(words[i])
+                                .color(TextColor.BLUE)
+                                .decoration(TextDecoration.UNDERLINED, true)
+                                .clickEvent(ClickEvent.openUrl(words[i]))
+                        );
+                    } else {
+                        messageBuilder.append(ProxyChat.legacyColor(words[i]));
+                    }
+
+                    // add space between each word
+                    if (i != words.length - 1) {
+                        messageBuilder.append(" ");
+                    }
+                }
+                TextComponent component = messageBuilder.build();
                 for(Player p : MSEssentials.getServer().getAllPlayers())
                 {
-                    p.sendMessage(PluginMessages.prefix.append(PluginMessages.legacyColor(message)));
+                    p.sendMessage(component);
                 }
                 return;
             }
@@ -40,7 +66,7 @@ public class Broadcast implements Command {
             }
 
         }
-        String message = Stream.of(args).collect(Collectors.joining(" "));
+        String message = String.join(" ", args);
         for(Player p : MSEssentials.getServer().getAllPlayers())
         {
             p.sendMessage(PluginMessages.broadcastPrefix.append(PluginMessages.legacyColor(message)));

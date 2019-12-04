@@ -29,6 +29,6 @@ dependencies {
     compile 'org.spongepowered:configurate-gson:3.6'
     compile 'org.spongepowered:configurate-yaml:3.6'
     compile 'org.spongepowered:configurate-core:3.6'
-    compileOnly 'me.lucko.luckperms:luckperms-api:4.4'
+    compileOnly 'net.luckperms:api:5.0'
     implementation 'org.javacord:javacord:3.0.4'
 }

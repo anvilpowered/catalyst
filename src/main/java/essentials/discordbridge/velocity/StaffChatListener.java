@@ -9,11 +9,13 @@ import essentials.discordbridge.discord.TextUtil;
 import essentials.modules.PluginMessages;
 import essentials.modules.StaffChat.StaffChatEvent;
 import essentials.modules.events.StaffChatFormedEvent;
-import me.lucko.luckperms.api.Contexts;
-import me.lucko.luckperms.api.User;
-import me.lucko.luckperms.api.caching.MetaData;
-import me.lucko.luckperms.api.caching.UserData;
 import net.kyori.text.TextComponent;
+import net.luckperms.api.cacheddata.CachedData;
+import net.luckperms.api.cacheddata.CachedDataManager;
+import net.luckperms.api.context.Context;
+import net.luckperms.api.context.ContextSet;
+import net.luckperms.api.model.user.User;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Optional;
 
@@ -27,15 +29,14 @@ public class StaffChatListener {
         Player player = event.getSender();
         MSEssentials.logger.info(player.getUsername());
 
-        User user = MSEssentials.api.getUser(player.getUniqueId());
-        MSEssentials.logger.info(user.getName());
+        User user = MSEssentials.api.getUserManager().getUser(player.getUniqueId());
+        MSEssentials.logger.info(user.getUsername());
 
-        Optional<Contexts> contextsOptional = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
-        UserData cachedData = user.getCachedData();
-        MetaData userMeta = cachedData.getMetaData(contextsOptional.get());
+        Optional<Context> contextsOptional = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
+        CachedDataManager userMeta = user.getCachedData();
 
         String prefix;
-        if(userMeta.getPrefix() != null)
+        if(userMeta.getMetaData().getPrefix() != null)
         {
             prefix = userMeta.getPrefix();
         }

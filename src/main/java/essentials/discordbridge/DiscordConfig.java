@@ -24,6 +24,7 @@ public class DiscordConfig {
 
     private static String token;
     public static String url;
+    public static String hoverMessage;
     private static List<Long> inChannels;
     private static List<Long> outChannels;
     private static List<Long> staffChannel;
@@ -73,6 +74,9 @@ public class DiscordConfig {
         playerlistCommandRemoveDelay = config.getNode("discord", "playerlist", "command-remove-delay").getInt(0);
         playerlistResponseRemoveDelay = config.getNode("discord", "playerlist", "response-remove-delay").getInt(10);
         url = config.getNode("discord", "url").getString();
+        hoverMessage = config.getNode("discord", "hover-message").getString();
+
+
 
         if (token == null || token.isEmpty()) {
             throw new DiscordConfig.InvalidConfigException("You need to set a bot token!");
@@ -115,6 +119,7 @@ public class DiscordConfig {
         config.getNode("discord", "join-format").setValue("**{player} joined the game");
         config.getNode("discord", "quit-format").setValue("**{player} left the game");
         config.getNode("discord", "url").setValue("https://www.milspecsg.rocks");
+        config.getNode("discord", "hover-message").setValue("Click here to join the discord!");
         save();
         load();
         startup();

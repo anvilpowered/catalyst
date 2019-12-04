@@ -22,9 +22,11 @@ public class ConfigManager {
     private static List<String> disabledServers = new ArrayList<String>();
     private static List<String> customTabs = new ArrayList<String>();
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void setupConfig() {
-        if (!MSEssentials.defaultConfigPath.toFile().exists())
+        if (!MSEssentials.defaultConfigPath.toFile().exists()) {
             MSEssentials.defaultConfigPath.toFile().mkdirs();
+        }
         if (!new File(MSEssentials.defaultConfigPath.toString() + "/globaltab.json").exists()) {
             try {
                 writeInitialConfig();
