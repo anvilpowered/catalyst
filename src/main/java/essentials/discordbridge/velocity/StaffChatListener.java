@@ -6,6 +6,7 @@ import essentials.MSEssentials;
 import essentials.discordbridge.Bridge;
 import essentials.discordbridge.DiscordConfig;
 import essentials.discordbridge.discord.TextUtil;
+import essentials.modules.LuckpermsHook;
 import essentials.modules.PluginMessages;
 import essentials.modules.StaffChat.StaffChatEvent;
 import essentials.modules.events.StaffChatFormedEvent;
@@ -27,18 +28,13 @@ public class StaffChatListener {
         MSEssentials.logger.info("StaffChatFormedEvent");
 
         Player player = event.getSender();
-        MSEssentials.logger.info(player.getUsername());
 
         User user = MSEssentials.api.getUserManager().getUser(player.getUniqueId());
-        MSEssentials.logger.info(user.getUsername());
-
-        Optional<Context> contextsOptional = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
-        CachedDataManager userMeta = user.getCachedData();
 
         String prefix;
-        if(userMeta.getMetaData().getPrefix() != null)
+        if(LuckpermsHook.getPrefix(player) != null)
         {
-            prefix = userMeta.getPrefix();
+            prefix = LuckpermsHook.getPrefix(player);
         }
         else
         {

@@ -4,18 +4,13 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
-import essentials.discordbridge.Bridge;
 import essentials.modules.Config.PlayerConfig;
+import essentials.modules.LuckpermsHook;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
 import essentials.modules.StaffChat.StaffChat;
 import essentials.modules.Utils;
-import essentials.modules.events.MSEssentialsChatFormedEvent;
 import essentials.modules.proxychat.ProxyChat;
-import me.lucko.luckperms.api.Contexts;
-import me.lucko.luckperms.api.User;
-import me.lucko.luckperms.api.caching.MetaData;
-import me.lucko.luckperms.api.caching.UserData;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
@@ -78,11 +73,7 @@ public class ProxyChatEvent {
     }
 
     public static String getRank(Player player) {
-        User user = MSEssentials.api.getUser(player.getUniqueId());
-        Optional<Contexts> context = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
-        UserData userData = user.getCachedData();
-        MetaData userMeta = userData.getMetaData(context.get());
-        String prefix = userMeta.getPrefix();
+        String prefix =  LuckpermsHook.getPrefix(player);
 
         return prefix;
     }
@@ -91,16 +82,10 @@ public class ProxyChatEvent {
 
         e.setResult(PlayerChatEvent.ChatResult.denied());
         Player player = e.getPlayer();
-        User user = MSEssentials.api.getUser(player.getUniqueId());
-
-        Optional<Contexts> contextsOptional = MSEssentials.api.getContextManager().lookupApplicableContexts(user);
-
-        UserData cachedData = user.getCachedData();
-        MetaData userMeta = cachedData.getMetaData(contextsOptional.get());
 
         String prefix = getRank(player);
-        String chatColor = userMeta.getMeta().get("chat-color");
-        String nameColor = userMeta.getMeta().get("name-color");
+        String chatColor = LuckpermsHook.getChatColor(player);
+        String nameColor = LuckpermsHook.getNameColor(player);
 
         e.setResult(PlayerChatEvent.ChatResult.denied());
 

@@ -5,11 +5,8 @@ can be found at : https://github.com/Aang23/GlobalTab/
 */
 
 import essentials.MSEssentials;
-import essentials.modules.server.MSServer;
-import me.lucko.luckperms.api.Contexts;
 
-
-public class UserInfoGetter {
+/*public class UserInfoGetter {
     public static String getPrefixFromUsername(String username)
     {
         if(MSEssentials.api.getUserSafe(username).isPresent())
@@ -37,4 +34,4 @@ public class UserInfoGetter {
     }
 
 
-}
+}*/

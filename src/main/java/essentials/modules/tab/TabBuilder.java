@@ -7,6 +7,7 @@ can be found at : https://github.com/Aang23/GlobalTab/
 
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
+import essentials.modules.LuckpermsHook;
 import essentials.modules.PluginMessages;
 import net.kyori.text.TextComponent;
 
@@ -17,8 +18,8 @@ public class TabBuilder {
     public static TextComponent formatPlayerTab(String raw, Player player)
     {
         raw = raw.replace("%username%", player.getUsername());
-        raw = raw.replace("%prefix%", UserInfoGetter.getPrefixFromUsername(player.getUsername()));
-        raw = raw.replace("%suffix%", UserInfoGetter.getSuffixFromUsername(player.getUsername()));
+        raw = raw.replace("%prefix%", LuckpermsHook.getPrefix(player));
+        //raw = raw.replace("%suffix%", LuckpermsHook.getSuffix(player));
         raw = raw.replace("%server%", getCurrentServer(player));
 
         return PluginMessages.legacyColor(raw);
@@ -27,8 +28,8 @@ public class TabBuilder {
     public static TextComponent formatCustomTab(String raw, Player player)
     {
         raw = raw.replace("%username%", player.getUsername());
-        raw = raw.replace("%prefix%", UserInfoGetter.getPrefixFromUsername(player.getUsername()));
-        raw = raw.replace("%suffix%", UserInfoGetter.getSuffixFromUsername(player.getUsername()));
+        raw = raw.replace("%prefix%", LuckpermsHook.getPrefix(player));
+       // raw = raw.replace("%suffix%", LuckpermsHook.getSuffix(player));
         raw = raw.replace("%server%", getCurrentServer(player));
         raw = raw.replace("%ping%", String.valueOf(player.getPing()));
         raw = raw.replace("%playercount%", String.valueOf(MSEssentials.server.getPlayerCount()));
