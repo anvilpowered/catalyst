@@ -86,19 +86,19 @@ public class MainConfig {
 
     public static boolean getProxyChatBoolean()
     {
-        boolean v = mainNode.getNode("ProxyChat", "enabled:").getBoolean();
+        boolean v = mainNode.getNode("ProxyChat", "enabled").getBoolean();
         return v;
     }
 
     public static boolean getChatFilterBoolean()
     {
-        boolean v = mainNode.getNode("Chat-Filter", "enabled:").getBoolean();
+        boolean v = mainNode.getNode("Chat-Filter", "enabled").getBoolean();
         return v;
     }
 
     public static boolean getDiscordBoolean()
     {
-        boolean v = mainNode.getNode("Discord-Bridge", "enabled:").getBoolean();
+        boolean v = mainNode.getNode("Discord-Bridge", "enabled").getBoolean();
         return v;
     }
     public static String getBroadcastPrefix()

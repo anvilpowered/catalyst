@@ -4,7 +4,7 @@ import essentials.MSEssentials;
 import essentials.discordbridge.discord.CommandListener;
 import essentials.discordbridge.discord.ConnectionListener;
 import essentials.discordbridge.discord.DiscordStaffChat;
-import essentials.discordbridge.discord.MSEssentialsChatListener;
+import essentials.discordbridge.discord.DiscordChatListener;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
@@ -65,7 +65,7 @@ public class Bridge {
 
         ConnectionListener connectionListener = new ConnectionListener();
         DiscordStaffChat discordStaffChat = new DiscordStaffChat();
-        MSEssentialsChatListener chatListener = new MSEssentialsChatListener();
+        DiscordChatListener chatListener = new DiscordChatListener();
         CommandListener commandListener = new CommandListener();
         new DiscordApiBuilder()
                 .setToken(DiscordConfig.getToken())

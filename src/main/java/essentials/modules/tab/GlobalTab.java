@@ -61,7 +61,7 @@ public class GlobalTab {
                     Integer.parseInt((String) ConfigManager.config.get("updatedelay")) * 1000);
 
 
-        }).repeat(10, TimeUnit.MINUTES).schedule();
+        }).repeat(30, TimeUnit.SECONDS).schedule();
     }
 
 }

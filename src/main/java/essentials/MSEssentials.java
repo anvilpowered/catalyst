@@ -13,7 +13,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import essentials.discordbridge.Bridge;
 import essentials.discordbridge.discord.DiscordStaffChat;
-import essentials.discordbridge.discord.MSEssentialsChatListener;
+import essentials.discordbridge.discord.DiscordChatListener;
 import essentials.discordbridge.velocity.*;
 import essentials.modules.events.*;
 import essentials.modules.Config.MainConfig;
@@ -26,9 +26,10 @@ import essentials.modules.language.WordCatch;
 import essentials.modules.server.MSServer;
 import essentials.modules.tab.ConfigManager;
 import essentials.modules.tab.GlobalTab;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
-import me.lucko.luckperms.*;
-import me.lucko.luckperms.api.*;
+
 
 import javax.inject.Inject;
 import java.nio.file.Path;
@@ -50,7 +51,7 @@ public class MSEssentials {
     public static Logger logger;
     public static Path defaultConfigPath;
 
-    public static LuckPermsApi api;
+    public static LuckPerms api;
 
     public static WordCatch wordCatch;
      MSLangConfig msLangConfig;
@@ -119,7 +120,7 @@ public class MSEssentials {
     }
 
     public void reload(){
-        api = LuckPerms.getApi();
+        api = LuckPermsProvider.get();
         logger.info("luckperms api connected successfully.");
     }
 
@@ -154,7 +155,7 @@ public class MSEssentials {
         }
 
         server.getEventManager().register(this, new StaffChatEvent());
-        server.getEventManager().register(this,new MSEssentialsChatListener());
+        server.getEventManager().register(this,new DiscordChatListener());
         server.getEventManager().register(this, new VelocityListener());
         server.getEventManager().register(this, new StaffChatListener());
         server.getEventManager().register(this, new DiscordStaffChat());

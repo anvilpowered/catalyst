@@ -47,7 +47,7 @@ public class ServerCommand implements Command {
                 } else {
                     player.createConnectionRequest(server).fireAndForget();
                     source.sendMessage(TextComponent.of("[MSEssentials] ")
-                            .append(TextComponent.of("Connecting to ").append(TextComponent.of(connection.get().getServerInfo().getName()))).color(TextColor.GREEN));            }
+                            .append(TextComponent.of("Connecting to ").append(TextComponent.of(server.getServerInfo().getName()))).color(TextColor.GREEN));            }
             }
         } else {
             source.sendMessage(TextComponent.of(
