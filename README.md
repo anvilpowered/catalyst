@@ -1,5 +1,5 @@
 # MSEssentials
-The first essentials plugin for Velocity!
+The first rocks.milspecsg.essentials plugin for Velocity!
 
 [![Discord](https://img.shields.io/discord/619325430431875072?style=for-the-badge)](https://discord.gg/6cXUEQJ)
 
@@ -28,8 +28,8 @@ stafflist
 discord intergration (Still in dev, missing topic updater and webhook)
 
 
-| Command        | Argument     | Permission|
-| ------------- |:-------------:| -----:|
+| Command        | Argument       | Permission|
+| ------------- |:----------------------------------:| -----:|
 | /ban          | [name] [reason]| msessentials.command.admin.ban|
 | /kick      | [name] [reason]      |   msessentials.command.admin.kick |
 | /broadcast| [message]      |    msessentials.command.admin.broadcast |
@@ -38,3 +38,20 @@ discord intergration (Still in dev, missing topic updater and webhook)
 |/sendgoogle|[player] [search entry]|msessentials.command.admin.sendgoogle|
 |/nick|[nickname]|msessentials.command.nickname, msessentials.command.nickname.color, msessentials.command.nickname.magic|
 |/playerinfo|[playername]|msessentials.command.admin.playerinfo|
+|/socialspy|none|msessentials.socialspy or msessentials.socialspy.onjoin|
+|/message|[name] [message] | msessentials.command.message|
+|/reply|[message]|msessentials.command.message|
+
+Luckperms Support
+-
+For setting name color
+    
+    /lp user/group (name/groupname) meta set name-color (Color code "&#")
+    
+    ex: /lp user stg_allen meta set name-color &4    <- Set's my name color to red
+
+For setting Chat Color
+
+    /lp user/group (name/groupname) meta set chat-color (Color code "&#")
+    
+    ex: /lp user STG_Allen meta set chat-color &4   <- Set's my chat color to red
