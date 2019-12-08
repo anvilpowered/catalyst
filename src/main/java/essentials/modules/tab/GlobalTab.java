@@ -20,32 +20,34 @@ public class GlobalTab {
 
     public static void insertIntoTab(TabList list, TabListEntry entry, List<UUID> toKeep)
     {
-        UUID in = entry.getProfile().getId();
-        List<UUID> contained = new ArrayList<UUID>();
-        Map<UUID, TabListEntry> cache = new HashMap<UUID, TabListEntry>();
-        for(TabListEntry current : list.getEntries())
-        {
-            contained.add(current.getProfile().getId());
-            cache.put(current.getProfile().getId(), current);
-        }
 
-        if(!contained.contains(in))
+        UUID player = entry.getProfile().getId();
+        List<UUID> existing = new ArrayList<>();
+        Map<UUID, TabListEntry> precache = new HashMap<>();
+
+        for(TabListEntry curr : list.getEntries())
         {
-            list.addEntry(entry);
-            toKeep.add(in);
-            return;
-        }
-        else
-        {
-            TabListEntry currentEntry = cache.get(in);
-            if(!currentEntry.getDisplayName().equals(entry.getDisplayName()))
+            if(!existing.contains(player))
             {
-                list.removeEntry(in);
                 list.addEntry(entry);
-                toKeep.add(in);
-            }else
+                toKeep.add(player);
+                return;
+            }
+            else
             {
-                toKeep.add(in);
+                TabListEntry currentEntry = precache.get(player);
+                if(!currentEntry.getDisplayName().equals(entry.getDisplayName()))
+                {
+                    list.removeEntry(player);
+                    list.addEntry(entry);
+                    toKeep.add(player);
+                    return;
+                }
+                else
+                {
+                    toKeep.add(player);
+                    return;
+                }
             }
         }
     }

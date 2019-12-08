@@ -15,21 +15,41 @@ import static essentials.modules.Utils.getCurrentServer;
 import static essentials.modules.Utils.getServerPlayerCount;
 
 public class TabBuilder {
-    public static TextComponent formatPlayerTab(String raw, Player player)
-    {
+    public static TextComponent formatPlayerTab(String raw, Player player) {
         raw = raw.replace("%username%", player.getUsername());
-        raw = raw.replace("%prefix%", LuckpermsHook.getPrefix(player));
-        //raw = raw.replace("%suffix%", LuckpermsHook.getSuffix(player));
+
+        if (LuckpermsHook.getPrefix(player) == null) {
+            raw = raw.replace("%prefix%", " ");
+        } else {
+            raw = raw.replace("%prefix%", LuckpermsHook.getPrefix(player));
+        }
+
+        if (LuckpermsHook.getSuffix(player) == null) {
+            raw = raw.replace("%suffix%", "");
+        } else {
+            raw = raw.replace("%suffix%", LuckpermsHook.getSuffix(player));
+        }
+
         raw = raw.replace("%server%", getCurrentServer(player));
 
         return PluginMessages.legacyColor(raw);
     }
 
-    public static TextComponent formatCustomTab(String raw, Player player)
-    {
+    public static TextComponent formatCustomTab(String raw, Player player) {
         raw = raw.replace("%username%", player.getUsername());
-        raw = raw.replace("%prefix%", LuckpermsHook.getPrefix(player));
-       // raw = raw.replace("%suffix%", LuckpermsHook.getSuffix(player));
+        if (LuckpermsHook.getPrefix(player) == null) {
+            raw = raw.replace("%prefix%", " ");
+        } else {
+            raw = raw.replace("%prefix%", LuckpermsHook.getPrefix(player));
+        }
+
+        if (LuckpermsHook.getSuffix(player) == null) {
+            raw = raw.replace("%suffix%", "");
+        } else {
+            raw = raw.replace("%suffix%", LuckpermsHook.getSuffix(player));
+        }
+
+        raw = raw.replace("%server%", getCurrentServer(player));
         raw = raw.replace("%server%", getCurrentServer(player));
         raw = raw.replace("%ping%", String.valueOf(player.getPing()));
         raw = raw.replace("%playercount%", String.valueOf(MSEssentials.server.getPlayerCount()));
@@ -44,13 +64,10 @@ public class TabBuilder {
 
     }
 
-    private static String getBalance(Player player)
-    {
-        if(MSEssentials.playerBalances.containsKey(player.getUsername()))
-        {
+    private static String getBalance(Player player) {
+        if (MSEssentials.playerBalances.containsKey(player.getUsername())) {
             return String.valueOf(MSEssentials.playerBalances.get(player.getUsername()));
-        }
-        else
+        } else
             return "null";
     }
 
