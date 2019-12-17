@@ -13,7 +13,8 @@ public class MSEssentialsChatFormedEvent {
     public MSEssentialsChatFormedEvent(Player sender, String rawMessage, Component message) {
         this.sender = sender;
         this.rawMessage = rawMessage;
-        this.message = TextComponent.of(": ").append( message);
+        this.message = message;
+        System.out.println("MSEssentialsChatFormedEvent Firing");
     }
 
     public Component getMessage() {

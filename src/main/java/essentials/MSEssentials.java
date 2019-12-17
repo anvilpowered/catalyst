@@ -148,12 +148,7 @@ public class MSEssentials {
 
 
     public  void initListeners(){
-        if(MainConfig.getProxyChatBoolean() == true)
-        {
-            server.getEventManager().register(this, new ProxyChatListener());
-
-        }
-
+        server.getEventManager().register(this, new ProxyChatListener());
         server.getEventManager().register(this, new StaffChatEvent());
         server.getEventManager().register(this,new DiscordChatListener());
         server.getEventManager().register(this, new VelocityListener());
@@ -163,8 +158,6 @@ public class MSEssentials {
         server.getEventManager().register(this, new PlayerJoin());
         server.getEventManager().register(this, new PlayerLeave());
         server.getEventManager().register(this, new BanListener());
-
-
     }
 
     @Subscribe

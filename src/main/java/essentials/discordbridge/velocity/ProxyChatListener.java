@@ -20,9 +20,8 @@ public class ProxyChatListener {
     @Subscribe
     public void onProxyChat(MSEssentialsChatFormedEvent event)
     {
-        System.out.println(event.getRawMessage());
         Player player = event.getSender();
-
+        MSEssentials.logger.info(event.getRawMessage());
         String prefix;
         if(LuckpermsHook.getPrefix(player) == null)
         {
@@ -34,15 +33,18 @@ public class ProxyChatListener {
         }
 
 
-            String finalPrefix = TextUtil.stripString(prefix);
+        String finalPrefix = TextUtil.stripString(prefix);
 
 
-            final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
+        final String msg = TextUtil.stripString(TextUtil.toMarkdown((TextComponent) event.getMessage()));
         final String sender = TextUtil.stripString(TextUtil.toMarkdown(TextComponent.of(event.getSender().getUsername())));
 
-      //  MSEssentials.logger.info(DiscordConfig.getOutChannels(Bridge.getDiscordApi()).toString());
+        MSEssentials.logger.info(msg);
+        MSEssentials.logger.info(sender);
+
+        MSEssentials.logger.info(finalPrefix + sender + msg);
 
         DiscordConfig.getOutChannels(Bridge.getDiscordApi())
-                .forEach(textChannel -> textChannel.sendMessage(finalPrefix + sender + msg));
+                .forEach(textChannel -> textChannel.sendMessage(msg));
     }
 }

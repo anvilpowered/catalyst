@@ -19,8 +19,6 @@ public class VelocityListener {
     {
         String message = DiscordConfig.getJoinFormat()
                 .replace("{player}", event.getPlayer().getUsername());
-        UUID playerUUID = event.getPlayer().getUniqueId();
-        String name = event.getPlayer().getGameProfile().getName();
 
         DiscordConfig.getOutChannels(Bridge.getDiscordApi()).forEach(chan -> chan.sendMessage(message));
 }

@@ -149,8 +149,6 @@ public class ProxyChatEvent {
         for (Player p : MSEssentials.server.getAllPlayers()) {
             p.sendMessage(messageToSend);
         }
-        System.out.println(messageToSend);
-        System.out.println(message);
         MSEssentialsChatFormedEvent formedEvent = new MSEssentialsChatFormedEvent(player, message, messageToSend);
         MSEssentials.server.getEventManager().fireAndForget(formedEvent);
 
