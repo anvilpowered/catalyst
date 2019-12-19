@@ -1,4 +1,4 @@
 package rocks.milspecsg.msessentials.commands;
 
-public class UnbanCommand {
+public class UnBanCommand {
 }

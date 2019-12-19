@@ -1,11 +1,9 @@
 package essentials.modules.Config;
 
 import essentials.MSEssentials;
-import net.kyori.text.TextComponent;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.IOException;
 import java.nio.file.Files;

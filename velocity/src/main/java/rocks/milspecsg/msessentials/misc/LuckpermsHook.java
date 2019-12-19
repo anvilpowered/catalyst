@@ -1,11 +1,11 @@
-package essentials.modules;
+package rocks.milspecsg.msessentials.misc;
 
 import com.velocitypowered.api.proxy.Player;
-import essentials.MSEssentials;
 import net.luckperms.api.cacheddata.CachedMetaData;
 import net.luckperms.api.context.ContextManager;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
+import rocks.milspecsg.msessentials.MSEssentials;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -13,22 +13,19 @@ import java.util.UUID;
 
 public class LuckpermsHook {
 
-    public static String getPrefix(Player player)
-    {
-        if(getMetaData(player).get().getPrefix() == null)
-            return "";
+    public static String getPrefix(Player player) {
+        if (getMetaData(player).get().getPrefix() == null)
+            return "&R";
         return getMetaData(player).get().getPrefix();
     }
 
-    public static String getSuffix(Player player)
-    {
-        if(getMetaData(player).get().getSuffix() == null)
-            return "";
+    public static String getSuffix(Player player) {
+        if (getMetaData(player).get().getSuffix() == null)
+            return "&r";
         return getMetaData(player).get().getSuffix();
     }
 
-    private static Optional<CachedMetaData> getMetaData(Player player)
-    {
+    private static Optional<CachedMetaData> getMetaData(Player player) {
         UUID playerUUID = player.getUniqueId();
         User tempUser = MSEssentials.api.getUserManager().getUser(playerUUID);
 
@@ -36,20 +33,19 @@ public class LuckpermsHook {
                 .map(data -> data.getMetaData(getQueryOptions(Optional.of(tempUser))))
                 .filter(Objects::nonNull);
     }
-    public static String getNameColor(Player player){
-        if(getMetaData(player).isPresent()) {
+
+    public static String getNameColor(Player player) {
+        if (getMetaData(player).isPresent()) {
             return getMetaData(player).get().getMetaValue("name-color");
         }
-        return null;
+        return "&r";
     }
 
-    public static String getChatColor(Player player)
-    {
-        if(getMetaData(player).isPresent())
-        {
+    public static String getChatColor(Player player) {
+        if (getMetaData(player).isPresent()) {
             return getMetaData(player).get().getMetaValue("chat-color");
         }
-        return null;
+        return "&r";
     }
 
     private static QueryOptions getQueryOptions(Optional<User> user) {

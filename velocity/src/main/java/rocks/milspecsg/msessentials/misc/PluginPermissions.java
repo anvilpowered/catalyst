@@ -1,4 +1,4 @@
-package essentials.modules;
+package rocks.milspecsg.msessentials.misc;
 
 public abstract class PluginPermissions {
     public static final String GOOGLE = "msessentials.command.google";

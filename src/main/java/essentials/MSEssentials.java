@@ -148,7 +148,7 @@ public class MSEssentials {
 
 
     public  void initListeners(){
-        if(MainConfig.getProxyChatBoolean() == true)
+        if(MainConfig.getProxyChatBoolean())
         {
             server.getEventManager().register(this, new ProxyChatListener());
 

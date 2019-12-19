@@ -90,7 +90,8 @@ public class Utils {
         String ip = PlayerConfig.getIP(username);
         String joined = PlayerConfig.getJoined(username);
         String seen = PlayerConfig.getLastSeen(username);
-        String nickname = "No Nickname.";
+        String nickname = "No Nickname";
+        String uuid = PlayerConfig.getPlayerUUID(username).toString();
         if (PlayerConfig.hasNickName(username))
             nickname = PlayerConfig.getNickName(username);
 
@@ -98,6 +99,7 @@ public class Utils {
                 .append(PluginMessages.legacyColor("&b----------------Player Info----------------"))
                 .append(PluginMessages.legacyColor(("\n&bName : &r")))
                 .append(username)
+                .append(uuid)
                 .append(PluginMessages.legacyColor("\n&bNickname : &r"))
                 .append(PluginMessages.legacyColor(nickname))
                 .append(PluginMessages.legacyColor("\n&bCurrent Server : &r"))

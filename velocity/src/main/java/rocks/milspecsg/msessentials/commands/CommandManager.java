@@ -1,4 +1,6 @@
 package rocks.milspecsg.msessentials.commands;
 
-public class CommandManager {
+@FunctionalInterface
+public interface CommandManager {
+    void register(Object plugin);
 }
