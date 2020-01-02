@@ -6,10 +6,12 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.msessentials.MSEssentials;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
+import rocks.milspecsg.msessentials.events.ProxyStaffChatEvent;
 import rocks.milspecsg.msessentials.misc.LuckpermsHook;
 import rocks.milspecsg.msessentials.misc.PluginMessages;
 import rocks.milspecsg.msessentials.misc.PluginPermissions;
@@ -31,6 +33,9 @@ public class ProxyChatListener {
     @Inject
     public ChatFilter chatFilter;
 
+    @Inject
+    private ProxyServer proxyServer;
+
 
     @Subscribe
     public void onChat(PlayerChatEvent e) throws ExecutionException, InterruptedException {
@@ -40,6 +45,12 @@ public class ProxyChatListener {
 
         if (muted.get()) {
             player.sendMessage(pluginMessages.currentlyMuted);
+            return;
+        }
+
+        if(ProxyStaffChatEvent.staffChatSet.contains(player.getUniqueId())) {
+            ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(player, message, TextComponent.of(message));
+            proxyServer.getEventManager().fire(proxyStaffChatEvent).join();
             return;
         }
 

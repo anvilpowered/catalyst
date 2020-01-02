@@ -18,6 +18,7 @@ import rocks.milspecsg.msessentials.events.ProxyStaffChatEvent;
 import rocks.milspecsg.msessentials.listeners.ProxyChatListener;
 import rocks.milspecsg.msessentials.listeners.ProxyJoinListener;
 import rocks.milspecsg.msessentials.listeners.ProxyLeaveListener;
+import rocks.milspecsg.msessentials.listeners.ProxyStaffChatListener;
 import rocks.milspecsg.msessentials.modules.chatutils.ChatFilter;
 import rocks.milspecsg.msrepository.CommonConfigurationModule;
 import rocks.milspecsg.msrepository.api.config.ConfigurationService;
@@ -92,6 +93,7 @@ public class MSEssentials {
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyJoinListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyLeaveListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyChatListener.class));
+        proxyServer.getEventManager().register(this, injector.getInstance(ProxyStaffChatListener.class));
     }
 
     public void loadConfig() {

@@ -43,10 +43,12 @@ public class StaffChatCommand implements Command {
                 }
                 String message = String.join(" ", args);
                 ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(player, message, TextComponent.of(message));
+                /*proxyServer.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
+                        .forEach(target ->
+                                target.sendMessage(pluginMessages.staffChatMessageFormatted(TextComponent.of(message), player.getUsername()))
+                        );*/
+                proxyServer.getEventManager().fire(proxyStaffChatEvent).join();
 
-                proxyServer.getEventManager().fire(proxyStaffChatEvent);
-
-                return;
             }
         } else {
             if(args.length ==  0) {
