@@ -43,6 +43,7 @@ public class CommonMemberManager<TUser, TString, TCommandSource> extends CommonM
                     Member<?> member = optionalMember.get();
                     String nick;
                     String lastSeen;
+                    String banReason;
                     if (member.getNickname() != null) {
                         nick = member.getNickname();
                     } else {
@@ -53,14 +54,22 @@ public class CommonMemberManager<TUser, TString, TCommandSource> extends CommonM
                     } else {
                         lastSeen = member.getLastSeenDateUtc().toString();
                     }
+                    if (member.getIsBanned()) {
+                        banReason = member.getBanReason();
+                    } else {
+                        banReason = "This user is not banned.";
+                    }
                     return stringResult.builder()
                             .append(
                                     stringResult.builder()
                                             .blue().append("----------------Player Info----------------"))
                             .append(
                                     stringResult.builder()
-                                            .blue().append("\nUsername : " + username)
+                                            .blue().append("\nUsername : ")
                             )
+                            .append(
+                                    stringResult.builder()
+                                            .green().append(username))
                             .append(
                                     stringResult.builder()
                                             .blue().append("\nNickname : ")
@@ -71,19 +80,41 @@ public class CommonMemberManager<TUser, TString, TCommandSource> extends CommonM
                             )
                             .append(
                                     stringResult.builder()
-                                            .blue().append("\nIP : " + member.getIPAddress())
+                                            .blue().append("\nIP : ")
                             )
                             .append(
                                     stringResult.builder()
-                                            .blue().append("\nJoined Date : " + member.getJoinDateUtc().toString())
+                                    .green().append(member.getIPAddress())
                             )
                             .append(
                                     stringResult.builder()
-                                            .blue().append("\nLast Seen : " + lastSeen)
+                                            .blue().append("\nJoined Date : ")
                             )
                             .append(
                                     stringResult.builder()
-                                            .blue().append("\nCurrent Server : " + currentServerService.getCurrentServerName(member.getUserUUID()).orElse("Offline User."))
+                                            .green().append(member.getJoinDateUtc().toString())
+                            )
+                            .append(
+                                    stringResult.builder()
+                                            .blue().append("\nLast Seen : ")
+                            )
+                            .append(
+                                    stringResult.builder()
+                                            .green().append(lastSeen))
+                            .append(
+                                    stringResult.builder()
+                                            .blue().append("\nBanned : ")
+                            )
+                            .append(
+                                    stringResult.builder()
+                                            .green().append(banReason))
+                            .append(
+                                    stringResult.builder()
+                                            .blue().append("\nCurrent Server : ")
+                            )
+                            .append(
+                                    stringResult.builder()
+                                            .gold().append(currentServerService.getCurrentServerName(member.getUserUUID()).orElse("Offline User."))
                             )
                             .build();
 
@@ -119,7 +150,7 @@ public class CommonMemberManager<TUser, TString, TCommandSource> extends CommonM
     public CompletableFuture<TString> setNickname(UUID userUUID, String nickname) {
         return getPrimaryComponent().setNicknameForUser(userUUID, nickname).thenApplyAsync(result -> {
             if (result) {
-                return stringResult.success("Set nickname to " + nickname);
+                return stringResult.success("Set nickname to " + stringResult.builder().deserialize(nickname).build());
             } else {
                 return stringResult.fail("Failed to set the nickname " + nickname);
             }
@@ -140,7 +171,7 @@ public class CommonMemberManager<TUser, TString, TCommandSource> extends CommonM
     @Override
     public CompletableFuture<TString> getIPAddress(String username) {
         return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
-            if(!optionalMember.isPresent()) {
+            if (!optionalMember.isPresent()) {
                 return stringResult.fail("Couldn't get the ip address for " + username);
             } else {
                 Member<?> member = optionalMember.get();
@@ -177,6 +208,23 @@ public class CommonMemberManager<TUser, TString, TCommandSource> extends CommonM
         });
     }
 
+    @Override
+    public CompletableFuture<TString> getBanReason(String username) {
+        return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
+            if (!optionalMember.isPresent()) {
+                return stringResult.fail("Could not get user data");
+            }
+            Member<?> member = optionalMember.get();
+            String banReason;
+            if (member.getBanReason() != null) {
+                banReason = member.getBanReason();
+            } else {
+                banReason = "not banned";
+            }
+            return stringResult.builder().append(banReason).build();
+        });
+    }
+
 
     public CompletableFuture<TString> formatMessage(String prefix, String nameColor, String name, String message, String suffix, boolean hasPermission) {
         return getPrimaryComponent().getOneForUser(name).thenApplyAsync(optionalMember -> {
@@ -204,12 +252,12 @@ public class CommonMemberManager<TUser, TString, TCommandSource> extends CommonM
 
     @Override
     public CompletableFuture<TString> setBanned(String username, boolean isBanned) {
-        return getPrimaryComponent().setBannedForUser(username, isBanned).thenApplyAsync(result  -> {
-            if(result) {
-                if(isBanned) {
-                    return stringResult.success("Banned " + username);
+        return getPrimaryComponent().setBannedForUser(username, isBanned).thenApplyAsync(result -> {
+            if (result) {
+                if (isBanned) {
+                    return stringResult.success("banned " + username);
                 } else {
-                    return stringResult.success("UnBanned " + username);
+                    return stringResult.success("unbanned " + username);
                 }
             } else {
                 return stringResult.fail("Failed to set ban status for " + username);
@@ -217,22 +265,47 @@ public class CommonMemberManager<TUser, TString, TCommandSource> extends CommonM
         });
     }
 
-    @Override
-    public CompletableFuture<TString> kick(String username) {
-        return null;
-    }
-
     public CompletableFuture<TString> setBanReason(String username, String reason) {
-        return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
-            if (!optionalMember.isPresent()) {
-                return stringResult.fail("Couldn't find a user matching that name!");
+        return getPrimaryComponent().setBanReasonForUser(username, reason).thenApplyAsync(result -> {
+            if (result) {
+                return stringResult.success(username + " was banned for" + reason);
             } else {
-                Member<?> member = optionalMember.get();
-                member.setBanned(true);
-                member.setBanReason(reason);
-                return stringResult.success(username + " was banned for " + reason);
+                return stringResult.fail("failed to set ban reason");
             }
         });
     }
 
+    public CompletableFuture<Boolean> getBanStatus(String username) {
+        return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
+            if (!optionalMember.isPresent()) {
+                return false;
+            } else {
+                Member<?> member = optionalMember.get();
+                return member.getIsBanned();
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<TString> setMutedStatus(String username, boolean muted) {
+        return getPrimaryComponent().setMuteStatusForUser(username, muted).thenApplyAsync(result -> {
+            if(result) {
+                return stringResult.success("Muted " + username);
+            } else {
+                return stringResult.success("unmuted " + username);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> getMutedStatus(String username) {
+        return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
+            if(!optionalMember.isPresent()) {
+                return false;
+            } else {
+                Member<?> member = optionalMember.get();
+                return member.getMuteStatus();
+            }
+        });
+    }
 }

@@ -14,6 +14,7 @@ import rocks.milspecsg.msrepository.service.common.repository.CommonMongoReposit
 
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -59,7 +60,7 @@ public class CommonMongoMemberRepository
     @Override
     public CompletableFuture<Boolean> setBannedForUser(String username, boolean isBanned) {
         return getOneForUser(username).thenApplyAsync(optionalMember -> {
-            if(!optionalMember.isPresent()) {
+            if (!optionalMember.isPresent()) {
                 return false;
             }
             return asQueryForUser(username).map(q -> setBanned(q, isBanned).join()).orElse(false);
@@ -185,6 +186,27 @@ public class CommonMongoMemberRepository
                 return false;
             }
             return asQueryForUser(username).map(q -> setBanReason(q, banReason).join()).orElse(false);
+        });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> setMuteStatus(Query<Member<ObjectId>> query, boolean muteStatus) {
+        return CompletableFuture.supplyAsync(() -> {
+            Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("muteStatus", muteStatus));
+            return updateOperations
+                    .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                            .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false))
+                    .orElse(false);
+        });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> setMuteStatusForUser(String username, boolean muteStatus) {
+        return getOneForUser(username).thenApplyAsync(optionalMember -> {
+            if (!optionalMember.isPresent()) {
+                return false;
+            }
+            return asQueryForUser(username).map(q -> setMuteStatus(q, muteStatus).join()).orElse(false);
         });
     }
 }

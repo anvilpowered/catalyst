@@ -8,7 +8,6 @@ import org.mongodb.morphia.Datastore;
 import rocks.milspecsg.msessentials.api.config.ConfigKeys;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
-import rocks.milspecsg.msessentials.model.core.member.Member;
 import rocks.milspecsg.msessentials.service.common.config.MSEssentialsConfigurationService;
 import rocks.milspecsg.msessentials.service.common.member.CommonMemberManager;
 import rocks.milspecsg.msessentials.service.common.member.repository.CommonMongoMemberRepository;
@@ -38,7 +37,7 @@ public class CommonModule<
         bind(new TypeLiteral<CommonConfigurationService>() {
         }).to(new TypeLiteral<MSEssentialsConfigurationService>() {
         });
-
+        
 
         be.bind(
                 new TypeToken<MemberRepository<?, ?, ?>>(getClass()) {

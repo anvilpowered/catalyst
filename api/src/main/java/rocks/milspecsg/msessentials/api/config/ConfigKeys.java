@@ -17,12 +17,19 @@ public interface ConfigKeys extends rocks.milspecsg.msrepository.api.config.Conf
     int MONGODB_PASSWORD = 94;
     int MONGODB_USE_AUTH = 95;
 
-    int DISCORD_IN_CHANNELS = 31;
-    int DISCORD_OUT_CHANNELS = 32;
+    int DISCORD_CHANNEL_ID = 31;
     int DISCORD_STAFF_CHANNEL = 33;
     int DISCORD_JOIN_FORMAT = 34;
     int DISCORD_QUIT_FORMAT = 35;
     int DISCORD_BOT_TOKEN = 36;
+    int DISCORD_PLAYING_MESSAGE = 37;
+    int DISCORD_CHAT_TO_GAME_FORMAT = 38;
+    int DISCORD_GAME_TO_CHAT_FORMAT = 39;
+    int DISCORD_WEBHOOK_URL = 40;
+    int DISCORD_STARTING_MESSAGE = 41;
+    int DISCORD_TOPIC_FORMAT = 42;
+    int DISCORD_CONSOLE_COMMAND_PREFIX = 43;
+    int DISCORD_PLAYER_LIST_PREFIX = 44;
 
 
 }

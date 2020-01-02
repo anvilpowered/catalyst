@@ -13,8 +13,8 @@ public final class MSEssentialsPluginInfo implements PluginInfo<TextComponent> {
     public static final String version = "$modVersion";
     public static final String description = "An essentials plugin for velocity";
     public static final String url = "https://github.com/MilSpecSG/MSDataSync";
-    public static final String authors = "STG_Allen, Cableguy20";
-    public static final TextComponent pluginPrefix = TextComponent.of("[MSEssentials] ").color(TextColor.GREEN);
+    public static final String authors = "STG_Allen";
+    public static final TextComponent pluginPrefix = TextComponent.of("[MSEssentials] ").color(TextColor.GOLD);
 
     @Override
     public String getId() {

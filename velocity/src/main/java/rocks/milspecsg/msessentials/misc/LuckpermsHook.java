@@ -15,7 +15,7 @@ public class LuckpermsHook {
 
     public static String getPrefix(Player player) {
         if (getMetaData(player).get().getPrefix() == null)
-            return "&R";
+            return "";
         return getMetaData(player).get().getPrefix();
     }
 
@@ -38,7 +38,7 @@ public class LuckpermsHook {
         if (getMetaData(player).isPresent()) {
             return getMetaData(player).get().getMetaValue("name-color");
         }
-        return "&r";
+        return "";
     }
 
     public static String getChatColor(Player player) {

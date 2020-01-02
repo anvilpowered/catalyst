@@ -5,7 +5,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import essentials.MSEssentials;
-import essentials.discordbridge.discord.DiscordCommandSource;
 import essentials.modules.PluginMessages;
 import essentials.modules.PluginPermissions;
 import net.kyori.text.TextComponent;
@@ -43,7 +42,7 @@ public class KickCommand implements Command
                 }
             }
             else
-                if(source instanceof DiscordCommandSource || source instanceof ConsoleCommandSource) {
+                if(source instanceof ConsoleCommandSource) {
                     source.sendMessage(TextComponent.of("Kicked " + target.get().getUsername()));
                     target.get().disconnect(TextComponent.of("You have been kicked by console!"));
                 }

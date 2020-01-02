@@ -15,6 +15,7 @@ public class JsonMember extends JsonDbo implements Member<UUID> {
     private String ipAddress;
     private Date joinedUtc;
     private Date lastSeenUtc;
+    private String banReason;
 
 
     @Override
@@ -85,7 +86,27 @@ public class JsonMember extends JsonDbo implements Member<UUID> {
     }
 
     @Override
+    public String getBanReason() {
+        return banReason;
+    }
+
+    @Override
+    public void setBanReason(String banReason) {
+        this.banReason = banReason;
+    }
+
+    @Override
     public void setUserName(String username) {
 
+    }
+
+    @Override
+    public void setMuteStatus(boolean muteStatus) {
+
+    }
+
+    @Override
+    public boolean getMuteStatus() {
+        return false;
     }
 }

@@ -6,7 +6,6 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -14,25 +13,18 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
-import rocks.milspecsg.msessentials.commands.CommandManager;
 import rocks.milspecsg.msessentials.commands.MSEssentialsCommandManager;
-import rocks.milspecsg.msessentials.commands.ReloadCommand;
-import rocks.milspecsg.msessentials.events.ProxyChatEvent;
+import rocks.milspecsg.msessentials.events.ProxyStaffChatEvent;
 import rocks.milspecsg.msessentials.listeners.ProxyChatListener;
 import rocks.milspecsg.msessentials.listeners.ProxyJoinListener;
 import rocks.milspecsg.msessentials.listeners.ProxyLeaveListener;
 import rocks.milspecsg.msessentials.modules.chatutils.ChatFilter;
-import rocks.milspecsg.msessentials.service.common.config.MSEssentialsConfigurationService;
 import rocks.milspecsg.msrepository.CommonConfigurationModule;
 import rocks.milspecsg.msrepository.api.config.ConfigurationService;
-import rocks.milspecsg.msrepository.service.common.config.CommonConfigurationService;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Plugin(
@@ -59,6 +51,7 @@ public class MSEssentials {
     @Inject
     private ProxyServer proxyServer;
 
+
     public static ProxyServer server;
 
     public static MSEssentials plugin = null;
@@ -69,13 +62,12 @@ public class MSEssentials {
     private boolean alreadyLoadedOnce = false;
 
     @Subscribe
-    public void onInit(ProxyInitializeEvent event) {
+    public void onInit(ProxyInitializeEvent event) throws LoginException {
         plugin = this;
         initServices();
         initCommands();
         initListeners();
         loadConfig();
-        logger.info("[MSEssentials] Loading complete.");
         server = proxyServer;
     }
 
@@ -91,15 +83,19 @@ public class MSEssentials {
         }
     }
 
-    public static ProxyServer getServer() {return server;}
+    public static ProxyServer getServer() {
+        return server;
+    }
 
     private void initListeners() {
-        System.out.println("Loading listeners");
+        logger.info("Injecting listeners");
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyJoinListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyLeaveListener.class));
-        proxyServer.getEventManager().register(this, injector.getInstance(ProxyChatListener.class));    }
+        proxyServer.getEventManager().register(this, injector.getInstance(ProxyChatListener.class));
+    }
 
     public void loadConfig() {
+        logger.info("Loading config");
         injector.getInstance(ConfigurationService.class).load(this);
     }
 
@@ -116,6 +112,7 @@ public class MSEssentials {
             bind(new TypeLiteral<ConfigurationLoader<CommentedConfigurationNode>>() {
             }).toInstance(HoconConfigurationLoader.builder().setPath(Paths.get(configFilesLocation + "/msessentials.conf")).build());
             bind(ChatFilter.class);
+
         }
     }
 }

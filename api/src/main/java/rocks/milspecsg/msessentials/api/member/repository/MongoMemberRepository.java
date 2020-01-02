@@ -51,4 +51,8 @@ public interface MongoMemberRepository
     CompletableFuture<Boolean> setBanReasonForUser(String username, String banReason);
 
     CompletableFuture<Boolean> setBanReason(Query<Member<ObjectId>> query, String banReason);
+
+    CompletableFuture<Boolean> setMuteStatus(Query<Member<ObjectId>> query, boolean muteStatus);
+
+    CompletableFuture<Boolean> setMuteStatusForUser(String username, boolean muteStatus);
 }

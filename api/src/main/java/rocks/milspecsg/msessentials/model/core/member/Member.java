@@ -38,4 +38,8 @@ public interface Member<TKey> extends ObjectWithId<TKey> {
     void setBanReason(String banReason);
 
     void setUserName(String username);
+
+    void setMuteStatus(boolean muteStatus);
+
+    boolean getMuteStatus();
 }

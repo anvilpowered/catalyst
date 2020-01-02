@@ -18,10 +18,21 @@ public class MongoMember extends MongoDbo implements Member<ObjectId> {
     private Date lastSeenUtc;
     private String username;
     private String banReason;
+    private boolean muteStatus;
 
     @Override
     public String getUserName() {
         return username;
+    }
+
+    @Override
+    public void setMuteStatus(boolean muteStatus) {
+        this.muteStatus = muteStatus;
+    }
+
+    @Override
+    public boolean getMuteStatus() {
+        return muteStatus;
     }
 
     @Override
@@ -93,6 +104,7 @@ public class MongoMember extends MongoDbo implements Member<ObjectId> {
         return banReason;
     }
 
+    @Override
     public void setBanReason(String banReason) {
         this.banReason = banReason;
     }

@@ -11,6 +11,7 @@ import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.msessentials.MSEssentials;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.misc.LuckpermsHook;
+import rocks.milspecsg.msessentials.misc.PluginMessages;
 import rocks.milspecsg.msessentials.misc.PluginPermissions;
 import rocks.milspecsg.msessentials.modules.chatutils.ChatFilter;
 import rocks.milspecsg.msrepository.api.config.ConfigurationService;
@@ -20,6 +21,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class ProxyChatListener {
+
+    @Inject
+    public PluginMessages pluginMessages;
 
     @Inject
     public MemberManager<TextComponent> memberManager;
@@ -32,6 +36,12 @@ public class ProxyChatListener {
     public void onChat(PlayerChatEvent e) throws ExecutionException, InterruptedException {
         String message = e.getMessage();
         Player player = e.getPlayer();
+        CompletableFuture<Boolean> muted = memberManager.getMutedStatus(player.getUsername());
+
+        if (muted.get()) {
+            player.sendMessage(pluginMessages.currentlyMuted);
+            return;
+        }
 
         List<String> swearList = chatFilter.isswear(message);
         if (swearList != null) {
@@ -56,7 +66,7 @@ public class ProxyChatListener {
 
     public static String checkPlayerName(String message) {
         for (Player onlinePlayer : MSEssentials.getServer().getAllPlayers()) {
-            if (message.toLowerCase().contains(onlinePlayer.getUsername().toLowerCase())) {
+            if (message.toLowerCase().equalsIgnoreCase(onlinePlayer.getUsername())) {
                 message = message.replaceAll(onlinePlayer.getUsername().toLowerCase(), "&b@" + onlinePlayer.getUsername() + "&r");
             }
         }
@@ -89,13 +99,12 @@ public class ProxyChatListener {
         String chatColor = getChatColor(player);
         String nameColor = getNameColor(player);
         String suffix = getSuffix(player);
-        if(chatColor == null) {
+        if (chatColor == null) {
             chatColor = "&r";
         }
-        System.out.println(chatColor);
         Tristate hasColorPermission = player.getPermissionValue(PluginPermissions.CHATCOLOR);
 
-        CompletableFuture<TextComponent> unFormatted = memberManager.formatMessage(prefix, nameColor, player.getUsername(), chatColor+message, suffix, hasColorPermission.asBoolean());
+        CompletableFuture<TextComponent> unFormatted = memberManager.formatMessage(prefix, nameColor, player.getUsername(), chatColor + message, suffix, hasColorPermission.asBoolean());
         TextComponent mes = unFormatted.get();
 
         for (Player p : MSEssentials.server.getAllPlayers()) {

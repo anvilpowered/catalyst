@@ -36,7 +36,9 @@ public interface MemberManager<TString> extends Manager<MemberRepository<?, ?, ?
 
     CompletableFuture<TString> setBanned(String username, boolean isBanned);
 
-    CompletableFuture<TString> kick(String username);
+    CompletableFuture<Boolean> getBanStatus(String username);
+
+    CompletableFuture<TString> getBanReason(String username);
 
     CompletableFuture<TString> setIPAddress(String username, String ipAddress);
 
@@ -55,6 +57,11 @@ public interface MemberManager<TString> extends Manager<MemberRepository<?, ?, ?
     CompletableFuture<Void> sync(UUID userUUID);
 
     CompletableFuture<TString> setBanReason(String username, String reason);
+
+    CompletableFuture<TString> setMutedStatus(String username, boolean muted);
+
+    CompletableFuture<Boolean> getMutedStatus(String username);
+
 
 
 }

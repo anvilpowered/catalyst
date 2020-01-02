@@ -39,5 +39,7 @@ public interface MemberRepository<
 
     CompletableFuture<Boolean> setBanReasonForUser(String username, String banReason);
 
+    CompletableFuture<Boolean> setMuteStatusForUser(String username, boolean muteStatus);
+
 
 }

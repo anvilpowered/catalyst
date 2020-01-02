@@ -10,6 +10,7 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
     maven { url "https://jitpack.io" }
     maven { url 'https://repo.velocitypowered.com/snapshots/' }
     maven { url 'https://repo.spongepowered.org/maven' }
@@ -34,9 +35,9 @@ dependencies {
     implementation project(':MSRepository:msr-common:common-repository')
     implementation project(':MSRepository:msr-common:common-repository:common-repository-json')
     implementation project(':MSRepository:msr-velocity')
-    implementation javacord
     implementation jsondb
     implementation guice
+    implementation sponge
 }
 
 shadowJar {
@@ -70,7 +71,6 @@ shadowJar {
         include dependency(javasisst)
         include dependency(jsondb)
         include dependency(jxpath)
-        include dependency(javacord)
         include dependency(reflections)
         include dependency(mongo_java_driver)
         include dependency(mongodb_driver_sync)
