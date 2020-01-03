@@ -1,0 +1,3 @@
+[submodule "MSRepository"]
+	path = MSRepository
+	url = https://github.com/MilSpecSG/MSRepository
