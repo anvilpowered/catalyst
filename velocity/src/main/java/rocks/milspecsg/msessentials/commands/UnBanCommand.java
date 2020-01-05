@@ -24,13 +24,10 @@ public class UnBanCommand implements Command {
             source.sendMessage(pluginMessages.noPermission);
             return;
         }
-
         if (!(args.length > 0)) {
             source.sendMessage(pluginMessages.notEnoughArgs);
             return;
         }
-
-        memberManager.setBanned(args[0], false).thenAcceptAsync(source::sendMessage);
-        memberManager.setBanReason(args[0], "");
+        memberManager.unBan(args[0]).thenAcceptAsync(source::sendMessage);
     }
 }

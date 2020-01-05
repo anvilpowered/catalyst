@@ -12,10 +12,7 @@ import rocks.milspecsg.msessentials.misc.PluginMessages;
 import rocks.milspecsg.msessentials.misc.PluginPermissions;
 
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InfoCommand implements Command {
@@ -50,6 +47,6 @@ public class InfoCommand implements Command {
         if (args.length == 1) {
             return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
-        return Arrays.asList();
+        return Collections.emptyList();
     }
 }

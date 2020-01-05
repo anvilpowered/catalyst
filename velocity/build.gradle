@@ -53,6 +53,7 @@ shadowJar {
         include project(':MSRepository:msr-api:api-repository:api-repository-mongodb')
         include project(':MSRepository:msr-api:api-repository:api-repository-nitrite')
 
+        include project(':MSRepository:msr-common')
         include project(':MSRepository:msr-common:common-config')
         include project(':MSRepository:msr-common:common-repository')
         include project(':MSRepository:msr-common:common-repository:common-repository-json')

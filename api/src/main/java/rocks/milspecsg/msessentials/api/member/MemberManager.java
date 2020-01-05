@@ -5,6 +5,7 @@ import rocks.milspecsg.msrepository.api.manager.Manager;
 
 import java.net.Inet4Address;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,19 +33,15 @@ public interface MemberManager<TString> extends Manager<MemberRepository<?, ?, ?
 
     CompletableFuture<TString> info(String nickname, boolean isActive);
 
-    CompletableFuture<TString> formatMessage(String prefix,String nameColor, String username, String message, String suffix, boolean hasPermission);
-
-    CompletableFuture<TString> setBanned(String username, boolean isBanned);
-
-    CompletableFuture<Boolean> getBanStatus(String username);
-
-    CompletableFuture<TString> getBanReason(String username);
+    CompletableFuture<TString> formatMessage(String prefix, String nameColor, String username, String message, String suffix, boolean hasPermission);
 
     CompletableFuture<TString> setIPAddress(String username, String ipAddress);
 
-    CompletableFuture<TString> getIPAddress(String username );
+    CompletableFuture<TString> getIPAddress(String username);
 
-    CompletableFuture<TString> setNickname(UUID userUUID, String nickname);
+    CompletableFuture<TString> setNickName(String userName, String nickName);
+
+    CompletableFuture<TString> deleteNickname(String username);
 
     CompletableFuture<TString> getNickname(String username);
 
@@ -54,14 +51,15 @@ public interface MemberManager<TString> extends Manager<MemberRepository<?, ?, ?
 
     CompletableFuture<TString> delNick(UUID userUUID);
 
-    CompletableFuture<Void> sync(UUID userUUID);
-
-    CompletableFuture<TString> setBanReason(String username, String reason);
-
     CompletableFuture<TString> setMutedStatus(String username, boolean muted);
 
     CompletableFuture<Boolean> getMutedStatus(String username);
 
+    CompletableFuture<Void> syncPlayerInfo(UUID playerUUID, String ipAddress, String username);
 
+    CompletableFuture<TString> ban(String username, String reason);
+
+    CompletableFuture<TString> ban(String userName);
+    CompletableFuture<TString> unBan(String userName);
 
 }

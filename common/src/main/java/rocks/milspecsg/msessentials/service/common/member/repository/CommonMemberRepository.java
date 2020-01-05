@@ -25,35 +25,6 @@ public abstract class CommonMemberRepository<
     }
 
     @Override
-    public CompletableFuture<Optional<Member<TKey>>> getOneOrGenerateForUser(UUID userUUID, String ipAddress, String username) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                Optional<Member<TKey>> optionalMember = getOneForUser(userUUID).join();
-                if (optionalMember.isPresent()) {
-                    optionalMember.get().setIPAddress(ipAddress);
-                    if (!optionalMember.get().getUserName().equals(username)) {
-                        optionalMember.get().setUserName(username);
-                    }
-                    if (!optionalMember.get().getIPAddress().equals(ipAddress)) {
-                        optionalMember.get().setIPAddress(ipAddress);
-                    }
-                    return optionalMember;
-                }
-                // if there isn't one already, create a new one
-                Member<TKey> member = generateEmpty();
-                member.setUserUUID(userUUID);
-                member.setJoinDateUtc(new Date());
-                member.setIPAddress(ipAddress);
-                member.setUserName(username);
-                return insertOne(member).join();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return Optional.empty();
-            }
-        });
-    }
-
-    @Override
     public CompletableFuture<Optional<TKey>> getIdForUser(UUID userUUID) {
         return CompletableFuture.supplyAsync(() -> getOneForUser(userUUID).join().map(ObjectWithId::getId));
     }

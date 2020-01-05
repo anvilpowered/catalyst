@@ -15,9 +15,6 @@ import java.util.UUID;
 public class SocialSpyCommand implements Command {
 
     @Inject
-    private ProxyServer proxyServer;
-
-    @Inject
     private PluginMessages pluginMessages;
 
     @Override

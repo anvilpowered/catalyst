@@ -12,9 +12,7 @@ import rocks.milspecsg.msrepository.datastore.DataStoreContext;
 import rocks.milspecsg.msrepository.datastore.mongodb.MongoConfig;
 import rocks.milspecsg.msrepository.service.common.repository.CommonMongoRepository;
 
-
 import javax.inject.Inject;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,12 +42,12 @@ public class CommonMongoMemberRepository
 
     @Override
     public Optional<Query<Member<ObjectId>>> asQueryForUser(String username) {
-        return asQuery().map(q -> q.field("username").equal(username));
+        return asQuery().map(q -> q.field("userName").equal(username));
     }
 
     @Override
-    public CompletableFuture<Optional<Member<ObjectId>>> getOneForUser(String username) {
-        return CompletableFuture.supplyAsync(() -> asQueryForUser(username).map(QueryResults::get));
+    public CompletableFuture<Optional<Member<ObjectId>>> getOneForUser(String userName) {
+        return CompletableFuture.supplyAsync(() -> asQueryForUser(userName).map(QueryResults::get));
     }
 
     @Override
@@ -58,23 +56,69 @@ public class CommonMongoMemberRepository
     }
 
     @Override
-    public CompletableFuture<Boolean> setBannedForUser(String username, boolean isBanned) {
-        return getOneForUser(username).thenApplyAsync(optionalMember -> {
-            if (!optionalMember.isPresent()) {
-                return false;
+    public CompletableFuture<Optional<Member<ObjectId>>> getOneOrGenerateForUser(UUID userUUID, String ipAddress, String userName, boolean[] flags) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Optional<Member<ObjectId>> optionalMember = getOneForUser(userUUID).join();
+                if (optionalMember.isPresent()) {
+                    Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations();
+                    boolean updateName = false;
+                    boolean updateIpAddress = false;
+                    if (!userName.equals(optionalMember.get().getUserName())) {
+                        updateOperations.map(u -> u.set("userName", userName));
+                        updateName = true;
+                    }
+                    if (!optionalMember.get().getIPAddress().equals(ipAddress)) {
+                        updateOperations.map(u -> u.set("ipAddress", ipAddress));
+                        updateIpAddress = true;
+                    }
+                    Optional<Query<Member<ObjectId>>> optionalQuery = asQuery(optionalMember.get().getId());
+                    if (optionalQuery.isPresent() && updateOperations
+                            .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                                    .map(datastore -> datastore.update(optionalQuery.get(), memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
+                            ).orElse(false)) {
+                        if (updateName) {
+                            optionalMember.get().setUserName(userName);
+                        }
+                        if (updateIpAddress) {
+                            optionalMember.get().setIPAddress(ipAddress);
+                        }
+                    }
+                    flags[0] = false;
+                    return optionalMember;
+                }
+                // if there isn't one already, create a new one
+                Member<ObjectId> member = generateEmpty();
+                member.setUserUUID(userUUID);
+                member.setJoinedUtc(new Date());
+                member.setIPAddress(ipAddress);
+                member.setUserName(userName);
+                flags[0] = true;
+                return insertOne(member).join();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Optional.empty();
             }
-            return asQueryForUser(username).map(q -> setBanned(q, isBanned).join()).orElse(false);
         });
     }
 
     @Override
-    public CompletableFuture<Boolean> setBanned(Query<Member<ObjectId>> query, boolean isBanned) {
+    public CompletableFuture<Optional<UUID>> setBannedForUser(String userName, boolean isBanned, String reason) {
+        return asQueryForUser(userName).map(q -> setBanned(q, isBanned, reason)).orElse(CompletableFuture.completedFuture(Optional.empty()));
+    }
+
+    @Override
+    public CompletableFuture<Optional<UUID>> setBanned(Query<Member<ObjectId>> query, boolean isBanned, String reason) {
         return CompletableFuture.supplyAsync(() -> {
-            Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("isBanned", isBanned));
-            return updateOperations
+            Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("isBanned", isBanned).set("banReason", reason));
+            if (updateOperations
                     .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
                             .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
-                    ).orElse(false);
+                    ).orElse(false)) {
+                return Optional.of(query.get().getUserUUID());
+            } else {
+                return Optional.empty();
+            }
         });
     }
 
@@ -90,18 +134,8 @@ public class CommonMongoMemberRepository
     }
 
     @Override
-    public CompletableFuture<Boolean> setNicknameForUser(UUID userUUID, String nickname) {
-        return getOneForUser(userUUID).thenApplyAsync(optionalMember -> {
-            if (!optionalMember.isPresent()) {
-                return false;
-            }
-            return asQueryForUser(userUUID).map(q -> setNickname(q, nickname).join()).orElse(false);
-        });
-    }
-
-    @Override
-    public CompletableFuture<Boolean> setNicknameForUser(String username, String nickname) {
-        return asQueryForUser(username).map(q -> setNickname(q, nickname).exceptionally(e -> false)).orElse(CompletableFuture.completedFuture(false));
+    public CompletableFuture<Boolean> setNickNameForUser(String userName, String nickName) {
+        return asQueryForUser(userName).map(q -> setNickname(q, nickName).exceptionally(e -> false)).orElse(CompletableFuture.completedFuture(false));
     }
 
     @Override
@@ -158,34 +192,13 @@ public class CommonMongoMemberRepository
     }
 
     @Override
-    public CompletableFuture<Boolean> setIPAddressForUser(String username, String ipAddress) {
-        return getOneForUser(username).thenApplyAsync(optionalMember -> {
+    public CompletableFuture<Boolean> setIPAddressForUser(String userName, String ipAddress) {
+        return getOneForUser(userName).thenApplyAsync(optionalMember -> {
             if (!optionalMember.isPresent()) {
                 System.out.println("isn't present");
                 return false;
             }
-            return asQueryForUser(username).map(q -> setIPAddress(q, ipAddress).join()).orElse(false);
-        });
-    }
-
-    @Override
-    public CompletableFuture<Boolean> setBanReason(Query<Member<ObjectId>> query, String banReason) {
-        return CompletableFuture.supplyAsync(() -> {
-            Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("banReason", banReason));
-            return updateOperations
-                    .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
-                            .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false))
-                    .orElse(false);
-        });
-    }
-
-    @Override
-    public CompletableFuture<Boolean> setBanReasonForUser(String username, String banReason) {
-        return getOneForUser(username).thenApplyAsync(optionalMember -> {
-            if (!optionalMember.isPresent()) {
-                return false;
-            }
-            return asQueryForUser(username).map(q -> setBanReason(q, banReason).join()).orElse(false);
+            return asQueryForUser(userName).map(q -> setIPAddress(q, ipAddress).join()).orElse(false);
         });
     }
 
@@ -201,12 +214,12 @@ public class CommonMongoMemberRepository
     }
 
     @Override
-    public CompletableFuture<Boolean> setMuteStatusForUser(String username, boolean muteStatus) {
-        return getOneForUser(username).thenApplyAsync(optionalMember -> {
+    public CompletableFuture<Boolean> setMuteStatusForUser(String userName, boolean muteStatus) {
+        return getOneForUser(userName).thenApplyAsync(optionalMember -> {
             if (!optionalMember.isPresent()) {
                 return false;
             }
-            return asQueryForUser(username).map(q -> setMuteStatus(q, muteStatus).join()).orElse(false);
+            return asQueryForUser(userName).map(q -> setMuteStatus(q, muteStatus).join()).orElse(false);
         });
     }
 }

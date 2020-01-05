@@ -11,10 +11,9 @@ import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.misc.PluginMessages;
 import rocks.milspecsg.msessentials.misc.PluginPermissions;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class BanCommand implements Command {
 
@@ -29,9 +28,6 @@ public class BanCommand implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        String banReason;
-        String username = null;
-
         if (!source.hasPermission(PluginPermissions.BAN)) {
             source.sendMessage(pluginMessages.noPermission);
             return;
@@ -41,24 +37,14 @@ public class BanCommand implements Command {
             source.sendMessage(pluginMessages.notEnoughArgs);
             return;
         }
-        if (username == null) {
-            username = args[0];
-        }
+        String username = args[0];
 
-        if(proxyServer.getPlayer(username).get().hasPermission(PluginPermissions.BAN_EXEMPT)) {
+        if (proxyServer.getPlayer(username).filter(p -> p.hasPermission(PluginPermissions.BAN_EXEMPT)).isPresent()) {
             source.sendMessage(pluginMessages.banExempt);
             return;
         }
-
-        if (args.length > 1) {
-            banReason = Stream.of(args).collect(Collectors.joining(" ")).replace(username, "");
-        } else {
-            banReason = "The ban hammer has spoken!";
-        }
-
-        memberManager.setBanned(username, true).thenAcceptAsync(source::sendMessage);
-        memberManager.setBanReason(username, banReason).thenAcceptAsync(source::sendMessage);
-        proxyServer.getPlayer(username).get().disconnect(TextComponent.of(banReason));
+        String banReason = args.length > 1 ? String.join(" ", args).replace(username, "") : "The ban hammer has spoken!";
+        memberManager.ban(username, banReason).thenAcceptAsync(source::sendMessage);
     }
 
     @Override
@@ -66,7 +52,6 @@ public class BanCommand implements Command {
         if (args.length == 1) {
             return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
-        return Arrays.asList();
+        return Collections.emptyList();
     }
-
 }

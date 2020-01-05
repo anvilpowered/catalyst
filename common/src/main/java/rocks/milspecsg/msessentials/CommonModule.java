@@ -22,7 +22,7 @@ import rocks.milspecsg.msrepository.service.common.config.CommonConfigurationSer
 
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class CommonModule<
-        TUser,
+        TUser extends TCommandSource,
         TString,
         TCommandSource>
         extends AbstractModule {

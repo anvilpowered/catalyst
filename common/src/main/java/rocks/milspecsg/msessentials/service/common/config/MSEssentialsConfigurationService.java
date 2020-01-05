@@ -35,22 +35,10 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeTypeMap.put(ConfigKeys.CHAT_FILTER_ENABLED, booleanTypeToken);
         nodeTypeMap.put(ConfigKeys.CHAT_FILTER_SWEARS, stringListTypeToken);
         nodeTypeMap.put(ConfigKeys.CHAT_FILTER_EXCEPTIONS, stringListTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_BRIDGE_ENABLED, booleanTypeToken);
         nodeTypeMap.put(ConfigKeys.JOIN_MESSAGE, stringTypeToken);
+        nodeTypeMap.put(ConfigKeys.LEAVE_MESSAGE, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.PROXY_CHAT_ENABLED, booleanTypeToken);
         nodeTypeMap.put(ConfigKeys.SERVER_COMMAND_ENABLED, booleanTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_CHANNEL_ID, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_JOIN_FORMAT, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_QUIT_FORMAT, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_STAFF_CHANNEL, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_BOT_TOKEN, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_PLAYING_MESSAGE, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_CHAT_TO_GAME_FORMAT, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_GAME_TO_CHAT_FORMAT, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_WEBHOOK_URL, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_STARTING_MESSAGE, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_TOPIC_FORMAT, stringTypeToken);
-        nodeTypeMap.put(ConfigKeys.DISCORD_CONSOLE_COMMAND_PREFIX, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.DATA_STORE_NAME, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.MONGODB_HOSTNAME, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.MONGODB_PORT, integerTypeToken);
@@ -58,6 +46,13 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeTypeMap.put(ConfigKeys.MONGODB_USERNAME, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.MONGODB_PASSWORD, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.MONGODB_USE_AUTH, booleanTypeToken);
+        nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_ENABLED, booleanTypeToken);
+        nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_HEADER, stringTypeToken);
+        nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_FOOTER, stringTypeToken);
+        nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_PLAYER_FORMAT, stringTypeToken);
+        nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_CUSTOM, stringListTypeToken);
+        nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_UPDATE_DELAY, integerTypeToken);
+        nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_DISABLED_SERVERS, stringListTypeToken);
     }
 
     @Override
@@ -71,22 +66,10 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         defaultBooleanMap.put(ConfigKeys.CHAT_FILTER_ENABLED, true);
         defaultListMap.put(ConfigKeys.CHAT_FILTER_SWEARS, Arrays.asList("ass", "fuck"));
         defaultListMap.put(ConfigKeys.CHAT_FILTER_EXCEPTIONS, Arrays.asList("assassin", "jkass"));
-        defaultBooleanMap.put(ConfigKeys.DISCORD_BRIDGE_ENABLED, true);
-        defaultStringMap.put(ConfigKeys.JOIN_MESSAGE, "{Player} has joined the proxy");
+        defaultStringMap.put(ConfigKeys.JOIN_MESSAGE, "%player% has joined the proxy");
+        defaultStringMap.put(ConfigKeys.LEAVE_MESSAGE, "%player% has left the proxy");
         defaultBooleanMap.put(ConfigKeys.PROXY_CHAT_ENABLED, true);
         defaultBooleanMap.put(ConfigKeys.SERVER_COMMAND_ENABLED, true);
-        defaultStringMap.put(ConfigKeys.DISCORD_CHANNEL_ID, "replace");
-        defaultStringMap.put(ConfigKeys.DISCORD_STAFF_CHANNEL, "replace");
-        defaultStringMap.put(ConfigKeys.DISCORD_JOIN_FORMAT, "**{player} joined the proxy");
-        defaultStringMap.put(ConfigKeys.DISCORD_QUIT_FORMAT, "**{player} left the proxy");
-        defaultStringMap.put(ConfigKeys.DISCORD_BOT_TOKEN, "replace");
-        defaultStringMap.put(ConfigKeys.DISCORD_PLAYING_MESSAGE, "On the best server ever!");
-        defaultStringMap.put(ConfigKeys.DISCORD_CHAT_TO_GAME_FORMAT, "[Discord] %name% : ");
-        defaultStringMap.put(ConfigKeys.DISCORD_GAME_TO_CHAT_FORMAT, "%prefix% %player% : ");
-        defaultStringMap.put(ConfigKeys.DISCORD_WEBHOOK_URL, "replace");
-        defaultStringMap.put(ConfigKeys.DISCORD_STARTING_MESSAGE, "The proxy is now starting!");
-        defaultStringMap.put(ConfigKeys.DISCORD_TOPIC_FORMAT, "Total Players : %players%");
-        defaultStringMap.put(ConfigKeys.DISCORD_CONSOLE_COMMAND_PREFIX, "!cmd");
         defaultStringMap.put(ConfigKeys.DATA_STORE_NAME, "mongodb");
         defaultStringMap.put(ConfigKeys.MONGODB_HOSTNAME, "hostname");
         defaultIntegerMap.put(ConfigKeys.MONGODB_PORT, 27017);
@@ -94,30 +77,25 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         defaultStringMap.put(ConfigKeys.MONGODB_PASSWORD, "password");
         defaultStringMap.put(ConfigKeys.MONGODB_DBNAME, "msessentials");
         defaultBooleanMap.put(ConfigKeys.MONGODB_USE_AUTH, false);
-
+        defaultBooleanMap.put(ConfigKeys.GLOBAL_TAB_ENABLED, true);
+        defaultStringMap.put(ConfigKeys.GLOBAL_TAB_HEADER, "Welcome to");
+        defaultStringMap.put(ConfigKeys.GLOBAL_TAB_FOOTER, "A Great Server");
+        defaultStringMap.put(ConfigKeys.GLOBAL_TAB_PLAYER_FORMAT, "%prefix% %player% %suffix%");
+        defaultListMap.put(ConfigKeys.GLOBAL_TAB_CUSTOM, Arrays.asList("&3Your Ping : &e%ping%", "&3Current Server : &e%server%", "&3Balance : &e%balance%"));
+        defaultIntegerMap.put(ConfigKeys.GLOBAL_TAB_UPDATE_DELAY, 1);
+        defaultListMap.put(ConfigKeys.GLOBAL_TAB_DISABLED_SERVERS, Arrays.asList("none"));
     }
 
     @Override
     protected void initNodeNameMap() {
-        nodeNameMap.put(ConfigKeys.BROADCAST_PREFIX, "broadcast.prefix");
+        nodeNameMap.put(ConfigKeys.BROADCAST_PREFIX, "message.broadcast.prefix");
         nodeNameMap.put(ConfigKeys.CHAT_FILTER_ENABLED, "chat.filter");
         nodeNameMap.put(ConfigKeys.CHAT_FILTER_SWEARS, "chat.filter.swears");
         nodeNameMap.put(ConfigKeys.CHAT_FILTER_EXCEPTIONS, "chat.filter.exceptions");
-        nodeNameMap.put(ConfigKeys.JOIN_MESSAGE, "join.message");
+        nodeNameMap.put(ConfigKeys.JOIN_MESSAGE, "message.join");
+        nodeNameMap.put(ConfigKeys.LEAVE_MESSAGE, "message.leave");
         nodeNameMap.put(ConfigKeys.PROXY_CHAT_ENABLED, "proxy.chat");
         nodeNameMap.put(ConfigKeys.SERVER_COMMAND_ENABLED, "server.command");
-        nodeNameMap.put(ConfigKeys.DISCORD_BRIDGE_ENABLED, "discord.toggle");
-        nodeNameMap.put(ConfigKeys.DISCORD_CHANNEL_ID, "discord.channel.main");
-        nodeNameMap.put(ConfigKeys.DISCORD_JOIN_FORMAT, "discord.format.join");
-        nodeNameMap.put(ConfigKeys.DISCORD_QUIT_FORMAT, "discord.format.quit");
-        nodeNameMap.put(ConfigKeys.DISCORD_STAFF_CHANNEL, "discord.channel.staff");
-        nodeNameMap.put(ConfigKeys.DISCORD_BOT_TOKEN, "discord.token");
-        nodeNameMap.put(ConfigKeys.DISCORD_PLAYING_MESSAGE, "discord.messages.playing");
-        nodeNameMap.put(ConfigKeys.DISCORD_CHAT_TO_GAME_FORMAT, "discord.messages.discord");
-        nodeNameMap.put(ConfigKeys.DISCORD_GAME_TO_CHAT_FORMAT, "discord.messages.server");
-        nodeNameMap.put(ConfigKeys.DISCORD_WEBHOOK_URL, "discord.webhook");
-        nodeNameMap.put(ConfigKeys.DISCORD_STARTING_MESSAGE, "discord.messages.startup");
-        nodeNameMap.put(ConfigKeys.DISCORD_TOPIC_FORMAT, "discord.messages.topic");
         nodeNameMap.put(ConfigKeys.DATA_STORE_NAME, "datastore.dataStoreName");
         nodeNameMap.put(ConfigKeys.MONGODB_HOSTNAME, "mongodb.hostname");
         nodeNameMap.put(ConfigKeys.MONGODB_PORT, "mongodb.port");
@@ -125,6 +103,13 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeNameMap.put(ConfigKeys.MONGODB_PASSWORD, "mongodb.password");
         nodeNameMap.put(ConfigKeys.MONGODB_DBNAME, "mongodb.dbname");
         nodeNameMap.put(ConfigKeys.MONGODB_USE_AUTH, "mongodb.auth");
+        nodeNameMap.put(ConfigKeys.GLOBAL_TAB_ENABLED, "globaltab.enabled");
+        nodeNameMap.put(ConfigKeys.GLOBAL_TAB_HEADER, "globaltab.format.header");
+        nodeNameMap.put(ConfigKeys.GLOBAL_TAB_FOOTER, "globaltab.format.footer");
+        nodeNameMap.put(ConfigKeys.GLOBAL_TAB_PLAYER_FORMAT, "globaltab.format.player");
+        nodeNameMap.put(ConfigKeys.GLOBAL_TAB_CUSTOM, "globaltab.format.custom");
+        nodeNameMap.put(ConfigKeys.GLOBAL_TAB_UPDATE_DELAY, "globaltab.updatedelay");
+        nodeNameMap.put(ConfigKeys.GLOBAL_TAB_DISABLED_SERVERS, "globaltab.disabledservers");
     }
 
     @Override
@@ -133,22 +118,10 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeDescriptionMap.put(ConfigKeys.CHAT_FILTER_ENABLED, "\nEnable or disable the chat filter");
         nodeDescriptionMap.put(ConfigKeys.CHAT_FILTER_SWEARS, "\nList of words you would like filtered out of chat.");
         nodeDescriptionMap.put(ConfigKeys.CHAT_FILTER_EXCEPTIONS, "\nList of words that are caught by the swear detection, but shouldn't be (ex. player's name that includes 'ass')");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_BRIDGE_ENABLED, "\nEnable or disable the discord chat bridge");
-        nodeDescriptionMap.put(ConfigKeys.JOIN_MESSAGE, "\nFormat for proxy connection messages. Current placeholders: {Player}");
+        nodeDescriptionMap.put(ConfigKeys.JOIN_MESSAGE, "\nFormat for proxy connection messages. Current placeholders: %player%");
+        nodeDescriptionMap.put(ConfigKeys.LEAVE_MESSAGE, "\nFormat for proxy disconnect messages. Current placeholders: %player%");
         nodeDescriptionMap.put(ConfigKeys.PROXY_CHAT_ENABLED, "\nEnable or disable proxy-wide chat.");
         nodeDescriptionMap.put(ConfigKeys.SERVER_COMMAND_ENABLED, "\nEnable or disable the /(server) command");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_CHANNEL_ID, "\nChannel for relaying chat between discord and the proxy");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_JOIN_FORMAT, "\nFormat to be displayed to discord when a player joins the proxy");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_QUIT_FORMAT, "\nFormat to be displayed to discord for when a player leaves the proxy");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_STAFF_CHANNEL, "\nChannels used for sending and recieving messages from /staffchat and discord.");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_BOT_TOKEN, "\nBot Token required for this module to work. The discord bot token can be retrieved after you create a bot. See the wiki for more information");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_PLAYING_MESSAGE, "\nMessage to be displayed as the 'now playing' for the discord bot!");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_CHAT_TO_GAME_FORMAT, "\nThe format in which you would like discord messages to appear in-game");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_GAME_TO_CHAT_FORMAT, "\nThe format in which you would like in-game messages to appear in discord");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_WEBHOOK_URL, "\nWebhook url that retrieves player images for discord");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_STARTING_MESSAGE, "\nThe message that is displayed when the proxy is booting");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_TOPIC_FORMAT, "\nThe format in which the topic of the discord channel is updated");
-        nodeDescriptionMap.put(ConfigKeys.DISCORD_CONSOLE_COMMAND_PREFIX, "\nThe prefix you would like to be used to run commands from discord");
         nodeDescriptionMap.put(ConfigKeys.DATA_STORE_NAME, "Data store name");
         nodeDescriptionMap.put(ConfigKeys.MONGODB_HOSTNAME, "\nMongoDB hostname");
         nodeDescriptionMap.put(ConfigKeys.MONGODB_PORT, "\nMongoDB port");
@@ -156,5 +129,12 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeDescriptionMap.put(ConfigKeys.MONGODB_USERNAME, "\nMongoDB username");
         nodeDescriptionMap.put(ConfigKeys.MONGODB_PASSWORD, "\nMongoDB password");
         nodeDescriptionMap.put(ConfigKeys.MONGODB_USE_AUTH, "\nWhether to use authentication (username/password) for MongoDB connection");
+        nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_ENABLED, "\nEnable or disable the global player tab");
+        nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_HEADER, "\nFormat for the tab header");
+        nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_FOOTER, "\nFormat for the tab footer");
+        nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_PLAYER_FORMAT, "\nFormat for the how players are displayed in the tab \nDefault example '[admin] STG_Allen [founder] '(%prefix% %player% %suffix%");
+        nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_CUSTOM, "\nFormat for extra information that can be displayed in the tab");
+        nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_UPDATE_DELAY, "\nTime setting for how often the tab updates in seconds");
+        nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_DISABLED_SERVERS, "List of servers you wish to disable the global tab in");
     }
 }

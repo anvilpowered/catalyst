@@ -8,31 +8,31 @@ import net.kyori.text.TextComponent;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.events.ProxyMessageEvent;
 import rocks.milspecsg.msessentials.misc.PluginPermissions;
-
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import rocks.milspecsg.msessentials.modules.utils.PlayerListUtils;
+import rocks.milspecsg.msessentials.modules.utils.StaffListUtils;
 
 public class ProxyJoinListener {
 
     @Inject
     private MemberManager<TextComponent> memberManager;
 
+    @Inject
+    private StaffListUtils staffListUtils;
+
+    @Inject
+    private PlayerListUtils playerListUtils;
+
     @Subscribe
-    public void onPlayerJoin(PostLoginEvent event) throws ExecutionException, InterruptedException {
+    public void onPlayerJoin(PostLoginEvent event) {
         Player player = event.getPlayer();
-        memberManager.getPrimaryComponent().getOneOrGenerateForUser(player.getUniqueId(), player.getRemoteAddress().toString(), player.getUsername());
 
-        CompletableFuture<Boolean> isBanned = memberManager.getBanStatus(player.getUsername());
-        if(isBanned.get()) {
-            CompletableFuture<TextComponent> banReason = memberManager.getBanReason(player.getUsername());
-            player.disconnect(banReason.get());
-            return;
-        }
-
-        if(player.hasPermission(PluginPermissions.SOCIALSPYONJOIN)) {
+        if (player.hasPermission(PluginPermissions.SOCIALSPYONJOIN)) {
             ProxyMessageEvent.socialSpySet.add(player.getUniqueId());
         }
 
+        playerListUtils.addPlayer(player);
+        staffListUtils.getStaffNames(player);
+
+        memberManager.syncPlayerInfo(player.getUniqueId(), player.getRemoteAddress().toString(), player.getUsername());
     }
 }

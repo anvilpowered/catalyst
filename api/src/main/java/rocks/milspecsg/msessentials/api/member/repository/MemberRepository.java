@@ -15,9 +15,9 @@ public interface MemberRepository<
         TDataStore,
         TDataStoreConfig extends DataStoreConfig>
         extends Repository<TKey, Member<TKey>, CacheService<TKey, Member<TKey>, TDataStore, TDataStoreConfig>, TDataStore, TDataStoreConfig> {
-    CompletableFuture<Optional<Member<TKey>>> getOneOrGenerateForUser(UUID userUUID, String ipAddress, String username);
+    CompletableFuture<Optional<Member<TKey>>> getOneOrGenerateForUser(UUID userUUID, String ipAddress, String userName, boolean[] flags);
 
-    CompletableFuture<Optional<Member<TKey>>> getOneForUser(String username);
+    CompletableFuture<Optional<Member<TKey>>> getOneForUser(String userName);
 
     CompletableFuture<Optional<Member<TKey>>> getOneForUser(UUID userUUID);
 
@@ -25,21 +25,15 @@ public interface MemberRepository<
 
     CompletableFuture<Optional<UUID>> getUUID(TKey id);
 
-    CompletableFuture<Boolean> setBannedForUser(String username, boolean isBanned);
+    CompletableFuture<Optional<UUID>> setBannedForUser(String userName, boolean isBanned, String reason);
 
-    CompletableFuture<Boolean> setNicknameForUser(UUID userUUID, String nickname);
+    CompletableFuture<Boolean> setNickNameForUser(String userName, String nickName);
 
-    CompletableFuture<Boolean> setNicknameForUser(String username, String nickname);
-
-    CompletableFuture<Boolean> setIPAddressForUser(String username, String ipAddress);
+    CompletableFuture<Boolean> setIPAddressForUser(String userName, String ipAddress);
 
     CompletableFuture<Boolean> setJoinedUtcForUser(UUID userUUID, Date joinedUtc);
 
     CompletableFuture<Boolean> setLastSeenUtcForUser(UUID userUUID, Date lastSeenUtc);
 
-    CompletableFuture<Boolean> setBanReasonForUser(String username, String banReason);
-
-    CompletableFuture<Boolean> setMuteStatusForUser(String username, boolean muteStatus);
-
-
+    CompletableFuture<Boolean> setMuteStatusForUser(String userName, boolean muteStatus);
 }

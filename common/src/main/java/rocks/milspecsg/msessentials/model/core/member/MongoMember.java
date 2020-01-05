@@ -16,13 +16,13 @@ public class MongoMember extends MongoDbo implements Member<ObjectId> {
     private String ipAddress;
     private Date joinedUtc;
     private Date lastSeenUtc;
-    private String username;
+    private String userName;
     private String banReason;
     private boolean muteStatus;
 
     @Override
     public String getUserName() {
-        return username;
+        return userName;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class MongoMember extends MongoDbo implements Member<ObjectId> {
 
     @Override
     public void setUserName(String username) {
-        this.username = username;
+        this.userName = username;
     }
 
     @Override
@@ -51,22 +51,22 @@ public class MongoMember extends MongoDbo implements Member<ObjectId> {
     }
 
     @Override
-    public String getNickname() {
+    public String getNickName() {
         return nickname;
     }
 
     @Override
-    public void setNickname(String nickname) {
+    public void setNickName(String nickname) {
         this.nickname = nickname;
     }
 
     @Override
-    public boolean getIsBanned() {
+    public boolean getBanStatus() {
         return isBanned;
     }
 
     @Override
-    public void setBanned(boolean banned) {
+    public void setBanStatus(boolean banned) {
         this.isBanned = banned;
     }
 
@@ -81,22 +81,22 @@ public class MongoMember extends MongoDbo implements Member<ObjectId> {
     }
 
     @Override
-    public Date getJoinDateUtc() {
+    public Date getJoinedUtc() {
         return joinedUtc;
     }
 
     @Override
-    public void setJoinDateUtc(Date joinDate) {
+    public void setJoinedUtc(Date joinDate) {
         this.joinedUtc = joinDate;
     }
 
     @Override
-    public Date getLastSeenDateUtc() {
+    public Date getLastSeenUtc() {
         return lastSeenUtc;
     }
 
     @Override
-    public void setLastSeenDateUtc(Date lastSeen) {
+    public void setLastSeenUtc(Date lastSeen) {
         this.lastSeenUtc = lastSeen;
     }
 

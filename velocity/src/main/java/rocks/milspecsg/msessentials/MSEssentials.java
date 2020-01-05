@@ -1,9 +1,9 @@
 package rocks.milspecsg.msessentials;
 
-import com.google.inject.Key;
-import com.velocitypowered.api.event.Subscribe;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -14,17 +14,13 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import rocks.milspecsg.msessentials.commands.MSEssentialsCommandManager;
-import rocks.milspecsg.msessentials.events.ProxyStaffChatEvent;
-import rocks.milspecsg.msessentials.listeners.ProxyChatListener;
-import rocks.milspecsg.msessentials.listeners.ProxyJoinListener;
-import rocks.milspecsg.msessentials.listeners.ProxyLeaveListener;
-import rocks.milspecsg.msessentials.listeners.ProxyStaffChatListener;
-import rocks.milspecsg.msessentials.modules.chatutils.ChatFilter;
+import rocks.milspecsg.msessentials.events.ProxyTeleportRequestEvent;
+import rocks.milspecsg.msessentials.listeners.*;
+import rocks.milspecsg.msrepository.ApiVelocityModule;
 import rocks.milspecsg.msrepository.CommonConfigurationModule;
 import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 
 import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.nio.file.Paths;
 
@@ -63,7 +59,7 @@ public class MSEssentials {
     private boolean alreadyLoadedOnce = false;
 
     @Subscribe
-    public void onInit(ProxyInitializeEvent event) throws LoginException {
+    public void onInit(ProxyInitializeEvent event) {
         plugin = this;
         initServices();
         initCommands();
@@ -74,7 +70,7 @@ public class MSEssentials {
 
     public void initServices() {
         api = LuckPermsProvider.get();
-        injector = velocityRootInjector.createChildInjector(new VelocityModule(), new MSEssentialsConfigurationModule());
+        injector = velocityRootInjector.createChildInjector(new VelocityModule(), new MSEssentialsConfigurationModule(), new ApiVelocityModule());
     }
 
     private void initCommands() {
@@ -94,6 +90,7 @@ public class MSEssentials {
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyLeaveListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyChatListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyStaffChatListener.class));
+        proxyServer.getEventManager().register(this, injector.getInstance(ProxyTeleportRequestListener.class));
     }
 
     public void loadConfig() {
@@ -113,7 +110,6 @@ public class MSEssentials {
             }
             bind(new TypeLiteral<ConfigurationLoader<CommentedConfigurationNode>>() {
             }).toInstance(HoconConfigurationLoader.builder().setPath(Paths.get(configFilesLocation + "/msessentials.conf")).build());
-            bind(ChatFilter.class);
 
         }
     }

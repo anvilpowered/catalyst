@@ -8,38 +8,29 @@ import java.util.UUID;
 public interface Member<TKey> extends ObjectWithId<TKey> {
 
     UUID getUserUUID();
-
     void setUserUUID(UUID userUUID);
 
-    String getNickname();
-
-    void setNickname(String nickname);
-
-    boolean getIsBanned();
-
-    void setBanned(boolean banned);
-
-    String getIPAddress();
-
-    void setIPAddress(String ipAddress);
-
-    Date getJoinDateUtc();
-
-    void setJoinDateUtc(Date joinDate);
-
-    Date getLastSeenDateUtc();
-
-    void setLastSeenDateUtc(Date lastSeen);
-
     String getUserName();
-
-    String getBanReason();
-
-    void setBanReason(String banReason);
-
     void setUserName(String username);
 
-    void setMuteStatus(boolean muteStatus);
+    String getNickName();
+    void setNickName(String nickname);
 
+    boolean getBanStatus();
+    void setBanStatus(boolean banned);
+
+    String getIPAddress();
+    void setIPAddress(String ipAddress);
+
+    Date getJoinedUtc();
+    void setJoinedUtc(Date joinDate);
+
+    Date getLastSeenUtc();
+    void setLastSeenUtc(Date lastSeen);
+
+    String getBanReason();
+    void setBanReason(String banReason);
+
+    void setMuteStatus(boolean muteStatus);
     boolean getMuteStatus();
 }

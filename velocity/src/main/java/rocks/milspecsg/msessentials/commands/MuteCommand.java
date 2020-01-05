@@ -12,6 +12,7 @@ import rocks.milspecsg.msessentials.misc.PluginMessages;
 import rocks.milspecsg.msessentials.misc.PluginPermissions;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,16 +40,15 @@ public class MuteCommand implements Command {
             source.sendMessage(pluginMessages.notEnoughArgs);
             return;
         }
-        if(proxyServer.getPlayer(args[0]).isPresent()) {
-            Optional<Player> optionalPlayer = proxyServer.getPlayer(args[0]);
-            if(optionalPlayer.get().hasPermission(PluginPermissions.MUTE_EXEMPT)) {
+        Optional<Player> player = proxyServer.getPlayer(args[0]);
+        if (player.isPresent()) {
+            if (player.get().hasPermission(PluginPermissions.MUTE_EXEMPT)) {
                 source.sendMessage(pluginMessages.muteExempt);
                 return;
             }
         }
 
         memberManager.setMutedStatus(args[0], true).thenAcceptAsync(source::sendMessage);
-
     }
 
     @Override
@@ -56,6 +56,6 @@ public class MuteCommand implements Command {
         if (args.length == 1) {
             return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
-        return Arrays.asList();
+        return Collections.emptyList();
     }
 }

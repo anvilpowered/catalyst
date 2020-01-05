@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.msessentials.MSEssentials;
+import rocks.milspecsg.msessentials.MSEssentialsPluginInfo;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.events.ProxyStaffChatEvent;
 import rocks.milspecsg.msessentials.misc.LuckpermsHook;
@@ -41,16 +42,11 @@ public class ProxyChatListener {
     public void onChat(PlayerChatEvent e) throws ExecutionException, InterruptedException {
         String message = e.getMessage();
         Player player = e.getPlayer();
-        CompletableFuture<Boolean> muted = memberManager.getMutedStatus(player.getUsername());
 
-        if (muted.get()) {
-            player.sendMessage(pluginMessages.currentlyMuted);
-            return;
-        }
-
-        if(ProxyStaffChatEvent.staffChatSet.contains(player.getUniqueId())) {
+        if (ProxyStaffChatEvent.staffChatSet.contains(player.getUniqueId())) {
             ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(player, message, TextComponent.of(message));
             proxyServer.getEventManager().fire(proxyStaffChatEvent).join();
+            e.setResult(PlayerChatEvent.ChatResult.denied());
             return;
         }
 
@@ -118,8 +114,13 @@ public class ProxyChatListener {
         CompletableFuture<TextComponent> unFormatted = memberManager.formatMessage(prefix, nameColor, player.getUsername(), chatColor + message, suffix, hasColorPermission.asBoolean());
         TextComponent mes = unFormatted.get();
 
-        for (Player p : MSEssentials.server.getAllPlayers()) {
-            p.sendMessage(mes);
-        }
+        memberManager.getMutedStatus(player.getUsername()).thenAcceptAsync(result -> {
+            if (result) {
+                player.sendMessage(pluginMessages.currentlyMuted);
+            }
+            for (Player p : MSEssentials.server.getAllPlayers()) {
+                p.sendMessage(mes);
+            }
+        });
     }
 }

@@ -1,15 +1,16 @@
 package rocks.milspecsg.msessentials.misc;
 
-import com.google.inject.Inject;
 import net.kyori.text.TextComponent;
+import net.kyori.text.event.ClickEvent;
+import net.kyori.text.event.HoverEvent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.msessentials.MSEssentialsPluginInfo;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 
 public class PluginMessages {
 
-    @Inject
-    private ConfigurationService configService;
+    public TextComponent broadcastPrefix = TextComponent.builder()
+            .append(legacyColor("&a[Broadcast] "))
+            .build();
 
     public TextComponent notEnoughArgs = TextComponent.builder()
             .append(MSEssentialsPluginInfo.pluginPrefix)
@@ -21,7 +22,12 @@ public class PluginMessages {
             .append(legacyColor("&4insufficient permissions!"))
             .build();
 
-    public TextComponent currentServer (String name, String serverName) {
+    public TextComponent noNickColorPermission = TextComponent.builder()
+            .append(MSEssentialsPluginInfo.pluginPrefix)
+            .append(legacyColor("&4You do not have permissions for a colored nickname!"))
+            .build();
+
+    public TextComponent currentServer(String name, String serverName) {
         return TextComponent.builder()
                 .append(MSEssentialsPluginInfo.pluginPrefix)
                 .append(legacyColor(name + " is connected to " + "&a" + serverName))
@@ -45,11 +51,11 @@ public class PluginMessages {
 
     public TextComponent kickExempt = TextComponent.builder()
             .append(MSEssentialsPluginInfo.pluginPrefix)
-            .append(legacyColor("&eThis user is exmpet from being kicked"))
+            .append(legacyColor("&eThis user is exempt from being kicked"))
             .build();
 
     public TextComponent socialSpyToggle(boolean b) {
-        if(b) {
+        if (b) {
             return TextComponent.builder()
                     .append(MSEssentialsPluginInfo.pluginPrefix)
                     .append(legacyColor("&aSocialSpy enabled."))
@@ -63,7 +69,7 @@ public class PluginMessages {
     }
 
     public TextComponent staffChatToggle(boolean b) {
-        if(b) {
+        if (b) {
             return TextComponent.builder()
                     .append(MSEssentialsPluginInfo.pluginPrefix)
                     .append(legacyColor("StaffChat &aenabled."))
@@ -76,15 +82,36 @@ public class PluginMessages {
         }
     }
 
-    public TextComponent staffChatMessageFormatted (TextComponent message, String username) {
+    public TextComponent staffChatMessageFormatted(TextComponent message, String username) {
         return TextComponent.builder()
                 .append(legacyColor("&b[STAFF]&5 " + username + " : ").append(message))
                 .build();
     }
 
-    public TextComponent staffChatMessageFormattedConsole (TextComponent message) {
+    public TextComponent staffChatMessageFormattedConsole(TextComponent message) {
         return TextComponent.builder()
                 .append(legacyColor("&b[STAFF]&5 CONSOLE : ").append(message))
+                .build();
+    }
+
+    public TextComponent teleportRequestSent(String targetName) {
+        return TextComponent.builder()
+                .append(legacyColor("&aRequested to teleport to "))
+                .append(legacyColor("&e").append(TextComponent.of(targetName)))
+                .build();
+    }
+
+    public TextComponent teleportRequestRecieved (String requesterName) {
+        return TextComponent.builder()
+                .append(legacyColor("&a" + requesterName + " requests to teleport to you."))
+                .hoverEvent(HoverEvent.showText(TextComponent.of("Click here to accept")))
+                .clickEvent(ClickEvent.runCommand("/tpaccept"))
+                .build();
+    }
+
+    public TextComponent teleportToSelf () {
+        return TextComponent.builder()
+                .append(legacyColor("&4You cannot teleport to yourself!"))
                 .build();
     }
 

@@ -25,25 +25,25 @@ public class KickCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         String kickReason = "you have been kicked!";
-        if(!source.hasPermission(PluginPermissions.KICK)) {
+        if (!source.hasPermission(PluginPermissions.KICK)) {
             source.sendMessage(pluginMessages.noPermission);
             return;
         }
-        if(!(args.length >= 1)) {
+        if (!(args.length >= 1)) {
             source.sendMessage(pluginMessages.notEnoughArgs);
             return;
         }
-        if(args.length > 1) {
+        if (args.length > 1) {
             kickReason = args[1];
         }
 
-        if(proxyServer.getPlayer(args[0]).isPresent()) {
-            Optional<Player> player = proxyServer.getPlayer(args[0]);
-            if(player.get().hasPermission(PluginPermissions.KICK_EXEMPT)) {
+        Optional<Player> player = proxyServer.getPlayer(args[0]);
+        if (player.isPresent()) {
+            if (player.get().hasPermission(PluginPermissions.KICK_EXEMPT)) {
                 source.sendMessage(pluginMessages.kickExempt);
                 return;
             }
-            proxyServer.getPlayer(player.get().getUsername()).get().disconnect(TextComponent.of(kickReason));
+            player.get().disconnect(TextComponent.of(kickReason));
         } else {
             source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Offline or invalid player.")));
         }

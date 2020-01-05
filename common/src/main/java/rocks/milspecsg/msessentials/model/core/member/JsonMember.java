@@ -30,23 +30,23 @@ public class JsonMember extends JsonDbo implements Member<UUID> {
     }
 
     @Override
-    public String getNickname() {
+    public String getNickName() {
         return nickname;
     }
 
     @Override
-    public void setNickname(String nickname) {
+    public void setNickName(String nickname) {
         this.nickname = nickname;
         prePersist();
     }
 
     @Override
-    public boolean getIsBanned() {
+    public boolean getBanStatus() {
         return isBanned;
     }
 
     @Override
-    public void setBanned(boolean banned) {
+    public void setBanStatus(boolean banned) {
         this.isBanned = banned;
     }
 
@@ -61,22 +61,22 @@ public class JsonMember extends JsonDbo implements Member<UUID> {
     }
 
     @Override
-    public Date getJoinDateUtc() {
+    public Date getJoinedUtc() {
         return joinedUtc;
     }
 
     @Override
-    public void setJoinDateUtc(Date joinedUtc) {
+    public void setJoinedUtc(Date joinedUtc) {
         this.joinedUtc = joinedUtc;
     }
 
     @Override
-    public Date getLastSeenDateUtc() {
+    public Date getLastSeenUtc() {
         return lastSeenUtc;
     }
 
     @Override
-    public void setLastSeenDateUtc(Date lastSeenUTC) {
+    public void setLastSeenUtc(Date lastSeenUTC) {
         this.lastSeenUtc = lastSeenUTC;
     }
 

@@ -3,31 +3,37 @@ package rocks.milspecsg.msessentials.commands;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.misc.PluginMessages;
 import rocks.milspecsg.msessentials.misc.PluginPermissions;
 
-
-public class UnMuteCommand implements Command {
-
-    @Inject
-    private MemberManager<TextComponent> memberManager;
+public class DeleteNicknameCommand implements Command {
 
     @Inject
     private PluginMessages pluginMessages;
 
+    @Inject
+    private MemberManager<TextComponent> memberManager;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(PluginPermissions.BAN)) {
+        if (!source.hasPermission(PluginPermissions.NICKNAME)) {
             source.sendMessage(pluginMessages.noPermission);
             return;
         }
+
         if (args.length == 0) {
             source.sendMessage(pluginMessages.notEnoughArgs);
             return;
         }
-        memberManager.setMutedStatus(args[0], false).thenAcceptAsync(source::sendMessage);
+        if (source instanceof Player) {
+            Player player = (Player) source;
+            memberManager.deleteNickname(player.getUsername()).thenAcceptAsync(source::sendMessage);
+        } else {
+            source.sendMessage(TextComponent.of("Player only command!"));
+        }
     }
 }

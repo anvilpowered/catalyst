@@ -42,14 +42,14 @@ public class ReplyCommand implements Command {
 
             if (ProxyMessageEvent.replyMap.containsKey(senderUUID)) {
                 UUID recipientUUID = ProxyMessageEvent.replyMap.get(senderUUID);
-                ProxyMessageEvent.replyMap.put(recipientUUID, senderUUID);
-
                 Optional<Player> recipient = proxyServer.getPlayer(recipientUUID);
 
-                if (!recipient.isPresent()) {
+                if (recipient.isPresent()) {
+                    ProxyMessageEvent.sendMessage(sender, recipient.get(), message, proxyServer);
+                    ProxyMessageEvent.replyMap.put(recipientUUID, senderUUID);
+                } else {
                     source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(pluginMessages.legacyColor("&4Invalid of offline player!")));
                 }
-                ProxyMessageEvent.sendMessage(sender, recipient.get(), message, proxyServer);
             } else {
                 source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(pluginMessages.legacyColor("Nobody to reply to!")));
             }

@@ -9,9 +9,11 @@ import rocks.milspecsg.msrepository.BindingExtensions;
 import rocks.milspecsg.msrepository.CommonBindingExtensions;
 import rocks.milspecsg.msrepository.PluginInfo;
 import rocks.milspecsg.msrepository.api.CurrentServerService;
+import rocks.milspecsg.msrepository.api.KickService;
 import rocks.milspecsg.msrepository.api.UserService;
 import rocks.milspecsg.msrepository.api.tools.resultbuilder.StringResult;
 import rocks.milspecsg.msrepository.service.velocity.VelocityCurrentServerService;
+import rocks.milspecsg.msrepository.service.velocity.VelocityKickService;
 import rocks.milspecsg.msrepository.service.velocity.VelocityStringResult;
 import rocks.milspecsg.msrepository.service.velocity.VelocityUserService;
 
@@ -39,5 +41,7 @@ public class VelocityModule extends CommonModule<
         });
 
         bind(CurrentServerService.class).to(VelocityCurrentServerService.class);
+
+        bind(KickService.class).to(VelocityKickService.class);
     }
 }

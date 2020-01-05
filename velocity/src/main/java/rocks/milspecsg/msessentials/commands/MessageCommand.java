@@ -12,7 +12,7 @@ import rocks.milspecsg.msessentials.events.ProxyMessageEvent;
 import rocks.milspecsg.msessentials.misc.PluginMessages;
 import rocks.milspecsg.msessentials.misc.PluginPermissions;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ public class MessageCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         String name;
-        if (args.length == 0 || !(args.length >= 1)) {
+        if (args.length < 1) {
             source.sendMessage(pluginMessages.notEnoughArgs);
             return;
         }
@@ -48,13 +48,13 @@ public class MessageCommand implements Command {
             Player sender = (Player) source;
 
             if (sender.hasPermission(PluginPermissions.MESSAGE)) {
-                if (proxyServer.getPlayer(args[0]).isPresent()) {
-                    if (args[0].equalsIgnoreCase(proxyServer.getPlayer(args[0]).get().getUsername())) {
+                if (recipient.isPresent()) {
+                    if (args[0].equalsIgnoreCase(recipient.get().getUsername())) {
                         args[0] = args[0].toLowerCase();
-                        String recipientName = proxyServer.getPlayer(args[0]).get().getUsername();
+                        String recipientName = recipient.get().getUsername();
                         String message = String.join("", args).replace(recipientName.toLowerCase(), "");
                         ProxyMessageEvent.sendMessage(sender, recipient.get(), message, proxyServer);
-                        if(sender.getUniqueId().equals(recipient.get().getUniqueId())) {
+                        if (sender.getUniqueId().equals(recipient.get().getUniqueId())) {
                             return;
                         }
                         ProxyMessageEvent.replyMap.put(recipient.get().getUniqueId(), sender.getUniqueId());
@@ -62,16 +62,13 @@ public class MessageCommand implements Command {
                 }
             }
         }
-
-
     }
-
 
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
             return MSEssentials.getServer().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
-        return Arrays.asList();
+        return Collections.emptyList();
     }
 }
