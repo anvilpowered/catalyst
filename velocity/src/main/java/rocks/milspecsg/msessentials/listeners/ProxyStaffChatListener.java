@@ -2,12 +2,10 @@ package rocks.milspecsg.msessentials.listeners;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import rocks.milspecsg.msessentials.events.ProxyStaffChatEvent;
-import rocks.milspecsg.msessentials.misc.LuckpermsHook;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
 public class ProxyStaffChatListener {
 

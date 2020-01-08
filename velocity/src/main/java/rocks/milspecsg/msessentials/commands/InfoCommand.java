@@ -1,17 +1,17 @@
 package rocks.milspecsg.msessentials.commands;
 
+import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.MSEssentialsPluginInfo;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.CommandUsageMessages;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
-import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +26,9 @@ public class InfoCommand implements Command {
     @Inject
     private PluginMessages pluginMessages;
 
+    @Inject
+    private CommandUsageMessages commandUsage;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
 
@@ -35,7 +38,8 @@ public class InfoCommand implements Command {
         }
 
         if (args.length == 0) {
-            source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Please supply a username!")));
+            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(commandUsage.infoCommandUsage);
         } else {
             boolean isActive = proxyServer.getPlayer(args[0]).isPresent();
             memberManager.info(args[0], isActive).thenAcceptAsync(source::sendMessage);

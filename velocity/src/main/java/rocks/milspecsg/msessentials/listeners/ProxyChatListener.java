@@ -1,26 +1,21 @@
 package rocks.milspecsg.msessentials.listeners;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.msessentials.MSEssentials;
-import rocks.milspecsg.msessentials.MSEssentialsPluginInfo;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.events.ProxyStaffChatEvent;
-import rocks.milspecsg.msessentials.misc.LuckpermsHook;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.utils.LuckPermsUtils;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.modules.chatutils.ChatFilter;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class ProxyChatListener {
@@ -53,7 +48,7 @@ public class ProxyChatListener {
         List<String> swearList = chatFilter.isswear(message);
         if (swearList != null) {
             if (e.getResult().isAllowed()) {
-                if (!player.hasPermission(PluginPermissions.LANGUAGEADMIN)) {
+                if (!player.hasPermission(PluginPermissions.LANGUAGE_ADMIN)) {
                     for (String swear : swearList) {
                         message = message.replace(swear, "****");
                     }
@@ -81,19 +76,19 @@ public class ProxyChatListener {
     }
 
     public String getRank(Player player) {
-        return LuckpermsHook.getPrefix(player);
+        return LuckPermsUtils.getPrefix(player);
     }
 
     public String getSuffix(Player player) {
-        return LuckpermsHook.getSuffix(player);
+        return LuckPermsUtils.getSuffix(player);
     }
 
     public String getChatColor(Player player) {
-        return LuckpermsHook.getChatColor(player);
+        return LuckPermsUtils.getChatColor(player);
     }
 
     public String getNameColor(Player player) {
-        return LuckpermsHook.getNameColor(player);
+        return LuckPermsUtils.getNameColor(player);
     }
 
     public void sendMessage(PlayerChatEvent e, String message) throws ExecutionException, InterruptedException {
@@ -111,16 +106,15 @@ public class ProxyChatListener {
         }
         Tristate hasColorPermission = player.getPermissionValue(PluginPermissions.CHATCOLOR);
 
-        CompletableFuture<TextComponent> unFormatted = memberManager.formatMessage(prefix, nameColor, player.getUsername(), chatColor + message, suffix, hasColorPermission.asBoolean());
-        TextComponent mes = unFormatted.get();
-
-        memberManager.getMutedStatus(player.getUsername()).thenAcceptAsync(result -> {
-            if (result) {
-                player.sendMessage(pluginMessages.currentlyMuted);
+        memberManager.formatMessage(prefix, nameColor, player.getUsername(), chatColor + message, suffix, hasColorPermission.asBoolean()).thenAcceptAsync(optionalMessage -> {
+            if (optionalMessage.equals(TextComponent.of("You are muted!"))) {
+                player.sendMessage(TextComponent.of("You are muted!"));
+                return;
             }
-            for (Player p : MSEssentials.server.getAllPlayers()) {
-                p.sendMessage(mes);
+            for (Player p : proxyServer.getAllPlayers()) {
+                p.sendMessage(optionalMessage);
             }
         });
+
     }
 }

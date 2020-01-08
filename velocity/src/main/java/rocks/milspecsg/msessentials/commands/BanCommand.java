@@ -8,8 +8,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.CommandUsageMessages;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,9 @@ public class BanCommand implements Command {
     @Inject
     private MemberManager<TextComponent> memberManager;
 
+    @Inject
+    private CommandUsageMessages commandUsage;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.BAN)) {
@@ -35,6 +39,7 @@ public class BanCommand implements Command {
 
         if (args.length == 0) {
             source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(commandUsage.banCommandUsage);
             return;
         }
         String username = args[0];

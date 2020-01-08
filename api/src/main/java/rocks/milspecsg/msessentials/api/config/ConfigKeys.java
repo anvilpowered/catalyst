@@ -8,7 +8,8 @@ public interface ConfigKeys extends rocks.milspecsg.msrepository.api.config.Conf
     int JOIN_MESSAGE = 14;
     int LEAVE_MESSAGE = 15;
     int WELCOME_MESSAGE = 16;
-    int SERVER_COMMAND_ENABLED = 17;
+    int MOTD = 17;
+    int SERVER_COMMAND_ENABLED = 18;
     int PROXY_CHAT_ENABLED = 50;
     int GLOBAL_TAB_ENABLED = 70;
     int GLOBAL_TAB_HEADER = 71;

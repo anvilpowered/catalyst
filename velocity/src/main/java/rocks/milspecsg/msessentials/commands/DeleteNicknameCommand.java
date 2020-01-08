@@ -7,8 +7,8 @@ import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
 public class DeleteNicknameCommand implements Command {
 

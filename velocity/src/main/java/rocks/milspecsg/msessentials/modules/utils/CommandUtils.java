@@ -1,4 +1,4 @@
-package rocks.milspecsg.msessentials.misc;
+package rocks.milspecsg.msessentials.modules.utils;
 
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;

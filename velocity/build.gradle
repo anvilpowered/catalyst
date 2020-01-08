@@ -41,7 +41,7 @@ dependencies {
 }
 
 shadowJar {
-    archiveName = "MSEssentials-Velocity-${modVersion}.jar"
+    archiveName = "MSEssentials-Velocity-2.0.0-BETA2.jar"
 
     dependencies {
         include project(':api')

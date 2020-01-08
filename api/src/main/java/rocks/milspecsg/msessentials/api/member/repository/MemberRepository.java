@@ -27,6 +27,8 @@ public interface MemberRepository<
 
     CompletableFuture<Optional<UUID>> setBannedForUser(String userName, boolean isBanned, String reason);
 
+    CompletableFuture<Optional<UUID>> setMuteStatusForUser(String userName, boolean muteStatus);
+
     CompletableFuture<Boolean> setNickNameForUser(String userName, String nickName);
 
     CompletableFuture<Boolean> setIPAddressForUser(String userName, String ipAddress);
@@ -34,6 +36,4 @@ public interface MemberRepository<
     CompletableFuture<Boolean> setJoinedUtcForUser(UUID userUUID, Date joinedUtc);
 
     CompletableFuture<Boolean> setLastSeenUtcForUser(UUID userUUID, Date lastSeenUtc);
-
-    CompletableFuture<Boolean> setMuteStatusForUser(String userName, boolean muteStatus);
 }

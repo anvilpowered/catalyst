@@ -9,13 +9,10 @@ import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.*;
 
-public class ProxyMessageEvent implements ResultedEvent<ProxyMessageEvent.MessageResult> {
+public class ProxyMessageEvent {
 
     @Inject
     private static ProxyServer proxyServer;
-
-    @Inject
-    private MessageResult messageResult;
 
     private final Player sender;
 
@@ -34,11 +31,6 @@ public class ProxyMessageEvent implements ResultedEvent<ProxyMessageEvent.Messag
         return recipient;
     }
 
-    @Override
-    public MessageResult getResult() {
-        return result;
-    }
-
     public String getRawMessage() {
         return rawMessage;
     }
@@ -47,7 +39,6 @@ public class ProxyMessageEvent implements ResultedEvent<ProxyMessageEvent.Messag
 
     private final String rawMessage;
 
-    private MessageResult result;
 
     private static TextComponent legacyColor(String text) {
         return LegacyComponentSerializer.legacy().deserialize(text, '&');
@@ -89,63 +80,18 @@ public class ProxyMessageEvent implements ResultedEvent<ProxyMessageEvent.Messag
                 .append(legacyColor("&7" + rawMessage))
                 .build();
 
-        if(socialSpySet.isEmpty()) {
+        if (socialSpySet.isEmpty()) {
             return;
         }
-            for (Player player : proxyServer.getAllPlayers()) {
-                if ((!(socialSpySet.isEmpty())) && socialSpySet.contains(player.getUniqueId())) {
-                    if (!sender.getUniqueId().equals(player.getUniqueId())) {
-                        if (!receiver.getUniqueId().equals(player.getUniqueId())) {
-                            System.out.println(player.getUsername());
-                            player.sendMessage(msg);
-                        }
+        for (Player player : proxyServer.getAllPlayers()) {
+            if ((!(socialSpySet.isEmpty())) && socialSpySet.contains(player.getUniqueId())) {
+                if (!sender.getUniqueId().equals(player.getUniqueId())) {
+                    if (!receiver.getUniqueId().equals(player.getUniqueId())) {
+                        System.out.println(player.getUsername());
+                        player.sendMessage(msg);
                     }
                 }
             }
-    }
-
-
-    public void setResult(MessageResult result) {
-        this.result = result;
-    }
-
-    public final class MessageResult implements ResultedEvent.Result {
-
-        private boolean allowed = false;
-
-        private String reason;
-
-        @Inject
-        public MessageResult(String optional, boolean b) {
-            reason = optional;
-            allowed = b;
         }
-
-        public final MessageResult create(boolean allowed2, String reason2) {
-            allowed = allowed2;
-            reason = reason2;
-            return new MessageResult(reason, allowed);
-        }
-
-        public String getReason() {
-            return reason;
-        }
-
-        public void setReason(String reason2) {
-            reason = reason2;
-        }
-
-
-        @Override
-        public boolean isAllowed() {
-            allowed = true;
-            return allowed;
-        }
-
-        public void deny(String reason2) {
-            reason = reason2;
-            allowed = false;
-        }
-
     }
 }

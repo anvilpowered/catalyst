@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import rocks.milspecsg.msessentials.api.config.ConfigKeys;
+import rocks.milspecsg.msessentials.api.config.ConfigTypes;
 import rocks.milspecsg.msrepository.service.common.config.CommonConfigurationService;
 
 import java.util.Arrays;
@@ -33,10 +34,11 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
     protected void initNodeTypeMap() {
         nodeTypeMap.put(ConfigKeys.BROADCAST_PREFIX, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.CHAT_FILTER_ENABLED, booleanTypeToken);
-        nodeTypeMap.put(ConfigKeys.CHAT_FILTER_SWEARS, stringListTypeToken);
-        nodeTypeMap.put(ConfigKeys.CHAT_FILTER_EXCEPTIONS, stringListTypeToken);
+        nodeTypeMap.put(ConfigKeys.CHAT_FILTER_SWEARS, ConfigTypes.STRINGLIST);
+        nodeTypeMap.put(ConfigKeys.CHAT_FILTER_EXCEPTIONS, ConfigTypes.STRINGLIST);
         nodeTypeMap.put(ConfigKeys.JOIN_MESSAGE, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.LEAVE_MESSAGE, stringTypeToken);
+        nodeTypeMap.put(ConfigKeys.MOTD, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.PROXY_CHAT_ENABLED, booleanTypeToken);
         nodeTypeMap.put(ConfigKeys.SERVER_COMMAND_ENABLED, booleanTypeToken);
         nodeTypeMap.put(ConfigKeys.DATA_STORE_NAME, stringTypeToken);
@@ -69,6 +71,7 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         defaultStringMap.put(ConfigKeys.JOIN_MESSAGE, "%player% has joined the proxy");
         defaultStringMap.put(ConfigKeys.LEAVE_MESSAGE, "%player% has left the proxy");
         defaultBooleanMap.put(ConfigKeys.PROXY_CHAT_ENABLED, true);
+        defaultStringMap.put(ConfigKeys.MOTD, "A MSEssentials Proxy Server!");
         defaultBooleanMap.put(ConfigKeys.SERVER_COMMAND_ENABLED, true);
         defaultStringMap.put(ConfigKeys.DATA_STORE_NAME, "mongodb");
         defaultStringMap.put(ConfigKeys.MONGODB_HOSTNAME, "hostname");
@@ -96,6 +99,7 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeNameMap.put(ConfigKeys.LEAVE_MESSAGE, "message.leave");
         nodeNameMap.put(ConfigKeys.PROXY_CHAT_ENABLED, "proxy.chat");
         nodeNameMap.put(ConfigKeys.SERVER_COMMAND_ENABLED, "server.command");
+        nodeNameMap.put(ConfigKeys.MOTD, "message.motd");
         nodeNameMap.put(ConfigKeys.DATA_STORE_NAME, "datastore.dataStoreName");
         nodeNameMap.put(ConfigKeys.MONGODB_HOSTNAME, "mongodb.hostname");
         nodeNameMap.put(ConfigKeys.MONGODB_PORT, "mongodb.port");
@@ -121,6 +125,7 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeDescriptionMap.put(ConfigKeys.JOIN_MESSAGE, "\nFormat for proxy connection messages. Current placeholders: %player%");
         nodeDescriptionMap.put(ConfigKeys.LEAVE_MESSAGE, "\nFormat for proxy disconnect messages. Current placeholders: %player%");
         nodeDescriptionMap.put(ConfigKeys.PROXY_CHAT_ENABLED, "\nEnable or disable proxy-wide chat.");
+        nodeDescriptionMap.put(ConfigKeys.MOTD, "\nServer MOTD that is displayed when the proxy is pinged.");
         nodeDescriptionMap.put(ConfigKeys.SERVER_COMMAND_ENABLED, "\nEnable or disable the /(server) command");
         nodeDescriptionMap.put(ConfigKeys.DATA_STORE_NAME, "Data store name");
         nodeDescriptionMap.put(ConfigKeys.MONGODB_HOSTNAME, "\nMongoDB hostname");

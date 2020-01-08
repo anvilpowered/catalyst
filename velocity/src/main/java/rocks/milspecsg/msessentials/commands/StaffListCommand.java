@@ -7,8 +7,8 @@ import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.MSEssentialsPluginInfo;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.modules.utils.StaffListUtils;
 
 //This class was initially written by LGC_McLovin of MilspecSG

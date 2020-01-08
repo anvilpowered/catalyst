@@ -8,10 +8,10 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.CommandUsageMessages;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +28,9 @@ public class MuteCommand implements Command {
     @Inject
     private MemberManager<TextComponent> memberManager;
 
+    @Inject
+    private CommandUsageMessages commandUsage;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
 
@@ -38,6 +41,7 @@ public class MuteCommand implements Command {
 
         if (args.length == 0) {
             source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(commandUsage.muteCommandUsage);
             return;
         }
         Optional<Player> player = proxyServer.getPlayer(args[0]);
@@ -48,7 +52,7 @@ public class MuteCommand implements Command {
             }
         }
 
-        memberManager.setMutedStatus(args[0], true).thenAcceptAsync(source::sendMessage);
+       memberManager.mute(args[0]).thenAcceptAsync(source::sendMessage);
     }
 
     @Override

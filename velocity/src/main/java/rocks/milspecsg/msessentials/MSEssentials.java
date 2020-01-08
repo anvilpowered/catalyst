@@ -1,9 +1,11 @@
 package rocks.milspecsg.msessentials;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -14,15 +16,14 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import rocks.milspecsg.msessentials.commands.MSEssentialsCommandManager;
-import rocks.milspecsg.msessentials.events.ProxyTeleportRequestEvent;
 import rocks.milspecsg.msessentials.listeners.*;
 import rocks.milspecsg.msrepository.ApiVelocityModule;
 import rocks.milspecsg.msrepository.CommonConfigurationModule;
 import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 @Plugin(
         id = MSEssentialsPluginInfo.id,
@@ -91,6 +92,8 @@ public class MSEssentials {
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyChatListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyStaffChatListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyTeleportRequestListener.class));
+        proxyServer.getEventManager().register(this, injector.getInstance(PluginMessageListener.class));
+        proxyServer.getEventManager().register(this, injector.getInstance(PingEventListener.class));
     }
 
     public void loadConfig() {
@@ -111,6 +114,15 @@ public class MSEssentials {
             bind(new TypeLiteral<ConfigurationLoader<CommentedConfigurationNode>>() {
             }).toInstance(HoconConfigurationLoader.builder().setPath(Paths.get(configFilesLocation + "/msessentials.conf")).build());
 
+        }
+    }
+
+    @Subscribe
+    public void onPluginMessage(PluginMessageEvent event) {
+        System.out.println("Plugin messaged");
+        System.out.println(event.getIdentifier());
+        if (event.getIdentifier().equals("MSE-Starting")) {
+            System.out.println(Arrays.toString(event.getData()));
         }
     }
 }

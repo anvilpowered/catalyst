@@ -1,14 +1,21 @@
 package rocks.milspecsg.msessentials.commands;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
+import rocks.milspecsg.msessentials.api.config.ConfigKeys;
+import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 
 @Singleton
 public class MSEssentialsCommandManager implements CommandManager {
 
     @Inject
     private ProxyServer proxyServer;
+
+    @Inject
+    private ConfigurationService configService;
 
     @Inject
     private BroadcastCommand broadcastCommand;
@@ -70,6 +77,18 @@ public class MSEssentialsCommandManager implements CommandManager {
     @Inject
     private TeleportAcceptCommand teleportAcceptCommand;
 
+    @Inject
+    Provider<ServerCommand> serverCommandProvider;
+
+    @Inject
+    private SwearListCommand swearListCommand;
+
+    @Inject
+    private SwearAddCommand swearAddCommand;
+
+    @Inject
+    private SwearRemoveCommand swearRemoveCommand;
+
     @Override
     public void register(Object plugin) {
         proxyServer.getCommandManager().register("ban", banCommand, "msban");
@@ -88,10 +107,21 @@ public class MSEssentialsCommandManager implements CommandManager {
         proxyServer.getCommandManager().register("stafflist", staffListCommand);
         proxyServer.getCommandManager().register("staffchat", staffChatCommand, "sc");
         //proxyServer.getCommandManager().register("tp", teleportCommand, "mstp");
-       // proxyServer.getCommandManager().register("tpaccept", teleportAcceptCommand);
-       // proxyServer.getCommandManager().register("tpa", teleportRequestCommand, "tprequest");
+        // proxyServer.getCommandManager().register("tpaccept", teleportAcceptCommand);
+        // proxyServer.getCommandManager().register("tpa", teleportRequestCommand, "tprequest");
         proxyServer.getCommandManager().register("unban", unBanCommand, "msunban", "pardon", "mspardon");
         proxyServer.getCommandManager().register("unmute", unMuteCommand, "msunmute");
+        if (configService.getConfigBoolean(ConfigKeys.SERVER_COMMAND_ENABLED)) {
+            for (RegisteredServer server : proxyServer.getAllServers()) {
+                String serverName = server.getServerInfo().getName();
+                ServerCommand command = serverCommandProvider.get();
+                command.setRegisteredServer(serverName);
+                proxyServer.getCommandManager().register(serverName, command);
+            }
+        }
+        proxyServer.getCommandManager().register("swearlist", swearListCommand);
+        proxyServer.getCommandManager().register("swearadd", swearAddCommand);
+        proxyServer.getCommandManager().register("swearremove", swearRemoveCommand);
 
     }
 }

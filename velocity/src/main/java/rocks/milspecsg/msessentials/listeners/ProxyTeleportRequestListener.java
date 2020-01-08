@@ -3,7 +3,7 @@ package rocks.milspecsg.msessentials.listeners;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import rocks.milspecsg.msessentials.events.ProxyTeleportRequestEvent;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
 
 public class ProxyTeleportRequestListener {
 

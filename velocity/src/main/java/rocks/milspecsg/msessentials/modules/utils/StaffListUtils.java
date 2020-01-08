@@ -3,7 +3,6 @@ package rocks.milspecsg.msessentials.modules.utils;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
 
 import java.util.ArrayList;
 import java.util.List;

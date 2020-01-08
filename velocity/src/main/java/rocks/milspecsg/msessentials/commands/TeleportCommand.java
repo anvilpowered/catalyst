@@ -7,16 +7,12 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
-import rocks.milspecsg.msrepository.service.velocity.VelocityTeleportationService;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
 import java.util.Optional;
 
 public class TeleportCommand implements Command {
-
-    @Inject
-    private VelocityTeleportationService velocityTeleportationService;
 
     @Inject
     private PluginMessages pluginMessages;
@@ -44,7 +40,6 @@ public class TeleportCommand implements Command {
                     sourcePlayer.sendMessage(pluginMessages.teleportToSelf());
                     return;
                 }
-                velocityTeleportationService.teleport(sourcePlayer.getUniqueId(), targetPlayer.get().getUniqueId());
                 source.sendMessage(TextComponent.of("Sending player"));
             }
         } else {

@@ -9,8 +9,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.MSEssentials;
 import rocks.milspecsg.msessentials.events.ProxyMessageEvent;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.CommandUsageMessages;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,12 +26,16 @@ public class MessageCommand implements Command {
     @Inject
     private ProxyServer proxyServer;
 
+    @Inject
+    private CommandUsageMessages commandUsageMessages;
+
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         String name;
         if (args.length < 1) {
             source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(commandUsageMessages.messageCommandUsage);
             return;
         }
 

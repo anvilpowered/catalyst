@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import rocks.milspecsg.msessentials.misc.LuckpermsHook;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.LuckPermsUtils;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
 
 public class TabBuilder {
 
@@ -18,8 +18,8 @@ public class TabBuilder {
 
     public TextComponent formatPlayerTab(String raw, Player player) {
         raw = raw.replace("%username%", player.getUsername());
-        raw = raw.replace("%prefix%", LuckpermsHook.getPrefix(player));
-        raw = raw.replace("%suffix%", LuckpermsHook.getSuffix(player));
+        raw = raw.replace("%prefix%", LuckPermsUtils.getPrefix(player));
+        raw = raw.replace("%suffix%", LuckPermsUtils.getSuffix(player));
 
         raw = raw.replace("%server%", player.getCurrentServer().get().getServerInfo().getName());
 
@@ -28,8 +28,8 @@ public class TabBuilder {
 
     public TextComponent formatTab(String raw, Player player) {
         raw = raw.replace("%username%", player.getUsername())
-                .replace("%prefix%", LuckpermsHook.getPrefix(player))
-                .replace("%suffix%", LuckpermsHook.getSuffix(player))
+                .replace("%prefix%", LuckPermsUtils.getPrefix(player))
+                .replace("%suffix%", LuckPermsUtils.getSuffix(player))
                 .replace("%server%", player.getCurrentServer().get().getServerInfo().getName())
                 .replace("%ping%", String.valueOf(player.getPing()))
                 .replace("%playercount%", String.valueOf(proxyServer.getPlayerCount()))

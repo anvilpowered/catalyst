@@ -130,18 +130,6 @@ public class CommonMemberManager<
         );
     }
 
-
-    @Override
-    public CompletableFuture<TString> setJoinedUtc(UUID userUUID, Date joinedUtc) {
-        return getPrimaryComponent().setJoinedUtcForUser(userUUID, joinedUtc).thenApplyAsync(result -> {
-            if (result) {
-                return stringResult.success("Welcome");
-            } else {
-                return stringResult.fail("Failed to set joinedUtc");
-            }
-        });
-    }
-
     @Override
     public CompletableFuture<TString> setLastSeenUtc(UUID userUUID, Date lastSeenUtc) {
         return getPrimaryComponent().setLastSeenUtcForUser(userUUID, lastSeenUtc).thenApplyAsync(result -> {
@@ -176,44 +164,13 @@ public class CommonMemberManager<
         });
     }
 
-    @Override
-    public CompletableFuture<TString> setIPAddress(String username, String ipAddress) {
-        return getPrimaryComponent().setIPAddressForUser(username, ipAddress).thenApplyAsync(result -> {
-            if (result) {
-                return stringResult.success("set ip address");
-            }
-            System.out.println("Failed to set ip");
-            return stringResult.fail("failed to set ip");
-        });
-    }
-
-    @Override
-    public CompletableFuture<TString> getIPAddress(String username) {
-        return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
-            if (!optionalMember.isPresent()) {
-                return stringResult.fail("Couldn't get the ip address for " + username);
-            } else {
-                Member<?> member = optionalMember.get();
-                return stringResult.builder().append(member.getIPAddress()).build();
-            }
-        });
-    }
-
-    @Override
-    public CompletableFuture<TString> delNick(UUID userUUID) {
-        return null;
-    }
-
-    @Override
-    public CompletableFuture<TString> getNickname(String username) {
-        return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember ->
-                stringResult.deserialize(optionalMember.map(Member::getNickName).orElse(username)));
-    }
-
     public CompletableFuture<TString> formatMessage(String prefix, String nameColor, String name, String message, String suffix, boolean hasPermission) {
         return getPrimaryComponent().getOneForUser(name).thenApplyAsync(optionalMember -> {
             if (!optionalMember.isPresent()) {
                 return stringResult.fail("Couldn't find a user matching that name!");
+            }
+            if(optionalMember.get().getMuteStatus()) {
+                return stringResult.fail("You are muted!");
             }
             String nickname = optionalMember.get().getNickName();
             return stringResult
@@ -226,23 +183,6 @@ public class CommonMemberManager<
                     .onClickRunCommand("/msg " + name)
                     .build();
         });
-    }
-
-    @Override
-    public CompletableFuture<TString> setMutedStatus(String username, boolean muted) {
-        return getPrimaryComponent().setMuteStatusForUser(username, muted).thenApplyAsync(result -> {
-            if (result) {
-                return stringResult.success("Muted " + username);
-            } else {
-                return stringResult.success("unmuted " + username);
-            }
-        });
-    }
-
-    @Override
-    public CompletableFuture<Boolean> getMutedStatus(String username) {
-        return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember ->
-                optionalMember.map(Member::getMuteStatus).orElse(false));
     }
 
     @Override
@@ -283,6 +223,26 @@ public class CommonMemberManager<
         return getPrimaryComponent().setBannedForUser(userName, false, "").thenApplyAsync(optionalUUID -> {
             if (optionalUUID.isPresent()) {
                 return stringResult.success("Unbanned " + userName);
+            }
+            return stringResult.fail("Invalid user.");
+        });
+    }
+
+    @Override
+    public CompletableFuture<TString> mute(String userName) {
+        return getPrimaryComponent().setMuteStatusForUser(userName, true).thenApplyAsync(optionalUUID -> {
+            if(optionalUUID.isPresent()) {
+                return stringResult.success("Muted " + userName);
+            }
+            return stringResult.fail("Invalid user.");
+        });
+    }
+
+    @Override
+    public CompletableFuture<TString> unMute(String userName) {
+        return getPrimaryComponent().setMuteStatusForUser(userName, false).thenApplyAsync(optionalUUID -> {
+            if(optionalUUID.isPresent()) {
+                return stringResult.success("UnMuted " + userName);
             }
             return stringResult.fail("Invalid user.");
         });

@@ -1,4 +1,4 @@
-package rocks.milspecsg.msessentials.misc;
+package rocks.milspecsg.msessentials.modules.utils;
 
 public abstract class PluginPermissions {
     public static final String BAN = "msessentials.command.admin.ban";
@@ -10,7 +10,13 @@ public abstract class PluginPermissions {
     public static final String INFO = "msessentials.command.admin.info";
     public static final String KICK = "msessentials.command.admin.kick";
     public static final String KICK_EXEMPT = "msessentials.command.admin.kick.exempt";
-    public static final String LANGUAGEADMIN = "msessentials.command.language.admin";
+    public static final String LANGUAGE_ADMIN = "msessentials.command.language.admin";
+    public static final String LANGUAGE_SWEAR_ADD = "msessentials.commmand.language.swear.add";
+    public static final String LANGUAGE_SWEAR_REMOVE = "msessentials.command.language.swear.remove";
+    public static final String LANGUAGE_SWEAR_LIST = "msessentials.command.language.swear.list";
+    public static final String LANGUAGE_EXCEPTION_ADD = "msessentials.command.language.exception.add";
+    public static final String LANGUAGE_EXCEPTION_REMOVE = "msessentials.command.language.exception.remove";
+    public static final String LANGUAGE_EXCEPTION_LIST = "msessentials.command.language.exception.list";
     public static final String LIST = "msessentials.command.list";
     public static final String MESSAGE = "msessentials.command.message";
     public static final String MUTE = "msessentials.command.admin.mute";

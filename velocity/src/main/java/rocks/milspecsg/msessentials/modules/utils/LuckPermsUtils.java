@@ -1,4 +1,4 @@
-package rocks.milspecsg.msessentials.misc;
+package rocks.milspecsg.msessentials.modules.utils;
 
 import com.velocitypowered.api.proxy.Player;
 import net.luckperms.api.cacheddata.CachedMetaData;
@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class LuckpermsHook {
+public class LuckPermsUtils {
 
     public static String getPrefix(Player player) {
         if (getMetaData(player).get().getPrefix() == null)

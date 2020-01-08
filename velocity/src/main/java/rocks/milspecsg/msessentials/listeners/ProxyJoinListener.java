@@ -7,7 +7,7 @@ import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.events.ProxyMessageEvent;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.modules.utils.PlayerListUtils;
 import rocks.milspecsg.msessentials.modules.utils.StaffListUtils;
 

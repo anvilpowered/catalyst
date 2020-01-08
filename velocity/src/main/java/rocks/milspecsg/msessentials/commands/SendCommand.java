@@ -1,5 +1,6 @@
 package rocks.milspecsg.msessentials.commands;
 
+import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
@@ -10,10 +11,10 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.MSEssentialsPluginInfo;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.CommandUsageMessages;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
 public class SendCommand implements Command {
@@ -24,6 +25,9 @@ public class SendCommand implements Command {
     @Inject
     private PluginMessages pluginMessages;
 
+    @Inject
+    private CommandUsageMessages commandUsage;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.SEND)) {
@@ -33,6 +37,7 @@ public class SendCommand implements Command {
 
         if (args.length < 2) {
             source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(commandUsage.sendCommandUsage);
             return;
         }
 

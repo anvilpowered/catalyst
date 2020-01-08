@@ -32,5 +32,5 @@ public interface MongoMemberRepository
 
     CompletableFuture<Optional<UUID>> setBanned(Query<Member<ObjectId>> query, boolean isBanned, String reason);
 
-    CompletableFuture<Boolean> setMuteStatus(Query<Member<ObjectId>> query, boolean muteStatus);
+    CompletableFuture<Optional<UUID>> setMuteStatus(Query<Member<ObjectId>> query, boolean muteStatus);
 }

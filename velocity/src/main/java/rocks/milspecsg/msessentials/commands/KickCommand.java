@@ -1,5 +1,6 @@
 package rocks.milspecsg.msessentials.commands;
 
+import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
@@ -7,10 +8,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.MSEssentialsPluginInfo;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
-
-import javax.inject.Inject;
+import rocks.milspecsg.msessentials.modules.messages.CommandUsageMessages;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
 import java.util.Optional;
 
@@ -22,6 +22,9 @@ public class KickCommand implements Command {
     @Inject
     private PluginMessages pluginMessages;
 
+    @Inject
+    private CommandUsageMessages commandUsage;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         String kickReason = "you have been kicked!";
@@ -31,6 +34,7 @@ public class KickCommand implements Command {
         }
         if (!(args.length >= 1)) {
             source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(commandUsage.kickCommandUsage);
             return;
         }
         if (args.length > 1) {

@@ -5,8 +5,8 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.MSEssentials;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
 public class ReloadCommand implements Command {
 

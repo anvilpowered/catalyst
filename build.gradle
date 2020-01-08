@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'rocks.milspecsg'
-version '1.0.1'
+version '2.0.0-BETA2'
 
 sourceCompatibility = 1.8
 

@@ -6,8 +6,9 @@ import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msessentials.misc.PluginMessages;
-import rocks.milspecsg.msessentials.misc.PluginPermissions;
+import rocks.milspecsg.msessentials.modules.messages.CommandUsageMessages;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
+import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
 
 
 public class UnMuteCommand implements Command {
@@ -18,6 +19,9 @@ public class UnMuteCommand implements Command {
     @Inject
     private PluginMessages pluginMessages;
 
+    @Inject
+    private CommandUsageMessages commandUsage;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.BAN)) {
@@ -26,8 +30,9 @@ public class UnMuteCommand implements Command {
         }
         if (args.length == 0) {
             source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(commandUsage.unMuteCommandUsage);
             return;
         }
-        memberManager.setMutedStatus(args[0], false).thenAcceptAsync(source::sendMessage);
+        memberManager.unMute(args[0]).thenAcceptAsync(source::sendMessage);
     }
 }

@@ -18,6 +18,5 @@ public class ProxyTeleportRequestEvent {
     public ProxyTeleportRequestEvent(Player sourcePlayer, Player targetPlayer) {
         this.sourcePlayer = sourcePlayer;
         this.targetPlayer = targetPlayer;
-        System.out.println("Teleport request fired");
     }
 }
