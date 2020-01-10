@@ -1,10 +1,9 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '4.0.4'
 }
 
 group 'rocks.milspecsg'
-version '1.0.2'
+version '2.0.0-BETA2'
 
 sourceCompatibility = 1.8
 
@@ -15,7 +14,7 @@ repositories {
         name = 'velocity'
         url = 'https://repo.velocitypowered.com/snapshots/'
     }
-    maven{
+    maven {
         name = 'sponge'
         url = 'https://repo.spongepowered.org/maven'
     }
@@ -26,9 +25,8 @@ dependencies {
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
     compile group: 'com.cedarsoftware', name: 'json-io', version: '4.5.0'
     compile 'org.spongepowered:configurate-hocon:3.6'
+    compile 'org.spongepowered:configurate-core:3.6'
     compile 'org.spongepowered:configurate-gson:3.6'
     compile 'org.spongepowered:configurate-yaml:3.6'
-    compile 'org.spongepowered:configurate-core:3.6'
     compileOnly 'net.luckperms:api:5.0'
-    implementation 'org.javacord:javacord:3.0.4'
 }
