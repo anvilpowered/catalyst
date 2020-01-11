@@ -27,6 +27,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import rocks.milspecsg.msessentials.MSEssentials;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
+import rocks.milspecsg.msessentials.events.ProxyChatEvent;
 import rocks.milspecsg.msessentials.events.ProxyStaffChatEvent;
 import rocks.milspecsg.msessentials.modules.utils.LuckPermsUtils;
 import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
@@ -79,6 +80,8 @@ public class ProxyChatListener {
             }
         } else {
             if (e.getResult().isAllowed()) {
+                ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), message, TextComponent.of(message));
+                proxyServer.getEventManager().fire(proxyChatEvent).join();
                 sendMessage(e, checkPlayerName(message));
             }
         }
