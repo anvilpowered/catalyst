@@ -18,5 +18,14 @@
 
 package rocks.milspecsg.msessentials.modules.tab;
 
+import com.google.inject.Singleton;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Singleton
 public class TabUtils {
+
+    public Map<String, Double> playerBalances = new HashMap<>();
+
 }

@@ -164,7 +164,7 @@ public class CommonMemberManager<
     public CompletableFuture<TString> setNickName(String userName, String nickName) {
         return getPrimaryComponent().setNickNameForUser(userName, nickName).thenApplyAsync(result -> {
             if (result) {
-                return stringResult.success("Set nickname to " + stringResult.deserialize(nickName));
+                return stringResult.success("Set nickname to " + nickName);
             } else {
                 return stringResult.fail("Failed to set the nickname " + nickName);
             }
@@ -173,7 +173,7 @@ public class CommonMemberManager<
 
     @Override
     public CompletableFuture<TString> deleteNickname(String username) {
-        return getPrimaryComponent().setNickNameForUser(username, "").thenApplyAsync(result -> {
+        return getPrimaryComponent().setNickNameForUser(username, username).thenApplyAsync(result -> {
             if(result) {
                 return stringResult.success("Successfully deleted your nickname.");
             } else {
@@ -190,15 +190,19 @@ public class CommonMemberManager<
             if(optionalMember.get().getMuteStatus()) {
                 return stringResult.fail("You are muted!");
             }
-            String nickname = optionalMember.get().getNickName();
+            String finalName = optionalMember.get().getUserName();
+            if(optionalMember.get().getNickName() != finalName) {
+                finalName = optionalMember.get().getNickName();
+            }
+            stringResult.deserialize(nameColor);
             return stringResult
                     .builder()
                     .append(stringResult.deserialize(prefix))
-                    .append(nickname == null ? name : nickname)
+                    .append(stringResult.deserialize(nameColor + finalName))
                     .append(": ")
                     .append(stringResult.deserialize(message))
                     .onHoverShowText(stringResult.builder().append(name).build())
-                    .onClickRunCommand("/msg " + name)
+                    .onClickSuggestCommand("/msg " + name)
                     .build();
         });
     }

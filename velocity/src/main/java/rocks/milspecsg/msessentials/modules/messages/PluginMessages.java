@@ -197,4 +197,15 @@ public class PluginMessages {
     public TextComponent legacyColor(String text) {
         return LegacyComponentSerializer.legacy().deserialize(text, '&');
     }
+
+    public String removeColor (String in) {
+      return in.replace("&0", "").replaceAll("&1", "").replaceAll("&2", "")
+                .replaceAll("&3", "").replaceAll("&4", "").replaceAll("&5", "")
+                .replaceAll("&6", "").replaceAll("&7", "").replaceAll("&8", "")
+                .replaceAll("&a", "").replaceAll("&b", "").replaceAll("&c", "")
+                .replaceAll("&d", "").replaceAll("&e", "").replaceAll("&f", "")
+                .replaceAll("&k", "").replaceAll("&l", "").replaceAll("&m", "")
+                .replaceAll("&n", "").replaceAll("&o", "").replaceAll("&r", "")
+                .replaceAll("&k", "").replaceAll("&9", "");
+    }
 }

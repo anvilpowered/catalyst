@@ -18,5 +18,128 @@
 
 package rocks.milspecsg.msessentials.modules.tab;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.player.TabList;
+import com.velocitypowered.api.proxy.player.TabListEntry;
+import com.velocitypowered.api.util.GameProfile;
+import rocks.milspecsg.msessentials.MSEssentials;
+import rocks.milspecsg.msessentials.api.config.ConfigKeys;
+import rocks.milspecsg.msessentials.api.config.ConfigTypes;
+import rocks.milspecsg.msrepository.api.config.ConfigurationService;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+@Singleton
 public class GlobalTab {
+
+    @Inject
+    private ProxyServer proxyServer;
+
+    private ConfigurationService configurationService;
+
+    @Inject
+    private TabBuilder tabBuilder;
+
+    @Inject
+    public GlobalTab(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+        this.configurationService.addConfigLoadedListener(this::configLoaded);
+    }
+
+    private void configLoaded(Object plugin) {
+        try {
+            System.out.println("Config Loaded - MSEssentials");
+            schedule();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void insertIntoTab(TabList list, TabListEntry entry, List<UUID> toKeep) {
+
+        UUID inUUID = entry.getProfile().getId();
+        List<UUID> contained = new ArrayList<>();
+        Map<UUID, TabListEntry> cache = new HashMap<>();
+
+
+        for (TabListEntry e : list.getEntries()) {
+            contained.add(e.getProfile().getId());
+            cache.put(e.getProfile().getId(), e);
+        }
+
+        if (!contained.contains(inUUID)) {
+            list.addEntry(entry);
+            toKeep.add(inUUID);
+            return;
+        } else {
+            TabListEntry tabListEntry = cache.get(inUUID);
+            if (!tabListEntry.getDisplayName().equals(entry.getDisplayName())) {
+                list.removeEntry(inUUID);
+                list.addEntry(entry);
+                toKeep.add(inUUID);
+            } else {
+                toKeep.add(inUUID);
+            }
+        }
+    }
+
+    public void schedule() {
+        System.out.println("Scheduler");
+        proxyServer.getScheduler().buildTask(MSEssentials.plugin, () -> {
+            try {
+                if (proxyServer.getPlayerCount() > 0) {
+                    for (Player currentPlayerToProcess : proxyServer.getAllPlayers()) {
+
+                        List<UUID> toKeep = new ArrayList<>();
+
+                        for (int i2 = 0; i2 < proxyServer.getPlayerCount(); i2++) {
+                            Player currentPlayer = (Player) proxyServer.getAllPlayers().toArray()[i2];
+
+                            TabListEntry currentEntry = TabListEntry.builder().profile(currentPlayer.getGameProfile())
+                                    .displayName(tabBuilder.formatPlayerTab(
+                                            configurationService.getConfigString(ConfigKeys.GLOBAL_TAB_PLAYER_FORMAT), currentPlayer))
+                                    .tabList(currentPlayerToProcess.getTabList()).build();
+
+                            insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry,
+                                    toKeep);
+                        }
+
+                        if (configurationService.getConfigBoolean(ConfigKeys.GLOBAL_TAB_ENABLED)) {
+                            List<String> customtabs = new ArrayList<>(configurationService.getConfigList(ConfigKeys.GLOBAL_TAB_CUSTOM, ConfigTypes.STRINGLIST));
+
+                            for (int i3 = 0; i3 < customtabs.size(); i3++) {
+                                GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
+
+                                TabListEntry currentEntry = TabListEntry.builder().profile(tabProfile)
+                                        .displayName(
+                                                tabBuilder.formatTab(customtabs.get(i3), currentPlayerToProcess))
+                                        .tabList(currentPlayerToProcess.getTabList()).build();
+
+                                insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry,
+                                        toKeep);
+                            }
+                        }
+
+                        for (TabListEntry current : currentPlayerToProcess.getTabList().getEntries()) {
+                            if (!toKeep.contains(current.getProfile().getId()))
+                                currentPlayerToProcess.getTabList().removeEntry(current.getProfile().getId());
+                        }
+
+                        currentPlayerToProcess.getTabList().setHeaderAndFooter(
+                                tabBuilder.formatTab(configurationService.getConfigString(ConfigKeys.GLOBAL_TAB_HEADER),
+                                        currentPlayerToProcess),
+                                tabBuilder.formatTab(configurationService.getConfigString(ConfigKeys.GLOBAL_TAB_FOOTER),
+                                        currentPlayerToProcess));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).repeat(10, TimeUnit.SECONDS).schedule();
+    }
 }

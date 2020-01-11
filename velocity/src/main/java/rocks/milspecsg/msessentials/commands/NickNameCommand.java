@@ -58,10 +58,11 @@ public class NickNameCommand implements Command {
             }
 
             Player player = (Player) source;
-            if (args[0].contains("&") == player.hasPermission(PluginPermissions.NICKNAMECOLOR)) {
+            String nick = args[0];
+            if (nick.contains("&") && player.hasPermission(PluginPermissions.NICKNAMECOLOR)) {
                 memberManager.setNickName(player.getUsername(), args[0]).thenAcceptAsync(source::sendMessage);
             } else {
-                source.sendMessage(pluginMessages.noNickColorPermission);
+                memberManager.setNickName(player.getUsername(), pluginMessages.removeColor(nick)).thenAccept(source::sendMessage);
             }
         } else {
             source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Player only command!")));

@@ -66,6 +66,7 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeTypeMap.put(ConfigKeys.MONGODB_USERNAME, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.MONGODB_PASSWORD, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.MONGODB_USE_AUTH, booleanTypeToken);
+        nodeTypeMap.put(ConfigKeys.MONGODB_AUTH_DB, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_ENABLED, booleanTypeToken);
         nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_HEADER, stringTypeToken);
         nodeTypeMap.put(ConfigKeys.GLOBAL_TAB_FOOTER, stringTypeToken);
@@ -96,6 +97,7 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         defaultIntegerMap.put(ConfigKeys.MONGODB_PORT, 27017);
         defaultStringMap.put(ConfigKeys.MONGODB_USERNAME, "username");
         defaultStringMap.put(ConfigKeys.MONGODB_PASSWORD, "password");
+        defaultStringMap.put(ConfigKeys.MONGODB_AUTH_DB, "admin");
         defaultStringMap.put(ConfigKeys.MONGODB_DBNAME, "msessentials");
         defaultBooleanMap.put(ConfigKeys.MONGODB_USE_AUTH, false);
         defaultBooleanMap.put(ConfigKeys.GLOBAL_TAB_ENABLED, true);
@@ -125,6 +127,7 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeNameMap.put(ConfigKeys.MONGODB_PASSWORD, "mongodb.password");
         nodeNameMap.put(ConfigKeys.MONGODB_DBNAME, "mongodb.dbname");
         nodeNameMap.put(ConfigKeys.MONGODB_USE_AUTH, "mongodb.auth");
+        nodeNameMap.put(ConfigKeys.MONGODB_AUTH_DB, "mongodb.authdb");
         nodeNameMap.put(ConfigKeys.GLOBAL_TAB_ENABLED, "globaltab.enabled");
         nodeNameMap.put(ConfigKeys.GLOBAL_TAB_HEADER, "globaltab.format.header");
         nodeNameMap.put(ConfigKeys.GLOBAL_TAB_FOOTER, "globaltab.format.footer");
@@ -151,6 +154,7 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeDescriptionMap.put(ConfigKeys.MONGODB_DBNAME, "\nMongoDB database name");
         nodeDescriptionMap.put(ConfigKeys.MONGODB_USERNAME, "\nMongoDB username");
         nodeDescriptionMap.put(ConfigKeys.MONGODB_PASSWORD, "\nMongoDB password");
+        nodeDescriptionMap.put(ConfigKeys.MONGODB_AUTH_DB, "\nDatabase to use for authentication");
         nodeDescriptionMap.put(ConfigKeys.MONGODB_USE_AUTH, "\nWhether to use authentication (username/password) for MongoDB connection");
         nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_ENABLED, "\nEnable or disable the global player tab");
         nodeDescriptionMap.put(ConfigKeys.GLOBAL_TAB_HEADER, "\nFormat for the tab header");

@@ -25,6 +25,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import net.kyori.text.TextComponent;
+import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.msessentials.api.config.ConfigKeys;
 import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 
@@ -48,7 +49,7 @@ public class PingEventListener {
         serverPing.getFavicon().ifPresent(builder::favicon);
         builder.version(serverPing.getVersion());
         builder.onlinePlayers(playerCount);
-        builder.description(TextComponent.of(configService.getConfigString(ConfigKeys.MOTD)));
+        builder.description(LegacyComponentSerializer.legacy().deserialize(configService.getConfigString(ConfigKeys.MOTD)));
         builder.maximumPlayers(proxyServer.getConfiguration().getShowMaxPlayers());
 
         event.setPing(builder.build());

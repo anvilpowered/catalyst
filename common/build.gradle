@@ -25,14 +25,10 @@ dependencies {
     implementation project(':MSRepository:msr-api:api-config')
     implementation project(':MSRepository:msr-api:api-repository')
     implementation project(':MSRepository:msr-api:api-repository:api-repository-mongodb')
-    implementation project(':MSRepository:msr-api:api-repository:api-repository-nitrite')
-    implementation project(':MSRepository:msr-api:api-repository:api-repository-json')
     implementation project(':MSRepository:msr-common')
     implementation project(':MSRepository:msr-common:common-config')
     implementation project(':MSRepository:msr-common:common-repository')
     implementation project(':MSRepository:msr-common:common-repository:common-repository-mongodb')
-    implementation project(':MSRepository:msr-common:common-repository:common-repository-nitrite')
-    implementation project(':MSRepository:msr-common:common-repository:common-repository-json')
     implementation jsondb
     implementation mongodb_driver_sync
     implementation mongo_java_driver

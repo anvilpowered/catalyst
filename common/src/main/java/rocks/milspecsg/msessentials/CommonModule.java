@@ -87,6 +87,7 @@ public class CommonModule<
                         ConfigKeys.MONGODB_DBNAME,
                         ConfigKeys.MONGODB_USERNAME,
                         ConfigKeys.MONGODB_PASSWORD,
+                        ConfigKeys.MONGODB_AUTH_DB,
                         ConfigKeys.MONGODB_USE_AUTH
                 )
         );

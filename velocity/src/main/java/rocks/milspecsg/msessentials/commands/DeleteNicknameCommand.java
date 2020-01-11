@@ -43,10 +43,6 @@ public class DeleteNicknameCommand implements Command {
             return;
         }
 
-        if (args.length == 0) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
-            return;
-        }
         if (source instanceof Player) {
             Player player = (Player) source;
             memberManager.deleteNickname(player.getUsername()).thenAcceptAsync(source::sendMessage);

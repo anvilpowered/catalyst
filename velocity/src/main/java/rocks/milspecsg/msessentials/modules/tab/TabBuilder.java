@@ -33,9 +33,12 @@ public class TabBuilder {
     @Inject
     private ProxyServer proxyServer;
 
+    @Inject
+    private TabUtils tabUtils;
+
 
     public TextComponent formatPlayerTab(String raw, Player player) {
-        raw = raw.replace("%username%", player.getUsername());
+        raw = raw.replace("%player%", player.getUsername());
         raw = raw.replace("%prefix%", LuckPermsUtils.getPrefix(player));
         raw = raw.replace("%suffix%", LuckPermsUtils.getSuffix(player));
 
@@ -45,7 +48,7 @@ public class TabBuilder {
     }
 
     public TextComponent formatTab(String raw, Player player) {
-        raw = raw.replace("%username%", player.getUsername())
+        raw = raw.replace("%player%", player.getUsername())
                 .replace("%prefix%", LuckPermsUtils.getPrefix(player))
                 .replace("%suffix%", LuckPermsUtils.getSuffix(player))
                 .replace("%server%", player.getCurrentServer().get().getServerInfo().getName())
@@ -57,6 +60,10 @@ public class TabBuilder {
     }
 
     private String getBalance(Player player) {
-        return "null";
+        if (tabUtils.playerBalances.containsKey(player.getUsername())) {
+            return String.valueOf(tabUtils.playerBalances.get(player.getUsername()));
+        } else {
+            return "null";
+        }
     }
 }

@@ -75,7 +75,7 @@ public class MessageCommand implements Command {
                     if (args[0].equalsIgnoreCase(recipient.get().getUsername())) {
                         args[0] = args[0].toLowerCase();
                         String recipientName = recipient.get().getUsername();
-                        String message = String.join("", args).replace(recipientName.toLowerCase(), "");
+                        String message = String.join(" ", args).replace(recipientName.toLowerCase(), "");
                         ProxyMessageEvent.sendMessage(sender, recipient.get(), message, proxyServer);
                         if (sender.getUniqueId().equals(recipient.get().getUniqueId())) {
                             return;

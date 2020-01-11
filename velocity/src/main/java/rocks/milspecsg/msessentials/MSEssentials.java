@@ -18,6 +18,7 @@
 
 package rocks.milspecsg.msessentials;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -27,6 +28,8 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -34,7 +37,9 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import rocks.milspecsg.msessentials.commands.MSEssentialsCommandManager;
+import rocks.milspecsg.msessentials.commands.ServerCommand;
 import rocks.milspecsg.msessentials.listeners.*;
+import rocks.milspecsg.msessentials.modules.tab.TabUtils;
 import rocks.milspecsg.msrepository.ApiVelocityModule;
 import rocks.milspecsg.msrepository.CommonConfigurationModule;
 import rocks.milspecsg.msrepository.api.config.ConfigurationService;
@@ -66,6 +71,9 @@ public class MSEssentials {
 
     @Inject
     private ProxyServer proxyServer;
+
+    @Inject
+    private TabUtils tabUtils;
 
 
     public static ProxyServer server;
@@ -137,10 +145,28 @@ public class MSEssentials {
 
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {
-        System.out.println("Plugin messaged");
-        System.out.println(event.getIdentifier());
-        if (event.getIdentifier().equals("MSE-Starting")) {
-            System.out.println(Arrays.toString(event.getData()));
+        if (!event.getIdentifier().equals(new LegacyChannelIdentifier("GlobalTab"))) {
+            return;
+        }
+
+        event.setResult(PluginMessageEvent.ForwardResult.handled());
+
+        if (!(event.getSource() instanceof ServerConnection)) {
+            return;
+        }
+
+        ByteArrayDataInput in = event.dataAsDataStream();
+        String subChannel = in.readUTF();
+
+        if (subChannel.endsWith("Balance")) {
+            String[] packet = in.readUTF().split(":");
+            String username = packet[0];
+            Double balance = Double.parseDouble(packet[1]);
+            if (tabUtils.playerBalances.containsKey(username)) {
+                tabUtils.playerBalances.replace(username, balance);
+            } else {
+                tabUtils.playerBalances.put(username, balance);
+            }
         }
     }
 }
