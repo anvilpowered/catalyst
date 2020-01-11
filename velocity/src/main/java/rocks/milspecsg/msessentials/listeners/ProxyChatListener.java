@@ -122,9 +122,13 @@ public class ProxyChatListener {
         if (chatColor == null) {
             chatColor = "&r";
         }
+        if (nameColor == null) {
+            nameColor = "&r";
+        }
+        String finalNameColor = nameColor;
         Tristate hasColorPermission = player.getPermissionValue(PluginPermissions.CHATCOLOR);
 
-        memberManager.formatMessage(prefix, nameColor, player.getUsername(), chatColor + message, suffix, hasColorPermission.asBoolean()).thenAcceptAsync(optionalMessage -> {
+        memberManager.formatMessage(prefix, finalNameColor, player.getUsername(), chatColor + message, suffix, hasColorPermission.asBoolean()).thenAcceptAsync(optionalMessage -> {
             if (optionalMessage.equals(TextComponent.of("You are muted!"))) {
                 player.sendMessage(TextComponent.of("You are muted!"));
                 return;

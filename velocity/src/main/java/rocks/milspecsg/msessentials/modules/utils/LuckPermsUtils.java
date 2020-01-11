@@ -56,7 +56,7 @@ public class LuckPermsUtils {
         if (getMetaData(player).isPresent()) {
             return getMetaData(player).get().getMetaValue("name-color");
         }
-        return "";
+        return "&r";
     }
 
     public static String getChatColor(Player player) {

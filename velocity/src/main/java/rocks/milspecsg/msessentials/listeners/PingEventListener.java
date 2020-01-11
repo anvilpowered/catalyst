@@ -27,6 +27,7 @@ import com.velocitypowered.api.proxy.server.ServerPing;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.msessentials.api.config.ConfigKeys;
+import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
 import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 
 import java.util.ArrayList;
@@ -40,6 +41,9 @@ public class PingEventListener {
     @Inject
     private ConfigurationService configService;
 
+    @Inject
+    private PluginMessages pluginmessages;
+
     @Subscribe
     public void onProxyPingEvent(ProxyPingEvent event) {
         ServerPing.Builder builder = ServerPing.builder();
@@ -49,7 +53,7 @@ public class PingEventListener {
         serverPing.getFavicon().ifPresent(builder::favicon);
         builder.version(serverPing.getVersion());
         builder.onlinePlayers(playerCount);
-        builder.description(LegacyComponentSerializer.legacy().deserialize(configService.getConfigString(ConfigKeys.MOTD)));
+        builder.description(pluginmessages.legacyColor(configService.getConfigString(ConfigKeys.MOTD)));
         builder.maximumPlayers(proxyServer.getConfiguration().getShowMaxPlayers());
 
         event.setPing(builder.build());

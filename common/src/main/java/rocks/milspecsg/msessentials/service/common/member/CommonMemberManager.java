@@ -162,7 +162,7 @@ public class CommonMemberManager<
 
     @Override
     public CompletableFuture<TString> setNickName(String userName, String nickName) {
-        return getPrimaryComponent().setNickNameForUser(userName, nickName).thenApplyAsync(result -> {
+        return getPrimaryComponent().setNickNameForUser( userName,"~" + nickName).thenApplyAsync(result -> {
             if (result) {
                 return stringResult.success("Set nickname to " + nickName);
             } else {
@@ -191,14 +191,16 @@ public class CommonMemberManager<
                 return stringResult.fail("You are muted!");
             }
             String finalName = optionalMember.get().getUserName();
-            if(optionalMember.get().getNickName() != finalName) {
+            String finalNameColor = nameColor;
+            if(optionalMember.get().getNickName() != null) {
                 finalName = optionalMember.get().getNickName();
+            } else {
+                finalName = finalNameColor + finalName;
             }
-            stringResult.deserialize(nameColor);
             return stringResult
                     .builder()
                     .append(stringResult.deserialize(prefix))
-                    .append(stringResult.deserialize(nameColor + finalName))
+                    .append(stringResult.deserialize(finalName))
                     .append(": ")
                     .append(stringResult.deserialize(message))
                     .onHoverShowText(stringResult.builder().append(name).build())

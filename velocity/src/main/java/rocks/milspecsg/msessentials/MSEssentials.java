@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import rocks.milspecsg.msessentials.commands.MSEssentialsCommandManager;
 import rocks.milspecsg.msessentials.commands.ServerCommand;
 import rocks.milspecsg.msessentials.listeners.*;
+import rocks.milspecsg.msessentials.modules.tab.GlobalTab;
 import rocks.milspecsg.msessentials.modules.tab.TabUtils;
 import rocks.milspecsg.msrepository.ApiVelocityModule;
 import rocks.milspecsg.msrepository.CommonConfigurationModule;
@@ -98,6 +99,7 @@ public class MSEssentials {
     public void initServices() {
         api = LuckPermsProvider.get();
         injector = velocityRootInjector.createChildInjector(new VelocityModule(), new MSEssentialsConfigurationModule(), new ApiVelocityModule());
+        injector.getInstance(GlobalTab.class);
     }
 
     private void initCommands() {
