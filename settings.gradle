@@ -10,21 +10,12 @@ include 'MSRepository:msr-api:api-config'
 
 include 'MSRepository:msr-api:api-repository'
 include 'MSRepository:msr-api:api-repository:api-repository-mongodb'
-include 'MSRepository:msr-api:api-repository:api-repository-json'
-include 'MSRepository:msr-api:api-repository:api-repository-h2'
-include 'MSRepository:msr-api:api-repository:api-repository-mariadb'
-include 'MSRepository:msr-api:api-repository:api-repository-nitrite'
 
 include 'MSRepository:msr-common'
 include 'MSRepository:msr-common:common-config'
 include 'MSRepository:msr-common:common-repository'
 include 'MSRepository:msr-common:common-repository:common-repository-mongodb'
-include 'MSRepository:msr-common:common-repository:common-repository-json'
-include 'MSRepository:msr-common:common-repository:common-repository-h2'
-include 'MSRepository:msr-common:common-repository:common-repository-mariadb'
-include 'MSRepository:msr-common:common-repository:common-repository-nitrite'
 
 include 'MSRepository:msr-sponge'
 include 'MSRepository:msr-sponge:sponge-repository'
-
 include 'MSRepository:msr-velocity'

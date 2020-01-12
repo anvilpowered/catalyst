@@ -19,7 +19,7 @@ dependencies {
     implementation project(':MSRepository:msr-api')
     implementation project(':MSRepository:msr-api:api-repository')
     implementation project(':MSRepository:msr-api:api-repository:api-repository-mongodb')
-    implementation jsondb
-    implementation mongodb_driver_sync
+    implementation project(':MSRepository:msr-api:api-config')
+    implementation guice
     implementation morphia
 }
