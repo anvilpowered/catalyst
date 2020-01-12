@@ -28,6 +28,7 @@ stafflist
 discord intergration (Still in dev, missing topic updater and webhook)
 
 Commands/Permissions : [Click Here](https://github.com/STG-Allen/MSEssentials/wiki/Commands)
+
 Luckperms Support
 -
 For setting name color
