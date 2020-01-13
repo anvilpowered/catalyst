@@ -26,9 +26,8 @@ import com.velocitypowered.api.proxy.player.TabList;
 import com.velocitypowered.api.proxy.player.TabListEntry;
 import com.velocitypowered.api.util.GameProfile;
 import rocks.milspecsg.msessentials.MSEssentials;
-import rocks.milspecsg.msessentials.api.config.ConfigKeys;
-import rocks.milspecsg.msessentials.api.config.ConfigTypes;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -39,20 +38,19 @@ public class GlobalTab {
     @Inject
     private ProxyServer proxyServer;
 
-    private ConfigurationService configurationService;
+    private Registry registry;
 
     @Inject
     private TabBuilder tabBuilder;
 
     @Inject
-    public GlobalTab(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
-        this.configurationService.addConfigLoadedListener(this::configLoaded);
+    public GlobalTab(Registry registry) {
+        this.registry = registry;
+        this.registry.addRegistryLoadedListener(this::registryLoaded);
     }
 
-    private void configLoaded(Object plugin) {
+    private void registryLoaded(Object plugin) {
         try {
-            System.out.println("Config Loaded - MSEssentials");
             schedule();
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -102,15 +100,15 @@ public class GlobalTab {
 
                             TabListEntry currentEntry = TabListEntry.builder().profile(currentPlayer.getGameProfile())
                                     .displayName(tabBuilder.formatPlayerTab(
-                                            configurationService.getConfigString(ConfigKeys.GLOBAL_TAB_PLAYER_FORMAT), currentPlayer))
+                                            registry.getOrDefault(MSEssentialsKeys.TAB_FORMAT), currentPlayer))
                                     .tabList(currentPlayerToProcess.getTabList()).build();
 
                             insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry,
                                     toKeep);
                         }
 
-                        if (configurationService.getConfigBoolean(ConfigKeys.GLOBAL_TAB_ENABLED)) {
-                            List<String> customtabs = new ArrayList<>(configurationService.getConfigList(ConfigKeys.GLOBAL_TAB_CUSTOM, ConfigTypes.STRINGLIST));
+                        if (registry.getOrDefault(MSEssentialsKeys.TAB)) {
+                            List<String> customtabs = new ArrayList<>(registry.getOrDefault(MSEssentialsKeys.TAB_FORMAT_CUSTOM));
 
                             for (int i3 = 0; i3 < customtabs.size(); i3++) {
                                 GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
@@ -131,9 +129,9 @@ public class GlobalTab {
                         }
 
                         currentPlayerToProcess.getTabList().setHeaderAndFooter(
-                                tabBuilder.formatTab(configurationService.getConfigString(ConfigKeys.GLOBAL_TAB_HEADER),
+                                tabBuilder.formatTab(registry.getOrDefault(MSEssentialsKeys.TAB_HEADER),
                                         currentPlayerToProcess),
-                                tabBuilder.formatTab(configurationService.getConfigString(ConfigKeys.GLOBAL_TAB_FOOTER),
+                                tabBuilder.formatTab(registry.getOrDefault(MSEssentialsKeys.TAB_FOOTER),
                                         currentPlayerToProcess));
                     }
                 }

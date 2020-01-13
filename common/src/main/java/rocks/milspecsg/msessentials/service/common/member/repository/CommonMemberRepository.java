@@ -21,25 +21,36 @@ package rocks.milspecsg.msessentials.service.common.member.repository;
 import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
 import rocks.milspecsg.msessentials.model.core.member.Member;
 import rocks.milspecsg.msrepository.api.cache.CacheService;
-import rocks.milspecsg.msrepository.datastore.DataStoreConfig;
 import rocks.milspecsg.msrepository.datastore.DataStoreContext;
 import rocks.milspecsg.msrepository.model.data.dbo.ObjectWithId;
 import rocks.milspecsg.msrepository.service.common.repository.CommonRepository;
 
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class CommonMemberRepository<
         TKey,
-        TDataStore,
-        TDataStoreConfig extends DataStoreConfig>
-        extends CommonRepository<TKey, Member<TKey>, CacheService<TKey, Member<TKey>, TDataStore, TDataStoreConfig>, TDataStore, TDataStoreConfig>
-        implements MemberRepository<TKey, TDataStore, TDataStoreConfig> {
+        TDataStore>
+        extends CommonRepository<TKey, Member<TKey>, CacheService<TKey, Member<TKey>, TDataStore>, TDataStore>
+        implements MemberRepository<TKey, TDataStore> {
 
-    protected CommonMemberRepository(DataStoreContext<TKey, TDataStore, TDataStoreConfig> dataStoreContext) {
+    protected CommonMemberRepository(DataStoreContext<TKey, TDataStore> dataStoreContext) {
         super(dataStoreContext);
+    }
+
+    @Override
+    public CompletableFuture<Optional<Member<TKey>>> getOneOrGenerateForUser(UUID userUUID, String ipAddress, String userName, boolean[] flags) {
+        return CompletableFuture.supplyAsync(() -> {
+            Optional<Member<TKey>> optionalMember = getOneForUser(userUUID).join();
+            if (optionalMember.isPresent()) return optionalMember;
+
+            Member<TKey> member = generateEmpty();
+            member.setUserUUID(userUUID);
+            member.setIPAddress(ipAddress);
+            member.setUserName(userName);
+            return insertOne(member).join();
+        });
     }
 
     @Override

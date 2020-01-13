@@ -23,11 +23,9 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.QueryResults;
 import org.mongodb.morphia.query.UpdateOperations;
-import rocks.milspecsg.msessentials.api.member.repository.MongoMemberRepository;
 import rocks.milspecsg.msessentials.model.core.member.Member;
 import rocks.milspecsg.msrepository.api.cache.CacheService;
 import rocks.milspecsg.msrepository.datastore.DataStoreContext;
-import rocks.milspecsg.msrepository.datastore.mongodb.MongoConfig;
 import rocks.milspecsg.msrepository.service.common.repository.CommonMongoRepository;
 
 import javax.inject.Inject;
@@ -37,12 +35,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class CommonMongoMemberRepository
-        extends CommonMemberRepository<ObjectId, Datastore, MongoConfig>
-        implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member<ObjectId>, Datastore, MongoConfig>>,
-        MongoMemberRepository {
+        extends CommonMemberRepository<ObjectId, Datastore>
+implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member<ObjectId>, Datastore>> {
 
     @Inject
-    public CommonMongoMemberRepository(DataStoreContext<ObjectId, Datastore, MongoConfig> dataStoreContext) {
+    public CommonMongoMemberRepository(DataStoreContext<ObjectId, Datastore> dataStoreContext) {
         super(dataStoreContext);
     }
 
@@ -52,13 +49,10 @@ public class CommonMongoMemberRepository
         return (Class<Member<ObjectId>>) getDataStoreContext().getEntityClassUnsafe("member");
     }
 
-
-    @Override
     public Optional<Query<Member<ObjectId>>> asQueryForUser(UUID userUUID) {
         return asQuery().map(q -> q.field("userUUID").equal(userUUID));
     }
 
-    @Override
     public Optional<Query<Member<ObjectId>>> asQueryForUser(String username) {
         return asQuery().map(q -> q.field("userName").equal(username));
     }
@@ -125,7 +119,6 @@ public class CommonMongoMemberRepository
         return asQueryForUser(userName).map(q -> setBanned(q, isBanned, reason)).orElse(CompletableFuture.completedFuture(Optional.empty()));
     }
 
-    @Override
     public CompletableFuture<Optional<UUID>> setBanned(Query<Member<ObjectId>> query, boolean isBanned, String reason) {
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("isBanned", isBanned).set("banReason", reason));
@@ -145,7 +138,6 @@ public class CommonMongoMemberRepository
         return asQueryForUser(userName).map(q -> setMuteStatus(q, muteStatus)).orElse(CompletableFuture.completedFuture(Optional.empty()));
     }
 
-    @Override
     public CompletableFuture<Optional<UUID>> setMuteStatus(Query<Member<ObjectId>> query, boolean muteStatus) {
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("muteStatus", muteStatus));
@@ -160,7 +152,6 @@ public class CommonMongoMemberRepository
         });
     }
 
-    @Override
     public CompletableFuture<Boolean> setNickname(Query<Member<ObjectId>> query, String nickname) {
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("nickname", nickname));
@@ -176,7 +167,6 @@ public class CommonMongoMemberRepository
         return asQueryForUser(userName).map(q -> setNickname(q, nickName).exceptionally(e -> false)).orElse(CompletableFuture.completedFuture(false));
     }
 
-    @Override
     public CompletableFuture<Boolean> setJoinedUtc(Query<Member<ObjectId>> query, Date joinedUtc) {
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("joinedUtc", joinedUtc));
@@ -197,7 +187,6 @@ public class CommonMongoMemberRepository
         });
     }
 
-    @Override
     public CompletableFuture<Boolean> setLastSeenUtc(Query<Member<ObjectId>> query, Date lastSeenUtc) {
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("lastSeenUtc", lastSeenUtc));
@@ -218,7 +207,6 @@ public class CommonMongoMemberRepository
         });
     }
 
-    @Override
     public CompletableFuture<Boolean> setIPAddress(Query<Member<ObjectId>> query, String ipAddress) {
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("ipAddress", ipAddress));

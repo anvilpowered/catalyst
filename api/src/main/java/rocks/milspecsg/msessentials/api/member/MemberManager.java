@@ -19,7 +19,10 @@
 package rocks.milspecsg.msessentials.api.member;
 
 import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
+import rocks.milspecsg.msessentials.model.core.member.Member;
+import rocks.milspecsg.msrepository.api.cache.CacheService;
 import rocks.milspecsg.msrepository.api.manager.Manager;
+import rocks.milspecsg.msrepository.api.repository.Repository;
 
 import java.net.Inet4Address;
 import java.util.Date;
@@ -27,27 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface MemberManager<TString> extends Manager<MemberRepository<?, ?, ?>> {
-
-    @Override
-    default String getDefaultIdentifierSingularUpper() {
-        return "Member";
-    }
-
-    @Override
-    default String getDefaultIdentifierPluralUpper() {
-        return "Members";
-    }
-
-    @Override
-    default String getDefaultIdentifierSingularLower() {
-        return "member";
-    }
-
-    @Override
-    default String getDefaultIdentifierPluralLower() {
-        return "member";
-    }
+public interface MemberManager<TString> extends Manager<MemberRepository<?, ?>> {
 
     CompletableFuture<TString> info(String nickname, boolean isActive);
 
@@ -64,9 +47,11 @@ public interface MemberManager<TString> extends Manager<MemberRepository<?, ?, ?
     CompletableFuture<TString> ban(String username, String reason);
 
     CompletableFuture<TString> ban(String userName);
+
     CompletableFuture<TString> unBan(String userName);
 
     CompletableFuture<TString> mute(String userName);
+
     CompletableFuture<TString> unMute(String userName);
 
 }

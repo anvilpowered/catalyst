@@ -21,7 +21,6 @@ package rocks.milspecsg.msessentials.api.member.repository;
 import rocks.milspecsg.msessentials.model.core.member.Member;
 import rocks.milspecsg.msrepository.api.cache.CacheService;
 import rocks.milspecsg.msrepository.api.repository.Repository;
-import rocks.milspecsg.msrepository.datastore.DataStoreConfig;
 
 import java.util.Date;
 import java.util.Optional;
@@ -30,9 +29,10 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MemberRepository<
         TKey,
-        TDataStore,
-        TDataStoreConfig extends DataStoreConfig>
-        extends Repository<TKey, Member<TKey>, CacheService<TKey, Member<TKey>, TDataStore, TDataStoreConfig>, TDataStore, TDataStoreConfig> {
+        TDataStore>
+    extends Repository<TKey, Member<TKey>, CacheService<TKey, Member<TKey>, TDataStore>, TDataStore> {
+
+
     CompletableFuture<Optional<Member<TKey>>> getOneOrGenerateForUser(UUID userUUID, String ipAddress, String userName, boolean[] flags);
 
     CompletableFuture<Optional<Member<TKey>>> getOneForUser(String userName);

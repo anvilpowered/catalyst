@@ -16,15 +16,18 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package rocks.milspecsg.msessentials.api.config;
+package rocks.milspecsg.msessentials.service.common.registry;
 
-import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import rocks.milspecsg.msrepository.api.data.key.Keys;
+import rocks.milspecsg.msrepository.service.registry.CommonExtendedRegistry;
 
-import java.util.List;
+@Singleton
+public class MSEssentialsRegistry extends CommonExtendedRegistry {
 
-
-@SuppressWarnings("UnstableApiUsage")
-public interface ConfigTypes {
-
-    TypeToken<List<String>> STRINGLIST = new TypeToken<List<String>>() {};
+    @Inject
+    public MSEssentialsRegistry() {
+        defaultMap.put(Keys.BASE_SCAN_PACKAGE, "rocks.milspecsg.msessentials.model.core");
+    }
 }

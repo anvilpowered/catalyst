@@ -37,9 +37,9 @@ import rocks.milspecsg.msrepository.service.velocity.VelocityUserService;
 
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class VelocityModule extends CommonModule<
-        Player,
         TextComponent,
         CommandSource> {
+
     @Override
     protected void configure() {
         super.configure();
@@ -51,10 +51,10 @@ public class VelocityModule extends CommonModule<
 
         bind(BasicPluginInfo.class).to(MSEssentialsPluginInfo.class);
 
-        bind(new TypeLiteral<PluginInfo<TextComponent>>(){
+        bind(new TypeLiteral<PluginInfo<TextComponent>>() {
         }).to(MSEssentialsPluginInfo.class);
 
-        bind(new TypeLiteral<StringResult<TextComponent, CommandSource>>(){
+        bind(new TypeLiteral<StringResult<TextComponent, CommandSource>>() {
         }).to(new TypeLiteral<VelocityStringResult>() {
         });
 

@@ -24,10 +24,8 @@ import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
 import net.kyori.text.format.TextColor;
 import rocks.milspecsg.msrepository.PluginInfo;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 
 import javax.inject.Inject;
-import java.net.MalformedURLException;
 import java.util.UUID;
 
 public class CommandUtils {
@@ -35,8 +33,6 @@ public class CommandUtils {
     @Inject
     private PluginInfo<TextComponent> pluginInfo;
 
-    @Inject
-    private ConfigurationService configurationService;
 
     public void createPluginInfoPage(final CommandSource source, final boolean hasPermissionForCommand)
     {

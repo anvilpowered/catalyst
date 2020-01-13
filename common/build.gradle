@@ -29,9 +29,12 @@ dependencies {
     implementation project(':MSRepository:msr-common:common-config')
     implementation project(':MSRepository:msr-common:common-repository')
     implementation project(':MSRepository:msr-common:common-repository:common-repository-mongodb')
+    implementation project(':MSRepository:msr-api:api-repository:api-repository-xodus')
     implementation jsondb
     implementation mongodb_driver_sync
     implementation mongo_java_driver
     implementation morphia
     implementation guice
+    implementation xodus
+    implementation xodus_entity_store
 }

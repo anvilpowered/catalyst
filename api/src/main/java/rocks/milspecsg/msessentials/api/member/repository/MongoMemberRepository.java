@@ -31,10 +31,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface MongoMemberRepository
-        extends MemberRepository<ObjectId,
-        Datastore,
-        MongoConfig>, MongoRepository<Member<ObjectId>, CacheService<ObjectId, Member<ObjectId>, Datastore, MongoConfig>> {
+public interface MongoMemberRepository<
+        TMember extends Member<ObjectId>,
+        TUser>
+    extends MemberRepository<ObjectId, TMember, TUser, Datastore, MongoConfig>
+{
 
     Optional<Query<Member<ObjectId>>> asQueryForUser(UUID userUUID);
 
