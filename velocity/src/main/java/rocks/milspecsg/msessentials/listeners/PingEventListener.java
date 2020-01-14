@@ -25,7 +25,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 
@@ -35,13 +34,10 @@ public class PingEventListener {
     private ProxyServer proxyServer;
 
     @Inject
-    private ConfigurationService configService;
-
-    @Inject
     private PluginMessages pluginmessages;
 
     @Inject
-    Registry registry;
+    private Registry registry;
 
     @Subscribe
     public void onProxyPingEvent(ProxyPingEvent event) {

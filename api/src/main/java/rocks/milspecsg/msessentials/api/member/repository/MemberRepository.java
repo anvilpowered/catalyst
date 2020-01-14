@@ -39,8 +39,6 @@ public interface MemberRepository<
 
     CompletableFuture<Optional<Member<TKey>>> getOneForUser(UUID userUUID);
 
-    CompletableFuture<Optional<TKey>> getIdForUser(UUID userUUID);
-
     CompletableFuture<Optional<UUID>> getUUID(TKey id);
 
     CompletableFuture<Optional<UUID>> setBannedForUser(String userName, boolean isBanned, String reason);

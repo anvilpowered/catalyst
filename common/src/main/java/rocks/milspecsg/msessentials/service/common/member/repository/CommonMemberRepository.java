@@ -22,7 +22,6 @@ import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
 import rocks.milspecsg.msessentials.model.core.member.Member;
 import rocks.milspecsg.msrepository.api.cache.CacheService;
 import rocks.milspecsg.msrepository.datastore.DataStoreContext;
-import rocks.milspecsg.msrepository.model.data.dbo.ObjectWithId;
 import rocks.milspecsg.msrepository.service.common.repository.CommonRepository;
 
 import java.util.Optional;
@@ -51,11 +50,6 @@ public abstract class CommonMemberRepository<
             member.setUserName(userName);
             return insertOne(member).join();
         });
-    }
-
-    @Override
-    public CompletableFuture<Optional<TKey>> getIdForUser(UUID userUUID) {
-        return CompletableFuture.supplyAsync(() -> getOneForUser(userUUID).join().map(ObjectWithId::getId));
     }
 
     @Override

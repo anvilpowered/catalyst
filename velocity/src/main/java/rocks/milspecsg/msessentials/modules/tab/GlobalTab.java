@@ -107,7 +107,7 @@ public class GlobalTab {
                                     toKeep);
                         }
 
-                        if (registry.getOrDefault(MSEssentialsKeys.TAB)) {
+                        if (registry.getOrDefault(MSEssentialsKeys.TAB_ENABLED)) {
                             List<String> customtabs = new ArrayList<>(registry.getOrDefault(MSEssentialsKeys.TAB_FORMAT_CUSTOM));
 
                             for (int i3 = 0; i3 < customtabs.size(); i3++) {

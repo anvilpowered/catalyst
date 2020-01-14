@@ -18,14 +18,14 @@
 
 package rocks.milspecsg.msessentials.service.common.member;
 
-import rocks.milspecsg.msessentials.api.config.ConfigKeys;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
 import rocks.milspecsg.msessentials.model.core.member.Member;
 import rocks.milspecsg.msrepository.api.CurrentServerService;
 import rocks.milspecsg.msrepository.api.KickService;
 import rocks.milspecsg.msrepository.api.UserService;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.api.tools.resultbuilder.StringResult;
 import rocks.milspecsg.msrepository.service.common.manager.CommonManager;
 
@@ -38,13 +38,11 @@ public class CommonMemberManager<
         TUser extends TCommandSource,
         TString,
         TCommandSource>
-        extends CommonManager<MemberRepository<?, ?, ?>> implements MemberManager<TString> {
+        extends CommonManager<MemberRepository<?, ?>>
+        implements MemberManager<TString> {
 
     @Inject
     protected StringResult<TString, TCommandSource> stringResult;
-
-    @Inject
-    protected CurrentServerService currentServerService;
 
     @Inject
     protected KickService kickService;
@@ -53,14 +51,17 @@ public class CommonMemberManager<
     protected UserService<TUser> userService;
 
     @Inject
-    protected CommonMemberManager(ConfigurationService configurationService) {
-        super(configurationService);
+    protected CurrentServerService currentServerService;
+
+    @Inject
+    protected CommonMemberManager(Registry registry) {
+        super(registry);
     }
 
     @Override
     public CompletableFuture<TString> info(String username, boolean isOnline) {
         return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
-            System.out.println("46");
+                    System.out.println("46");
                     if (!optionalMember.isPresent()) {
                         return stringResult.fail("Could not get user data");
                     }
@@ -162,7 +163,7 @@ public class CommonMemberManager<
 
     @Override
     public CompletableFuture<TString> setNickName(String userName, String nickName) {
-        return getPrimaryComponent().setNickNameForUser( userName,"~" + nickName).thenApplyAsync(result -> {
+        return getPrimaryComponent().setNickNameForUser(userName, "~" + nickName).thenApplyAsync(result -> {
             if (result) {
                 return stringResult.success("Set nickname to " + nickName);
             } else {
@@ -174,7 +175,7 @@ public class CommonMemberManager<
     @Override
     public CompletableFuture<TString> deleteNickname(String username) {
         return getPrimaryComponent().setNickNameForUser(username, username).thenApplyAsync(result -> {
-            if(result) {
+            if (result) {
                 return stringResult.success("Successfully deleted your nickname.");
             } else {
                 return stringResult.fail("Failed to delete your nickname.");
@@ -187,12 +188,12 @@ public class CommonMemberManager<
             if (!optionalMember.isPresent()) {
                 return stringResult.fail("Couldn't find a user matching that name!");
             }
-            if(optionalMember.get().getMuteStatus()) {
+            if (optionalMember.get().getMuteStatus()) {
                 return stringResult.fail("You are muted!");
             }
             String finalName = optionalMember.get().getUserName();
             String finalNameColor = nameColor;
-            if(optionalMember.get().getNickName() != null) {
+            if (optionalMember.get().getNickName() != null) {
                 finalName = optionalMember.get().getNickName();
             } else {
                 finalName = finalNameColor + finalName;
@@ -221,7 +222,7 @@ public class CommonMemberManager<
                         kickService.kick(playerUUID, optionalMember.get().getBanReason());
                     } else if (flags[0]) {
                         //If the player is new
-                        userService.get(playerUUID).ifPresent(user -> stringResult.send(stringResult.deserialize(configurationService.getConfigString(ConfigKeys.WELCOME_MESSAGE)), user));
+                        userService.get(playerUUID).ifPresent(user -> stringResult.send(stringResult.deserialize(registry.getOrDefault(MSEssentialsKeys.FIRST_JOIN)), user));
                     }
                 });
     }
@@ -255,7 +256,7 @@ public class CommonMemberManager<
     @Override
     public CompletableFuture<TString> mute(String userName) {
         return getPrimaryComponent().setMuteStatusForUser(userName, true).thenApplyAsync(optionalUUID -> {
-            if(optionalUUID.isPresent()) {
+            if (optionalUUID.isPresent()) {
                 return stringResult.success("Muted " + userName);
             }
             return stringResult.fail("Invalid user.");
@@ -265,7 +266,7 @@ public class CommonMemberManager<
     @Override
     public CompletableFuture<TString> unMute(String userName) {
         return getPrimaryComponent().setMuteStatusForUser(userName, false).thenApplyAsync(optionalUUID -> {
-            if(optionalUUID.isPresent()) {
+            if (optionalUUID.isPresent()) {
                 return stringResult.success("UnMuted " + userName);
             }
             return stringResult.fail("Invalid user.");

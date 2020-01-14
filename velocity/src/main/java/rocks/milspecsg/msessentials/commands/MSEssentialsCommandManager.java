@@ -23,8 +23,8 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import rocks.milspecsg.msessentials.api.config.ConfigKeys;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 @Singleton
 public class MSEssentialsCommandManager implements CommandManager {
@@ -33,7 +33,7 @@ public class MSEssentialsCommandManager implements CommandManager {
     private ProxyServer proxyServer;
 
     @Inject
-    private ConfigurationService configService;
+    private Registry registry;
 
     @Inject
     private BroadcastCommand broadcastCommand;
@@ -129,7 +129,7 @@ public class MSEssentialsCommandManager implements CommandManager {
         // proxyServer.getCommandManager().register("tpa", teleportRequestCommand, "tprequest");
         proxyServer.getCommandManager().register("unban", unBanCommand, "msunban", "pardon", "mspardon");
         proxyServer.getCommandManager().register("unmute", unMuteCommand, "msunmute");
-        if (configService.getConfigBoolean(ConfigKeys.SERVER_COMMAND_ENABLED)) {
+        if (registry.getOrDefault(MSEssentialsKeys.SERVER_COMMAND)) {
             for (RegisteredServer server : proxyServer.getAllServers()) {
                 String serverName = server.getServerInfo().getName();
                 ServerCommand command = serverCommandProvider.get();

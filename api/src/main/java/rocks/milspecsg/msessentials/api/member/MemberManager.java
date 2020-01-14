@@ -32,6 +32,26 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MemberManager<TString> extends Manager<MemberRepository<?, ?>> {
 
+    @Override
+    default String getDefaultIdentifierSingularUpper() {
+        return "Member";
+    }
+
+    @Override
+    default String getDefaultIdentifierPluralUpper() {
+        return "Members";
+    }
+
+    @Override
+    default String getDefaultIdentifierSingularLower() {
+        return "member";
+    }
+
+    @Override
+    default String getDefaultIdentifierPluralLower() {
+        return "members";
+    }
+
     CompletableFuture<TString> info(String nickname, boolean isActive);
 
     CompletableFuture<TString> formatMessage(String prefix, String nameColor, String username, String message, String suffix, boolean hasPermission);

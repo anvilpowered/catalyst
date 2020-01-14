@@ -18,10 +18,9 @@
 
 package rocks.milspecsg.msessentials.modules.chatutils;
 
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
-import rocks.milspecsg.msessentials.api.config.ConfigKeys;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +28,11 @@ import java.util.List;
 
 public class ChatFilter {
 
-    private ConfigurationService configurationService;
+    private Registry registry;
 
     @Inject
-    public ChatFilter(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
+    public ChatFilter(Registry registry) {
+        this.registry = registry;
     }
 
     public List<String> aggressiveMode(String swear) {
@@ -84,14 +83,14 @@ public class ChatFilter {
 
     public List<String> checkswear(List<String> finalwords) {
         List<String> swearlist = new ArrayList<>();
-        for (String exception : configurationService.getConfigList(ConfigKeys.CHAT_FILTER_EXCEPTIONS, new TypeToken<List<String>> (){})) {
+        for (String exception : registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS)) {
             for (String swear : finalwords) {
                 if (swear.contains(exception)) {
                     return null;
                 }
             }
         }
-        for (String swears : configurationService.getConfigList(ConfigKeys.CHAT_FILTER_SWEARS, new TypeToken<List<String>> (){})) {
+        for (String swears : registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS)) {
             for (String swear : finalwords) {
                 String newswear = swear.toLowerCase();
                 if (newswear.contains(swears.toLowerCase())) {

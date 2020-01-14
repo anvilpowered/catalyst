@@ -22,9 +22,6 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import rocks.milspecsg.msessentials.model.core.member.Member;
-import rocks.milspecsg.msrepository.api.cache.CacheService;
-import rocks.milspecsg.msrepository.api.repository.MongoRepository;
-import rocks.milspecsg.msrepository.datastore.mongodb.MongoConfig;
 
 import java.util.Date;
 import java.util.Optional;
@@ -34,8 +31,7 @@ import java.util.concurrent.CompletableFuture;
 public interface MongoMemberRepository<
         TMember extends Member<ObjectId>,
         TUser>
-    extends MemberRepository<ObjectId, TMember, TUser, Datastore, MongoConfig>
-{
+        extends MemberRepository<ObjectId, Datastore> {
 
     Optional<Query<Member<ObjectId>>> asQueryForUser(UUID userUUID);
 

@@ -71,9 +71,12 @@ public class ProxyChatListener {
                     for (String swear : swearList) {
                         message = message.replace(swear, "****");
                     }
-                    sendMessage(e, checkPlayerName(message));
+                    ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), checkPlayerName(message), TextComponent.of(checkPlayerName(message)));
+                    proxyServer.getEventManager().fire(proxyChatEvent).join();
+
                 } else {
-                    sendMessage(e, checkPlayerName(message));
+                    ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), checkPlayerName(message), TextComponent.of(checkPlayerName(message)));
+                    proxyServer.getEventManager().fire(proxyChatEvent).join();
                 }
             } else {
                 e.setResult(PlayerChatEvent.ChatResult.denied());
@@ -87,7 +90,7 @@ public class ProxyChatListener {
         }
     }
 
-    public static String checkPlayerName(String message) {
+    public String checkPlayerName(String message) {
         for (Player onlinePlayer : MSEssentials.getServer().getAllPlayers()) {
             if (message.toLowerCase().equalsIgnoreCase(onlinePlayer.getUsername())) {
                 message = message.replaceAll(onlinePlayer.getUsername().toLowerCase(), "&b@" + onlinePlayer.getUsername() + "&r");

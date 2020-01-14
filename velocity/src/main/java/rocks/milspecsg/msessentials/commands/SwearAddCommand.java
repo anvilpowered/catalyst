@@ -22,19 +22,19 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.api.config.ConfigKeys;
-import rocks.milspecsg.msessentials.api.config.ConfigTypes;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.modules.messages.CommandUsageMessages;
 import rocks.milspecsg.msessentials.modules.messages.PluginMessages;
 import rocks.milspecsg.msessentials.modules.utils.PluginPermissions;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SwearAddCommand implements Command {
+
     @Inject
-    private ConfigurationService configurationService;
+    private Registry registry;
 
     @Inject
     private PluginMessages pluginMessages;
@@ -55,15 +55,13 @@ public class SwearAddCommand implements Command {
             return;
         }
 
-            List<String> swearList = new ArrayList<>(configurationService.getConfigList(ConfigKeys.CHAT_FILTER_SWEARS, ConfigTypes.STRINGLIST));
+        List<String> swearList = new ArrayList<>(registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS));
 
-            if(swearList.contains(args[0])) {
-                source.sendMessage(pluginMessages.existingSwear(args[0]));
-            } else {
-                swearList.add(args[0]);
-                configurationService.setConfigList(ConfigKeys.CHAT_FILTER_SWEARS, swearList);
-                configurationService.save();
-                source.sendMessage(pluginMessages.addSwear(args[0]));
-            }
+        if (swearList.contains(args[0])) {
+            source.sendMessage(pluginMessages.existingSwear(args[0]));
+        } else {
+            registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS).add(args[0]);
+            source.sendMessage(pluginMessages.addSwear(args[0]));
         }
+    }
 }

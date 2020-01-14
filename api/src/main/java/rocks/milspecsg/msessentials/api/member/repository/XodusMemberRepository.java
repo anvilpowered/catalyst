@@ -20,24 +20,14 @@ package rocks.milspecsg.msessentials.api.member.repository;
 
 import jetbrains.exodus.entitystore.Entity;
 import jetbrains.exodus.entitystore.EntityId;
-import jetbrains.exodus.entitystore.PersistentEntityStore;
 import jetbrains.exodus.entitystore.StoreTransaction;
-import rocks.milspecsg.msessentials.model.core.member.Member;
-import rocks.milspecsg.msrepository.api.cache.CacheService;
-import rocks.milspecsg.msrepository.api.repository.XodusRepository;
-import rocks.milspecsg.msrepository.datastore.xodus.XodusConfig;
-import rocks.milspecsg.msrepository.model.data.dbo.Mappable;
 
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public interface XodusMemberRepository<
-        TMember extends Member<EntityId> & Mappable<Entity>,
-        TUser>
-        extends MemberRepository<EntityId, TMember, TUser, PersistentEntityStore, XodusConfig>,
-        XodusRepository<TMember, CacheService<EntityId, TMember, PersistentEntityStore, XodusConfig>> {
+public interface XodusMemberRepository {
 
     CompletableFuture<Boolean> ban(Function<? super StoreTransaction, ? extends Iterable<Entity>> query);
 
