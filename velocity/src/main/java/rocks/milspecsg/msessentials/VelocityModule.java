@@ -18,27 +18,20 @@
 
 package rocks.milspecsg.msessentials;
 
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
-import rocks.milspecsg.msrepository.BasicPluginInfo;
-import rocks.milspecsg.msrepository.BindingExtensions;
-import rocks.milspecsg.msrepository.CommonBindingExtensions;
-import rocks.milspecsg.msrepository.PluginInfo;
-import rocks.milspecsg.msrepository.api.CurrentServerService;
-import rocks.milspecsg.msrepository.api.KickService;
-import rocks.milspecsg.msrepository.api.UserService;
-import rocks.milspecsg.msrepository.api.tools.resultbuilder.StringResult;
-import rocks.milspecsg.msrepository.service.velocity.VelocityCurrentServerService;
-import rocks.milspecsg.msrepository.service.velocity.VelocityKickService;
-import rocks.milspecsg.msrepository.service.velocity.VelocityStringResult;
-import rocks.milspecsg.msrepository.service.velocity.VelocityUserService;
+import rocks.milspecsg.msrepository.api.misc.*;
+import rocks.milspecsg.msrepository.api.util.*;
+import rocks.milspecsg.msrepository.common.misc.*;
+import rocks.milspecsg.msrepository.velocity.util.*;
 
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class VelocityModule extends CommonModule<
-        TextComponent,
-        CommandSource> {
+    TextComponent,
+    Player,
+    CommandSource> {
 
     @Override
     protected void configure() {
@@ -46,7 +39,7 @@ public class VelocityModule extends CommonModule<
 
         BindingExtensions be = new CommonBindingExtensions(binder());
 
-        bind(new TypeLiteral<UserService<Player>>() {
+        bind(new TypeLiteral<UserService<Player, Player>>() {
         }).to(VelocityUserService.class);
 
         bind(BasicPluginInfo.class).to(MSEssentialsPluginInfo.class);

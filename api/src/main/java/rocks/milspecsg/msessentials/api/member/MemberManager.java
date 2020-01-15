@@ -19,14 +19,9 @@
 package rocks.milspecsg.msessentials.api.member;
 
 import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
-import rocks.milspecsg.msessentials.model.core.member.Member;
-import rocks.milspecsg.msrepository.api.cache.CacheService;
 import rocks.milspecsg.msrepository.api.manager.Manager;
-import rocks.milspecsg.msrepository.api.repository.Repository;
 
-import java.net.Inet4Address;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -73,5 +68,4 @@ public interface MemberManager<TString> extends Manager<MemberRepository<?, ?>> 
     CompletableFuture<TString> mute(String userName);
 
     CompletableFuture<TString> unMute(String userName);
-
 }

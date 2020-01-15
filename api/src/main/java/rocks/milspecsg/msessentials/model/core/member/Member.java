@@ -18,7 +18,7 @@
 
 package rocks.milspecsg.msessentials.model.core.member;
 
-import rocks.milspecsg.msrepository.model.data.dbo.ObjectWithId;
+import rocks.milspecsg.msrepository.api.model.ObjectWithId;
 
 import java.util.Date;
 import java.util.UUID;

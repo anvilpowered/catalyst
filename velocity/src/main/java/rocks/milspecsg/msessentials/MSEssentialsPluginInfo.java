@@ -20,7 +20,7 @@ package rocks.milspecsg.msessentials;
 
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
-import rocks.milspecsg.msrepository.PluginInfo;
+import rocks.milspecsg.msrepository.api.util.*;
 
 import javax.inject.Singleton;
 

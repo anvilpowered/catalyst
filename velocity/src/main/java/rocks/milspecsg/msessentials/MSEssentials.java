@@ -37,17 +37,15 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import rocks.milspecsg.msessentials.commands.MSEssentialsCommandManager;
-import rocks.milspecsg.msessentials.commands.ServerCommand;
 import rocks.milspecsg.msessentials.listeners.*;
 import rocks.milspecsg.msessentials.modules.tab.GlobalTab;
 import rocks.milspecsg.msessentials.modules.tab.TabUtils;
-import rocks.milspecsg.msrepository.ApiVelocityModule;
-import rocks.milspecsg.msrepository.CommonConfigurationModule;
-import rocks.milspecsg.msrepository.api.config.ConfigurationService;
+import rocks.milspecsg.msrepository.api.data.config.*;
+import rocks.milspecsg.msrepository.common.module.*;
+import rocks.milspecsg.msrepository.velocity.module.*;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 @Plugin(
         id = MSEssentialsPluginInfo.id,

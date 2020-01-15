@@ -19,26 +19,29 @@
 package rocks.milspecsg.msessentials;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
 import rocks.milspecsg.msessentials.model.core.member.Member;
+import rocks.milspecsg.msessentials.service.common.config.MSEssentialsConfigurationService;
 import rocks.milspecsg.msessentials.service.common.member.CommonMemberManager;
 import rocks.milspecsg.msessentials.service.common.member.repository.CommonMongoMemberRepository;
-import rocks.milspecsg.msrepository.BindingExtensions;
-import rocks.milspecsg.msrepository.CommonBindingExtensions;
+import rocks.milspecsg.msessentials.service.common.registry.MSEssentialsRegistry;
+import rocks.milspecsg.msrepository.api.data.config.ConfigurationService;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
+import rocks.milspecsg.msrepository.api.datastore.*;
 import rocks.milspecsg.msrepository.api.manager.annotation.MongoDBComponent;
-import rocks.milspecsg.msrepository.datastore.DataStoreContext;
-import rocks.milspecsg.msrepository.datastore.mongodb.MongoContext;
+import rocks.milspecsg.msrepository.api.misc.*;
+import rocks.milspecsg.msrepository.common.misc.*;
 
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class CommonModule<
-        TString,
-        TCommandSource>
-        extends AbstractModule {
+    TString,
+    TUser,
+    TCommandSource>
+    extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -46,24 +49,28 @@ public class CommonModule<
         BindingExtensions be = new CommonBindingExtensions(binder());
 
         be.bind(
-                new TypeToken<MemberRepository<?, ?>>(getClass()) {
-                },
-                new TypeToken<MemberRepository<?, Member<?>>>(getClass()) {
-                },
-                new TypeToken<MemberRepository<ObjectId, Datastore>>(getClass()) {
-                },
-                new TypeToken<CommonMongoMemberRepository>(getClass()) {
-                },
-                MongoDBComponent.class
+            new TypeToken<MemberRepository<?, ?>>(getClass()) {
+            },
+            new TypeToken<MemberRepository<?, Member<?>>>(getClass()) {
+            },
+            new TypeToken<MemberRepository<ObjectId, Datastore>>(getClass()) {
+            },
+            new TypeToken<CommonMongoMemberRepository>(getClass()) {
+            },
+            MongoDBComponent.class
         );
         be.bind(
-                new TypeToken<MemberManager<TString>>(getClass()) {
-                },
-                new TypeToken<CommonMemberManager<TCommandSource, TString, TCommandSource>>(getClass()) {
-                }
+            new TypeToken<MemberManager<TString>>(getClass()) {
+            },
+            new TypeToken<CommonMemberManager<TUser, TCommandSource, TString, TCommandSource>>(getClass()) {
+            }
         );
+
         bind(new TypeLiteral<DataStoreContext<ObjectId, Datastore>>() {
         }).to(new TypeLiteral<MongoContext>() {
         });
+
+        bind(ConfigurationService.class).to(MSEssentialsConfigurationService.class);
+        bind(Registry.class).to(MSEssentialsRegistry.class);
     }
 }

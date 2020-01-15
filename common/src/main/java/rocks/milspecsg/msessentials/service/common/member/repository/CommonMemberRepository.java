@@ -21,8 +21,8 @@ package rocks.milspecsg.msessentials.service.common.member.repository;
 import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
 import rocks.milspecsg.msessentials.model.core.member.Member;
 import rocks.milspecsg.msrepository.api.cache.CacheService;
-import rocks.milspecsg.msrepository.datastore.DataStoreContext;
-import rocks.milspecsg.msrepository.service.common.repository.CommonRepository;
+import rocks.milspecsg.msrepository.api.datastore.*;
+import rocks.milspecsg.msrepository.common.repository.*;
 
 import java.util.Optional;
 import java.util.UUID;

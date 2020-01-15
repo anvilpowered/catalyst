@@ -25,8 +25,8 @@ import org.mongodb.morphia.query.QueryResults;
 import org.mongodb.morphia.query.UpdateOperations;
 import rocks.milspecsg.msessentials.model.core.member.Member;
 import rocks.milspecsg.msrepository.api.cache.CacheService;
-import rocks.milspecsg.msrepository.datastore.DataStoreContext;
-import rocks.milspecsg.msrepository.service.common.repository.CommonMongoRepository;
+import rocks.milspecsg.msrepository.api.datastore.*;
+import rocks.milspecsg.msrepository.common.repository.*;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -35,8 +35,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class CommonMongoMemberRepository
-        extends CommonMemberRepository<ObjectId, Datastore>
-implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member<ObjectId>, Datastore>> {
+    extends CommonMemberRepository<ObjectId, Datastore>
+    implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member<ObjectId>, Datastore>> {
 
     @Inject
     public CommonMongoMemberRepository(DataStoreContext<ObjectId, Datastore> dataStoreContext) {
@@ -86,9 +86,9 @@ implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member
                     }
                     Optional<Query<Member<ObjectId>>> optionalQuery = asQuery(optionalMember.get().getId());
                     if (optionalQuery.isPresent() && updateOperations
-                            .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
-                                    .map(datastore -> datastore.update(optionalQuery.get(), memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
-                            ).orElse(false)) {
+                        .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                            .map(datastore -> datastore.update(optionalQuery.get(), memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
+                        ).orElse(false)) {
                         if (updateName) {
                             optionalMember.get().setUserName(userName);
                         }
@@ -123,9 +123,9 @@ implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("isBanned", isBanned).set("banReason", reason));
             if (updateOperations
-                    .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
-                            .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
-                    ).orElse(false)) {
+                .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                    .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
+                ).orElse(false)) {
                 return Optional.of(query.get().getUserUUID());
             } else {
                 return Optional.empty();
@@ -142,9 +142,9 @@ implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("muteStatus", muteStatus));
             if (updateOperations
-                    .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
-                            .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
-                    ).orElse(false)) {
+                .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                    .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
+                ).orElse(false)) {
                 return Optional.of(query.get().getUserUUID());
             } else {
                 return Optional.empty();
@@ -156,9 +156,9 @@ implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("nickname", nickname));
             return updateOperations
-                    .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
-                            .map(dataStore -> dataStore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
-                    ).orElse(false);
+                .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                    .map(dataStore -> dataStore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false)
+                ).orElse(false);
         });
     }
 
@@ -171,9 +171,9 @@ implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("joinedUtc", joinedUtc));
             return updateOperations
-                    .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
-                            .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false))
-                    .orElse(false);
+                .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                    .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false))
+                .orElse(false);
         });
     }
 
@@ -191,9 +191,9 @@ implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("lastSeenUtc", lastSeenUtc));
             return updateOperations
-                    .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
-                            .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false))
-                    .orElse(false);
+                .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                    .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false))
+                .orElse(false);
         });
     }
 
@@ -211,9 +211,9 @@ implements CommonMongoRepository<Member<ObjectId>, CacheService<ObjectId, Member
         return CompletableFuture.supplyAsync(() -> {
             Optional<UpdateOperations<Member<ObjectId>>> updateOperations = createUpdateOperations().map(u -> u.set("ipAddress", ipAddress));
             return updateOperations
-                    .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
-                            .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false))
-                    .orElse(false);
+                .map(memberUpdateOperations -> getDataStoreContext().getDataStore()
+                    .map(datastore -> datastore.update(query, memberUpdateOperations).getUpdatedCount() > 0).orElse(false))
+                .orElse(false);
         });
     }
 

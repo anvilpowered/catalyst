@@ -26,12 +26,14 @@ dependencies {
     implementation project(':common')
 
     implementation project(':MSRepository:msr-api')
-    implementation project(':MSRepository:msr-api:api-repository')
     implementation project(':MSRepository:msr-api:api-config')
+    implementation project(':MSRepository:msr-api:api-repository')
+    implementation project(':MSRepository:msr-api:api-repository:api-repository-mongodb')
 
     implementation project(':MSRepository:msr-common')
     implementation project(':MSRepository:msr-common:common-config')
     implementation project(':MSRepository:msr-common:common-repository')
+    implementation project(':MSRepository:msr-common:common-repository:common-repository-mongodb')
     implementation project(':MSRepository:msr-velocity')
     implementation jsondb
     implementation guice
@@ -52,9 +54,7 @@ shadowJar {
         include project(':MSRepository:msr-common')
         include project(':MSRepository:msr-common:common-config')
         include project(':MSRepository:msr-common:common-repository')
-        include project(':MSRepository:msr-common:common-repository:common-repository-json')
         include project(':MSRepository:msr-common:common-repository:common-repository-mongodb')
-        include project(':MSRepository:msr-common:common-repository:common-repository-nitrite')
         include project(':MSRepository:msr-sponge')
         include project(':MSRepository:msr-velocity')
 

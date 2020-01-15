@@ -22,12 +22,9 @@ import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
 import rocks.milspecsg.msessentials.model.core.member.Member;
-import rocks.milspecsg.msrepository.api.CurrentServerService;
-import rocks.milspecsg.msrepository.api.KickService;
-import rocks.milspecsg.msrepository.api.UserService;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
-import rocks.milspecsg.msrepository.api.tools.resultbuilder.StringResult;
-import rocks.milspecsg.msrepository.service.common.manager.CommonManager;
+import rocks.milspecsg.msrepository.api.util.*;
+import rocks.milspecsg.msrepository.common.manager.*;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -35,11 +32,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class CommonMemberManager<
-        TUser extends TCommandSource,
-        TString,
-        TCommandSource>
-        extends CommonManager<MemberRepository<?, ?>>
-        implements MemberManager<TString> {
+    TUser,
+    TPlayer extends TCommandSource,
+    TString,
+    TCommandSource>
+    extends CommonManager<MemberRepository<?, ?>>
+    implements MemberManager<TString> {
 
     @Inject
     protected StringResult<TString, TCommandSource> stringResult;
@@ -48,7 +46,7 @@ public class CommonMemberManager<
     protected KickService kickService;
 
     @Inject
-    protected UserService<TUser> userService;
+    protected UserService<TUser, TPlayer> userService;
 
     @Inject
     protected CurrentServerService currentServerService;
@@ -61,91 +59,91 @@ public class CommonMemberManager<
     @Override
     public CompletableFuture<TString> info(String username, boolean isOnline) {
         return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
-                    System.out.println("46");
-                    if (!optionalMember.isPresent()) {
-                        return stringResult.fail("Could not get user data");
-                    }
-                    Member<?> member = optionalMember.get();
-                    String nick;
-                    String lastSeen;
-                    String banReason;
-                    if (member.getNickName() != null) {
-                        nick = member.getNickName();
-                    } else {
-                        nick = "No Nickname.";
-                    }
-                    if (isOnline) {
-                        lastSeen = "Currently Online.";
-                    } else {
-                        lastSeen = member.getLastSeenUtc().toString();
-                    }
-                    if (member.getBanStatus()) {
-                        banReason = member.getBanReason();
-                    } else {
-                        banReason = "This user is not banned.";
-                    }
-                    System.out.println(username);
-
-                    return stringResult.builder()
-                            .append(
-                                    stringResult.builder()
-                                            .blue().append("----------------Player Info----------------"))
-                            .append(
-                                    stringResult.builder()
-                                            .blue().append("\nUsername : ")
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .green().append(username))
-                            .append(
-                                    stringResult.builder()
-                                            .blue().append("\nNickname : ")
-                            )
-                            .append(
-                                    stringResult
-                                            .deserialize(nick)
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .blue().append("\nIP : ")
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .green().append(member.getIPAddress())
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .blue().append("\nJoined Date : ")
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .green().append(member.getCreatedUtcDate().toString())
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .blue().append("\nLast Seen : ")
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .green().append(lastSeen))
-                            .append(
-                                    stringResult.builder()
-                                            .blue().append("\nBanned : ")
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .green().append(banReason))
-                            .append(
-                                    stringResult.builder()
-                                            .blue().append("\nCurrent Server : ")
-                            )
-                            .append(
-                                    stringResult.builder()
-                                            .gold().append(currentServerService.getCurrentServerName(member.getUserUUID()).orElse("Offline User."))
-                            )
-                            .build();
-
+                System.out.println("46");
+                if (!optionalMember.isPresent()) {
+                    return stringResult.fail("Could not get user data");
                 }
+                Member<?> member = optionalMember.get();
+                String nick;
+                String lastSeen;
+                String banReason;
+                if (member.getNickName() != null) {
+                    nick = member.getNickName();
+                } else {
+                    nick = "No Nickname.";
+                }
+                if (isOnline) {
+                    lastSeen = "Currently Online.";
+                } else {
+                    lastSeen = member.getLastSeenUtc().toString();
+                }
+                if (member.getBanStatus()) {
+                    banReason = member.getBanReason();
+                } else {
+                    banReason = "This user is not banned.";
+                }
+                System.out.println(username);
+
+                return stringResult.builder()
+                    .append(
+                        stringResult.builder()
+                            .blue().append("----------------Player Info----------------"))
+                    .append(
+                        stringResult.builder()
+                            .blue().append("\nUsername : ")
+                    )
+                    .append(
+                        stringResult.builder()
+                            .green().append(username))
+                    .append(
+                        stringResult.builder()
+                            .blue().append("\nNickname : ")
+                    )
+                    .append(
+                        stringResult
+                            .deserialize(nick)
+                    )
+                    .append(
+                        stringResult.builder()
+                            .blue().append("\nIP : ")
+                    )
+                    .append(
+                        stringResult.builder()
+                            .green().append(member.getIPAddress())
+                    )
+                    .append(
+                        stringResult.builder()
+                            .blue().append("\nJoined Date : ")
+                    )
+                    .append(
+                        stringResult.builder()
+                            .green().append(member.getCreatedUtcDate().toString())
+                    )
+                    .append(
+                        stringResult.builder()
+                            .blue().append("\nLast Seen : ")
+                    )
+                    .append(
+                        stringResult.builder()
+                            .green().append(lastSeen))
+                    .append(
+                        stringResult.builder()
+                            .blue().append("\nBanned : ")
+                    )
+                    .append(
+                        stringResult.builder()
+                            .green().append(banReason))
+                    .append(
+                        stringResult.builder()
+                            .blue().append("\nCurrent Server : ")
+                    )
+                    .append(
+                        stringResult.builder()
+                            .gold().append(currentServerService.getCurrentServerName(member.getUserUUID()).orElse("Offline User."))
+                    )
+                    .build();
+
+            }
         );
     }
 
@@ -199,14 +197,14 @@ public class CommonMemberManager<
                 finalName = finalNameColor + finalName;
             }
             return stringResult
-                    .builder()
-                    .append(stringResult.deserialize(prefix))
-                    .append(stringResult.deserialize(finalName))
-                    .append(": ")
-                    .append(stringResult.deserialize(message))
-                    .onHoverShowText(stringResult.builder().append(name).build())
-                    .onClickSuggestCommand("/msg " + name)
-                    .build();
+                .builder()
+                .append(stringResult.deserialize(prefix))
+                .append(stringResult.deserialize(finalName))
+                .append(": ")
+                .append(stringResult.deserialize(message))
+                .onHoverShowText(stringResult.builder().append(name).build())
+                .onClickSuggestCommand("/msg " + name)
+                .build();
         });
     }
 
@@ -214,17 +212,17 @@ public class CommonMemberManager<
     public CompletableFuture<Void> syncPlayerInfo(UUID playerUUID, String ipAddress, String username) {
         boolean[] flags = {false};
         return getPrimaryComponent().getOneOrGenerateForUser(playerUUID, ipAddress, username, flags)
-                .thenAcceptAsync(optionalMember -> {
-                    if (!optionalMember.isPresent()) {
-                        return;
-                    }
-                    if (optionalMember.get().getBanStatus()) {
-                        kickService.kick(playerUUID, optionalMember.get().getBanReason());
-                    } else if (flags[0]) {
-                        //If the player is new
-                        userService.get(playerUUID).ifPresent(user -> stringResult.send(stringResult.deserialize(registry.getOrDefault(MSEssentialsKeys.FIRST_JOIN)), user));
-                    }
-                });
+            .thenAcceptAsync(optionalMember -> {
+                if (!optionalMember.isPresent()) {
+                    return;
+                }
+                if (optionalMember.get().getBanStatus()) {
+                    kickService.kick(playerUUID, optionalMember.get().getBanReason());
+                } else if (flags[0]) {
+                    //If the player is new
+                    userService.getPlayer(playerUUID).ifPresent(user -> stringResult.send(stringResult.deserialize(registry.getOrDefault(MSEssentialsKeys.FIRST_JOIN)), user));
+                }
+            });
     }
 
     @Override

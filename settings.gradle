@@ -17,13 +17,9 @@ include 'MSRepository:msr-common'
 include 'MSRepository:msr-common:common-config'
 include 'MSRepository:msr-common:common-repository'
 include 'MSRepository:msr-common:common-repository:common-repository-mongodb'
-include 'MSRepository:msr-common:common-repository:common-repository-json'
 include 'MSRepository:msr-common:common-repository:common-repository-h2'
-include 'MSRepository:msr-common:common-repository:common-repository-mariadb'
-include 'MSRepository:msr-common:common-repository:common-repository-nitrite'
 include 'MSRepository:msr-common:common-repository:common-repository-xodus'
 
 include 'MSRepository:msr-sponge'
-include 'MSRepository:msr-sponge:sponge-repository'
 
 include 'MSRepository:msr-velocity'
