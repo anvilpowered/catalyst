@@ -10,7 +10,7 @@ import rocks.milspecsg.msessentials.service.common.config.MSEssentialsConfigurat
 public class MSEssentialsVelocityConfigurationService extends MSEssentialsConfigurationService {
 
     @Inject
-    public MSEssentialsVelocityConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
+    public MSEssentialsVelocityConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader){
         super(configLoader);
     }
 }

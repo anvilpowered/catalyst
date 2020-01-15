@@ -22,20 +22,38 @@ import com.google.inject.*;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
 import rocks.milspecsg.msrepository.api.misc.*;
 import rocks.milspecsg.msrepository.api.util.*;
 import rocks.milspecsg.msrepository.common.misc.*;
 import rocks.milspecsg.msrepository.velocity.util.*;
 
+import java.io.File;
+import java.nio.file.Paths;
+
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class VelocityModule extends CommonModule<
-    TextComponent,
-    Player,
-    CommandSource> {
+        TextComponent,
+        Player,
+        Player,
+        CommandSource> {
 
     @Override
     protected void configure() {
         super.configure();
+
+        File configFilesLocation = Paths.get("plugins/" + MSEssentialsPluginInfo.id).toFile();
+        if (!configFilesLocation.exists()) {
+            if (!configFilesLocation.mkdirs()){
+                throw new IllegalStateException("Unable to create config directory");
+            }
+        }
+
+        bind (new TypeLiteral<ConfigurationLoader<CommentedConfigurationNode>>(){
+        }).toInstance(HoconConfigurationLoader.builder().setPath(Paths.get(configFilesLocation + "/msessentials.conf")).build());
+
 
         BindingExtensions be = new CommonBindingExtensions(binder());
 

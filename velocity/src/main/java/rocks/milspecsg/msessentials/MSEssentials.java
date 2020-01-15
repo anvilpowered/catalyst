@@ -96,7 +96,7 @@ public class MSEssentials {
 
     public void initServices() {
         api = LuckPermsProvider.get();
-        injector = velocityRootInjector.createChildInjector(new VelocityModule(), new MSEssentialsConfigurationModule(), new ApiVelocityModule());
+        injector = velocityRootInjector.createChildInjector(new VelocityModule(), new ApiVelocityModule());
         injector.getInstance(GlobalTab.class);
     }
 
@@ -126,7 +126,7 @@ public class MSEssentials {
         logger.info("Loading config");
         injector.getInstance(ConfigurationService.class).load(this);
     }
-
+/*
     private static class MSEssentialsConfigurationModule extends CommonConfigurationModule {
         @Override
         protected void configure() {
@@ -141,7 +141,7 @@ public class MSEssentials {
             }).toInstance(HoconConfigurationLoader.builder().setPath(Paths.get(configFilesLocation + "/msessentials.conf")).build());
 
         }
-    }
+    }*/
 
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {

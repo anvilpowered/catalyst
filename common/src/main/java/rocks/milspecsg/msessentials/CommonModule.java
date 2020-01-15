@@ -38,10 +38,11 @@ import rocks.milspecsg.msrepository.common.misc.*;
 
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class CommonModule<
-    TString,
-    TUser,
-    TCommandSource>
-    extends AbstractModule {
+        TString,
+        TUser,
+        TPlayer extends TCommandSource,
+        TCommandSource>
+        extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -49,21 +50,21 @@ public class CommonModule<
         BindingExtensions be = new CommonBindingExtensions(binder());
 
         be.bind(
-            new TypeToken<MemberRepository<?, ?>>(getClass()) {
-            },
-            new TypeToken<MemberRepository<?, Member<?>>>(getClass()) {
-            },
-            new TypeToken<MemberRepository<ObjectId, Datastore>>(getClass()) {
-            },
-            new TypeToken<CommonMongoMemberRepository>(getClass()) {
-            },
-            MongoDBComponent.class
+                new TypeToken<MemberRepository<?, ?>>(getClass()) {
+                },
+                new TypeToken<MemberRepository<?, Member<?>>>(getClass()) {
+                },
+                new TypeToken<MemberRepository<ObjectId, Datastore>>(getClass()) {
+                },
+                new TypeToken<CommonMongoMemberRepository>(getClass()) {
+                },
+                MongoDBComponent.class
         );
         be.bind(
-            new TypeToken<MemberManager<TString>>(getClass()) {
-            },
-            new TypeToken<CommonMemberManager<TUser, TCommandSource, TString, TCommandSource>>(getClass()) {
-            }
+                new TypeToken<MemberManager<TString>>(getClass()) {
+                },
+                new TypeToken<CommonMemberManager<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
+                }
         );
 
         bind(new TypeLiteral<DataStoreContext<ObjectId, Datastore>>() {
