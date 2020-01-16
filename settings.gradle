@@ -20,6 +20,12 @@ include 'MSRepository:msr-common:common-repository:common-repository-mongodb'
 include 'MSRepository:msr-common:common-repository:common-repository-h2'
 include 'MSRepository:msr-common:common-repository:common-repository-xodus'
 
+include 'MSRepository:msr-core'
+include 'MSRepository:msr-core:core-api'
+include 'MSRepository:msr-core:core-common'
+include 'MSRepository:msr-core:core-sponge'
+include 'MSRepository:msr-core:core-velocity'
+
 include 'MSRepository:msr-sponge'
 
 include 'MSRepository:msr-velocity'

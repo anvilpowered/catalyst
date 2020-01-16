@@ -21,16 +21,14 @@ package rocks.milspecsg.msessentials.api.member.repository;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
-import rocks.milspecsg.msessentials.model.core.member.Member;
+import rocks.milspecsg.msessentials.api.model.member.Member;
 
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface MongoMemberRepository<
-        TMember extends Member<ObjectId>,
-        TUser>
+public interface MongoMemberRepository
         extends MemberRepository<ObjectId, Datastore> {
 
     Optional<Query<Member<ObjectId>>> asQueryForUser(UUID userUUID);

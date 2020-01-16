@@ -18,7 +18,7 @@
 
 package rocks.milspecsg.msessentials.api.member.repository;
 
-import rocks.milspecsg.msessentials.model.core.member.Member;
+import rocks.milspecsg.msessentials.api.model.member.Member;
 import rocks.milspecsg.msrepository.api.cache.CacheService;
 import rocks.milspecsg.msrepository.api.repository.Repository;
 

@@ -35,7 +35,6 @@ dependencies {
     implementation project(':MSRepository:msr-common:common-repository')
     implementation project(':MSRepository:msr-common:common-repository:common-repository-mongodb')
     implementation project(':MSRepository:msr-velocity')
-    implementation jsondb
     implementation guice
     implementation sponge
 }
@@ -46,45 +45,9 @@ shadowJar {
     dependencies {
         include project(':api')
         include project(':common')
-        include project(':MSRepository:msr-api')
-        include project(':MSRepository:msr-api:api-config')
-        include project(':MSRepository:msr-api:api-repository')
-        include project(':MSRepository:msr-api:api-repository:api-repository-mongodb')
-
-        include project(':MSRepository:msr-common')
-        include project(':MSRepository:msr-common:common-config')
-        include project(':MSRepository:msr-common:common-repository')
-        include project(':MSRepository:msr-common:common-repository:common-repository-mongodb')
-        include project(':MSRepository:msr-sponge')
-        include project(':MSRepository:msr-velocity')
-
-        include dependency(jackson_annotations)
-        include dependency(jackson_core)
-        include dependency(jackson_databind)
-        include dependency(jackson_datatype_jdk8)
-        include dependency(jackson_datatype_jsr310)
-        include dependency(jackson_module)
-        include dependency(jasypt)
-        include dependency(javasisst)
-        include dependency(jsondb)
-        include dependency(jxpath)
-        include dependency(reflections)
-        include dependency(mongo_java_driver)
-        include dependency(mongodb_driver_sync)
-        include dependency(morphia)
-
-        relocate 'com.fasterxml', 'relocated.com.fasterxml'
-        relocate 'org.reflections', 'relocated.org.reflections'
-        relocate 'org.javassist', 'relocated.org.javassist'
-        relocate 'org.objenesis', 'relocated.org.objenesis'
-        relocate 'org.apache', 'relocated.org.apache'
-        relocate 'org.bson', 'relocated.org.bson'
-        relocate 'org.dizitart', 'relocated.org.dizitart'
-        relocate 'org.h2', 'relocated.org.h2'
-        relocate 'org.mongodb', 'relocated.org.mongodb'
-        relocate 'com.mongodb', 'relocated.com.mongodb'
-        relocate 'javassist', 'relocated.javassist'
-        relocate 'okhttp3', 'relocated.okhttp3'
-        relocate 'org.jasypt', 'relocated.org.jasypt'
     }
+}
+
+artifacts {
+    archives shadowJar
 }
