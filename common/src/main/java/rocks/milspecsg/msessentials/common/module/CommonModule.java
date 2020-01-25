@@ -20,24 +20,21 @@ package rocks.milspecsg.msessentials.common.module;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.Datastore;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.common.data.config.MSEssentialsConfigurationService;
 import rocks.milspecsg.msessentials.common.data.registry.MSEssentialsRegistry;
 import rocks.milspecsg.msessentials.common.member.CommonMemberManager;
-import rocks.milspecsg.msessentials.common.member.repository.CommonMongoMemberRepository;
+import rocks.milspecsg.msessentials.common.plugin.MSEssentialsPluginInfo;
+import rocks.milspecsg.msessentials.common.plugin.MSEssentialsPluginMessages;
 import rocks.milspecsg.msrepository.api.data.config.ConfigurationService;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
-import rocks.milspecsg.msrepository.api.datastore.DataStoreContext;
-import rocks.milspecsg.msrepository.api.datastore.MongoContext;
-import rocks.milspecsg.msrepository.api.manager.annotation.MongoDBComponent;
 import rocks.milspecsg.msrepository.api.misc.BindingExtensions;
+import rocks.milspecsg.msrepository.api.util.BasicPluginInfo;
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 import rocks.milspecsg.msrepository.common.misc.CommonBindingExtensions;
 
-@SuppressWarnings({"unchecked", "UnstableApiUsage"})
+@SuppressWarnings({"UnstableApiUsage"})
 public class CommonModule<
     TString,
     TUser,
@@ -50,14 +47,19 @@ public class CommonModule<
 
         BindingExtensions be = new CommonBindingExtensions(binder());
 
+        be.bind(new TypeToken<PluginInfo<TString>>(getClass()) {
+        }, new TypeToken<MSEssentialsPluginInfo<TString, TCommandSource>>(getClass()) {
+        });
+
+        be.bind(new TypeToken<BasicPluginInfo>(getClass()) {
+        }, new TypeToken<MSEssentialsPluginInfo<TString, TCommandSource>>(getClass()) {
+        });
+
         be.bind(
-            new TypeToken<MemberRepository<?, ?>>(getClass()) {
+            new TypeToken<PluginMessages<TString>>(getClass()) {
             },
-            new TypeToken<MemberRepository<ObjectId, Datastore>>(getClass()) {
-            },
-            new TypeToken<CommonMongoMemberRepository>(getClass()) {
-            },
-            MongoDBComponent.class
+            new TypeToken<MSEssentialsPluginMessages<TString, TCommandSource>>(getClass()) {
+            }
         );
 
         be.bind(
@@ -66,10 +68,6 @@ public class CommonModule<
             new TypeToken<CommonMemberManager<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
-
-        bind(new TypeLiteral<DataStoreContext<ObjectId, Datastore>>() {
-        }).to(new TypeLiteral<MongoContext>() {
-        });
 
         bind(ConfigurationService.class).to(MSEssentialsConfigurationService.class);
         bind(Registry.class).to(MSEssentialsRegistry.class);

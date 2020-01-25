@@ -21,8 +21,9 @@ package rocks.milspecsg.msessentials.velocity.listeners;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.text.TextComponent;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyStaffChatEvent;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class ProxyStaffChatListener {
@@ -31,12 +32,12 @@ public class ProxyStaffChatListener {
     private ProxyServer proxyServer;
 
     @Inject
-    private PluginMessages pluginmessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Subscribe
     public void staffChatEvent(ProxyStaffChatEvent event) {
         proxyServer.getAllPlayers().stream().filter(target -> target
-                .hasPermission(PluginPermissions.STAFFCHAT))
-                .forEach(target -> target.sendMessage(pluginmessages.staffChatMessageFormatted(event.getMessage(), event.getSender().getUsername())));
+            .hasPermission(PluginPermissions.STAFFCHAT))
+            .forEach(target -> target.sendMessage(pluginMessages.getStaffChatMessageFormatted(event.getSender().getUsername(), event.getMessage())));
     }
 }

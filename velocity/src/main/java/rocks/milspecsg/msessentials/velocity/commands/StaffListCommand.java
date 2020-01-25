@@ -24,25 +24,28 @@ import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentialsPluginInfo;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.velocity.utils.StaffListUtils;
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 
 //This class was initially written by LGC_McLovin of MilspecSG
 public class StaffListCommand implements Command {
 
     @Inject
-    private StaffListUtils staffListUtils;
+    private PluginInfo<TextComponent> pluginInfo;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
+
+    @Inject
+    private StaffListUtils staffListUtils;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
 
         if (!source.hasPermission(PluginPermissions.STAFFLIST_BASE)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
@@ -69,9 +72,9 @@ public class StaffListCommand implements Command {
             source.sendMessage(getLine());
         } else {
             source.sendMessage(TextComponent.builder()
-                    .append(MSEssentialsPluginInfo.pluginPrefix)
-                    .append("There are no staff members currently online.")
-                    .build());
+                .append(pluginInfo.getPrefix())
+                .append("There are no staff members currently online.")
+                .build());
         }
     }
 
@@ -81,29 +84,29 @@ public class StaffListCommand implements Command {
 
     public TextComponent getLine() {
         return TextComponent.builder()
-                .content("-----------------------------------------------------")
-                .color(TextColor.DARK_AQUA)
-                .build();
+            .content("-----------------------------------------------------")
+            .color(TextColor.DARK_AQUA)
+            .build();
     }
 
     public TextComponent getStaffTitle() {
         return TextComponent.builder()
-                .content("Staff:")
-                .color(TextColor.GOLD)
-                .build();
+            .content("Staff:")
+            .color(TextColor.GOLD)
+            .build();
     }
 
     public TextComponent getAdminTitle() {
         return TextComponent.builder()
-                .content("Admin:")
-                .color(TextColor.GOLD)
-                .build();
+            .content("Admin:")
+            .color(TextColor.GOLD)
+            .build();
     }
 
     public TextComponent getOwnerTitle() {
         return TextComponent.builder()
-                .content("Owner:")
-                .color(TextColor.GOLD)
-                .build();
+            .content("Owner:")
+            .color(TextColor.GOLD)
+            .build();
     }
 }

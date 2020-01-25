@@ -24,12 +24,11 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentialsPluginInfo;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
-
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 
 public class NickNameCommand implements Command {
 
@@ -37,7 +36,10 @@ public class NickNameCommand implements Command {
     private MemberManager<TextComponent> memberManager;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginInfo<TextComponent> pluginInfo;
+
+    @Inject
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private CommandUsageMessages commandUsage;
@@ -47,12 +49,12 @@ public class NickNameCommand implements Command {
     public void execute(CommandSource source, @NonNull String[] args) {
         if (source instanceof Player) {
             if (!source.hasPermission(PluginPermissions.NICKNAME)) {
-                source.sendMessage(pluginMessages.noPermission);
+                source.sendMessage(pluginMessages.getNoPermission());
                 return;
             }
 
             if (args.length == 0) {
-                source.sendMessage(pluginMessages.notEnoughArgs);
+                source.sendMessage(pluginMessages.getNotEnoughArgs());
                 source.sendMessage(commandUsage.nickNameCommandUsage);
                 return;
             }
@@ -65,7 +67,7 @@ public class NickNameCommand implements Command {
                 memberManager.setNickName(player.getUsername(), pluginMessages.removeColor(nick)).thenAccept(source::sendMessage);
             }
         } else {
-            source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Player only command!")));
+            source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Player only command!")));
         }
     }
 }

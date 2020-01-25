@@ -25,14 +25,14 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyStaffChatEvent;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class StaffChatCommand implements Command {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private ProxyServer proxyServer;
@@ -40,7 +40,7 @@ public class StaffChatCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.STAFFCHAT)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
         }
 
         if (source instanceof Player) {
@@ -48,10 +48,10 @@ public class StaffChatCommand implements Command {
             if (args.length == 0) {
                 if (ProxyStaffChatEvent.staffChatSet.contains(player.getUniqueId())) {
                     ProxyStaffChatEvent.staffChatSet.remove(player.getUniqueId());
-                    player.sendMessage(pluginMessages.staffChatToggle(false));
+                    player.sendMessage(pluginMessages.getStaffChat(false));
                 } else {
                     ProxyStaffChatEvent.staffChatSet.add(player.getUniqueId());
-                    source.sendMessage(pluginMessages.staffChatToggle(true));
+                    source.sendMessage(pluginMessages.getStaffChat(true));
                 }
             } else {
                 ProxyStaffChatEvent.staffChatSet.add(player.getUniqueId());
@@ -61,13 +61,13 @@ public class StaffChatCommand implements Command {
             }
         } else {
             if (args.length == 0) {
-                source.sendMessage(pluginMessages.notEnoughArgs);
+                source.sendMessage(pluginMessages.getNotEnoughArgs());
             } else {
                 String message = String.join(" ", args);
                 proxyServer.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
-                        .forEach(target ->
-                                target.sendMessage(pluginMessages.staffChatMessageFormattedConsole(TextComponent.of(message)))
-                        );
+                    .forEach(target ->
+                        target.sendMessage(pluginMessages.getStaffChatMessageFormattedConsole(TextComponent.of(message)))
+                    );
             }
         }
     }

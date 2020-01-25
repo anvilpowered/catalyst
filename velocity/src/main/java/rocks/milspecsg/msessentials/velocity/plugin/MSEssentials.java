@@ -24,6 +24,7 @@ import com.google.inject.Injector;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
@@ -31,6 +32,7 @@ import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
+import rocks.milspecsg.msessentials.common.plugin.MSEssentialsPluginInfo;
 import rocks.milspecsg.msessentials.velocity.commands.MSEssentialsCommandManager;
 import rocks.milspecsg.msessentials.velocity.listeners.PingEventListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyChatListener;
@@ -38,9 +40,10 @@ import rocks.milspecsg.msessentials.velocity.listeners.ProxyJoinListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyLeaveListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyStaffChatListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyTeleportRequestListener;
-import rocks.milspecsg.msessentials.velocity.tab.GlobalTab;
 import rocks.milspecsg.msessentials.velocity.module.VelocityModule;
+import rocks.milspecsg.msessentials.velocity.tab.GlobalTab;
 import rocks.milspecsg.msessentials.velocity.tab.TabUtils;
+import rocks.milspecsg.msrepository.api.MSRepository;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
 
@@ -51,7 +54,10 @@ import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
     version = MSEssentialsPluginInfo.version,
     authors = MSEssentialsPluginInfo.authors,
     description = MSEssentialsPluginInfo.description,
-    url = MSEssentialsPluginInfo.url
+    url = MSEssentialsPluginInfo.url,
+    dependencies = {
+        @Dependency(id = "mscore"),
+    }
 )
 public class MSEssentials {
 
@@ -71,7 +77,6 @@ public class MSEssentials {
 
     @Inject
     private TabUtils tabUtils;
-
 
     public static ProxyServer server;
 
@@ -95,6 +100,7 @@ public class MSEssentials {
     public void initServices() {
         api = LuckPermsProvider.get();
         injector = velocityRootInjector.createChildInjector(new VelocityModule(), new ApiVelocityModule());
+        MSRepository.createEnvironment("msessentials", injector);
         injector.getInstance(GlobalTab.class);
     }
 

@@ -24,11 +24,12 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyMessageEvent;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
+import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Collections;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 public class MessageCommand implements Command {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private ProxyServer proxyServer;
@@ -52,7 +53,7 @@ public class MessageCommand implements Command {
     public void execute(CommandSource source, @NonNull String[] args) {
         String name;
         if (args.length < 1) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             source.sendMessage(commandUsageMessages.messageCommandUsage);
             return;
         }

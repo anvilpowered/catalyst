@@ -21,9 +21,10 @@ package rocks.milspecsg.msessentials.velocity.commands;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class ReloadCommand implements Command {
@@ -32,12 +33,12 @@ public class ReloadCommand implements Command {
     private MSEssentials msEssentials;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.RELOAD)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
         msEssentials.loadConfig();

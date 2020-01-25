@@ -25,7 +25,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Optional;
@@ -33,7 +33,7 @@ import java.util.Optional;
 public class TeleportCommand implements Command {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private ProxyServer proxyServer;
@@ -41,12 +41,12 @@ public class TeleportCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.TELEPORT_FORCE)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (args.length < 1) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             return;
         }
 
@@ -55,13 +55,13 @@ public class TeleportCommand implements Command {
             Optional<Player> targetPlayer = proxyServer.getPlayer(args[0]);
             if (targetPlayer.isPresent()) {
                 if (sourcePlayer.equals(targetPlayer.get())) {
-                    sourcePlayer.sendMessage(pluginMessages.teleportToSelf());
+                    sourcePlayer.sendMessage(pluginMessages.getTeleportToSelf());
                     return;
                 }
                 source.sendMessage(TextComponent.of("Sending player"));
             }
         } else {
-            source.sendMessage(pluginMessages.legacyColor("Player only command!"));
+            source.sendMessage(TextComponent.of("Player only command!"));
         }
     }
 }

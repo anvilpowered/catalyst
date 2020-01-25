@@ -21,10 +21,11 @@ package rocks.milspecsg.msessentials.velocity.commands;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
@@ -34,23 +35,23 @@ import java.util.List;
 public class SwearRemoveCommand implements Command {
 
     @Inject
-    private Registry registry;
-
-    @Inject
-    private PluginMessages pluginMessages;
-
-    @Inject
     private CommandUsageMessages commandUsage;
+
+    @Inject
+    private PluginMessages<TextComponent> pluginMessages;
+
+    @Inject
+    private Registry registry;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!(source.hasPermission(PluginPermissions.LANGUAGE_ADMIN) || source.hasPermission(PluginPermissions.LANGUAGE_SWEAR_REMOVE))) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (args.length < 1) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             source.sendMessage(commandUsage.swearAddCommandUsage);
             return;
         }
@@ -58,10 +59,10 @@ public class SwearRemoveCommand implements Command {
         List<String> swearList = new ArrayList<>(registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS));
 
         if (!swearList.contains(args[0])) {
-            source.sendMessage(pluginMessages.missingSwear(args[0]));
+            source.sendMessage(pluginMessages.getMissingSwear(args[0]));
         } else {
             registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS).add(args[0]);
-            source.sendMessage(pluginMessages.removeSwear(args[0]));
+            source.sendMessage(pluginMessages.getRemoveSwear(args[0]));
 
         }
     }

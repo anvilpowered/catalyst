@@ -22,26 +22,27 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
+import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PlayerListUtils;
+import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class ListCommand implements Command {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PlayerListUtils playerListUtils;
 
     @Inject
-    private PlayerListUtils playerListUtils;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.LIST)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
-        source.sendMessage(pluginMessages.legacyColor("&a------------------- Online Players --------------------"));
+        source.sendMessage(TextComponent.of("------------------- Online Players --------------------").color(TextColor.GREEN));
         for (TextComponent text : playerListUtils.playerNameList) {
             source.sendMessage(text.append(TextComponent.of(", ")));
         }

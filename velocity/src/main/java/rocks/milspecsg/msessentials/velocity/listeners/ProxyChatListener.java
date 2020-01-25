@@ -25,22 +25,18 @@ import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
+import rocks.milspecsg.msessentials.velocity.chatutils.ChatFilter;
 import rocks.milspecsg.msessentials.velocity.events.ProxyChatEvent;
 import rocks.milspecsg.msessentials.velocity.events.ProxyStaffChatEvent;
+import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.velocity.utils.LuckPermsUtils;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
-import rocks.milspecsg.msessentials.velocity.chatutils.ChatFilter;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ProxyChatListener {
-
-    @Inject
-    public PluginMessages pluginMessages;
 
     @Inject
     public MemberManager<TextComponent> memberManager;
@@ -143,6 +139,5 @@ public class ProxyChatListener {
                 p.sendMessage(optionalMessage);
             }
         });
-
     }
 }

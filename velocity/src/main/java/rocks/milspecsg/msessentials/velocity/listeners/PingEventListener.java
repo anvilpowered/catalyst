@@ -19,14 +19,15 @@
 package rocks.milspecsg.msessentials.velocity.listeners;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
+import net.kyori.text.TextComponent;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
-
+import rocks.milspecsg.msrepository.api.util.StringResult;
 
 public class PingEventListener {
 
@@ -34,10 +35,10 @@ public class PingEventListener {
     private ProxyServer proxyServer;
 
     @Inject
-    private PluginMessages pluginmessages;
+    private Registry registry;
 
     @Inject
-    private Registry registry;
+    private StringResult<TextComponent, CommandSource> stringResult;
 
     @Subscribe
     public void onProxyPingEvent(ProxyPingEvent event) {
@@ -48,7 +49,7 @@ public class PingEventListener {
         serverPing.getFavicon().ifPresent(builder::favicon);
         builder.version(serverPing.getVersion());
         builder.onlinePlayers(playerCount);
-        builder.description(pluginmessages.legacyColor(registry.getOrDefault(MSEssentialsKeys.MOTD)));
+        builder.description(stringResult.deserialize(registry.getOrDefault(MSEssentialsKeys.MOTD)));
         builder.maximumPlayers(proxyServer.getConfiguration().getShowMaxPlayers());
 
         event.setPing(builder.build());

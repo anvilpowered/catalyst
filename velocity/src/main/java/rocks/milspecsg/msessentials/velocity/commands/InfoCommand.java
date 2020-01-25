@@ -26,11 +26,12 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class InfoCommand implements Command {
@@ -42,7 +43,7 @@ public class InfoCommand implements Command {
     private ProxyServer proxyServer;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private CommandUsageMessages commandUsage;
@@ -50,19 +51,17 @@ public class InfoCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
 
-        if(!source.hasPermission(PluginPermissions.INFO)) {
-            source.sendMessage(pluginMessages.noPermission);
+        if (!source.hasPermission(PluginPermissions.INFO)) {
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (args.length == 0) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             source.sendMessage(commandUsage.infoCommandUsage);
         } else {
             boolean isActive = proxyServer.getPlayer(args[0]).isPresent();
-            memberManager.info(args[0], isActive).thenAcceptAsync(source::sendMessage).exceptionally(e ->{ e.printStackTrace();
-                return null;
-            });
+            memberManager.info(args[0], isActive).thenAcceptAsync(source::sendMessage);
         }
     }
 

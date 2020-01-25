@@ -48,6 +48,9 @@ public class MSEssentialsCommandManager {
     private BanCommand banCommand;
 
     @Inject
+    private TempBanCommand tempBanCommand;
+
+    @Inject
     private UnBanCommand unBanCommand;
 
     @Inject
@@ -67,6 +70,9 @@ public class MSEssentialsCommandManager {
 
     @Inject
     private MuteCommand muteCommand;
+
+    @Inject
+    private TempMuteCommand tempMuteCommand;
 
     @Inject
     private UnMuteCommand unMuteCommand;
@@ -109,13 +115,15 @@ public class MSEssentialsCommandManager {
 
     public void register(Object plugin) {
         proxyServer.getCommandManager().register("ban", banCommand, "msban");
+        proxyServer.getCommandManager().register("tempban", tempBanCommand, "mstempban");
         proxyServer.getCommandManager().register("broadcast", broadcastCommand);
-        proxyServer.getCommandManager().register("delnick", deleteNicknameCommand, "deletenick");
+        proxyServer.getCommandManager().register("delnick", deleteNicknameCommand, "msdelnick", "deletenick");
         proxyServer.getCommandManager().register("find", findCommand, "msfind");
         proxyServer.getCommandManager().register("list", listCommand, "mslist");
         proxyServer.getCommandManager().register("info", infoCommand, "msinfo");
         proxyServer.getCommandManager().register("kick", kickCommand, "mskick");
         proxyServer.getCommandManager().register("mute", muteCommand, "msmute");
+        proxyServer.getCommandManager().register("tempmute", tempMuteCommand, "mstempmmute");
         proxyServer.getCommandManager().register("msg", messageCommand, "w", "tell", "whisper", "m", "t");
         proxyServer.getCommandManager().register("nick", nicknameCommand, "msnick");
         proxyServer.getCommandManager().register("reply", replyCommand, "r");
@@ -139,6 +147,5 @@ public class MSEssentialsCommandManager {
         proxyServer.getCommandManager().register("swearlist", swearListCommand);
         proxyServer.getCommandManager().register("swearadd", swearAddCommand);
         proxyServer.getCommandManager().register("swearremove", swearRemoveCommand);
-
     }
 }

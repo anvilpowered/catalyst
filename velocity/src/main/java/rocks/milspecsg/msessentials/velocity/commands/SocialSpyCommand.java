@@ -22,9 +22,10 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyMessageEvent;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.UUID;
@@ -32,20 +33,20 @@ import java.util.UUID;
 public class SocialSpyCommand implements Command {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if(source instanceof Player) {
+        if (source instanceof Player) {
             Player player = (Player) source;
-            if(source.hasPermission(PluginPermissions.SOCIALSPY) || source.hasPermission(PluginPermissions.SOCIALSPYONJOIN)) {
+            if (source.hasPermission(PluginPermissions.SOCIALSPY) || source.hasPermission(PluginPermissions.SOCIALSPYONJOIN)) {
                 UUID playerUUID = player.getUniqueId();
-                if(ProxyMessageEvent.socialSpySet.contains(playerUUID)) {
+                if (ProxyMessageEvent.socialSpySet.contains(playerUUID)) {
                     ProxyMessageEvent.socialSpySet.remove(playerUUID);
-                    source.sendMessage(pluginMessages.socialSpyToggle(false));
+                    source.sendMessage(pluginMessages.getSocialSpy(false));
                 } else {
                     ProxyMessageEvent.socialSpySet.add(playerUUID);
-                    source.sendMessage(pluginMessages.socialSpyToggle(true));
+                    source.sendMessage(pluginMessages.getSocialSpy(true));
                 }
             }
         }

@@ -25,33 +25,36 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentialsPluginInfo;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 
 import java.util.Optional;
 
 public class KickCommand implements Command {
 
     @Inject
-    private ProxyServer proxyServer;
+    private PluginInfo<TextComponent> pluginInfo;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
+
+    @Inject
+    private ProxyServer proxyServer;
 
     @Inject
     private CommandUsageMessages commandUsage;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        String kickReason = "you have been kicked!";
+        String kickReason = "You have been kicked!";
         if (!source.hasPermission(PluginPermissions.KICK)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
         if (!(args.length >= 1)) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             source.sendMessage(commandUsage.kickCommandUsage);
             return;
         }
@@ -62,12 +65,12 @@ public class KickCommand implements Command {
         Optional<Player> player = proxyServer.getPlayer(args[0]);
         if (player.isPresent()) {
             if (player.get().hasPermission(PluginPermissions.KICK_EXEMPT)) {
-                source.sendMessage(pluginMessages.kickExempt);
+                source.sendMessage(pluginMessages.getKickExempt());
                 return;
             }
             player.get().disconnect(TextComponent.of(kickReason));
         } else {
-            source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Offline or invalid player.")));
+            source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
         }
     }
 }

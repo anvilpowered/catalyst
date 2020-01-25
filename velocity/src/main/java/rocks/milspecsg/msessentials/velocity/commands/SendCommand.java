@@ -28,20 +28,23 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentialsPluginInfo;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 
 import java.util.Optional;
 
 public class SendCommand implements Command {
 
     @Inject
-    private ProxyServer proxyServer;
+    private PluginInfo<TextComponent> pluginInfo;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
+
+    @Inject
+    private ProxyServer proxyServer;
 
     @Inject
     private CommandUsageMessages commandUsage;
@@ -49,12 +52,12 @@ public class SendCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.SEND)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (args.length < 2) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             source.sendMessage(commandUsage.sendCommandUsage);
             return;
         }
@@ -64,18 +67,18 @@ public class SendCommand implements Command {
             Optional<RegisteredServer> server = proxyServer.getServer(args[1]);
             if (server.isPresent()) {
                 if (player.get().getCurrentServer().map(ServerConnection::getServerInfo).map(ServerInfo::getName).map(s -> s.equalsIgnoreCase(server.get().getServerInfo().getName())).orElse(false)) {
-                    source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of(player.get().getUsername() + " is already connected to that server.")));
+                    source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of(player.get().getUsername() + " is already connected to that server.")));
                 } else {
                     Player sender = (Player) source;
-                    source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("sending " + player.get().getUsername() + " to " + server.get().getServerInfo().getName())));
-                    player.get().sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("you have been sent to " + server.get().getServerInfo().getName() + " by " + sender.getUsername())));
+                    source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("sending " + player.get().getUsername() + " to " + server.get().getServerInfo().getName())));
+                    player.get().sendMessage(pluginInfo.getPrefix().append(TextComponent.of("you have been sent to " + server.get().getServerInfo().getName() + " by " + sender.getUsername())));
                     player.get().createConnectionRequest(server.get()).fireAndForget();
                 }
             } else {
-                source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Invalid or offline server.")));
+                source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Invalid or offline server.")));
             }
         } else {
-            source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Offline or invalid player.")));
+            source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
         }
     }
 }

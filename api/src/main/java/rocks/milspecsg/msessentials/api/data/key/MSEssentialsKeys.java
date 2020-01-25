@@ -44,7 +44,6 @@ public final class MSEssentialsKeys {
     };
 
     public static final Key<String> BROADCAST_PREFIX = new Key<String>("BROADCAST", "[Broadcast]") {
-        ;
     };
 
     public static final Key<String> FIRST_JOIN = new Key<String>("FIRST_JOIN", "Welcome to the server, %player%") {
@@ -101,6 +100,5 @@ public final class MSEssentialsKeys {
         Keys.registerKey(TAB_FORMAT);
         Keys.registerKey(TAB_FORMAT_CUSTOM);
         Keys.registerKey(TAB_UPDATE);
-
     }
 }

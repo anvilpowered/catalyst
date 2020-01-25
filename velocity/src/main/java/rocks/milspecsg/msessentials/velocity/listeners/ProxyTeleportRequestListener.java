@@ -20,18 +20,19 @@ package rocks.milspecsg.msessentials.velocity.listeners;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
+import net.kyori.text.TextComponent;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyTeleportRequestEvent;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 
 public class ProxyTeleportRequestListener {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Subscribe
-    public void onTeleportRequest (ProxyTeleportRequestEvent event) {
-        event.getTargetPlayer().sendMessage(pluginMessages.teleportRequestRecieved(event.getSourcePlayer().getUsername()));
-        event.getSourcePlayer().sendMessage(pluginMessages.teleportRequestSent(event.getTargetPlayer().getUsername()));
+    public void onTeleportRequest(ProxyTeleportRequestEvent event) {
+        event.getTargetPlayer().sendMessage(pluginMessages.getTeleportRequestReceived(event.getSourcePlayer().getUsername()));
+        event.getSourcePlayer().sendMessage(pluginMessages.getTeleportRequestSent(event.getTargetPlayer().getUsername()));
 
         //Fire plugin message events
     }

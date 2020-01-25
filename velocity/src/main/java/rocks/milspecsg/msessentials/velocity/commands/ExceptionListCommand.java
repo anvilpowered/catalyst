@@ -24,7 +24,7 @@ import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
@@ -37,12 +37,12 @@ public class ExceptionListCommand implements Command {
     private Registry registry;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!(source.hasPermission(PluginPermissions.LANGUAGE_ADMIN) || source.hasPermission(PluginPermissions.LANGUAGE_EXCEPTION_LIST))) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 

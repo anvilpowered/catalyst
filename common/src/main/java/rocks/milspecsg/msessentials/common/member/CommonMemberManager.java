@@ -18,20 +18,26 @@
 
 package rocks.milspecsg.msessentials.common.member;
 
-import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
+import rocks.milspecsg.mscore.api.coremember.repository.CoreMemberRepository;
+import rocks.milspecsg.mscore.api.model.coremember.CoreMember;
+import rocks.milspecsg.mscore.api.plugin.PluginMessages;
+import rocks.milspecsg.mscore.common.plugin.MSCore;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
-import rocks.milspecsg.msessentials.api.model.member.Member;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.api.util.CurrentServerService;
 import rocks.milspecsg.msrepository.api.util.KickService;
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 import rocks.milspecsg.msrepository.api.util.StringResult;
+import rocks.milspecsg.msrepository.api.util.TimeFormatService;
 import rocks.milspecsg.msrepository.api.util.UserService;
 import rocks.milspecsg.msrepository.common.manager.CommonManager;
 
 import javax.inject.Inject;
-import java.util.Date;
-import java.util.UUID;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class CommonMemberManager<
@@ -39,33 +45,48 @@ public class CommonMemberManager<
     TPlayer extends TCommandSource,
     TString,
     TCommandSource>
-    extends CommonManager<MemberRepository<?, ?>>
+    extends CommonManager<CoreMemberRepository<?, ?>>
     implements MemberManager<TString> {
-
-    @Inject
-    protected StringResult<TString, TCommandSource> stringResult;
-
-    @Inject
-    protected KickService kickService;
-
-    @Inject
-    protected UserService<TUser, TPlayer> userService;
 
     @Inject
     protected CurrentServerService currentServerService;
 
     @Inject
-    protected CommonMemberManager(Registry registry) {
+    protected KickService kickService;
+
+    @Inject
+    protected PluginInfo<TString> pluginInfo;
+
+    // not from this injector
+    protected PluginMessages<TString> pluginMessages;
+
+    @Inject
+    protected StringResult<TString, TCommandSource> stringResult;
+
+    @Inject
+    protected TimeFormatService timeFormatService;
+
+    @Inject
+    protected UserService<TUser, TPlayer> userService;
+
+    @Inject
+    public CommonMemberManager(Registry registry) {
         super(registry);
+        pluginMessages = MSCore.getPluginMessages();
     }
 
     @Override
-    public CompletableFuture<TString> info(String username, boolean isOnline) {
-        return getPrimaryComponent().getOneForUser(username).thenApplyAsync(optionalMember -> {
+    public CoreMemberRepository<?, ?> getPrimaryComponent() {
+        return MSCore.getCoreMemberRepository();
+    }
+
+    @Override
+    public CompletableFuture<TString> info(String userName, boolean isOnline) {
+        return getPrimaryComponent().getOneForUser(userName).thenApplyAsync(optionalMember -> {
                 if (!optionalMember.isPresent()) {
                     return stringResult.fail("Could not get user data");
                 }
-                Member<?> member = optionalMember.get();
+                CoreMember<?> member = optionalMember.get();
                 String nick;
                 String lastSeen;
                 String banReason;
@@ -77,14 +98,13 @@ public class CommonMemberManager<
                 if (isOnline) {
                     lastSeen = "Currently Online.";
                 } else {
-                    lastSeen = member.getLastSeenUtc().toString();
+                    lastSeen = timeFormatService.format(member.getLastJoinedUtc());
                 }
-                if (member.getBanStatus()) {
+                if (member.isBanned()) {
                     banReason = member.getBanReason();
                 } else {
                     banReason = "This user is not banned.";
                 }
-                System.out.println(username);
 
                 return stringResult.builder()
                     .append(
@@ -96,7 +116,7 @@ public class CommonMemberManager<
                     )
                     .append(
                         stringResult.builder()
-                            .green().append(username))
+                            .green().append(userName))
                     .append(
                         stringResult.builder()
                             .blue().append("\nNickname : ")
@@ -111,7 +131,7 @@ public class CommonMemberManager<
                     )
                     .append(
                         stringResult.builder()
-                            .green().append(member.getIPAddress())
+                            .green().append(member.getIpAddress())
                     )
                     .append(
                         stringResult.builder()
@@ -119,7 +139,7 @@ public class CommonMemberManager<
                     )
                     .append(
                         stringResult.builder()
-                            .green().append(member.getCreatedUtcDate().toString())
+                            .green().append(member.getCreatedUtc().toString())
                     )
                     .append(
                         stringResult.builder()
@@ -144,22 +164,9 @@ public class CommonMemberManager<
                             .gold().append(currentServerService.getCurrentServerName(member.getUserUUID()).orElse("Offline User."))
                     )
                     .build();
-
             }
         );
     }
-
-    @Override
-    public CompletableFuture<TString> setLastSeenUtc(UUID userUUID, Date lastSeenUtc) {
-        return getPrimaryComponent().setLastSeenUtcForUser(userUUID, lastSeenUtc).thenApplyAsync(result -> {
-            if (result) {
-                return stringResult.success("successfully updated lastSeenUtc");
-            } else {
-                return stringResult.fail("Failed to update lastSeenUtc");
-            }
-        });
-    }
-
 
     @Override
     public CompletableFuture<TString> setNickName(String userName, String nickName) {
@@ -173,8 +180,8 @@ public class CommonMemberManager<
     }
 
     @Override
-    public CompletableFuture<TString> deleteNickname(String username) {
-        return getPrimaryComponent().setNickNameForUser(username, username).thenApplyAsync(result -> {
+    public CompletableFuture<TString> deleteNickname(String userName) {
+        return getPrimaryComponent().setNickNameForUser(userName, userName).thenApplyAsync(result -> {
             if (result) {
                 return stringResult.success("Successfully deleted your nickname.");
             } else {
@@ -188,15 +195,11 @@ public class CommonMemberManager<
             if (!optionalMember.isPresent()) {
                 return stringResult.fail("Couldn't find a user matching that name!");
             }
-            if (optionalMember.get().getMuteStatus()) {
-                return stringResult.fail("You are muted!");
-            }
             String finalName = optionalMember.get().getUserName();
-            String finalNameColor = nameColor;
             if (optionalMember.get().getNickName() != null) {
                 finalName = optionalMember.get().getNickName();
             } else {
-                finalName = finalNameColor + finalName;
+                finalName = nameColor + finalName;
             }
             return stringResult
                 .builder()
@@ -211,28 +214,12 @@ public class CommonMemberManager<
     }
 
     @Override
-    public CompletableFuture<Void> syncPlayerInfo(UUID playerUUID, String ipAddress, String username) {
-        boolean[] flags = {false};
-        return getPrimaryComponent().getOneOrGenerateForUser(playerUUID, ipAddress, username, flags)
-            .thenAcceptAsync(optionalMember -> {
-                if (!optionalMember.isPresent()) {
-                    return;
-                }
-                if (optionalMember.get().getBanStatus()) {
-                    kickService.kick(playerUUID, optionalMember.get().getBanReason());
-                } else if (flags[0]) {
-                    //If the player is new
-                    userService.getPlayer(playerUUID).ifPresent(user -> stringResult.send(stringResult.deserialize(registry.getOrDefault(MSEssentialsKeys.FIRST_JOIN)), user));
-                }
-            });
-    }
-
-    @Override
-    public CompletableFuture<TString> ban(String username, String reason) {
-        return getPrimaryComponent().setBannedForUser(username, true, reason).thenApplyAsync(optionalUUID -> {
-            if (optionalUUID.isPresent()) {
-                kickService.kick(optionalUUID.get(), reason);
-                return stringResult.success("Banned " + username + " for " + reason);
+    public CompletableFuture<TString> ban(String userName, String reason) {
+        Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(Duration.ofDays(3600));
+        return getPrimaryComponent().banUser(userName, endUtc, reason).thenApplyAsync(b -> {
+            if (b) {
+                kickService.kick(userName, pluginMessages.getBanMessage(reason, endUtc));
+                return stringResult.success("Banned " + userName + " for " + reason);
             }
             return stringResult.fail("Invalid user.");
         });
@@ -244,9 +231,31 @@ public class CommonMemberManager<
     }
 
     @Override
+    public CompletableFuture<TString> tempBan(String userName, String duration, String reason) {
+        Optional<Duration> optionalDuration = timeFormatService.parseDuration(duration);
+        if (!optionalDuration.isPresent()) {
+            return CompletableFuture.completedFuture(stringResult.fail("Invalid input for duration"));
+        }
+        Duration dur = optionalDuration.get();
+        Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(dur);
+        return getPrimaryComponent().banUser(userName, endUtc, reason).thenApplyAsync(b -> {
+            if (b) {
+                kickService.kick(userName, pluginMessages.getBanMessage(reason, endUtc));
+                return stringResult.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur));
+            }
+            return stringResult.fail("Invalid user.");
+        });
+    }
+
+    @Override
+    public CompletableFuture<TString> tempBan(String userName, String duration) {
+        return tempBan(userName, duration, "The ban hammer has spoken.");
+    }
+
+    @Override
     public CompletableFuture<TString> unBan(String userName) {
-        return getPrimaryComponent().setBannedForUser(userName, false, "").thenApplyAsync(optionalUUID -> {
-            if (optionalUUID.isPresent()) {
+        return getPrimaryComponent().unBanUser(userName).thenApplyAsync(b -> {
+            if (b) {
                 return stringResult.success("Unbanned " + userName);
             }
             return stringResult.fail("Invalid user.");
@@ -254,9 +263,11 @@ public class CommonMemberManager<
     }
 
     @Override
-    public CompletableFuture<TString> mute(String userName) {
-        return getPrimaryComponent().setMuteStatusForUser(userName, true).thenApplyAsync(optionalUUID -> {
-            if (optionalUUID.isPresent()) {
+    public CompletableFuture<TString> mute(String userName, String reason) {
+        Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(Duration.ofDays(3600));
+        return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
+            if (b) {
+                userService.getPlayer(userName).ifPresent(p -> stringResult.send(pluginMessages.getMuteMessage(reason, endUtc), p));
                 return stringResult.success("Muted " + userName);
             }
             return stringResult.fail("Invalid user.");
@@ -264,9 +275,42 @@ public class CommonMemberManager<
     }
 
     @Override
+    public CompletableFuture<TString> mute(String userName) {
+        return mute(userName, "You have been muted.");
+    }
+
+    @Override
+    public CompletableFuture<TString> tempMute(String userName, String duration, String reason) {
+        Optional<Duration> optionalDuration = timeFormatService.parseDuration(duration);
+        if (!optionalDuration.isPresent()) {
+            return CompletableFuture.completedFuture(stringResult.fail("Invalid input for duration"));
+        }
+        Duration dur = optionalDuration.get();
+        Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(dur);
+        return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
+            if (b) {
+                userService.getPlayer(userName).ifPresent(p -> stringResult.send(pluginMessages.getMuteMessage(reason, endUtc), p));
+                return stringResult.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur));
+            }
+            return stringResult.fail("Invalid user.");
+        });
+    }
+
+    @Override
+    public CompletableFuture<TString> tempMute(String userName, String duration) {
+        return tempMute(userName, duration, "You have been muted.");
+    }
+
+    @Override
     public CompletableFuture<TString> unMute(String userName) {
-        return getPrimaryComponent().setMuteStatusForUser(userName, false).thenApplyAsync(optionalUUID -> {
-            if (optionalUUID.isPresent()) {
+        return getPrimaryComponent().unMuteUser(userName).thenApplyAsync(b -> {
+            if (b) {
+                userService.getPlayer(userName).ifPresent(p -> {
+                    stringResult.builder()
+                        .append(pluginInfo.getPrefix())
+                        .yellow().append("You have been unmuted.")
+                        .sendTo(p);
+                });
                 return stringResult.success("UnMuted " + userName);
             }
             return stringResult.fail("Invalid user.");

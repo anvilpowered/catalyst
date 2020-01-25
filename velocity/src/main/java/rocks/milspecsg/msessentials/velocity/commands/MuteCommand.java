@@ -26,51 +26,52 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MuteCommand implements Command {
 
     @Inject
-    private ProxyServer proxyServer;
-
-    @Inject
-    private PluginMessages pluginMessages;
+    private CommandUsageMessages commandUsage;
 
     @Inject
     private MemberManager<TextComponent> memberManager;
 
     @Inject
-    private CommandUsageMessages commandUsage;
+    private PluginMessages<TextComponent> pluginMessages;
+
+    @Inject
+    private ProxyServer proxyServer;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-
         if (!source.hasPermission(PluginPermissions.MUTE)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (args.length == 0) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             source.sendMessage(commandUsage.muteCommandUsage);
             return;
         }
-        Optional<Player> player = proxyServer.getPlayer(args[0]);
-        if (player.isPresent()) {
-            if (player.get().hasPermission(PluginPermissions.MUTE_EXEMPT)) {
-                source.sendMessage(pluginMessages.muteExempt);
-                return;
-            }
-        }
+        String username = args[0];
 
-       memberManager.mute(args[0]).thenAcceptAsync(source::sendMessage);
+        if (proxyServer.getPlayer(username).filter(p -> p.hasPermission(PluginPermissions.MUTE_EXEMPT)).isPresent()) {
+            source.sendMessage(pluginMessages.getMuteExempt());
+            return;
+        }
+        if (args.length == 1) {
+            memberManager.mute(username).thenAcceptAsync(source::sendMessage);
+        } else {
+            String reason = String.join(" ", args).replace(username + " ", "");
+            memberManager.mute(username, reason).thenAcceptAsync(source::sendMessage);
+        }
     }
 
     @Override

@@ -26,16 +26,19 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentialsPluginInfo;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 
 public class ServerCommand implements Command {
 
     @Inject
-    private ProxyServer proxyServer;
+    private PluginInfo<TextComponent> pluginInfo;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
+
+    @Inject
+    private ProxyServer proxyServer;
 
     private RegisteredServer registeredServer;
 
@@ -48,24 +51,23 @@ public class ServerCommand implements Command {
         if (source instanceof Player) {
             Player player = (Player) source;
             if (player.hasPermission("msessentials.server.join." + registeredServer.getServerInfo().getName())) {
-                if(registeredServer.ping().join().getVersion().getName().equals(player.getProtocolVersion().getName())) {
-
+                if (registeredServer.ping().join().getVersion().getName().equals(player.getProtocolVersion().getName())) {
                     player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {
                         if (connection.isSuccessful()) {
-                            player.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Connected to server " + registeredServer.getServerInfo().getName())));
+                            player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Connected to server " + registeredServer.getServerInfo().getName())));
                         } else {
-                            if (player.getCurrentServer().get().getServerInfo().getName().equals(registeredServer.getServerInfo().getName())) {
-                                player.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("You are already connected to " + registeredServer.getServerInfo().getName())));
+                            if (player.getCurrentServer().map(s -> s.getServerInfo().getName().equals(registeredServer.getServerInfo().getName())).orElse(false)) {
+                                player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("You are already connected to " + registeredServer.getServerInfo().getName())));
                             } else {
-                                player.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Failed to connect to " + registeredServer.getServerInfo().getName())));
+                                player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Failed to connect to " + registeredServer.getServerInfo().getName())));
                             }
                         }
                     });
                 } else {
-                    source.sendMessage(pluginMessages.incompatibleServerVersion);
+                    source.sendMessage(pluginMessages.getIncompatibleServerVersion());
                 }
             } else {
-                player.sendMessage(pluginMessages.noPermission);
+                player.sendMessage(pluginMessages.getNoPermission());
             }
         }
     }

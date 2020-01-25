@@ -101,12 +101,12 @@ public class GlobalTab {
                             Player currentPlayer = (Player) proxyServer.getAllPlayers().toArray()[i2];
 
                             TabListEntry currentEntry = TabListEntry.builder().profile(currentPlayer.getGameProfile())
-                                    .displayName(tabBuilder.formatPlayerTab(
-                                            registry.getOrDefault(MSEssentialsKeys.TAB_FORMAT), currentPlayer))
-                                    .tabList(currentPlayerToProcess.getTabList()).build();
+                                .displayName(tabBuilder.formatPlayerTab(
+                                    registry.getOrDefault(MSEssentialsKeys.TAB_FORMAT), currentPlayer))
+                                .tabList(currentPlayerToProcess.getTabList()).build();
 
                             insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry,
-                                    toKeep);
+                                toKeep);
                         }
 
                         if (registry.getOrDefault(MSEssentialsKeys.TAB_ENABLED)) {
@@ -116,12 +116,12 @@ public class GlobalTab {
                                 GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
 
                                 TabListEntry currentEntry = TabListEntry.builder().profile(tabProfile)
-                                        .displayName(
-                                                tabBuilder.formatTab(customtabs.get(i3), currentPlayerToProcess))
-                                        .tabList(currentPlayerToProcess.getTabList()).build();
+                                    .displayName(
+                                        tabBuilder.formatTab(customtabs.get(i3), currentPlayerToProcess))
+                                    .tabList(currentPlayerToProcess.getTabList()).build();
 
                                 insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry,
-                                        toKeep);
+                                    toKeep);
                             }
                         }
 
@@ -131,10 +131,10 @@ public class GlobalTab {
                         }
 
                         currentPlayerToProcess.getTabList().setHeaderAndFooter(
-                                tabBuilder.formatTab(registry.getOrDefault(MSEssentialsKeys.TAB_HEADER),
-                                        currentPlayerToProcess),
-                                tabBuilder.formatTab(registry.getOrDefault(MSEssentialsKeys.TAB_FOOTER),
-                                        currentPlayerToProcess));
+                            tabBuilder.formatTab(registry.getOrDefault(MSEssentialsKeys.TAB_HEADER),
+                                currentPlayerToProcess),
+                            tabBuilder.formatTab(registry.getOrDefault(MSEssentialsKeys.TAB_FOOTER),
+                                currentPlayerToProcess));
                     }
                 }
             } catch (Exception e) {

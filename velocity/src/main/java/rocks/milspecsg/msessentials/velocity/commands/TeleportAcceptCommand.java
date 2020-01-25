@@ -21,16 +21,17 @@ package rocks.milspecsg.msessentials.velocity.commands;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.entity.living.player.Player;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.velocity.utils.ProxyTeleportUtils;
 
 public class TeleportAcceptCommand implements Command {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private ProxyTeleportUtils proxyTeleportUtils;
@@ -38,19 +39,16 @@ public class TeleportAcceptCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.TELEPORT_REQUEST)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
-        if(source instanceof Player) {
+        if (source instanceof Player) {
             Player player = (Player) source;
-            if(proxyTeleportUtils.teleportationMap.containsKey(player.getUniqueId())) {
+            if (proxyTeleportUtils.teleportationMap.containsKey(player.getUniqueId())) {
                 //TODO Implement teleport accepting
                 proxyTeleportUtils.teleportationMap.remove(player.getUniqueId());
-
-
             }
-
         }
     }
 }

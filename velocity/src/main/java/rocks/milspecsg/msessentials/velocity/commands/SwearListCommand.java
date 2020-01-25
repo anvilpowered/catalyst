@@ -24,7 +24,7 @@ import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
@@ -34,15 +34,15 @@ import java.util.List;
 public class SwearListCommand implements Command {
 
     @Inject
-    private Registry registry;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private Registry registry;
 
     @Override
-    public void execute(CommandSource source,  @NonNull String[] args) {
+    public void execute(CommandSource source, @NonNull String[] args) {
         if (!(source.hasPermission(PluginPermissions.LANGUAGE_ADMIN) || source.hasPermission(PluginPermissions.LANGUAGE_SWEAR_LIST))) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 

@@ -21,14 +21,26 @@ package rocks.milspecsg.msessentials.velocity.commands;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
-public class BroadcastCommand implements Command {
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class TempMuteCommand implements Command {
+
+    @Inject
+    private CommandUsageMessages commandUsage;
+
+    @Inject
+    private MemberManager<TextComponent> memberManager;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -36,22 +48,39 @@ public class BroadcastCommand implements Command {
     @Inject
     private ProxyServer proxyServer;
 
-    @Inject
-    private CommandUsageMessages commandUsage;
-
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-
-        if (!source.hasPermission(PluginPermissions.BROADCAST)) {
+        if (!source.hasPermission(PluginPermissions.MUTE)) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
-        if (args[0].isEmpty()) {
+        if (args.length < 2) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(commandUsage.broadcastCommandUsage);
+            source.sendMessage(commandUsage.tempMuteCommandUsage);
             return;
         }
-        proxyServer.broadcast(pluginMessages.getBroadcast(String.join(" ", args)));
+        String username = args[0];
+        String duration = args[1];
+
+        if (proxyServer.getPlayer(username).filter(p -> p.hasPermission(PluginPermissions.MUTE_EXEMPT)).isPresent()) {
+            source.sendMessage(pluginMessages.getMuteExempt());
+            return;
+        }
+
+        if (args.length == 2) {
+            memberManager.tempMute(username, duration).thenAcceptAsync(source::sendMessage);
+        } else {
+            String reason = String.join(" ", args).replace(username + " ", "").replace(duration, "");
+            memberManager.tempMute(username, duration, reason).thenAcceptAsync(source::sendMessage);
+        }
+    }
+
+    @Override
+    public List<String> suggest(CommandSource src, String[] args) {
+        if (args.length == 1) {
+            return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

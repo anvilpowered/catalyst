@@ -16,23 +16,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package rocks.milspecsg.msessentials.velocity.plugin;
+package rocks.milspecsg.msessentials.common.plugin;
 
-import net.kyori.text.TextComponent;
-import net.kyori.text.format.TextColor;
-import rocks.milspecsg.msrepository.api.util.*;
+import com.google.inject.Inject;
+import rocks.milspecsg.mscore.common.plugin.MSCorePluginInfo;
+import rocks.milspecsg.msrepository.api.util.StringResult;
 
 import javax.inject.Singleton;
 
 @Singleton
-public final class MSEssentialsPluginInfo implements PluginInfo<TextComponent> {
+public final class MSEssentialsPluginInfo<TString, TCommandSource> extends MSCorePluginInfo<TString, TCommandSource> {
     public static final String id = "msessentials";
     public static final String name = "MSEssentials";
     public static final String version = "$modVersion";
     public static final String description = "An essentials plugin for velocity";
-    public static final String url = "https://github.com/MilSpecSG/MSDataSync";
-    public static final String authors = "STG_Allen";
-    public static final TextComponent pluginPrefix = TextComponent.of("[MSEssentials] ").color(TextColor.GOLD);
+    public static final String url = "https://github.com/MilSpecSG/MSEssentials";
+    public static final String authors = "STG_Allen, Cableguy20";
+    public TString pluginPrefix;
+
+    @Inject
+    public void setPluginPrefix(StringResult<TString, TCommandSource> stringResult) {
+        pluginPrefix = stringResult.builder().gold().append("[", name, "] ").build();
+    }
 
     @Override
     public String getId() {
@@ -65,7 +70,7 @@ public final class MSEssentialsPluginInfo implements PluginInfo<TextComponent> {
     }
 
     @Override
-    public TextComponent getPrefix() {
+    public TString getPrefix() {
         return pluginPrefix;
     }
 }

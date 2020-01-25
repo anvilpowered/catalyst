@@ -26,10 +26,10 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentialsPluginInfo;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +42,10 @@ public class FindCommand implements Command {
     private ProxyServer proxyServer;
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginInfo<TextComponent> pluginInfo;
+
+    @Inject
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private CommandUsageMessages commandUsage;
@@ -50,21 +53,21 @@ public class FindCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.FIND)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (!(args.length >= 1)) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNoPermission());
             source.sendMessage(commandUsage.findCommandUsage);
         } else {
             Optional<Player> player = proxyServer.getPlayer(args[0]);
 
             if (player.isPresent()) {
                 String serverName = player.get().getCurrentServer().map(ServerConnection::getServerInfo).get().getName();
-                source.sendMessage(pluginMessages.currentServer(player.get().getUsername(), serverName));
+                source.sendMessage(pluginMessages.getCurrentServer(player.get().getUsername(), serverName));
             } else {
-                source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(TextComponent.of("Offline or invalid player.")));
+                source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
             }
         }
     }

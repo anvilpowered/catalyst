@@ -22,17 +22,12 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.text.TextComponent;
-import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.velocity.events.ProxyMessageEvent;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.velocity.utils.PlayerListUtils;
+import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.velocity.utils.StaffListUtils;
 
 public class ProxyJoinListener {
-
-    @Inject
-    private MemberManager<TextComponent> memberManager;
 
     @Inject
     private StaffListUtils staffListUtils;
@@ -50,7 +45,5 @@ public class ProxyJoinListener {
 
         playerListUtils.addPlayer(player);
         staffListUtils.getStaffNames(player);
-
-        memberManager.syncPlayerInfo(player.getUniqueId(), player.getRemoteAddress().toString(), player.getUsername());
     }
 }

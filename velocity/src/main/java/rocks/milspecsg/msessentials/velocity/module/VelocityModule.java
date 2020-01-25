@@ -26,11 +26,8 @@ import net.kyori.text.TextComponent;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import rocks.milspecsg.msessentials.api.model.member.Member;
 import rocks.milspecsg.msessentials.common.module.CommonModule;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentialsPluginInfo;
-import rocks.milspecsg.msrepository.api.util.BasicPluginInfo;
-import rocks.milspecsg.msrepository.api.util.PluginInfo;
+import rocks.milspecsg.msessentials.common.plugin.MSEssentialsPluginInfo;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -48,7 +45,6 @@ public class VelocityModule extends CommonModule<
         super.configure();
 
         File configFilesLocation = Paths.get("plugins/" + MSEssentialsPluginInfo.id).toFile();
-        System.out.println(Member.class.getPackage().toString());
         if (!configFilesLocation.exists()) {
             if (!configFilesLocation.mkdirs()) {
                 throw new IllegalStateException("Unable to create config directory");
@@ -57,10 +53,5 @@ public class VelocityModule extends CommonModule<
 
         bind(new TypeLiteral<ConfigurationLoader<CommentedConfigurationNode>>() {
         }).toInstance(HoconConfigurationLoader.builder().setPath(Paths.get(configFilesLocation + "/msessentials.conf")).build());
-
-        bind(BasicPluginInfo.class).to(MSEssentialsPluginInfo.class);
-
-        bind(new TypeLiteral<PluginInfo<TextComponent>>() {
-        }).to(MSEssentialsPluginInfo.class);
     }
 }

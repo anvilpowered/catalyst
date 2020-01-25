@@ -18,14 +18,12 @@
 
 package rocks.milspecsg.msessentials.api.member;
 
-import rocks.milspecsg.msessentials.api.member.repository.MemberRepository;
+import rocks.milspecsg.mscore.api.coremember.repository.CoreMemberRepository;
 import rocks.milspecsg.msrepository.api.manager.Manager;
 
-import java.util.Date;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface MemberManager<TString> extends Manager<MemberRepository<?, ?>> {
+public interface MemberManager<TString> extends Manager<CoreMemberRepository<?, ?>> {
 
     @Override
     default String getDefaultIdentifierSingularUpper() {
@@ -47,25 +45,31 @@ public interface MemberManager<TString> extends Manager<MemberRepository<?, ?>> 
         return "members";
     }
 
-    CompletableFuture<TString> info(String nickname, boolean isActive);
+    CompletableFuture<TString> info(String nickName, boolean isActive);
 
-    CompletableFuture<TString> formatMessage(String prefix, String nameColor, String username, String message, String suffix, boolean hasPermission);
+    CompletableFuture<TString> formatMessage(String prefix, String nameColor, String userName, String message, String suffix, boolean hasPermission);
 
     CompletableFuture<TString> setNickName(String userName, String nickName);
 
-    CompletableFuture<TString> deleteNickname(String username);
+    CompletableFuture<TString> deleteNickname(String userName);
 
-    CompletableFuture<TString> setLastSeenUtc(UUID userUUID, Date lastSeenUtc);
-
-    CompletableFuture<Void> syncPlayerInfo(UUID playerUUID, String ipAddress, String username);
-
-    CompletableFuture<TString> ban(String username, String reason);
+    CompletableFuture<TString> ban(String userName, String reason);
 
     CompletableFuture<TString> ban(String userName);
 
+    CompletableFuture<TString> tempBan(String userName, String duration, String reason);
+
+    CompletableFuture<TString> tempBan(String userName, String duration);
+
     CompletableFuture<TString> unBan(String userName);
 
+    CompletableFuture<TString> mute(String userName, String reason);
+
     CompletableFuture<TString> mute(String userName);
+
+    CompletableFuture<TString> tempMute(String userName, String duration, String reason);
+
+    CompletableFuture<TString> tempMute(String userName, String duration);
 
     CompletableFuture<TString> unMute(String userName);
 }

@@ -50,6 +50,4 @@ public class ProxyStaffChatEvent {
         this.rawMessage = rawMessage;
         this.message = message;
     }
-
-
 }

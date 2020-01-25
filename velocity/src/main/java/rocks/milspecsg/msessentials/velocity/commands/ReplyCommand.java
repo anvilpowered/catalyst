@@ -23,11 +23,13 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.text.TextComponent;
+import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentialsPluginInfo;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyMessageEvent;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
+import rocks.milspecsg.msrepository.api.util.PluginInfo;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +37,10 @@ import java.util.UUID;
 public class ReplyCommand implements Command {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginInfo<TextComponent> pluginInfo;
+
+    @Inject
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private ProxyServer proxyServer;
@@ -43,12 +48,12 @@ public class ReplyCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.MESSAGE)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (args.length == 0) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             return;
         }
 
@@ -65,10 +70,10 @@ public class ReplyCommand implements Command {
                     ProxyMessageEvent.sendMessage(sender, recipient.get(), message, proxyServer);
                     ProxyMessageEvent.replyMap.put(recipientUUID, senderUUID);
                 } else {
-                    source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(pluginMessages.legacyColor("&4Invalid of offline player!")));
+                    source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Invalid of offline player!").color(TextColor.RED)));
                 }
             } else {
-                source.sendMessage(MSEssentialsPluginInfo.pluginPrefix.append(pluginMessages.legacyColor("Nobody to reply to!")));
+                source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Nobody to reply to!").color(TextColor.RED)));
             }
         }
     }

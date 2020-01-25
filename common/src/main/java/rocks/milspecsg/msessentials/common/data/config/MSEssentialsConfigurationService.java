@@ -17,11 +17,14 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
 
     @Override
     protected void initNodeNameMap() {
-        super.initNodeNameMap();
         nodeNameMap.put(MSEssentialsKeys.MOTD, "motd");
         nodeNameMap.put(MSEssentialsKeys.BROADCAST_PREFIX, "broadcast");
         nodeNameMap.put(MSEssentialsKeys.CHAT_FILTER_SWEARS, "chat.filter.swears");
         nodeNameMap.put(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, "chat.filter.exceptions");
         nodeNameMap.put(MSEssentialsKeys.CHAT_FILTER_ENABLED, "chat.filter");
+    }
+
+    @Override
+    protected void initNodeDescriptionMap() {
     }
 }

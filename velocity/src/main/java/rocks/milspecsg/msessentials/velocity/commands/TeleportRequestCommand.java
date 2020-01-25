@@ -23,9 +23,10 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyTeleportRequestEvent;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.velocity.utils.ProxyTeleportUtils;
 
@@ -34,7 +35,7 @@ import java.util.Optional;
 public class TeleportRequestCommand implements Command {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
     private ProxyServer proxyServer;
@@ -45,12 +46,12 @@ public class TeleportRequestCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(PluginPermissions.TELEPORT_REQUEST)) {
-            source.sendMessage(pluginMessages.noPermission);
+            source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (args.length < 1) {
-            source.sendMessage(pluginMessages.notEnoughArgs);
+            source.sendMessage(pluginMessages.getNotEnoughArgs());
             return;
         }
 
@@ -59,7 +60,7 @@ public class TeleportRequestCommand implements Command {
             Optional<Player> targetPlayer = proxyServer.getPlayer(args[0]);
             if (targetPlayer.isPresent()) {
                 if (sourcePlayer.equals(targetPlayer.get())) {
-                    sourcePlayer.sendMessage(pluginMessages.teleportToSelf());
+                    sourcePlayer.sendMessage(pluginMessages.getTeleportToSelf());
                 }
 
                 proxyTeleportUtils.teleportationMap.put(sourcePlayer.getUniqueId(), targetPlayer.get().getUniqueId());

@@ -19,16 +19,17 @@
 package rocks.milspecsg.msessentials.velocity.tab;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import rocks.milspecsg.msessentials.velocity.utils.LuckPermsUtils;
-import rocks.milspecsg.msessentials.velocity.messages.PluginMessages;
+import rocks.milspecsg.msrepository.api.util.StringResult;
 
 public class TabBuilder {
 
     @Inject
-    private PluginMessages pluginMessages;
+    private StringResult<TextComponent, CommandSource> stringResult;
 
     @Inject
     private ProxyServer proxyServer;
@@ -42,28 +43,24 @@ public class TabBuilder {
         raw = raw.replace("%prefix%", LuckPermsUtils.getPrefix(player));
         raw = raw.replace("%suffix%", LuckPermsUtils.getSuffix(player));
 
-        raw = raw.replace("%server%", player.getCurrentServer().get().getServerInfo().getName());
+        raw = raw.replace("%server%", player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("null"));
 
-        return pluginMessages.legacyColor(raw);
+        return stringResult.deserialize(raw);
     }
 
     public TextComponent formatTab(String raw, Player player) {
         raw = raw.replace("%player%", player.getUsername())
-                .replace("%prefix%", LuckPermsUtils.getPrefix(player))
-                .replace("%suffix%", LuckPermsUtils.getSuffix(player))
-                .replace("%server%", player.getCurrentServer().get().getServerInfo().getName())
-                .replace("%ping%", String.valueOf(player.getPing()))
-                .replace("%playercount%", String.valueOf(proxyServer.getPlayerCount()))
-                .replace("%balance%", getBalance(player));
+            .replace("%prefix%", LuckPermsUtils.getPrefix(player))
+            .replace("%suffix%", LuckPermsUtils.getSuffix(player))
+            .replace("%server%", player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("null"))
+            .replace("%ping%", String.valueOf(player.getPing()))
+            .replace("%playercount%", String.valueOf(proxyServer.getPlayerCount()))
+            .replace("%balance%", getBalance(player));
 
-        return pluginMessages.legacyColor(raw);
+        return stringResult.deserialize(raw);
     }
 
     private String getBalance(Player player) {
-        if (tabUtils.playerBalances.containsKey(player.getUsername())) {
-            return String.valueOf(tabUtils.playerBalances.get(player.getUsername()));
-        } else {
-            return "null";
-        }
+        return String.valueOf(tabUtils.playerBalances.get(player.getUsername()));
     }
 }
