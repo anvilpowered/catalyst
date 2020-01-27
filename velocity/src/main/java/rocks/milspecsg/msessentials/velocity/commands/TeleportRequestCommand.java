@@ -32,6 +32,7 @@ import rocks.milspecsg.msessentials.velocity.utils.ProxyTeleportUtils;
 
 import java.util.Optional;
 
+//Not currently implemented
 public class TeleportRequestCommand implements Command {
 
     @Inject

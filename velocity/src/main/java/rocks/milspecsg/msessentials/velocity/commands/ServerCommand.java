@@ -43,13 +43,16 @@ public class ServerCommand implements Command {
     private RegisteredServer registeredServer;
 
     public void setRegisteredServer(String serverName) {
-        this.registeredServer = proxyServer.getServer(serverName).get();
+        if(proxyServer.getServer(serverName).isPresent()) {
+            this.registeredServer = proxyServer.getServer(serverName).get();
+        }
     }
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (source instanceof Player) {
             Player player = (Player) source;
+            if(registeredServer.getServerInfo().getAddress().isUnresolved())
             if (player.hasPermission("msessentials.server.join." + registeredServer.getServerInfo().getName())) {
                 if (registeredServer.ping().join().getVersion().getName().equals(player.getProtocolVersion().getName())) {
                     player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {

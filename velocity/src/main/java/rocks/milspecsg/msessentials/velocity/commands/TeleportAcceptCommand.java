@@ -28,6 +28,7 @@ import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.velocity.utils.ProxyTeleportUtils;
 
+//Not currently implemented
 public class TeleportAcceptCommand implements Command {
 
     @Inject

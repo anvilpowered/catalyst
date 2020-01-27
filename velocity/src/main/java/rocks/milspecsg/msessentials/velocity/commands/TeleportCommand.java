@@ -30,6 +30,7 @@ import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Optional;
 
+//Not currently implemented
 public class TeleportCommand implements Command {
 
     @Inject

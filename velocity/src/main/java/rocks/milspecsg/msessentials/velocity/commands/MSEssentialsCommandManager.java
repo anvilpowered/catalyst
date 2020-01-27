@@ -93,15 +93,6 @@ public class MSEssentialsCommandManager {
     private DeleteNicknameCommand deleteNicknameCommand;
 
     @Inject
-    private TeleportCommand teleportCommand;
-
-    @Inject
-    private TeleportRequestCommand teleportRequestCommand;
-
-    @Inject
-    private TeleportAcceptCommand teleportAcceptCommand;
-
-    @Inject
     Provider<ServerCommand> serverCommandProvider;
 
     @Inject
@@ -131,9 +122,6 @@ public class MSEssentialsCommandManager {
         proxyServer.getCommandManager().register("socialspy", socialSpyCommand, "ss");
         proxyServer.getCommandManager().register("stafflist", staffListCommand);
         proxyServer.getCommandManager().register("staffchat", staffChatCommand, "sc");
-        //proxyServer.getCommandManager().register("tp", teleportCommand, "mstp");
-        // proxyServer.getCommandManager().register("tpaccept", teleportAcceptCommand);
-        // proxyServer.getCommandManager().register("tpa", teleportRequestCommand, "tprequest");
         proxyServer.getCommandManager().register("unban", unBanCommand, "msunban", "pardon", "mspardon");
         proxyServer.getCommandManager().register("unmute", unMuteCommand, "msunmute");
         if (registry.getOrDefault(MSEssentialsKeys.SERVER_COMMAND)) {

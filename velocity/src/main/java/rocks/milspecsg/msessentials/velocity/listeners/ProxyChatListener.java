@@ -69,13 +69,13 @@ public class ProxyChatListener {
                     }
                     ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), checkPlayerName(message), TextComponent.of(checkPlayerName(message)));
                     proxyServer.getEventManager().fire(proxyChatEvent).join();
+                    sendMessage(e, checkPlayerName(message));
 
                 } else {
                     ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), checkPlayerName(message), TextComponent.of(checkPlayerName(message)));
                     proxyServer.getEventManager().fire(proxyChatEvent).join();
+                    sendMessage(e, checkPlayerName(message));
                 }
-            } else {
-                e.setResult(PlayerChatEvent.ChatResult.denied());
             }
         } else {
             if (e.getResult().isAllowed()) {
@@ -111,7 +111,7 @@ public class ProxyChatListener {
         return LuckPermsUtils.getNameColor(player);
     }
 
-    public void sendMessage(PlayerChatEvent e, String message) throws ExecutionException, InterruptedException {
+    public void sendMessage(PlayerChatEvent e, String message) {
         //Set the result to denied to broadcast our own message
         e.setResult(PlayerChatEvent.ChatResult.denied());
         Player player = e.getPlayer();

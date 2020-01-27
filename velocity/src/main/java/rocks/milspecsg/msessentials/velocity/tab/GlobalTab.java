@@ -89,7 +89,6 @@ public class GlobalTab {
     }
 
     public void schedule() {
-        System.out.println("Scheduler");
         proxyServer.getScheduler().buildTask(MSEssentials.plugin, () -> {
             try {
                 if (proxyServer.getPlayerCount() > 0) {

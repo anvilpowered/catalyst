@@ -39,6 +39,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CommonMemberManager<
     TUser,
@@ -197,19 +198,43 @@ public class CommonMemberManager<
             }
             String finalName = optionalMember.get().getUserName();
             if (optionalMember.get().getNickName() != null) {
+                System.out.println(optionalMember.get().getNickName());
                 finalName = optionalMember.get().getNickName();
             } else {
                 finalName = nameColor + finalName;
             }
-            return stringResult
-                .builder()
-                .append(stringResult.deserialize(prefix))
-                .append(stringResult.deserialize(finalName))
-                .append(": ")
-                .append(stringResult.deserialize(message))
-                .onHoverShowText(stringResult.builder().append(name).build())
-                .onClickSuggestCommand("/msg " + name)
-                .build();
+            //TODO move this to a method
+            String z = message.replaceAll("&0", "").replaceAll("&1", "").replaceAll("&2", "")
+                .replaceAll("&3", "").replaceAll("&4", "").replaceAll("&5", "")
+                .replaceAll("&6", "").replaceAll("&7", "").replaceAll("&8", "")
+                .replaceAll("&a", "").replaceAll("&b", "").replaceAll("&c", "")
+                .replaceAll("&d", "").replaceAll("&e", "").replaceAll("&f", "")
+                .replaceAll("&k", "").replaceAll("&l", "").replaceAll("&m", "")
+                .replaceAll("&n", "").replaceAll("&o", "").replaceAll("&r", "")
+                .replaceAll("&k", "").replaceAll("&9", "");
+
+            //If the player doesn't have chat color perms, remove the color
+            if (!hasPermission) {
+                return stringResult
+                    .builder()
+                    .append(stringResult.deserialize(prefix))
+                    .append(stringResult.deserialize(finalName))
+                    .append(": ")
+                    .append(z)
+                    .onHoverShowText(stringResult.builder().append(name).build())
+                    .onClickSuggestCommand("/msg " + name)
+                    .build();
+            } else {
+                return stringResult
+                    .builder()
+                    .append(stringResult.deserialize(prefix))
+                    .append(stringResult.deserialize(finalName))
+                    .append(": ")
+                    .append(stringResult.deserialize(message))
+                    .onHoverShowText(stringResult.builder().append(name).build())
+                    .onClickSuggestCommand("/msg " + name)
+                    .build();
+            }
         });
     }
 
