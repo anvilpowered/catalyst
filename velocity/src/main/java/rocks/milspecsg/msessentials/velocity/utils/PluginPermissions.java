@@ -40,6 +40,7 @@ public abstract class PluginPermissions {
     public static final String MUTE = "msessentials.command.admin.mute";
     public static final String MUTE_EXEMPT = "msessentials.command.admin.mute.exempt";
     public static final String NICKNAME = "msessentials.command.nickname";
+    public static final String NICKNAME_OTHER = "msessentials.command.nickname.other";
     public static final String NICKNAMEMAGIC = "msessentials.command.nickname.magic";
     public static final String NICKNAMECOLOR = "msessentials.command.nickname.color";
     public static final String RELOAD = "msessentials.command.reload";

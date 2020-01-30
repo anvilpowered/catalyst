@@ -50,25 +50,23 @@ public interface MemberManager<TString> extends Manager<CoreMemberRepository<?, 
     CompletableFuture<TString> formatMessage(String prefix, String nameColor, String userName, String message, String suffix, boolean hasPermission);
 
     CompletableFuture<TString> setNickName(String userName, String nickName);
+    CompletableFuture<TString> setNickNameForUser(String userName, String nickName);
 
-    CompletableFuture<TString> deleteNickname(String userName);
+    CompletableFuture<TString> deleteNickName(String userName);
+    CompletableFuture<TString> deleteNickNameForUser(String userName);
 
     CompletableFuture<TString> ban(String userName, String reason);
-
     CompletableFuture<TString> ban(String userName);
 
     CompletableFuture<TString> tempBan(String userName, String duration, String reason);
-
     CompletableFuture<TString> tempBan(String userName, String duration);
 
     CompletableFuture<TString> unBan(String userName);
 
     CompletableFuture<TString> mute(String userName, String reason);
-
     CompletableFuture<TString> mute(String userName);
 
     CompletableFuture<TString> tempMute(String userName, String duration, String reason);
-
     CompletableFuture<TString> tempMute(String userName, String duration);
 
     CompletableFuture<TString> unMute(String userName);

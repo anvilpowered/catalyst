@@ -48,7 +48,6 @@ public class GlobalTab {
     public GlobalTab(Registry registry) {
         this.registry = registry;
         this.registry.addRegistryLoadedListener(this::registryLoaded);
-        System.out.println(registry.get(Keys.BASE_SCAN_PACKAGE));
     }
 
     private void registryLoaded(Object plugin) {

@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
@@ -29,6 +30,10 @@ import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msrepository.api.util.PluginInfo;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class NickNameCommand implements Command {
 
@@ -44,10 +49,15 @@ public class NickNameCommand implements Command {
     @Inject
     private CommandUsageMessages commandUsage;
 
+    @Inject
+    private ProxyServer proxyServer;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
+        String nick;
         if (source instanceof Player) {
+            Player player = (Player) source;
+
             if (!source.hasPermission(PluginPermissions.NICKNAME)) {
                 source.sendMessage(pluginMessages.getNoPermission());
                 return;
@@ -59,15 +69,29 @@ public class NickNameCommand implements Command {
                 return;
             }
 
-            Player player = (Player) source;
-            String nick = args[0];
+            if (args[0].equals("other") && source.hasPermission(PluginPermissions.NICKNAME_OTHER)) {
+                nick = args[2];
+                memberManager.setNickNameForUser(args[1], nick).thenAcceptAsync(source::sendMessage);
+                return;
+            } else {
+                nick = args[0];
+            }
+
             if (nick.contains("&") && player.hasPermission(PluginPermissions.NICKNAMECOLOR)) {
                 memberManager.setNickName(player.getUsername(), args[0]).thenAcceptAsync(source::sendMessage);
             } else {
                 memberManager.setNickName(player.getUsername(), pluginMessages.removeColor(nick)).thenAccept(source::sendMessage);
             }
-        } else {
+
+        } else
             source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Player only command!")));
+    }
+
+    @Override
+    public List<String> suggest(CommandSource src, String[] args) {
+        if (args.length == 1) {
+            return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
         }
+        return Collections.emptyList();
     }
 }

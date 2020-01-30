@@ -26,7 +26,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
@@ -62,8 +61,7 @@ public class SwearAddCommand implements Command {
         if (swearList.contains(args[0])) {
             source.sendMessage(pluginMessages.getExistingSwear(args[0]));
         } else {
-            registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS).add(args[0]);
-            registry.load(MSEssentials.plugin);
+            //TODO Save configurationService (Wasn't able to get it to work successfully)
             source.sendMessage(pluginMessages.getNewSwear(args[0]));
         }
     }

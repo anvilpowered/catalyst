@@ -39,7 +39,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class CommonMemberManager<
     TUser,
@@ -181,7 +180,31 @@ public class CommonMemberManager<
     }
 
     @Override
-    public CompletableFuture<TString> deleteNickname(String userName) {
+    public CompletableFuture<TString> setNickNameForUser(String userName, String nickName) {
+        return getPrimaryComponent().setNickNameForUser(userName, "~" + nickName).thenApplyAsync(result -> {
+            if (result) {
+                userService.getPlayer(userName).ifPresent(stringResult.builder().green().append("Your nickname was set to " + nickName)::sendTo);
+                return stringResult.success("Set " + userName + "'s nickname to " + nickName);
+            } else {
+                return stringResult.fail("Failed to set the nickname for " + userName);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<TString> deleteNickNameForUser(String userName) {
+        return getPrimaryComponent().setNickNameForUser(userName, userName).thenApplyAsync(result -> {
+            if (result) {
+                userService.getPlayer(userName).ifPresent(stringResult.builder().green().append("Your nickname was deleted.")::sendTo);
+                return stringResult.success("Successfully deleted " + userName + "'s nickname.");
+            } else {
+                return stringResult.fail("Failed to delete " + userName + "'s nickname.");
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<TString> deleteNickName(String userName) {
         return getPrimaryComponent().setNickNameForUser(userName, userName).thenApplyAsync(result -> {
             if (result) {
                 return stringResult.success("Successfully deleted your nickname.");
@@ -198,43 +221,19 @@ public class CommonMemberManager<
             }
             String finalName = optionalMember.get().getUserName();
             if (optionalMember.get().getNickName() != null) {
-                System.out.println(optionalMember.get().getNickName());
                 finalName = optionalMember.get().getNickName();
             } else {
                 finalName = nameColor + finalName;
             }
-            //TODO move this to a method
-            String z = message.replaceAll("&0", "").replaceAll("&1", "").replaceAll("&2", "")
-                .replaceAll("&3", "").replaceAll("&4", "").replaceAll("&5", "")
-                .replaceAll("&6", "").replaceAll("&7", "").replaceAll("&8", "")
-                .replaceAll("&a", "").replaceAll("&b", "").replaceAll("&c", "")
-                .replaceAll("&d", "").replaceAll("&e", "").replaceAll("&f", "")
-                .replaceAll("&k", "").replaceAll("&l", "").replaceAll("&m", "")
-                .replaceAll("&n", "").replaceAll("&o", "").replaceAll("&r", "")
-                .replaceAll("&k", "").replaceAll("&9", "");
-
-            //If the player doesn't have chat color perms, remove the color
-            if (!hasPermission) {
-                return stringResult
-                    .builder()
-                    .append(stringResult.deserialize(prefix))
-                    .append(stringResult.deserialize(finalName))
-                    .append(": ")
-                    .append(z)
-                    .onHoverShowText(stringResult.builder().append(name).build())
-                    .onClickSuggestCommand("/msg " + name)
-                    .build();
-            } else {
-                return stringResult
-                    .builder()
-                    .append(stringResult.deserialize(prefix))
-                    .append(stringResult.deserialize(finalName))
-                    .append(": ")
-                    .append(stringResult.deserialize(message))
-                    .onHoverShowText(stringResult.builder().append(name).build())
-                    .onClickSuggestCommand("/msg " + name)
-                    .build();
-            }
+            return stringResult
+                .builder()
+                .append(stringResult.deserialize(prefix))
+                .append(stringResult.deserialize(finalName))
+                .append(": ")
+                .append(hasPermission ? stringResult.deserialize(message) : stringResult.removeColor(message))
+                .onHoverShowText(stringResult.builder().append(name).build())
+                .onClickSuggestCommand("/msg " + name)
+                .build();
         });
     }
 

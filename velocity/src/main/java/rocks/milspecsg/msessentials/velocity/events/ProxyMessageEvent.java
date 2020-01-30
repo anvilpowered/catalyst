@@ -70,13 +70,13 @@ public class ProxyMessageEvent {
 
     public static TextComponent message(String sender, String receiver, String rawMessage) {
         TextComponent msg = TextComponent.builder()
-                .append(legacyColor("&8["))
-                .append(legacyColor("&b" + sender))
-                .append(legacyColor("&6 -> "))
-                .append(legacyColor("&b" + receiver))
-                .append(legacyColor("&8] "))
-                .append(legacyColor("&7" + rawMessage))
-                .build();
+            .append(legacyColor("&8["))
+            .append(legacyColor("&b" + sender))
+            .append(legacyColor("&6 -> "))
+            .append(legacyColor("&b" + receiver))
+            .append(legacyColor("&8] "))
+            .append(legacyColor("&7" + rawMessage))
+            .build();
         return msg;
     }
 
@@ -88,14 +88,14 @@ public class ProxyMessageEvent {
 
     public static void socialSpy(Player sender, Player receiver, String rawMessage, ProxyServer proxyServer) {
         TextComponent msg = TextComponent.builder()
-                .append(legacyColor("&7[SocialSpy] "))
-                .append(legacyColor("&8["))
-                .append(legacyColor("&b" + sender.getUsername()))
-                .append(legacyColor("&6 -> "))
-                .append(legacyColor("&b" + receiver.getUsername()))
-                .append(legacyColor("&8] "))
-                .append(legacyColor("&7" + rawMessage))
-                .build();
+            .append(legacyColor("&7[SocialSpy] "))
+            .append(legacyColor("&8["))
+            .append(legacyColor("&b" + sender.getUsername()))
+            .append(legacyColor("&6 -> "))
+            .append(legacyColor("&b" + receiver.getUsername()))
+            .append(legacyColor("&8] "))
+            .append(legacyColor("&7" + rawMessage))
+            .build();
 
         if (socialSpySet.isEmpty()) {
             return;
@@ -104,7 +104,6 @@ public class ProxyMessageEvent {
             if ((!(socialSpySet.isEmpty())) && socialSpySet.contains(player.getUniqueId())) {
                 if (!sender.getUniqueId().equals(player.getUniqueId())) {
                     if (!receiver.getUniqueId().equals(player.getUniqueId())) {
-                        System.out.println(player.getUsername());
                         player.sendMessage(msg);
                     }
                 }

@@ -22,11 +22,16 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DeleteNicknameCommand implements Command {
 
@@ -35,6 +40,9 @@ public class DeleteNicknameCommand implements Command {
 
     @Inject
     private MemberManager<TextComponent> memberManager;
+
+    @Inject
+    private ProxyServer proxyServer;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
@@ -45,9 +53,21 @@ public class DeleteNicknameCommand implements Command {
 
         if (source instanceof Player) {
             Player player = (Player) source;
-            memberManager.deleteNickname(player.getUsername()).thenAcceptAsync(source::sendMessage);
+            if (args[0].equals("other") && source.hasPermission(PluginPermissions.NICKNAME_OTHER)) {
+                memberManager.deleteNickNameForUser(args[1]).thenAcceptAsync(source::sendMessage);
+            } else {
+                memberManager.deleteNickName(player.getUsername()).thenAcceptAsync(source::sendMessage);
+            }
         } else {
             source.sendMessage(TextComponent.of("Player only command!"));
         }
+    }
+
+    @Override
+    public List<String> suggest(CommandSource src, String[] args) {
+        if (args.length == 1) {
+            return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }
