@@ -28,7 +28,7 @@ import javax.inject.Singleton;
 public final class MSEssentialsPluginInfo<TString, TCommandSource> extends MSCorePluginInfo<TString, TCommandSource> {
     public static final String id = "msessentials";
     public static final String name = "MSEssentials";
-    public static final String version = "$modVersion";
+    public static final String version = "{$modVersion}";
     public static final String description = "An essentials plugin for velocity";
     public static final String url = "https://github.com/MilSpecSG/MSEssentials";
     public static final String authors = "STG_Allen, Cableguy20";

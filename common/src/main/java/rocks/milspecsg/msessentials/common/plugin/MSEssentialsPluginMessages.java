@@ -34,7 +34,6 @@ public class MSEssentialsPluginMessages<TString, TCommandSource> implements Plug
     @Override
     public TString getBroadcast(TString message) {
         return stringResult.builder()
-            .append(pluginInfo.getPrefix())
             .green().append("[Broadcast] ", message)
             .build();
     }

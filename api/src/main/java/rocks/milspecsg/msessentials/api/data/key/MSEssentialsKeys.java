@@ -37,13 +37,10 @@ public final class MSEssentialsKeys {
     public static final Key<Boolean> CHAT_FILTER_ENABLED = new Key<Boolean>("CHAT_FILTER_ENABLED", false) {
     };
 
-    public static final Key<List<String>> CHAT_FILTER_SWEARS = new Key<List<String>>("CHAT_FILTER_SWEARS", new ArrayList<>()) {
+    public static final Key<List<String>> CHAT_FILTER_SWEARS = new Key<List<String>>("CHAT_FILTER_SWEARS", Arrays.asList("fuck", "shit", "ass")) {
     };
 
-    public static final Key<List<String>> CHAT_FILTER_EXCEPTIONS = new Key<List<String>>("CHAT_FILTER_EXCEPTIONS", new ArrayList<>()) {
-    };
-
-    public static final Key<String> BROADCAST_PREFIX = new Key<String>("BROADCAST", "[Broadcast]") {
+    public static final Key<List<String>> CHAT_FILTER_EXCEPTIONS = new Key<List<String>>("CHAT_FILTER_EXCEPTIONS", Arrays.asList("assassin", "jkass")) {
     };
 
     public static final Key<String> FIRST_JOIN = new Key<String>("FIRST_JOIN", "Welcome to the server, %player%") {
@@ -87,7 +84,6 @@ public final class MSEssentialsKeys {
         Keys.registerKey(CHAT_FILTER_ENABLED);
         Keys.registerKey(CHAT_FILTER_EXCEPTIONS);
         Keys.registerKey(CHAT_FILTER_SWEARS);
-        Keys.registerKey(BROADCAST_PREFIX);
         Keys.registerKey(FIRST_JOIN);
         Keys.registerKey(JOIN_MESSAGE);
         Keys.registerKey(LEAVE_MESSAGE);

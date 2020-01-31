@@ -34,7 +34,6 @@ import rocks.milspecsg.msessentials.velocity.utils.LuckPermsUtils;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ProxyChatListener {
 
@@ -49,7 +48,7 @@ public class ProxyChatListener {
 
 
     @Subscribe
-    public void onChat(PlayerChatEvent e) throws ExecutionException, InterruptedException {
+    public void onChat(PlayerChatEvent e) {
         String message = e.getMessage();
         Player player = e.getPlayer();
 
@@ -60,7 +59,7 @@ public class ProxyChatListener {
             return;
         }
 
-        List<String> swearList = chatFilter.isswear(message);
+        List<String> swearList = chatFilter.isSwear(message);
         if (swearList != null) {
             if (e.getResult().isAllowed()) {
                 if (!player.hasPermission(PluginPermissions.LANGUAGE_ADMIN)) {

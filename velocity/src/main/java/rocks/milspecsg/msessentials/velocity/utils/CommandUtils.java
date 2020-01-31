@@ -54,12 +54,4 @@ public class CommandUtils {
                         .build()
         );
     }
-
-    public void createPlayerInfoPage(final CommandSource source, UUID userUUID ){
-        source.sendMessage(
-                TextComponent.builder()
-                        .color(TextColor.BLUE)
-                        .build()
-        );
-    }
 }

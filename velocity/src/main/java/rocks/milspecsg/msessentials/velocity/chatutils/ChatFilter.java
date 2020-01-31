@@ -36,77 +36,54 @@ public class ChatFilter {
     }
 
     public List<String> aggressiveMode(String swear) {
+        List<String> finalWords = new ArrayList<>();
 
-        String message = swear.toLowerCase();
+        String message = swear.toLowerCase().replace("*", " ").replace("()", "o")
+            .replace("(", " ").replace(")", " ").replace("/", " ")
+            .replace(".", " ").replace(",", " ").replace("4", "a")
+            .replace(";", " ").replace("'", " ").replace("#", " ")
+            .replace("~", " ").replace("^", " ").replace("-", " ")
+            .replace("+", " ").replace("1", "i").replace("0", "o")
+            .replace("$", "s").replace("@", "o").replace("@", "a")
+            .replaceAll(" ", "").replaceAll(" ", "");
 
-        List<String> finalwords = new ArrayList<>();
-
-        String mess = message.replace("*", " ");
-        String mes3 = mess.replace("()", "o");
-        String mes2 = mes3.replace("(", " ");
-        String mes = mes2.replace(")", " ");
-        String me1 = mes.replace("/", " ");
-        String me2 = me1.replace(".", " ");
-        String me3 = me2.replace(",", " ");
-        String me4 = me3.replace("4", "a");
-        String me5 = me4.replace(";", " ");
-        String me6 = me5.replace("'", " ");
-        String me7 = me6.replace("#", " ");
-        String me8 = me7.replace("~", " ");
-        String me9 = me8.replace("^", " ");
-        String me10 = me9.replace("-", " ");
-        String me11 = me10.replace("+", " ");
-        String me12 = me11.replace("1", "i");
-        String me13 = me12.replace("0", "o");
-        String me14 = me13.replace("$", "s");
-        String messageo = me14.replace("@", "o");
-        String messagea = me14.replace("@", "a");
-
-        String removespaceso = messageo.replaceAll(" ", "");
-        String removespacesa = messagea.replaceAll(" ", "");
-
-        String finalchecko = removeDups(removespaceso);
-        String finalchecka = removeDups(removespacesa);
-
-        finalwords.add(finalchecko);
-        finalwords.add(finalchecka);
-        finalwords.add(message);
-        return finalwords;
-
+        finalWords.add(removeDuplicates(message));
+        finalWords.add(swear.toLowerCase());
+        return finalWords;
     }
 
-    public String removeDups(String s) {
+    public String removeDuplicates(String s) {
         if (s.length() <= 1) return s;
-        if (s.substring(1, 2).equalsIgnoreCase(s.substring(0, 1))) return removeDups(s.substring(1));
-        else return s.substring(0, 1) + removeDups(s.substring(1));
+        if (s.substring(1, 2).equalsIgnoreCase(s.substring(0, 1))) return removeDuplicates(s.substring(1));
+        else return s.substring(0, 1) + removeDuplicates(s.substring(1));
     }
 
-    public List<String> checkswear(List<String> finalwords) {
-        List<String> swearlist = new ArrayList<>();
+    public List<String> checkSwear(List<String> finalWords) {
+        List<String> swearList = new ArrayList<>();
         for (String exception : registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS)) {
-            for (String swear : finalwords) {
+            for (String swear : finalWords) {
                 if (swear.contains(exception)) {
                     return null;
                 }
             }
         }
         for (String swears : registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS)) {
-            for (String swear : finalwords) {
-                String newswear = swear.toLowerCase();
-                if (newswear.contains(swears.toLowerCase())) {
-                    if (!(swearlist.contains(swears.toLowerCase()))) {
-                        swearlist.add(swears.toLowerCase());
+            for (String swear : finalWords) {
+                String newSwear = swear.toLowerCase();
+                if (newSwear.contains(swears.toLowerCase())) {
+                    if (!(swearList.contains(swears.toLowerCase()))) {
+                        swearList.add(swears.toLowerCase());
                     }
                 }
             }
         }
-        if (swearlist.isEmpty()) return null;
+        if (swearList.isEmpty()) return null;
 
-        return swearlist;
+        return swearList;
     }
 
-    public List<String> isswear(String s) {
-        return checkswear(aggressiveMode(s));
+    public List<String> isSwear(String swear) {
+        return checkSwear(aggressiveMode(swear));
     }
 
 }

@@ -76,19 +76,11 @@ public class CommandUsageMessages {
         .build();
 
     public TextComponent swearAddCommandUsage = TextComponent.builder()
-        .append(legacyColor("&4Usage: /swear add <word>"))
-        .build();
-
-    public TextComponent swearRemoveCommandUsage = TextComponent.builder()
-        .append(legacyColor("&4Usage: /swear remove <word>"))
+        .append(legacyColor("&4Usage: /swear (add|remove <word>) |list"))
         .build();
 
     public TextComponent exceptionAddCommandUsage = TextComponent.builder()
-        .append(legacyColor("&4Usage: /exception add <word>"))
-        .build();
-
-    public TextComponent exceptionRemoveCommand = TextComponent.builder()
-        .append(legacyColor("&4Usage: /exception remove <word>"))
+        .append(legacyColor("&4Usage: /exception (add|remove <word>) |list"))
         .build();
 
     public TextComponent legacyColor(String text) {

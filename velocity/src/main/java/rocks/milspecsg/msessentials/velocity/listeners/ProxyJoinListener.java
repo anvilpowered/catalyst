@@ -22,10 +22,15 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.text.TextComponent;
+import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.velocity.events.ProxyMessageEvent;
 import rocks.milspecsg.msessentials.velocity.utils.PlayerListUtils;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.velocity.utils.StaffListUtils;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 public class ProxyJoinListener {
 
@@ -34,6 +39,12 @@ public class ProxyJoinListener {
 
     @Inject
     private PlayerListUtils playerListUtils;
+
+    @Inject
+    private ProxyServer proxyServer;
+
+    @Inject
+    private Registry registry;
 
     @Subscribe
     public void onPlayerJoin(PostLoginEvent event) {
@@ -45,5 +56,7 @@ public class ProxyJoinListener {
 
         playerListUtils.addPlayer(player);
         staffListUtils.getStaffNames(player);
+
+        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(MSEssentialsKeys.JOIN_MESSAGE).replace("%player%", player.getUsername())));
     }
 }

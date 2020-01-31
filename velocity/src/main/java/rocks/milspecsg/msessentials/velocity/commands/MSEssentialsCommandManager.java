@@ -96,13 +96,13 @@ public class MSEssentialsCommandManager {
     Provider<ServerCommand> serverCommandProvider;
 
     @Inject
-    private SwearListCommand swearListCommand;
+    private SwearCommand swearCommand;
 
     @Inject
-    private SwearAddCommand swearAddCommand;
+    private ExceptionCommand exceptionCommand;
 
     @Inject
-    private SwearRemoveCommand swearRemoveCommand;
+    private MSEssentialsCommand msEssentialsCommand;
 
     public void register(Object plugin) {
         proxyServer.getCommandManager().register("ban", banCommand, "msban");
@@ -132,8 +132,8 @@ public class MSEssentialsCommandManager {
                 proxyServer.getCommandManager().register(serverName, command);
             }
         }
-        proxyServer.getCommandManager().register("swearlist", swearListCommand);
-        proxyServer.getCommandManager().register("swearadd", swearAddCommand);
-        proxyServer.getCommandManager().register("swearremove", swearRemoveCommand);
+        proxyServer.getCommandManager().register("swear", swearCommand);
+        proxyServer.getCommandManager().register("exception", exceptionCommand);
+        proxyServer.getCommandManager().register("msessentials", msEssentialsCommand, "mse");
     }
 }
