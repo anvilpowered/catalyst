@@ -193,7 +193,7 @@ public class CommonMemberManager<
 
     @Override
     public CompletableFuture<TString> deleteNickNameForUser(String userName) {
-        return getPrimaryComponent().setNickNameForUser(userName, userName).thenApplyAsync(result -> {
+        return getPrimaryComponent().deleteNickNameForUser(userName).thenApplyAsync(result -> {
             if (result) {
                 userService.getPlayer(userName).ifPresent(stringResult.builder().green().append("Your nickname was deleted.")::sendTo);
                 return stringResult.success("Successfully deleted " + userName + "'s nickname.");
@@ -205,7 +205,7 @@ public class CommonMemberManager<
 
     @Override
     public CompletableFuture<TString> deleteNickName(String userName) {
-        return getPrimaryComponent().setNickNameForUser(userName, userName).thenApplyAsync(result -> {
+        return getPrimaryComponent().deleteNickNameForUser(userName).thenApplyAsync(result -> {
             if (result) {
                 return stringResult.success("Successfully deleted your nickname.");
             } else {
