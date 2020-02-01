@@ -21,12 +21,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.velocitypowered:velocity-api:1.0.1-SNAPSHOT'
-    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
-    compile group: 'com.cedarsoftware', name: 'json-io', version: '4.5.0'
-    compile 'org.spongepowered:configurate-hocon:3.6'
-    compile 'org.spongepowered:configurate-core:3.6'
-    compile 'org.spongepowered:configurate-gson:3.6'
-    compile 'org.spongepowered:configurate-yaml:3.6'
-    compileOnly 'net.luckperms:api:5.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.0'
 }
