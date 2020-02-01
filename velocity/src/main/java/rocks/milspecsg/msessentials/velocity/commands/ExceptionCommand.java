@@ -29,7 +29,7 @@ public class ExceptionCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
 
-        if (args.length < 1) {
+        if (args.length == 0) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
             source.sendMessage(commandUsage.exceptionAddCommandUsage);
             return;
@@ -47,14 +47,13 @@ public class ExceptionCommand implements Command {
             }
             case "add": {
                 if(registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).isEmpty()) {
-                    configurationService.add(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                    configurationService.addToCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
                     configurationService.save();
                     source.sendMessage(pluginMessages.getNewException(args[1]));
-                }
-                if (registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
+                } else if (registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
                     source.sendMessage(pluginMessages.getExistingException(args[1]));
                 } else {
-                    configurationService.add(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                    configurationService.addToCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
                     configurationService.save();
                     source.sendMessage(pluginMessages.getNewException(args[1]));
                 }
@@ -64,7 +63,7 @@ public class ExceptionCommand implements Command {
                 if (!registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
                     source.sendMessage(pluginMessages.getMissingSwear(args[1]));
                 } else {
-                    configurationService.remove(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                    configurationService.removeFromCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
                     configurationService.save();
                     source.sendMessage(pluginMessages.getRemoveException(args[1]));
                 }

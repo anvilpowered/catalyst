@@ -49,7 +49,7 @@ public class SwearCommand implements Command {
                 if (registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
                     source.sendMessage(pluginMessages.getExistingSwear(args[1]));
                 } else {
-                    configurationService.add(MSEssentialsKeys.CHAT_FILTER_SWEARS, args[1]);
+                    configurationService.addToCollection(MSEssentialsKeys.CHAT_FILTER_SWEARS, args[1]);
                     configurationService.save();
                     source.sendMessage(pluginMessages.getNewSwear(args[1]));
                 }
@@ -59,7 +59,7 @@ public class SwearCommand implements Command {
                 if (!registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
                     source.sendMessage(pluginMessages.getMissingSwear(args[1]));
                 } else {
-                    configurationService.remove(MSEssentialsKeys.CHAT_FILTER_SWEARS, args[1]);
+                    configurationService.removeFromCollection(MSEssentialsKeys.CHAT_FILTER_SWEARS, args[1]);
                     configurationService.save();
                     source.sendMessage(pluginMessages.getRemoveSwear(args[1]));
                 }

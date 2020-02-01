@@ -45,7 +45,7 @@ public interface MemberManager<TString> extends Manager<CoreMemberRepository<?, 
         return "members";
     }
 
-    CompletableFuture<TString> info(String nickName, boolean isActive);
+    CompletableFuture<TString> info(String userName, boolean isActive);
 
     CompletableFuture<TString> formatMessage(String prefix, String nameColor, String userName, String message, String suffix, boolean hasPermission);
 

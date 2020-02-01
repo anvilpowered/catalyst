@@ -38,14 +38,10 @@ public class ChatFilter {
     public List<String> aggressiveMode(String swear) {
         List<String> finalWords = new ArrayList<>();
 
-        String message = swear.toLowerCase().replace("*", " ").replace("()", "o")
-            .replace("(", " ").replace(")", " ").replace("/", " ")
-            .replace(".", " ").replace(",", " ").replace("4", "a")
-            .replace(";", " ").replace("'", " ").replace("#", " ")
-            .replace("~", " ").replace("^", " ").replace("-", " ")
-            .replace("+", " ").replace("1", "i").replace("0", "o")
-            .replace("$", "s").replace("@", "o").replace("@", "a")
-            .replaceAll(" ", "").replaceAll(" ", "");
+        String message = swear.toLowerCase()
+            .replaceAll("[*()/.,;'#~^+-]", " ").replaceAll("[0@]", "o")
+            .replaceAll("1", "i").replaceAll("$", "s"
+            ).replaceAll(" ", "");
 
         finalWords.add(removeDuplicates(message));
         finalWords.add(swear.toLowerCase());

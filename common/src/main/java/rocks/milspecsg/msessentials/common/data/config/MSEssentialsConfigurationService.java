@@ -36,19 +36,21 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
 
     @Override
     protected void initNodeDescriptionMap() {
-        nodeDescriptionMap.put(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, "\nList of words that are caught by the swear detection, but shouldn't be. (ex. A player name that contains 'ass'");
-        nodeDescriptionMap.put(MSEssentialsKeys.CHAT_FILTER_SWEARS, "\nList of words you would like filtered out of chat.");
-        nodeDescriptionMap.put(MSEssentialsKeys.TAB_UPDATE, "\nTime setting for how often the tab updates in seconds");
-        nodeDescriptionMap.put(MSEssentialsKeys.TAB_HEADER, "\nFormat for the tab header");
-        nodeDescriptionMap.put(MSEssentialsKeys.TAB_FOOTER, "\nFormat for the tab footer");
-        nodeDescriptionMap.put(MSEssentialsKeys.TAB_FORMAT, "\nFormat for how each player is displayed in the tab");
-        nodeDescriptionMap.put(MSEssentialsKeys.TAB_FORMAT_CUSTOM, "\nFormat for extra information that can be displayed in the tab.");
         nodeDescriptionMap.put(MSEssentialsKeys.MOTD, "\nServer MOTD that is displayed when the proxy is pinged.");
+        nodeDescriptionMap.put(MSEssentialsKeys.CHAT_FILTER_SWEARS, "\nList of words you would like filtered out of chat.");
+        nodeDescriptionMap.put(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, "\nList of words that are caught by the swear detection, but shouldn't be. (ex. A player name that contains 'ass'");
+        nodeDescriptionMap.put(MSEssentialsKeys.CHAT_FILTER_ENABLED, "\nEnable or disable the chat filter. (true = enabled)");
         nodeDescriptionMap.put(MSEssentialsKeys.FIRST_JOIN, "\nFormat for the message that is displayed when a player joins the proxy for the first time");
         nodeDescriptionMap.put(MSEssentialsKeys.JOIN_MESSAGE, "\nFormat for the message that is displayed when a player joins the proxy");
         nodeDescriptionMap.put(MSEssentialsKeys.LEAVE_MESSAGE, "\nFormat for the message that is displayed when a player leaves the proxy");
         nodeDescriptionMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT, "\nFormat for the proxy-wide chat");
         nodeDescriptionMap.put(MSEssentialsKeys.PROXY_CHAT_ENABLED, "\nEnable or Disable the proxy-wide chat. (true = enabled)");
         nodeDescriptionMap.put(MSEssentialsKeys.SERVER_COMMAND, "\nEnable or Disable the /(servername) command. (true = enabled)");
+        nodeDescriptionMap.put(MSEssentialsKeys.TAB_ENABLED, "\nEnable or Disable the global tab. (true = enabled)");
+        nodeDescriptionMap.put(MSEssentialsKeys.TAB_HEADER, "\nFormat for the tab header");
+        nodeDescriptionMap.put(MSEssentialsKeys.TAB_FOOTER, "\nFormat for the tab footer");
+        nodeDescriptionMap.put(MSEssentialsKeys.TAB_FORMAT, "\nFormat for how each player is displayed in the tab");
+        nodeDescriptionMap.put(MSEssentialsKeys.TAB_FORMAT_CUSTOM, "\nFormat for extra information that can be displayed in the tab.");
+        nodeDescriptionMap.put(MSEssentialsKeys.TAB_UPDATE, "\nTime setting for how often the tab updates in seconds");
     }
 }
