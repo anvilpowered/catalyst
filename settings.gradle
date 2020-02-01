@@ -9,13 +9,23 @@ include 'MSRepository:msr-api'
 include 'MSRepository:msr-api:api-config'
 
 include 'MSRepository:msr-api:api-repository'
+include 'MSRepository:msr-api:api-repository:api-repository-mariadb'
 include 'MSRepository:msr-api:api-repository:api-repository-mongodb'
+include 'MSRepository:msr-api:api-repository:api-repository-xodus'
 
 include 'MSRepository:msr-common'
 include 'MSRepository:msr-common:common-config'
 include 'MSRepository:msr-common:common-repository'
+include 'MSRepository:msr-common:common-repository:common-repository-mariadb'
 include 'MSRepository:msr-common:common-repository:common-repository-mongodb'
+include 'MSRepository:msr-common:common-repository:common-repository-xodus'
+
+include 'MSRepository:msr-core'
+include 'MSRepository:msr-core:core-api'
+include 'MSRepository:msr-core:core-common'
+include 'MSRepository:msr-core:core-sponge'
+include 'MSRepository:msr-core:core-velocity'
 
 include 'MSRepository:msr-sponge'
-include 'MSRepository:msr-sponge:sponge-repository'
+
 include 'MSRepository:msr-velocity'
