@@ -10,6 +10,7 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.spongepowered.org/maven' }
 }
 
 dependencies {
@@ -21,6 +22,8 @@ dependencies {
     implementation project(':MSRepository:msr-api:api-repository:api-repository-xodus')
     implementation project(':MSRepository:msr-core:core-api')
 
+    implementation configurate_core
+    implementation configurate_hocon
     implementation guice
     implementation mongodb_driver_sync
     implementation morphia
