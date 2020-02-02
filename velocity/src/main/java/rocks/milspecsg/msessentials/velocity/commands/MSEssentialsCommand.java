@@ -10,7 +10,7 @@ import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
 import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.velocity.utils.CommandUtils;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
-import rocks.milspecsg.msrepository.api.util.PluginInfo;
+import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 
 public class MSEssentialsCommand implements Command {
 

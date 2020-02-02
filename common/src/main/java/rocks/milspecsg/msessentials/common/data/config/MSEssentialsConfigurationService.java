@@ -21,17 +21,21 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeNameMap.put(MSEssentialsKeys.CHAT_FILTER_SWEARS, "chat.filter.swears");
         nodeNameMap.put(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, "chat.filter.exceptions");
         nodeNameMap.put(MSEssentialsKeys.CHAT_FILTER_ENABLED, "chat.filter.enabled");
-        nodeNameMap.put(MSEssentialsKeys.FIRST_JOIN, "message.firstjoin");
+        nodeNameMap.put(MSEssentialsKeys.FIRST_JOIN, "message.firstJoin");
         nodeNameMap.put(MSEssentialsKeys.JOIN_MESSAGE, "message.join");
         nodeNameMap.put(MSEssentialsKeys.LEAVE_MESSAGE, "message.leave");
-        nodeNameMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT, "chat.format");
+        nodeNameMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT_MESSAGE, "chat.format.message");
+        nodeNameMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT_HOVER, "chat.format.hover");
+        nodeNameMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND, "chat.format.click");
         nodeNameMap.put(MSEssentialsKeys.PROXY_CHAT_ENABLED, "chat.proxy.enabled");
         nodeNameMap.put(MSEssentialsKeys.SERVER_COMMAND, "command.server");
         nodeNameMap.put(MSEssentialsKeys.TAB_ENABLED, "tab.enabled");
         nodeNameMap.put(MSEssentialsKeys.TAB_HEADER, "tab.format.header");
         nodeNameMap.put(MSEssentialsKeys.TAB_FOOTER, "tab.format.footer");
         nodeNameMap.put(MSEssentialsKeys.TAB_FORMAT_CUSTOM, "tab.format.custom");
-        nodeNameMap.put(MSEssentialsKeys.TAB_UPDATE, "tab.updatedelay");
+        nodeNameMap.put(MSEssentialsKeys.TAB_UPDATE, "tab.updateDelay");
+        nodeNameMap.put(MSEssentialsKeys.CHAT_CHANNELS, "chat.channels");
+        nodeNameMap.put(MSEssentialsKeys.CHAT_DEFAULT_CHANNEL, "chat.channelDefault");
     }
 
     @Override
@@ -43,7 +47,9 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeDescriptionMap.put(MSEssentialsKeys.FIRST_JOIN, "\nFormat for the message that is displayed when a player joins the proxy for the first time");
         nodeDescriptionMap.put(MSEssentialsKeys.JOIN_MESSAGE, "\nFormat for the message that is displayed when a player joins the proxy");
         nodeDescriptionMap.put(MSEssentialsKeys.LEAVE_MESSAGE, "\nFormat for the message that is displayed when a player leaves the proxy");
-        nodeDescriptionMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT, "\nFormat for the proxy-wide chat");
+        nodeDescriptionMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT_MESSAGE, "\nFormat for the proxy-wide chat");
+        nodeDescriptionMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT_HOVER, "\nFormat for the hover message");
+        nodeDescriptionMap.put(MSEssentialsKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND, "\nFormat for click event's");
         nodeDescriptionMap.put(MSEssentialsKeys.PROXY_CHAT_ENABLED, "\nEnable or Disable the proxy-wide chat. (true = enabled)");
         nodeDescriptionMap.put(MSEssentialsKeys.SERVER_COMMAND, "\nEnable or Disable the /(servername) command. (true = enabled)");
         nodeDescriptionMap.put(MSEssentialsKeys.TAB_ENABLED, "\nEnable or Disable the global tab. (true = enabled)");
@@ -52,5 +58,6 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeDescriptionMap.put(MSEssentialsKeys.TAB_FORMAT, "\nFormat for how each player is displayed in the tab");
         nodeDescriptionMap.put(MSEssentialsKeys.TAB_FORMAT_CUSTOM, "\nFormat for extra information that can be displayed in the tab.");
         nodeDescriptionMap.put(MSEssentialsKeys.TAB_UPDATE, "\nTime setting for how often the tab updates in seconds");
+        nodeDescriptionMap.put(MSEssentialsKeys.CHAT_CHANNELS, "\nChat Channels");
     }
 }

@@ -50,7 +50,7 @@ public class GlobalTab {
         this.registry.addRegistryLoadedListener(this::registryLoaded);
     }
 
-    private void registryLoaded(Object plugin) {
+    private void registryLoaded() {
         try {
             schedule();
         } catch (NullPointerException e) {

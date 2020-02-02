@@ -24,21 +24,26 @@ import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.text.TextComponent;
-import rocks.milspecsg.msessentials.api.member.MemberManager;
+import rocks.milspecsg.msessentials.api.chat.ChatService;
+import rocks.milspecsg.msessentials.api.data.config.Channel;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.velocity.chatutils.ChatFilter;
 import rocks.milspecsg.msessentials.velocity.events.ProxyChatEvent;
 import rocks.milspecsg.msessentials.velocity.events.ProxyStaffChatEvent;
 import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.velocity.utils.LuckPermsUtils;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ProxyChatListener {
 
     @Inject
-    public MemberManager<TextComponent> memberManager;
+    public ChatService<TextComponent> chatService;
 
     @Inject
     public ChatFilter chatFilter;
@@ -120,22 +125,44 @@ public class ProxyChatListener {
         String chatColor = getChatColor(player);
         String nameColor = getNameColor(player);
         String suffix = getSuffix(player);
+        String server = player.getCurrentServer().orElseThrow(() -> new IllegalStateException("Invalid Server!")).getServer().getServerInfo().getName();
+        Optional<Channel> channel = chatService.getChannel(chatService.getChannelId(player.getUniqueId()));
+        String channelId = chatService.getChannelId(player.getUniqueId());
+        String channelPrefix = chatService.getChannelPrefix(channelId).orElseThrow(() -> new IllegalStateException("Please specify a prefix for " + channelId));
+
         if (chatColor == null) {
             chatColor = "&r";
         }
         if (nameColor == null) {
             nameColor = "&r";
         }
+
+        if (!channel.isPresent()) throw new IllegalStateException("Invalid chat channel!");
+
         String finalNameColor = nameColor;
         Tristate hasColorPermission = player.getPermissionValue(PluginPermissions.CHATCOLOR);
 
-        memberManager.formatMessage(prefix, finalNameColor, player.getUsername(), chatColor + message, suffix, hasColorPermission.asBoolean()).thenAcceptAsync(optionalMessage -> {
-            if (optionalMessage.equals(TextComponent.of("You are muted!"))) {
-                player.sendMessage(TextComponent.of("You are muted!"));
-                return;
-            }
+        chatService.formatMessage(
+            prefix,
+            finalNameColor,
+            player.getUsername(),
+            chatColor + message,
+            hasColorPermission.asBoolean(),
+            suffix,
+            server,
+            channelId,
+            channelPrefix
+        ).thenAcceptAsync(optionalMessage -> {
             for (Player p : proxyServer.getAllPlayers()) {
-                p.sendMessage(optionalMessage);
+                if (p.hasPermission(PluginPermissions.ALL_CHAT_CHANNELS)) {
+                    p.sendMessage(optionalMessage);
+                } else if (p.hasPermission(PluginPermissions.CHANNEL_BASE + channelId)) {
+                    p.sendMessage(optionalMessage);
+                } else {
+                    if (chatService.getChannelId(p.getUniqueId()).equals(channelId)) {
+                        p.sendMessage(optionalMessage);
+                    }
+                }
             }
         });
     }

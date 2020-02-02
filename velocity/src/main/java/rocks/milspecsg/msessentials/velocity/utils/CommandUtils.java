@@ -23,6 +23,7 @@ import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
 import net.kyori.text.format.TextColor;
+import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 import rocks.milspecsg.msrepository.api.util.*;
 
 import javax.inject.Inject;
@@ -45,8 +46,8 @@ public class CommandUtils {
                         .append(pluginInfo.getVersion())
                         .color(TextColor.AQUA)
                         .append(TextComponent.of("\n") + "[ Plugin Page ]")
-                        .hoverEvent(HoverEvent.showText(TextComponent.of(pluginInfo.getURL())))
-                        .clickEvent(ClickEvent.openUrl(pluginInfo.getURL()))
+                        //.hoverEvent(HoverEvent.showText(TextComponent.of(pluginInfo.getURL())))
+                        //.clickEvent(ClickEvent.openUrl(pluginInfo.getURL()))
                         .append(TextComponent.of("\n") + "[ MilspecSG ]")
                         .hoverEvent(HoverEvent.showText(TextComponent.of("https://www.milspecsg.rocks/")))
                         .clickEvent(ClickEvent.openUrl("https://ww.milspecsg.rocks/"))

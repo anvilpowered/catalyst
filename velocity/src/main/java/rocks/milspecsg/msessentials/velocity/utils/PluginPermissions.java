@@ -56,5 +56,6 @@ public abstract class PluginPermissions {
     public static final String STAFFLIST_OWNER = "msessentials.staff.owner";
     public static final String TELEPORT_FORCE = "msessentials.teleport.force";
     public static final String TELEPORT_REQUEST = "msessentials.teleport.request";
-
+    public static final String ALL_CHAT_CHANNELS = "msessntials.channel.all";
+    public static final String CHANNEL_BASE = "msessentials.channel.";
 }

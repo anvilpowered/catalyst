@@ -32,7 +32,6 @@ public class MSEssentialsCommandManager {
     @Inject
     private ProxyServer proxyServer;
 
-    @Inject
     private Registry registry;
 
     @Inject
@@ -104,7 +103,20 @@ public class MSEssentialsCommandManager {
     @Inject
     private MSEssentialsCommand msEssentialsCommand;
 
-    public void register(Object plugin) {
+    @Inject
+    Provider<ChannelCommand> channelCommandProvider;
+
+    private boolean alreadyLoaded = false;
+
+    @Inject
+    public MSEssentialsCommandManager(Registry registry) {
+        this.registry = registry;
+        this.registry.addRegistryLoadedListener(this::registryLoaded);
+    }
+
+    public void registryLoaded() {
+        if (alreadyLoaded) return;
+        alreadyLoaded = true;
         proxyServer.getCommandManager().register("ban", banCommand, "msban");
         proxyServer.getCommandManager().register("tempban", tempBanCommand, "mstempban");
         proxyServer.getCommandManager().register("broadcast", broadcastCommand);
@@ -132,6 +144,11 @@ public class MSEssentialsCommandManager {
                 proxyServer.getCommandManager().register(serverName, command);
             }
         }
+        registry.getOrDefault(MSEssentialsKeys.CHAT_CHANNELS).forEach(channel -> {
+            ChannelCommand command = channelCommandProvider.get();
+            command.setChannelId(channel.id);
+            proxyServer.getCommandManager().register(channel.id, command, channel.aliases.toArray(new String[0]));
+        });
         proxyServer.getCommandManager().register("swear", swearCommand);
         proxyServer.getCommandManager().register("exception", exceptionCommand);
         proxyServer.getCommandManager().register("msessentials", msEssentialsCommand, "mse");

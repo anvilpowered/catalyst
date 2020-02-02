@@ -22,11 +22,12 @@ import rocks.milspecsg.mscore.api.coremember.repository.CoreMemberRepository;
 import rocks.milspecsg.mscore.api.model.coremember.CoreMember;
 import rocks.milspecsg.mscore.api.plugin.PluginMessages;
 import rocks.milspecsg.mscore.common.plugin.MSCore;
+import rocks.milspecsg.msessentials.api.chat.ChatService;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.api.util.CurrentServerService;
 import rocks.milspecsg.msrepository.api.util.KickService;
-import rocks.milspecsg.msrepository.api.util.PluginInfo;
+import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 import rocks.milspecsg.msrepository.api.util.StringResult;
 import rocks.milspecsg.msrepository.api.util.TimeFormatService;
 import rocks.milspecsg.msrepository.api.util.UserService;
@@ -68,6 +69,9 @@ public class CommonMemberManager<
 
     @Inject
     protected UserService<TUser, TPlayer> userService;
+
+    @Inject
+    protected ChatService<TString> chatService;
 
     @Inject
     public CommonMemberManager(Registry registry) {
@@ -157,6 +161,14 @@ public class CommonMemberManager<
                             .green().append(banReason))
                     .append(
                         stringResult.builder()
+                        .blue().append("Channel : ")
+                    )
+                    .append(
+                        stringResult.builder()
+                        .green().append(chatService.getChannelPrefix(chatService.getChannelId(member.getUserUUID())).orElse("Offline User."))
+                    )
+                    .append(
+                        stringResult.builder()
                             .blue().append("\nCurrent Server : ")
                     )
                     .append(
@@ -211,29 +223,6 @@ public class CommonMemberManager<
             } else {
                 return stringResult.fail("Failed to delete your nickname.");
             }
-        });
-    }
-
-    public CompletableFuture<TString> formatMessage(String prefix, String nameColor, String name, String message, String suffix, boolean hasPermission) {
-        return getPrimaryComponent().getOneForUser(name).thenApplyAsync(optionalMember -> {
-            if (!optionalMember.isPresent()) {
-                return stringResult.fail("Couldn't find a user matching that name!");
-            }
-            String finalName = optionalMember.get().getUserName();
-            if (optionalMember.get().getNickName() != null) {
-                finalName = optionalMember.get().getNickName();
-            } else {
-                finalName = nameColor + finalName;
-            }
-            return stringResult
-                .builder()
-                .append(stringResult.deserialize(prefix))
-                .append(stringResult.deserialize(finalName))
-                .append(": ")
-                .append(hasPermission ? stringResult.deserialize(message) : stringResult.removeColor(message))
-                .onHoverShowText(stringResult.builder().append(name).build())
-                .onClickSuggestCommand("/msg " + name)
-                .build();
         });
     }
 

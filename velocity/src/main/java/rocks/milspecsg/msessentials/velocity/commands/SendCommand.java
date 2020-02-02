@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
-import rocks.milspecsg.msrepository.api.util.PluginInfo;
+import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 
 import java.util.Optional;
 

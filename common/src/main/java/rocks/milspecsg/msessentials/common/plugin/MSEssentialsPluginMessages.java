@@ -20,7 +20,7 @@ package rocks.milspecsg.msessentials.common.plugin;
 
 import com.google.inject.Inject;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
-import rocks.milspecsg.msrepository.api.util.PluginInfo;
+import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 import rocks.milspecsg.msrepository.api.util.StringResult;
 
 public class MSEssentialsPluginMessages<TString, TCommandSource> implements PluginMessages<TString> {
@@ -128,7 +128,6 @@ public class MSEssentialsPluginMessages<TString, TCommandSource> implements Plug
     @Override
     public TString getStaffChatMessageFormatted(String userName, TString message) {
         return stringResult.builder()
-            .append(pluginInfo.getPrefix())
             .aqua().append("[STAFF] ")
             .light_purple().append(userName, ": ", message)
             .build();

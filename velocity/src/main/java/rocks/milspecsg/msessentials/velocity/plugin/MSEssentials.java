@@ -19,6 +19,7 @@
 package rocks.milspecsg.msessentials.velocity.plugin;
 
 import com.google.common.io.ByteArrayDataInput;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.velocitypowered.api.event.Subscribe;
@@ -29,6 +30,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
+import net.kyori.text.TextComponent;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
@@ -45,6 +47,8 @@ import rocks.milspecsg.msessentials.velocity.tab.GlobalTab;
 import rocks.milspecsg.msessentials.velocity.tab.TabUtils;
 import rocks.milspecsg.msrepository.api.MSRepository;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
+import rocks.milspecsg.msrepository.api.misc.BindingExtensions;
+import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
 
 
@@ -52,7 +56,7 @@ import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
     id = MSEssentialsPluginInfo.id,
     name = MSEssentialsPluginInfo.name,
     version = MSEssentialsPluginInfo.version,
-    authors = MSEssentialsPluginInfo.authors,
+    authors = {"STG_Allen", "Cableguy20"},
     description = MSEssentialsPluginInfo.description,
     url = MSEssentialsPluginInfo.url,
     dependencies = {
@@ -91,7 +95,6 @@ public class MSEssentials {
     public void onInit(ProxyInitializeEvent event) {
         plugin = this;
         initServices();
-        initCommands();
         initListeners();
         loadConfig();
         server = proxyServer;
@@ -100,15 +103,10 @@ public class MSEssentials {
     public void initServices() {
         api = LuckPermsProvider.get();
         injector = velocityRootInjector.createChildInjector(new VelocityModule(), new ApiVelocityModule());
-        MSRepository.createEnvironment("msessentials", injector);
+        MSRepository.registerEnvironment("msessentials", injector, BindingExtensions.getKey(new TypeToken<PluginInfo<TextComponent>>(){
+        }));
         injector.getInstance(GlobalTab.class);
-    }
-
-    private void initCommands() {
-        if (!alreadyLoadedOnce) {
-            injector.getInstance(MSEssentialsCommandManager.class).register(this);
-            alreadyLoadedOnce = true;
-        }
+        injector.getInstance(MSEssentialsCommandManager.class);
     }
 
     public static ProxyServer getServer() {
@@ -127,7 +125,7 @@ public class MSEssentials {
 
     public void loadConfig() {
         logger.info("Loading config");
-        injector.getInstance(Registry.class).load(this);
+        injector.getInstance(Registry.class).load();
     }
 
     @Subscribe

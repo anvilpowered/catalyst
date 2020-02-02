@@ -20,8 +20,10 @@ package rocks.milspecsg.msessentials.common.module;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
+import rocks.milspecsg.msessentials.api.chat.ChatService;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
+import rocks.milspecsg.msessentials.common.chat.CommonChatService;
 import rocks.milspecsg.msessentials.common.data.config.MSEssentialsConfigurationService;
 import rocks.milspecsg.msessentials.common.data.registry.MSEssentialsRegistry;
 import rocks.milspecsg.msessentials.common.member.CommonMemberManager;
@@ -30,8 +32,8 @@ import rocks.milspecsg.msessentials.common.plugin.MSEssentialsPluginMessages;
 import rocks.milspecsg.msrepository.api.data.config.ConfigurationService;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.api.misc.BindingExtensions;
-import rocks.milspecsg.msrepository.api.util.BasicPluginInfo;
-import rocks.milspecsg.msrepository.api.util.PluginInfo;
+import rocks.milspecsg.msrepository.api.plugin.BasicPluginInfo;
+import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 import rocks.milspecsg.msrepository.common.misc.CommonBindingExtensions;
 
 @SuppressWarnings({"UnstableApiUsage"})
@@ -66,6 +68,13 @@ public class CommonModule<
             new TypeToken<MemberManager<TString>>(getClass()) {
             },
             new TypeToken<CommonMemberManager<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
+            }
+        );
+
+        be.bind(
+            new TypeToken<ChatService<TString>>(getClass()) {
+            },
+            new TypeToken<CommonChatService<TString, TCommandSource>>(getClass()) {
             }
         );
 
