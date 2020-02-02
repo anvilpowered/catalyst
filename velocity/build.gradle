@@ -3,10 +3,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-group modGroup
-version modVersion
-
-sourceCompatibility = 1.8
+jar.enabled = false // we only want shadowJar
 
 repositories {
     mavenCentral()

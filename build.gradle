@@ -2,25 +2,11 @@ plugins {
     id 'java'
 }
 
-group modGroup
-version modVersion
-
-sourceCompatibility = 1.8
-
-
-repositories {
-    mavenCentral()
-    maven {
-        name = 'velocity'
-        url = 'https://repo.velocitypowered.com/snapshots/'
+subprojects {
+    if (project.hasProperty("buildNumber") && modVersion.contains("-SNAPSHOT")) {
+        modVersion = modVersion.replace("-SNAPSHOT", "-RC${buildNumber}")
     }
-    maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
-    }
-}
-
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.0'
+    group modGroup
+    version modVersion
+    sourceCompatibility = 1.8
 }
