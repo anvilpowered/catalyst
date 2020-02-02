@@ -81,7 +81,6 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
             } else {
                 finalName = nameColor + finalName;
             }
-            System.out.println(userName + message + finalName);
             return stringResult
                 .builder()
                 .append(stringResult.deserialize(replacePlaceholders(message, prefix, finalName, hasChatColorPermission, suffix, serverName, channelPrefix, MSEssentialsKeys.PROXY_CHAT_FORMAT_MESSAGE)))
