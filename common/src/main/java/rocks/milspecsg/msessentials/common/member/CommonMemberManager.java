@@ -161,11 +161,11 @@ public class CommonMemberManager<
                             .green().append(banReason))
                     .append(
                         stringResult.builder()
-                        .blue().append("Channel : ")
+                        .blue().append("\nChannel : ")
                     )
                     .append(
                         stringResult.builder()
-                        .green().append(chatService.getChannelPrefix(chatService.getChannelId(member.getUserUUID())).orElse("Offline User."))
+                        .green().append(chatService.getChannelId(member.getUserUUID()))
                     )
                     .append(
                         stringResult.builder()

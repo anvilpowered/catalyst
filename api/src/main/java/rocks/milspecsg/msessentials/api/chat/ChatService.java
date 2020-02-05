@@ -34,5 +34,9 @@ public interface ChatService<TString> {
 
     Optional<String> getChannelPrefix(String channelId);
 
+    CompletableFuture<Void> sendMessageToChannel(String channelId, TString message);
+
+    CompletableFuture<Void> sendGlobalMessage (TString message);
+
     CompletableFuture<TString> formatMessage(String prefix, String nameColor, String userName, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
 }

@@ -27,6 +27,7 @@ import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msrepository.api.data.key.Key;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.api.util.StringResult;
+import rocks.milspecsg.msrepository.api.util.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,9 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
 
     @Inject
     StringResult<TString, TCommandSource> stringResult;
+
+    @Inject
+    private UserService<TCommandSource, TCommandSource> userService;
 
     Map<UUID, String> channelMap = new HashMap<>();
 
@@ -74,6 +78,20 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
     @Override
     public Optional<String> getChannelPrefix(String channelId) {
         return getChannel(channelId).map(c -> c.prefix);
+    }
+
+    @Override
+    public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message) {
+        return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
+            if (getChannelId(userService.getUUID(p)).equals(channelId)) {
+                stringResult.send(message, p);
+            }
+        }));
+    }
+
+    @Override
+    public CompletableFuture<Void> sendGlobalMessage(TString message) {
+        return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> stringResult.send(message, p)));
     }
 
     @Override

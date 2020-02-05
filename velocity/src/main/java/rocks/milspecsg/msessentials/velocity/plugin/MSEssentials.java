@@ -19,7 +19,6 @@
 package rocks.milspecsg.msessentials.velocity.plugin;
 
 import com.google.common.io.ByteArrayDataInput;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.velocitypowered.api.event.Subscribe;
@@ -27,10 +26,10 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.PluginDescription;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
-import net.kyori.text.TextComponent;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
@@ -47,8 +46,6 @@ import rocks.milspecsg.msessentials.velocity.tab.GlobalTab;
 import rocks.milspecsg.msessentials.velocity.tab.TabUtils;
 import rocks.milspecsg.msrepository.api.MSRepository;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
-import rocks.milspecsg.msrepository.api.misc.BindingExtensions;
-import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
 
 
@@ -63,7 +60,7 @@ import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
         @Dependency(id = "mscore"),
     }
 )
-public class MSEssentials {
+public class MSEssentials implements rocks.milspecsg.msrepository.api.plugin.Plugin<PluginDescription> {
 
     @Override
     public String toString() {
@@ -74,13 +71,13 @@ public class MSEssentials {
     Logger logger;
 
     @Inject
-    private Injector velocityRootInjector;
-
-    @Inject
     private ProxyServer proxyServer;
 
     @Inject
     private TabUtils tabUtils;
+
+    @Inject
+    private PluginDescription pluginDescription;
 
     public static ProxyServer server;
 
@@ -89,7 +86,25 @@ public class MSEssentials {
 
     public static LuckPerms api;
 
-    private boolean alreadyLoadedOnce = false;
+    @Inject
+    public MSEssentials(Injector injector) {
+        MSRepository.environmentBuilder()
+            .setName(getName())
+            .addModules(new ApiVelocityModule(), new VelocityModule())
+            .setRootInjector(injector)
+            .whenReady(e -> this.injector = e.getInjector())
+            .register(plugin);
+    }
+
+    @Override
+    public String getName() {
+        return MSEssentialsPluginInfo.id;
+    }
+
+    @Override
+    public PluginDescription getPluginContainer() {
+        return pluginDescription;
+    }
 
     @Subscribe
     public void onInit(ProxyInitializeEvent event) {
@@ -102,9 +117,6 @@ public class MSEssentials {
 
     public void initServices() {
         api = LuckPermsProvider.get();
-        injector = velocityRootInjector.createChildInjector(new VelocityModule(), new ApiVelocityModule());
-        MSRepository.registerEnvironment("msessentials", injector, BindingExtensions.getKey(new TypeToken<PluginInfo<TextComponent>>(){
-        }));
         injector.getInstance(GlobalTab.class);
         injector.getInstance(MSEssentialsCommandManager.class);
     }
