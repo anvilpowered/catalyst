@@ -6,10 +6,9 @@ import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
-import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.velocity.utils.CommandUtils;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
+import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 
 public class MSEssentialsCommand implements Command {
@@ -18,7 +17,7 @@ public class MSEssentialsCommand implements Command {
     private CommandUtils commandUtils;
 
     @Inject
-    private MSEssentials msEssentials;
+    private Registry registry;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -36,7 +35,7 @@ public class MSEssentialsCommand implements Command {
             case "reload": {
                 if (source.hasPermission(PluginPermissions.RELOAD)) {
                     source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Reloading")));
-                    msEssentials.loadConfig();
+                    registry.load();
                 } else {
                     source.sendMessage(pluginMessages.getNoPermission());
                 }

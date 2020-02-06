@@ -38,9 +38,9 @@ import rocks.milspecsg.msrepository.common.misc.CommonBindingExtensions;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class CommonModule<
-    TString,
     TUser,
     TPlayer extends TCommandSource,
+    TString,
     TCommandSource>
     extends AbstractModule {
 
@@ -74,7 +74,7 @@ public class CommonModule<
         be.bind(
             new TypeToken<ChatService<TString>>(getClass()) {
             },
-            new TypeToken<CommonChatService<TString, TCommandSource>>(getClass()) {
+            new TypeToken<CommonChatService<TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
 

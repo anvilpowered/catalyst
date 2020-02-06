@@ -25,7 +25,6 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msessentials.velocity.utils.PlayerListUtils;
 import rocks.milspecsg.msessentials.velocity.utils.StaffListUtils;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
@@ -33,9 +32,6 @@ public class ProxyLeaveListener {
 
     @Inject
     private StaffListUtils staffListUtils;
-
-    @Inject
-    private PlayerListUtils playerListUtils;
 
     @Inject
     private ProxyServer proxyServer;
@@ -47,8 +43,6 @@ public class ProxyLeaveListener {
     public void onPlayerLeave(DisconnectEvent event) {
         Player player = event.getPlayer();
         staffListUtils.removeStaffNames(player);
-        playerListUtils.removePlayer(player);
         proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(MSEssentialsKeys.LEAVE_MESSAGE).replace("%player%", player.getUsername())));
-
     }
 }

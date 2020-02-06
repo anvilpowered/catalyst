@@ -69,9 +69,9 @@ public final class MSEssentialsKeys {
     };
     public static final Key<String> PROXY_CHAT_FORMAT_MESSAGE = new Key<String>("PROXY_CHAT_FORMAT_MESSAGE", "%prefix% %username% %suffix%: %message% ") {
     };
-    public static final Key<String> PROXY_CHAT_FORMAT_HOVER = new Key<String>("PROXY_CHAT_FORMAT_HOVER", "%player% %server%"){
+    public static final Key<String> PROXY_CHAT_FORMAT_HOVER = new Key<String>("PROXY_CHAT_FORMAT_HOVER", "%player% %server%") {
     };
-    public static final Key<String> PROXY_CHAT_FORMAT_CLICK_COMMAND = new Key<String>("PROXY_CHAT_FORMAT_CLICK_COMMAND", "/msg %player%"){
+    public static final Key<String> PROXY_CHAT_FORMAT_CLICK_COMMAND = new Key<String>("PROXY_CHAT_FORMAT_CLICK_COMMAND", "/msg %player%") {
     };
     public static final Key<Boolean> SERVER_COMMAND = new Key<Boolean>("SERVER_COMMAND", true) {
     };

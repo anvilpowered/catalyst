@@ -77,5 +77,6 @@ public class MSEssentialsConfigurationService extends CommonConfigurationService
         nodeDescriptionMap.put(MSEssentialsKeys.TAB_FORMAT_CUSTOM, "\nFormat for extra information that can be displayed in the tab.");
         nodeDescriptionMap.put(MSEssentialsKeys.TAB_UPDATE, "\nTime setting for how often the tab updates in seconds");
         nodeDescriptionMap.put(MSEssentialsKeys.CHAT_CHANNELS, "\nChat Channels");
+        nodeDescriptionMap.put(MSEssentialsKeys.CHAT_DEFAULT_CHANNEL, "\nDefault chat channel");
     }
 }

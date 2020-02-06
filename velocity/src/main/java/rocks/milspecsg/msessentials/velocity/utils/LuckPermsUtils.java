@@ -25,22 +25,29 @@ import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
 import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 public class LuckPermsUtils {
 
     public static String getPrefix(Player player) {
-        if (getMetaData(player).get().getPrefix() == null)
-            return "";
-        return getMetaData(player).get().getPrefix();
+        if (getMetaData(player).isPresent()) {
+            if (getMetaData(player).get().getPrefix() == null) {
+                return "";
+            }
+            return getMetaData(player).get().getPrefix();
+        }
+        return "";
     }
 
     public static String getSuffix(Player player) {
-        if (getMetaData(player).get().getSuffix() == null)
-            return "&r";
-        return getMetaData(player).get().getSuffix();
+        if (getMetaData(player).isPresent()) {
+            if (getMetaData(player).get().getSuffix() == null) {
+                return "";
+            }
+            return getMetaData(player).get().getSuffix();
+        }
+        return "";
     }
 
     private static Optional<CachedMetaData> getMetaData(Player player) {
@@ -48,28 +55,34 @@ public class LuckPermsUtils {
         User tempUser = MSEssentials.api.getUserManager().getUser(playerUUID);
 
         return Optional.ofNullable(tempUser).map(User::getCachedData)
-                .map(data -> data.getMetaData(getQueryOptions(Optional.of(tempUser))))
-                .filter(Objects::nonNull);
+            .map(data -> data.getMetaData(getQueryOptions(Optional.of(tempUser))));
     }
 
     public static String getNameColor(Player player) {
         if (getMetaData(player).isPresent()) {
-            return getMetaData(player).get().getMetaValue("name-color");
+            if (getMetaData(player).get().getMetaValue("name-color") != null) {
+                return getMetaData(player).get().getMetaValue("name-color");
+            } else {
+                return "";
+            }
         }
-        return "&r";
+        return "";
     }
 
     public static String getChatColor(Player player) {
         if (getMetaData(player).isPresent()) {
-            return getMetaData(player).get().getMetaValue("chat-color");
+            if (getMetaData(player).get().getMetaValue("chat-color") != null) {
+                return getMetaData(player).get().getMetaValue("chat-color");
+            } else {
+                return "";
+            }
         }
-        return "&r";
+        return "";
     }
 
     private static QueryOptions getQueryOptions(Optional<User> user) {
         final ContextManager contextManager = MSEssentials.api.getContextManager();
-
         return user.flatMap(contextManager::getQueryOptions)
-                .orElseGet(contextManager::getStaticQueryOptions);
+            .orElseGet(contextManager::getStaticQueryOptions);
     }
 }

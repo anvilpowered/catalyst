@@ -35,9 +35,9 @@ import java.nio.file.Paths;
 @Singleton
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class VelocityModule extends CommonModule<
+    Player,
+    Player,
     TextComponent,
-    Player,
-    Player,
     CommandSource> {
 
     @Override

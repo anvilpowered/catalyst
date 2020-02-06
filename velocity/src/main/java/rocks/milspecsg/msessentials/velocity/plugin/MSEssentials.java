@@ -35,17 +35,16 @@ import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
 import rocks.milspecsg.msessentials.common.plugin.MSEssentialsPluginInfo;
 import rocks.milspecsg.msessentials.velocity.commands.MSEssentialsCommandManager;
-import rocks.milspecsg.msessentials.velocity.listeners.PingEventListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyChatListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyJoinListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyLeaveListener;
+import rocks.milspecsg.msessentials.velocity.listeners.ProxyPingEventListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyStaffChatListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyTeleportRequestListener;
 import rocks.milspecsg.msessentials.velocity.module.VelocityModule;
 import rocks.milspecsg.msessentials.velocity.tab.GlobalTab;
 import rocks.milspecsg.msessentials.velocity.tab.TabUtils;
 import rocks.milspecsg.msrepository.api.MSRepository;
-import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
 
 
@@ -88,12 +87,15 @@ public class MSEssentials implements rocks.milspecsg.msrepository.api.plugin.Plu
 
     @Inject
     public MSEssentials(Injector injector) {
+        plugin = this;
         MSRepository.environmentBuilder()
-            .setName(getName())
+            .setName(MSEssentialsPluginInfo.id)
             .addModules(new ApiVelocityModule(), new VelocityModule())
             .setRootInjector(injector)
             .whenReady(e -> this.injector = e.getInjector())
-            .register(plugin);
+            .whenReady(e -> api = LuckPermsProvider.get())
+            .addEarlyServices(GlobalTab.class, MSEssentialsCommandManager.class)
+            .register(this);
     }
 
     @Override
@@ -108,17 +110,8 @@ public class MSEssentials implements rocks.milspecsg.msrepository.api.plugin.Plu
 
     @Subscribe
     public void onInit(ProxyInitializeEvent event) {
-        plugin = this;
-        initServices();
         initListeners();
-        loadConfig();
         server = proxyServer;
-    }
-
-    public void initServices() {
-        api = LuckPermsProvider.get();
-        injector.getInstance(GlobalTab.class);
-        injector.getInstance(MSEssentialsCommandManager.class);
     }
 
     public static ProxyServer getServer() {
@@ -132,12 +125,7 @@ public class MSEssentials implements rocks.milspecsg.msrepository.api.plugin.Plu
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyChatListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyStaffChatListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyTeleportRequestListener.class));
-        proxyServer.getEventManager().register(this, injector.getInstance(PingEventListener.class));
-    }
-
-    public void loadConfig() {
-        logger.info("Loading config");
-        injector.getInstance(Registry.class).load();
+        proxyServer.getEventManager().register(this, injector.getInstance(ProxyPingEventListener.class));
     }
 
     @Subscribe

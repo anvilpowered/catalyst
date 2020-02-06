@@ -48,7 +48,6 @@ public class ProxyChatListener {
     @Inject
     private ProxyServer proxyServer;
 
-
     @Subscribe
     public void onChat(PlayerChatEvent e) {
         String message = e.getMessage();
@@ -96,52 +95,28 @@ public class ProxyChatListener {
         return message;
     }
 
-    public String getRank(Player player) {
-        return LuckPermsUtils.getPrefix(player);
-    }
-
-    public String getSuffix(Player player) {
-        return LuckPermsUtils.getSuffix(player);
-    }
-
-    public String getChatColor(Player player) {
-        return LuckPermsUtils.getChatColor(player);
-    }
-
-    public String getNameColor(Player player) {
-        return LuckPermsUtils.getNameColor(player);
-    }
-
     public void sendMessage(PlayerChatEvent e, String message) {
         //Set the result to denied to broadcast our own message
         e.setResult(PlayerChatEvent.ChatResult.denied());
         Player player = e.getPlayer();
         //Grab all the information we will need from luckperms
         //The only supported permissions plugin to date
-        String prefix = getRank(player);
-        String chatColor = getChatColor(player);
-        String nameColor = getNameColor(player);
-        String suffix = getSuffix(player);
+        String prefix = LuckPermsUtils.getPrefix(player);
+        String chatColor = LuckPermsUtils.getChatColor(player);
+        String nameColor = LuckPermsUtils.getNameColor(player);
+        String suffix = LuckPermsUtils.getSuffix(player);
         String server = player.getCurrentServer().orElseThrow(() -> new IllegalStateException("Invalid Server!")).getServer().getServerInfo().getName();
-        Optional<Channel> channel = chatService.getChannel(chatService.getChannelId(player.getUniqueId()));
-        String channelId = chatService.getChannelId(player.getUniqueId());
+        Optional<Channel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(player.getUniqueId()));
+        String channelId = chatService.getChannelIdForUser(player.getUniqueId());
         String channelPrefix = chatService.getChannelPrefix(channelId).orElseThrow(() -> new IllegalStateException("Please specify a prefix for " + channelId));
-
-        if (chatColor == null) {
-            chatColor = "&r";
-        }
-        if (nameColor == null) {
-            nameColor = "&r";
-        }
 
         if (!channel.isPresent()) throw new IllegalStateException("Invalid chat channel!");
 
-        String finalNameColor = nameColor;
         Tristate hasColorPermission = player.getPermissionValue(PluginPermissions.CHATCOLOR);
 
         chatService.formatMessage(
             prefix,
-            finalNameColor,
+            nameColor,
             player.getUsername(),
             chatColor + message,
             hasColorPermission.asBoolean(),
@@ -150,7 +125,17 @@ public class ProxyChatListener {
             channelId,
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
-            chatService.sendMessageToChannel(channelId, optionalMessage);
+            for (Player p : proxyServer.getAllPlayers()) {
+                if (p.hasPermission(PluginPermissions.ALL_CHAT_CHANNELS)) {
+                    p.sendMessage(optionalMessage);
+                } else if (p.hasPermission(PluginPermissions.CHANNEL_BASE + channelId)) {
+                    p.sendMessage(optionalMessage);
+                } else {
+                    if (chatService.getChannelIdForUser(p.getUniqueId()).equals(channelId)) {
+                        p.sendMessage(optionalMessage);
+                    }
+                }
+            }
         });
     }
 }

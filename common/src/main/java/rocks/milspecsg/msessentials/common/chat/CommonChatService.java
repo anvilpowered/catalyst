@@ -29,14 +29,21 @@ import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.api.util.StringResult;
 import rocks.milspecsg.msrepository.api.util.UserService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Singleton
-public class CommonChatService<TString, TCommandSource> implements ChatService<TString> {
+public class CommonChatService<
+    TPlayer extends TCommandSource,
+    TString,
+    TCommandSource>
+    implements ChatService<TString> {
 
     @Inject
     Registry registry;
@@ -48,9 +55,10 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
     StringResult<TString, TCommandSource> stringResult;
 
     @Inject
-    private UserService<TCommandSource, TCommandSource> userService;
+    private UserService<TPlayer, TPlayer> userService;
 
     Map<UUID, String> channelMap = new HashMap<>();
+    List<String> playerListMap = new ArrayList<>();
 
     @Override
     public void switchChannel(UUID userUUID, String channelId) {
@@ -58,7 +66,7 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
     }
 
     @Override
-    public String getChannelId(UUID userUUID) {
+    public String getChannelIdForUser(UUID userUUID) {
         String channelId = channelMap.get(userUUID);
         if (channelId == null) {
             return registry.getOrDefault(MSEssentialsKeys.CHAT_DEFAULT_CHANNEL);
@@ -67,7 +75,7 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
     }
 
     @Override
-    public Optional<Channel> getChannel(String channelId) {
+    public Optional<Channel> getChannelFromId(String channelId) {
         return registry.get(MSEssentialsKeys.CHAT_CHANNELS).flatMap(channels ->
             channels.stream()
                 .filter(c -> c.id.equals(channelId))
@@ -77,13 +85,19 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
 
     @Override
     public Optional<String> getChannelPrefix(String channelId) {
-        return getChannel(channelId).map(c -> c.prefix);
+        return getChannelFromId(channelId).map(c -> c.prefix);
+    }
+
+    @Override
+    public List<String> getUsersInChannel(String channelId) {
+        List<String> userList = new ArrayList<>();
+        return userList;
     }
 
     @Override
     public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
-            if (getChannelId(userService.getUUID(p)).equals(channelId)) {
+            if (getChannelIdForUser(userService.getUUID(p)).equals(channelId)) {
                 stringResult.send(message, p);
             }
         }));
@@ -91,6 +105,7 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
 
     @Override
     public CompletableFuture<Void> sendGlobalMessage(TString message) {
+        System.out.println(message);
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> stringResult.send(message, p)));
     }
 
@@ -144,5 +159,18 @@ public class CommonChatService<TString, TCommandSource> implements ChatService<T
             .replace("%server%", serverName)
             .replace("%channel%", channelPrefix)
             .replace("%message%", hasChatColorPermission ? rawMessage : stringResult.removeColor(rawMessage));
+    }
+
+    @Override
+    public String getPlayerList() {
+        return userService.getOnlinePlayers().stream().map(userService::getUserName).collect(Collectors.joining(", \n"));
+    }
+
+    @Override
+    public TString list() {
+        return stringResult.builder()
+            .green().append("------------------- Online Players --------------------\n")
+            .gray().append(getPlayerList())
+            .build();
     }
 }

@@ -161,11 +161,11 @@ public class CommonMemberManager<
                             .green().append(banReason))
                     .append(
                         stringResult.builder()
-                        .blue().append("\nChannel : ")
+                            .blue().append("\nChannel : ")
                     )
                     .append(
                         stringResult.builder()
-                        .green().append(chatService.getChannelId(member.getUserUUID()))
+                            .green().append(chatService.getChannelIdForUser(member.getUserUUID()))
                     )
                     .append(
                         stringResult.builder()
@@ -177,7 +177,10 @@ public class CommonMemberManager<
                     )
                     .build();
             }
-        );
+        ).exceptionally(e -> {
+            e.printStackTrace();
+            return null;
+        });
     }
 
     @Override

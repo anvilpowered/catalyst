@@ -29,7 +29,7 @@ import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
 import rocks.milspecsg.msrepository.api.util.StringResult;
 
-public class PingEventListener {
+public class ProxyPingEventListener {
 
     @Inject
     private ProxyServer proxyServer;

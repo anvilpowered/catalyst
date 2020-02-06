@@ -25,12 +25,15 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.player.TabList;
 import com.velocitypowered.api.proxy.player.TabListEntry;
 import com.velocitypowered.api.util.GameProfile;
-import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msrepository.api.data.key.Keys;
 import rocks.milspecsg.msrepository.api.data.registry.Registry;
+import rocks.milspecsg.msrepository.api.plugin.Plugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -43,6 +46,9 @@ public class GlobalTab {
 
     @Inject
     private TabBuilder tabBuilder;
+
+    @Inject
+    Plugin<?> msessentials;
 
     @Inject
     public GlobalTab(Registry registry) {
@@ -74,21 +80,18 @@ public class GlobalTab {
         if (!contained.contains(inUUID)) {
             list.addEntry(entry);
             toKeep.add(inUUID);
-            return;
         } else {
             TabListEntry tabListEntry = cache.get(inUUID);
             if (!tabListEntry.getDisplayName().equals(entry.getDisplayName())) {
                 list.removeEntry(inUUID);
                 list.addEntry(entry);
-                toKeep.add(inUUID);
-            } else {
-                toKeep.add(inUUID);
             }
+            toKeep.add(inUUID);
         }
     }
 
     public void schedule() {
-        proxyServer.getScheduler().buildTask(MSEssentials.plugin, () -> {
+        proxyServer.getScheduler().buildTask(msessentials, () -> {
             try {
                 if (proxyServer.getPlayerCount() > 0) {
                     for (Player currentPlayerToProcess : proxyServer.getAllPlayers()) {

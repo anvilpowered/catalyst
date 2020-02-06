@@ -20,6 +20,7 @@ package rocks.milspecsg.msessentials.api.chat;
 
 import rocks.milspecsg.msessentials.api.data.config.Channel;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -28,15 +29,21 @@ public interface ChatService<TString> {
 
     void switchChannel(UUID userUUID, String channelId);
 
-    String getChannelId(UUID userUUID);
+    String getChannelIdForUser(UUID userUUID);
 
-    Optional<Channel> getChannel(String channelId);
+    Optional<Channel> getChannelFromId(String channelId);
 
     Optional<String> getChannelPrefix(String channelId);
+
+    List<String> getUsersInChannel(String channelId);
 
     CompletableFuture<Void> sendMessageToChannel(String channelId, TString message);
 
     CompletableFuture<Void> sendGlobalMessage (TString message);
 
     CompletableFuture<TString> formatMessage(String prefix, String nameColor, String userName, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
+
+    String getPlayerList();
+
+    TString list();
 }

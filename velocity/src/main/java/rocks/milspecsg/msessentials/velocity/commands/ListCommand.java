@@ -22,16 +22,15 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
-import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.msessentials.api.chat.ChatService;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PlayerListUtils;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class ListCommand implements Command {
 
     @Inject
-    private PlayerListUtils playerListUtils;
+    ChatService<TextComponent> chatService;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -42,9 +41,6 @@ public class ListCommand implements Command {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
-        source.sendMessage(TextComponent.of("------------------- Online Players --------------------").color(TextColor.GREEN));
-        for (TextComponent text : playerListUtils.playerNameList) {
-            source.sendMessage(text.append(TextComponent.of(", ")));
-        }
+        source.sendMessage(chatService.list());
     }
 }
