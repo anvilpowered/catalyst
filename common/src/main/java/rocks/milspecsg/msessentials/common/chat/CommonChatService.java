@@ -105,7 +105,6 @@ public class CommonChatService<
 
     @Override
     public CompletableFuture<Void> sendGlobalMessage(TString message) {
-        System.out.println(message);
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> stringResult.send(message, p)));
     }
 

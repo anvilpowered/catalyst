@@ -6,7 +6,7 @@ subprojects {
     group "rocks.milspecsg"
     version "C1.0-1.0.4-SNAPSHOT"
     sourceCompatibility = 1.8
-    if (project.hasProperty("buildNumber") && modVersion.contains("-SNAPSHOT")) {
-        modVersion = modVersion.replace("-SNAPSHOT", "-RC${buildNumber}")
+    if (project.hasProperty("buildNumber") && version.contains("-SNAPSHOT")) {
+        version = version.replace("-SNAPSHOT", "-RC${buildNumber}")
     }
 }
