@@ -20,8 +20,8 @@ package rocks.milspecsg.msessentials.common.data.registry;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import rocks.milspecsg.msrepository.api.data.key.Keys;
-import rocks.milspecsg.msrepository.common.data.registry.CommonExtendedRegistry;
+import rocks.milspecsg.anvil.api.data.key.Keys;
+import rocks.milspecsg.anvil.common.data.registry.CommonExtendedRegistry;
 
 @Singleton
 public class MSEssentialsRegistry extends CommonExtendedRegistry {

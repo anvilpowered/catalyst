@@ -23,11 +23,9 @@ import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
 import net.kyori.text.format.TextColor;
-import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
-import rocks.milspecsg.msrepository.api.util.*;
+import rocks.milspecsg.anvil.api.plugin.PluginInfo;
 
 import javax.inject.Inject;
-import java.util.UUID;
 
 public class CommandUtils {
 

@@ -18,9 +18,9 @@
 
 package rocks.milspecsg.msessentials.api.data.key;
 
+import rocks.milspecsg.anvil.api.data.key.Key;
+import rocks.milspecsg.anvil.api.data.key.Keys;
 import rocks.milspecsg.msessentials.api.data.config.Channel;
-import rocks.milspecsg.msrepository.api.data.key.Key;
-import rocks.milspecsg.msrepository.api.data.key.Keys;
 
 import java.util.Arrays;
 import java.util.LinkedList;

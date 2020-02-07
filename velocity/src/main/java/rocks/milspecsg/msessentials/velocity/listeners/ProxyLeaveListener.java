@@ -24,9 +24,9 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.velocity.utils.StaffListUtils;
-import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 public class ProxyLeaveListener {
 

@@ -25,9 +25,9 @@ import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import net.kyori.text.TextComponent;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.anvil.api.util.StringResult;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msrepository.api.data.registry.Registry;
-import rocks.milspecsg.msrepository.api.util.StringResult;
 
 public class ProxyPingEventListener {
 

@@ -19,8 +19,8 @@
 package rocks.milspecsg.msessentials.velocity.chatutils;
 
 import com.google.inject.Inject;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msrepository.api.data.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;

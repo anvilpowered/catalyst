@@ -24,7 +24,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import rocks.milspecsg.msessentials.velocity.utils.LuckPermsUtils;
-import rocks.milspecsg.msrepository.api.util.StringResult;
+import rocks.milspecsg.anvil.api.util.StringResult;
 
 public class TabBuilder {
 

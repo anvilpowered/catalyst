@@ -19,14 +19,13 @@
 package rocks.milspecsg.msessentials.common.plugin;
 
 import com.google.inject.Inject;
-import rocks.milspecsg.mscore.common.plugin.MSCorePluginInfo;
-import rocks.milspecsg.msrepository.api.util.StringResult;
+import rocks.milspecsg.anvil.api.util.StringResult;
+import rocks.milspecsg.anvil.core.common.plugin.AnvilCorePluginInfo;
 
 import javax.inject.Singleton;
-import java.lang.reflect.Array;
 
 @Singleton
-public final class MSEssentialsPluginInfo<TString, TCommandSource> extends MSCorePluginInfo<TString, TCommandSource> {
+public final class MSEssentialsPluginInfo<TString, TCommandSource> extends AnvilCorePluginInfo<TString, TCommandSource> {
     public static final String id = "msessentials";
     public static final String name = "MSEssentials";
     public static final String version = "$modVersion";

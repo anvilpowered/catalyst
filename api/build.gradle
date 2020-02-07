@@ -11,11 +11,21 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    implementation project(':MSRepository:msr-api')
-    implementation project(':MSRepository:msr-api:api-repository')
-    implementation project(':MSRepository:msr-api:api-repository:api-repository-mongodb')
-    implementation project(':MSRepository:msr-api:api-repository:api-repository-xodus')
-    implementation project(':MSRepository:msr-core:core-api')
+    implementation project (':Anvil:anvil-api')
+    implementation project (':Anvil:anvil-api:anvil-api-mongodb')
+    implementation project (':Anvil:anvil-api:anvil-api-mariadb')
+    implementation project (':Anvil:anvil-api:anvil-api-xodus')
+
+    implementation project (':Anvil:anvil-common')
+    implementation project (':Anvil:anvil-common:anvil-common-mongodb')
+    implementation project (':Anvil:anvil-common:anvil-common-mariadb')
+    implementation project (':Anvil:anvil-common:anvil-common-xodus')
+
+    implementation project (':Anvil:anvil-core')
+    implementation project (':Anvil:anvil-core:anvil-core-api')
+    implementation project (':Anvil:anvil-core:anvil-core-common')
+    implementation project (':Anvil:anvil-core:anvil-core-sponge')
+    implementation project (':Anvil:anvil-core:anvil-core-velocity')
 
     implementation configurate_core
     implementation configurate_hocon

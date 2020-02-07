@@ -26,8 +26,8 @@ import com.velocitypowered.api.proxy.player.TabList;
 import com.velocitypowered.api.proxy.player.TabListEntry;
 import com.velocitypowered.api.util.GameProfile;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msrepository.api.data.registry.Registry;
-import rocks.milspecsg.msrepository.api.plugin.Plugin;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.anvil.api.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;

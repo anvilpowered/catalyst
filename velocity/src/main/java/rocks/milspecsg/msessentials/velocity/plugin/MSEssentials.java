@@ -44,8 +44,8 @@ import rocks.milspecsg.msessentials.velocity.listeners.ProxyTeleportRequestListe
 import rocks.milspecsg.msessentials.velocity.module.VelocityModule;
 import rocks.milspecsg.msessentials.velocity.tab.GlobalTab;
 import rocks.milspecsg.msessentials.velocity.tab.TabUtils;
-import rocks.milspecsg.msrepository.api.MSRepository;
-import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
+import rocks.milspecsg.anvil.api.Anvil;
+import rocks.milspecsg.anvil.velocity.module.ApiVelocityModule;
 
 
 @Plugin(
@@ -59,7 +59,7 @@ import rocks.milspecsg.msrepository.velocity.module.ApiVelocityModule;
         @Dependency(id = "mscore"),
     }
 )
-public class MSEssentials implements rocks.milspecsg.msrepository.api.plugin.Plugin<PluginDescription> {
+public class MSEssentials implements rocks.milspecsg.anvil.api.plugin.Plugin<PluginDescription> {
 
     @Override
     public String toString() {
@@ -88,7 +88,7 @@ public class MSEssentials implements rocks.milspecsg.msrepository.api.plugin.Plu
     @Inject
     public MSEssentials(Injector injector) {
         plugin = this;
-        MSRepository.environmentBuilder()
+        Anvil.environmentBuilder()
             .setName(MSEssentialsPluginInfo.id)
             .addModules(new ApiVelocityModule(), new VelocityModule())
             .setRootInjector(injector)

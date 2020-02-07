@@ -23,7 +23,7 @@ import com.google.inject.Singleton;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msrepository.common.data.config.CommonConfigurationService;
+import rocks.milspecsg.anvil.common.data.config.CommonConfigurationService;
 
 @Singleton
 public class MSEssentialsConfigurationService extends CommonConfigurationService {

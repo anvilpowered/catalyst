@@ -18,8 +18,8 @@
 
 package rocks.milspecsg.msessentials.api.member;
 
-import rocks.milspecsg.mscore.api.coremember.repository.CoreMemberRepository;
-import rocks.milspecsg.msrepository.api.manager.Manager;
+import rocks.milspecsg.anvil.api.manager.Manager;
+import rocks.milspecsg.anvil.core.api.coremember.repository.CoreMemberRepository;
 
 import java.util.concurrent.CompletableFuture;
 

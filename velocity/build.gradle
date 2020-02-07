@@ -22,20 +22,23 @@ dependencies {
     implementation project(':api')
     implementation project(':common')
 
-    implementation project(':MSRepository:msr-api')
-    implementation project(':MSRepository:msr-api:api-config')
-    implementation project(':MSRepository:msr-api:api-repository')
-    implementation project(':MSRepository:msr-api:api-repository:api-repository-mongodb')
+    implementation project (':Anvil:anvil-api')
+    implementation project (':Anvil:anvil-api:anvil-api-mongodb')
+    implementation project (':Anvil:anvil-api:anvil-api-mariadb')
+    implementation project (':Anvil:anvil-api:anvil-api-xodus')
 
-    implementation project(':MSRepository:msr-common')
-    implementation project(':MSRepository:msr-common:common-config')
-    implementation project(':MSRepository:msr-common:common-repository')
-    implementation project(':MSRepository:msr-common:common-repository:common-repository-mongodb')
+    implementation project (':Anvil:anvil-common')
+    implementation project (':Anvil:anvil-common:anvil-common-mongodb')
+    implementation project (':Anvil:anvil-common:anvil-common-mariadb')
+    implementation project (':Anvil:anvil-common:anvil-common-xodus')
 
-    implementation project(':MSRepository:msr-core:core-api')
-    implementation project(':MSRepository:msr-core:core-common')
+    implementation project (':Anvil:anvil-core')
+    implementation project (':Anvil:anvil-core:anvil-core-api')
+    implementation project (':Anvil:anvil-core:anvil-core-common')
+    implementation project (':Anvil:anvil-core:anvil-core-sponge')
+    implementation project (':Anvil:anvil-core:anvil-core-velocity')
 
-    implementation project(':MSRepository:msr-velocity')
+    implementation project (':Anvil:anvil-velocity')
     implementation guice
     implementation sponge
 }

@@ -26,10 +26,10 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.plugin.PluginInfo;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyMessageEvent;
 import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
-import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
 
 import java.util.Optional;
 import java.util.UUID;

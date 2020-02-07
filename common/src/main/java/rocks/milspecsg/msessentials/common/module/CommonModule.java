@@ -20,6 +20,12 @@ package rocks.milspecsg.msessentials.common.module;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
+import rocks.milspecsg.anvil.api.data.config.ConfigurationService;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.anvil.api.misc.BindingExtensions;
+import rocks.milspecsg.anvil.api.plugin.BasicPluginInfo;
+import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.anvil.common.misc.CommonBindingExtensions;
 import rocks.milspecsg.msessentials.api.chat.ChatService;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
@@ -29,12 +35,6 @@ import rocks.milspecsg.msessentials.common.data.registry.MSEssentialsRegistry;
 import rocks.milspecsg.msessentials.common.member.CommonMemberManager;
 import rocks.milspecsg.msessentials.common.plugin.MSEssentialsPluginInfo;
 import rocks.milspecsg.msessentials.common.plugin.MSEssentialsPluginMessages;
-import rocks.milspecsg.msrepository.api.data.config.ConfigurationService;
-import rocks.milspecsg.msrepository.api.data.registry.Registry;
-import rocks.milspecsg.msrepository.api.misc.BindingExtensions;
-import rocks.milspecsg.msrepository.api.plugin.BasicPluginInfo;
-import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
-import rocks.milspecsg.msrepository.common.misc.CommonBindingExtensions;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class CommonModule<

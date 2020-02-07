@@ -18,20 +18,20 @@
 
 package rocks.milspecsg.msessentials.common.member;
 
-import rocks.milspecsg.mscore.api.coremember.repository.CoreMemberRepository;
-import rocks.milspecsg.mscore.api.model.coremember.CoreMember;
-import rocks.milspecsg.mscore.api.plugin.PluginMessages;
-import rocks.milspecsg.mscore.common.plugin.MSCore;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.anvil.api.util.CurrentServerService;
+import rocks.milspecsg.anvil.api.util.KickService;
+import rocks.milspecsg.anvil.api.util.StringResult;
+import rocks.milspecsg.anvil.api.util.TimeFormatService;
+import rocks.milspecsg.anvil.api.util.UserService;
+import rocks.milspecsg.anvil.common.manager.CommonManager;
+import rocks.milspecsg.anvil.core.api.coremember.repository.CoreMemberRepository;
+import rocks.milspecsg.anvil.core.api.model.coremember.CoreMember;
+import rocks.milspecsg.anvil.core.api.plugin.PluginMessages;
+import rocks.milspecsg.anvil.core.common.plugin.AnvilCore;
 import rocks.milspecsg.msessentials.api.chat.ChatService;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msrepository.api.data.registry.Registry;
-import rocks.milspecsg.msrepository.api.util.CurrentServerService;
-import rocks.milspecsg.msrepository.api.util.KickService;
-import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
-import rocks.milspecsg.msrepository.api.util.StringResult;
-import rocks.milspecsg.msrepository.api.util.TimeFormatService;
-import rocks.milspecsg.msrepository.api.util.UserService;
-import rocks.milspecsg.msrepository.common.manager.CommonManager;
 
 import javax.inject.Inject;
 import java.time.Duration;
@@ -76,12 +76,12 @@ public class CommonMemberManager<
     @Inject
     public CommonMemberManager(Registry registry) {
         super(registry);
-        pluginMessages = MSCore.getPluginMessages();
+        pluginMessages = AnvilCore.getPluginMessages();
     }
 
     @Override
     public CoreMemberRepository<?, ?> getPrimaryComponent() {
-        return MSCore.getCoreMemberRepository();
+        return AnvilCore.getCoreMemberRepository();
     }
 
     @Override

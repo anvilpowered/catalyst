@@ -24,10 +24,10 @@ import rocks.milspecsg.msessentials.api.chat.ChatService;
 import rocks.milspecsg.msessentials.api.data.config.Channel;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
-import rocks.milspecsg.msrepository.api.data.key.Key;
-import rocks.milspecsg.msrepository.api.data.registry.Registry;
-import rocks.milspecsg.msrepository.api.util.StringResult;
-import rocks.milspecsg.msrepository.api.util.UserService;
+import rocks.milspecsg.anvil.api.data.key.Key;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.anvil.api.util.StringResult;
+import rocks.milspecsg.anvil.api.util.UserService;
 
 import java.util.ArrayList;
 import java.util.HashMap;

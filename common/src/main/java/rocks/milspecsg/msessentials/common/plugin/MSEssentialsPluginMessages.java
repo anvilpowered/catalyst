@@ -19,9 +19,9 @@
 package rocks.milspecsg.msessentials.common.plugin;
 
 import com.google.inject.Inject;
+import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.anvil.api.util.StringResult;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
-import rocks.milspecsg.msrepository.api.plugin.PluginInfo;
-import rocks.milspecsg.msrepository.api.util.StringResult;
 
 public class MSEssentialsPluginMessages<TString, TCommandSource> implements PluginMessages<TString> {
 
