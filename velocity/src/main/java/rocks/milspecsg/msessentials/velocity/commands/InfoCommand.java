@@ -25,10 +25,11 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,10 +49,13 @@ public class InfoCommand implements Command {
     @Inject
     private CommandUsageMessages commandUsage;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
 
-        if (!source.hasPermission(PluginPermissions.INFO)) {
+        if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.INFO))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }

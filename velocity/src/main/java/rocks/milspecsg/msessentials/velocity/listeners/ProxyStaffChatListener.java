@@ -22,9 +22,10 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyStaffChatEvent;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class ProxyStaffChatListener {
 
@@ -34,10 +35,13 @@ public class ProxyStaffChatListener {
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
 
+    @Inject
+    private Registry registry;
+
     @Subscribe
     public void staffChatEvent(ProxyStaffChatEvent event) {
         proxyServer.getAllPlayers().stream().filter(target -> target
-            .hasPermission(PluginPermissions.STAFFCHAT))
+            .hasPermission(registry.getOrDefault(MSEssentialsKeys.STAFFCHAT)))
             .forEach(target -> target.sendMessage(pluginMessages.getStaffChatMessageFormatted(event.getSender().getUsername(), event.getMessage())));
     }
 }

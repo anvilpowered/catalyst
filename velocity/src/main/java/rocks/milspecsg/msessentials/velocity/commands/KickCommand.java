@@ -25,10 +25,11 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Optional;
 
@@ -46,10 +47,13 @@ public class KickCommand implements Command {
     @Inject
     private CommandUsageMessages commandUsage;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         String kickReason = "You have been kicked!";
-        if (!source.hasPermission(PluginPermissions.KICK)) {
+        if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.KICK))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
@@ -64,7 +68,7 @@ public class KickCommand implements Command {
 
         Optional<Player> player = proxyServer.getPlayer(args[0]);
         if (player.isPresent()) {
-            if (player.get().hasPermission(PluginPermissions.KICK_EXEMPT)) {
+            if (player.get().hasPermission(registry.getOrDefault(MSEssentialsKeys.KICK_EXEMPT))) {
                 source.sendMessage(pluginMessages.getKickExempt());
                 return;
             }

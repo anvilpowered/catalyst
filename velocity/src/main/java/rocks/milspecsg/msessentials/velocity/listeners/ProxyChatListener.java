@@ -25,14 +25,15 @@ import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.msessentials.api.chat.ChatService;
 import rocks.milspecsg.msessentials.api.data.config.Channel;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.velocity.chatutils.ChatFilter;
 import rocks.milspecsg.msessentials.velocity.events.ProxyChatEvent;
 import rocks.milspecsg.msessentials.velocity.events.ProxyStaffChatEvent;
 import rocks.milspecsg.msessentials.velocity.plugin.MSEssentials;
 import rocks.milspecsg.msessentials.velocity.utils.LuckPermsUtils;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +48,9 @@ public class ProxyChatListener {
 
     @Inject
     private ProxyServer proxyServer;
+
+    @Inject
+    private Registry registry;
 
     @Subscribe
     public void onChat(PlayerChatEvent e) {
@@ -63,7 +67,7 @@ public class ProxyChatListener {
         List<String> swearList = chatFilter.isSwear(message);
         if (swearList != null) {
             if (e.getResult().isAllowed()) {
-                if (!player.hasPermission(PluginPermissions.LANGUAGE_ADMIN)) {
+                if (!player.hasPermission(registry.getOrDefault(MSEssentialsKeys.LANGUAGE_ADMIN))) {
                     for (String swear : swearList) {
                         message = message.replace(swear, "****");
                     }
@@ -126,16 +130,13 @@ public class ProxyChatListener {
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
             for (Player p : proxyServer.getAllPlayers()) {
-                if (p.hasPermission(PluginPermissions.ALL_CHAT_CHANNELS)) {
+                if (p.hasPermission(registry.getOrDefault(MSEssentialsKeys.ALL_CHAT_CHANNELS)) || p.hasPermission(registry.getOrDefault(MSEssentialsKeys.CHANNEL_BASE) + channelId)) {
                     p.sendMessage(optionalMessage);
-                } else if (p.hasPermission(PluginPermissions.CHANNEL_BASE + channelId)) {
-                    p.sendMessage(optionalMessage);
-                } else {
+                } else
                     if (chatService.getChannelIdForUser(p.getUniqueId()).equals(channelId)) {
-                        p.sendMessage(optionalMessage);
+                        chatService.sendMessageToChannel(channelId, optionalMessage);
                     }
                 }
-            }
         });
     }
 }

@@ -24,9 +24,10 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.msessentials.api.chat.ChatService;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class ChannelCommand implements Command {
 
@@ -36,6 +37,9 @@ public class ChannelCommand implements Command {
     @Inject
     private ChatService<TextComponent> chatService;
 
+    @Inject
+    private Registry registry;
+
     String channelId;
 
     public void setChannelId(String channelId) {
@@ -44,7 +48,7 @@ public class ChannelCommand implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (source.hasPermission(PluginPermissions.CHANNEL_BASE + channelId)) {
+        if (source.hasPermission(registry.getOrDefault(MSEssentialsKeys.CHANNEL_BASE) + channelId)) {
             if (args.length == 0) {
                 if (source instanceof Player) {
                     Player player = (Player) source;

@@ -20,14 +20,14 @@ package rocks.milspecsg.msessentials.common.chat;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import rocks.milspecsg.msessentials.api.chat.ChatService;
-import rocks.milspecsg.msessentials.api.data.config.Channel;
-import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
-import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.anvil.api.data.key.Key;
 import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.anvil.api.util.StringResult;
 import rocks.milspecsg.anvil.api.util.UserService;
+import rocks.milspecsg.msessentials.api.chat.ChatService;
+import rocks.milspecsg.msessentials.api.data.config.Channel;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
+import rocks.milspecsg.msessentials.api.member.MemberManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +58,6 @@ public class CommonChatService<
     private UserService<TPlayer, TPlayer> userService;
 
     Map<UUID, String> channelMap = new HashMap<>();
-    List<String> playerListMap = new ArrayList<>();
 
     @Override
     public void switchChannel(UUID userUUID, String channelId) {

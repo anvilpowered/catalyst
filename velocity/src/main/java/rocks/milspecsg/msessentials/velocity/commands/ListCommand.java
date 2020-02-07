@@ -23,9 +23,10 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.msessentials.api.chat.ChatService;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class ListCommand implements Command {
 
@@ -35,9 +36,12 @@ public class ListCommand implements Command {
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(PluginPermissions.LIST)) {
+        if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.LIST))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }

@@ -25,11 +25,12 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,13 +53,16 @@ public class NickNameCommand implements Command {
     @Inject
     private ProxyServer proxyServer;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         String nick;
         if (source instanceof Player) {
             Player player = (Player) source;
 
-            if (!source.hasPermission(PluginPermissions.NICKNAME)) {
+            if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.NICKNAME))) {
                 source.sendMessage(pluginMessages.getNoPermission());
                 return;
             }
@@ -69,7 +73,7 @@ public class NickNameCommand implements Command {
                 return;
             }
 
-            if (args[0].equals("other") && source.hasPermission(PluginPermissions.NICKNAME_OTHER)) {
+            if (args[0].equals("other") && source.hasPermission(registry.getOrDefault(MSEssentialsKeys.NICKNAME_OTHER))) {
                 nick = args[2];
                 memberManager.setNickNameForUser(args[1], nick).thenAcceptAsync(source::sendMessage);
                 return;
@@ -77,7 +81,7 @@ public class NickNameCommand implements Command {
                 nick = args[0];
             }
 
-            if (nick.contains("&") && player.hasPermission(PluginPermissions.NICKNAMECOLOR)) {
+            if (nick.contains("&") && player.hasPermission(registry.getOrDefault(MSEssentialsKeys.NICKNAME_COLOR))) {
                 memberManager.setNickName(player.getUsername(), args[0]).thenAcceptAsync(source::sendMessage);
             } else {
                 memberManager.setNickName(player.getUsername(), pluginMessages.removeColor(nick)).thenAccept(source::sendMessage);

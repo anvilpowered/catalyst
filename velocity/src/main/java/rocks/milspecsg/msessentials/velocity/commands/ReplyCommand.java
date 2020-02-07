@@ -26,10 +26,11 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyMessageEvent;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -45,9 +46,12 @@ public class ReplyCommand implements Command {
     @Inject
     private ProxyServer proxyServer;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(PluginPermissions.MESSAGE)) {
+        if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.MESSAGE))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }

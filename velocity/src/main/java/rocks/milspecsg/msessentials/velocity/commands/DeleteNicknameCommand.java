@@ -25,9 +25,10 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,16 +45,19 @@ public class DeleteNicknameCommand implements Command {
     @Inject
     private ProxyServer proxyServer;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(PluginPermissions.NICKNAME)) {
+        if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.NICKNAME))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
 
         if (source instanceof Player) {
             Player player = (Player) source;
-            if (args[0].equals("other") && source.hasPermission(PluginPermissions.NICKNAME_OTHER)) {
+            if (args[0].equals("other") && source.hasPermission(registry.getOrDefault(MSEssentialsKeys.NICKNAME_OTHER))) {
                 memberManager.deleteNickNameForUser(args[1]).thenAcceptAsync(source::sendMessage);
             } else {
                 memberManager.deleteNickName(player.getUsername()).thenAcceptAsync(source::sendMessage);

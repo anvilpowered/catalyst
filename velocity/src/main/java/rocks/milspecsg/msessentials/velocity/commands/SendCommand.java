@@ -28,10 +28,11 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Optional;
 
@@ -49,9 +50,12 @@ public class SendCommand implements Command {
     @Inject
     private CommandUsageMessages commandUsage;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(PluginPermissions.SEND)) {
+        if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.SEND))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }

@@ -27,7 +27,6 @@ import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.velocity.events.ProxyMessageEvent;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 import rocks.milspecsg.msessentials.velocity.utils.StaffListUtils;
 
 public class ProxyJoinListener {
@@ -45,7 +44,7 @@ public class ProxyJoinListener {
     public void onPlayerJoin(PostLoginEvent event) {
         Player player = event.getPlayer();
 
-        if (player.hasPermission(PluginPermissions.SOCIALSPYONJOIN)) {
+        if (player.hasPermission(registry.getOrDefault(MSEssentialsKeys.SOCIALSPY_ONJOIN))) {
             ProxyMessageEvent.socialSpySet.add(player.getUniqueId());
         }
 

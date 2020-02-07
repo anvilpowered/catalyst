@@ -28,7 +28,6 @@ import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class ExceptionCommand implements Command {
 
@@ -53,37 +52,46 @@ public class ExceptionCommand implements Command {
             return;
         }
 
-        if (!source.hasPermission(PluginPermissions.LANGUAGE_ADMIN)) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
-
         switch (args[0]) {
             case "list": {
-                source.sendMessage(TextComponent.of(String.join(", ", registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS))));
+                if(source.hasPermission(registry.getOrDefault(MSEssentialsKeys.LANGUAGE_LIST))) {
+                    source.sendMessage(TextComponent.of(String.join(", ", registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS))));
+                    return;
+                } else {
+                    source.sendMessage(pluginMessages.getNoPermission());
+                }
                 return;
             }
             case "add": {
-                if(registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).isEmpty()) {
-                    configurationService.addToCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
-                    configurationService.save();
-                    source.sendMessage(pluginMessages.getNewException(args[1]));
-                } else if (registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
-                    source.sendMessage(pluginMessages.getExistingException(args[1]));
+                if(source.hasPermission(registry.getOrDefault(MSEssentialsKeys.LANGUAGE_ADMIN))) {
+                    if (registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).isEmpty()) {
+                        configurationService.addToCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                        configurationService.save();
+                        source.sendMessage(pluginMessages.getNewException(args[1]));
+                    } else if (registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
+                        source.sendMessage(pluginMessages.getExistingException(args[1]));
+                    } else {
+                        configurationService.addToCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                        configurationService.save();
+                        source.sendMessage(pluginMessages.getNewException(args[1]));
+                    }
                 } else {
-                    configurationService.addToCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
-                    configurationService.save();
-                    source.sendMessage(pluginMessages.getNewException(args[1]));
+                    source.sendMessage(pluginMessages.getNoPermission());
+                    return;
                 }
                 return;
             }
             case "remove": {
-                if (!registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
-                    source.sendMessage(pluginMessages.getMissingSwear(args[1]));
+                if(source.hasPermission(registry.getOrDefault(MSEssentialsKeys.LANGUAGE_ADMIN))) {
+                    if (!registry.getOrDefault(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
+                        source.sendMessage(pluginMessages.getMissingSwear(args[1]));
+                    } else {
+                        configurationService.removeFromCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                        configurationService.save();
+                        source.sendMessage(pluginMessages.getRemoveException(args[1]));
+                    }
                 } else {
-                    configurationService.removeFromCollection(MSEssentialsKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
-                    configurationService.save();
-                    source.sendMessage(pluginMessages.getRemoveException(args[1]));
+                    source.sendMessage(pluginMessages.getNoPermission());
                 }
             }
         }

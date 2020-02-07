@@ -25,10 +25,11 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.member.MemberManager;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.messages.CommandUsageMessages;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,9 +49,12 @@ public class TempBanCommand implements Command {
     @Inject
     private ProxyServer proxyServer;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(PluginPermissions.BAN)) {
+        if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.TEMP_BAN))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
@@ -63,7 +67,7 @@ public class TempBanCommand implements Command {
         String username = args[0];
         String duration = args[1];
 
-        if (proxyServer.getPlayer(username).filter(p -> p.hasPermission(PluginPermissions.BAN_EXEMPT)).isPresent()) {
+        if (proxyServer.getPlayer(username).filter(p -> p.hasPermission(registry.getOrDefault(MSEssentialsKeys.BAN_EXEMPT))).isPresent()) {
             source.sendMessage(pluginMessages.getBanExempt());
             return;
         }

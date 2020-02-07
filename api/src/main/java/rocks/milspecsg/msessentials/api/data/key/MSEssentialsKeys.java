@@ -91,6 +91,70 @@ public final class MSEssentialsKeys {
     };
     public static final Key<String> CHAT_DEFAULT_CHANNEL = new Key<String>("CHAT_DEFAULT_CHANNEL", "global") {
     };
+    public static final Key<String> BAN = new Key<String>("BAN", "msessentials.command.ban") {
+    };
+    public static final Key<String> TEMP_BAN = new Key<String>("TEMP_BAN", "msessentials.command.tempban") {
+    };
+    public static final Key<String> BAN_EXEMPT = new Key<String>("BAN_EXEMPT", "msessentials.command.ban.exempt") {
+    };
+    public static final Key<String> BROADCAST = new Key<String>("BROADCAST", "msessentials.command.broadcast") {
+    };
+    public static final Key<String> CHAT_COLOR = new Key<String>("CHAT_COLOR", "msessentials.chat.color") {
+    };
+    public static final Key<String> FIND = new Key<String>("FIND", "msessentials.command.find") {
+    };
+    public static final Key<String> GOOGLE = new Key<String>("GOOGLE", "msessentials.command.google") {
+    };
+    public static final Key<String> INFO = new Key<String>("INFO", "msessentials.command.info") {
+    };
+    public static final Key<String> KICK = new Key<String>("KICK", "msessentials.command.kick") {
+    };
+    public static final Key<String> KICK_EXEMPT = new Key<String>("KICK_EXEMPT", "msessentials.command.kick.exempt") {
+    };
+    public static final Key<String> LANGUAGE_ADMIN = new Key<String>("LANGUAGE_ADMIN", "msessentials.command.language.admin") {
+    };
+    public static final Key<String> LANGUAGE_LIST = new Key<String>("LANGUAGE_LIST", "msessentials.command.language.list") {
+    };
+    public static final Key<String> LIST = new Key<String>("LIST", "msessentials.command.list") {
+    };
+    public static final Key<String> MESSAGE = new Key<String>("MESSAGE", "msessentials.command.message") {
+    };
+    public static final Key<String> MUTE = new Key<String>("MUTE", "msessentials.command.mute") {
+    };
+    public static final Key<String> MUTE_EXEMPT = new Key<String>("MUTE_EXEMPT", "msessentials.command.mute.exempt") {
+    };
+    public static final Key<String> NICKNAME = new Key<String>("NICKNAME", "msessentials.command.nickname") {
+    };
+    public static final Key<String> NICKNAME_COLOR = new Key<String>("NICKNAME_COLOR", "msessentials.command.nickname.color") {
+    };
+    public static final Key<String> NICKNAME_OTHER = new Key<String>("NICKNAME_OTHER", "msessentials.command.nickname.other"){
+    };
+    public static final Key<String> RELOAD = new Key<String>("RELOAD", "msessentials.command.reload"){
+    };
+    public static final Key<String> SEND = new Key<String>("SEND", "msessentials.admin.command.send"){
+    };
+    public static final Key<String> SERVER_BASE = new Key<String>("SERVER_BASE", "msessentials.server."){
+    };
+    public static final Key<String> SENDGOOGLE = new Key<String>("SENDGOOGLE", "msessentials.admin.command.sendgoogle"){
+    };
+    public static final Key<String> SOCIALSPY = new Key<String>("SOCIALSPY", "msessentials.admin.command.socialspy"){
+    };
+    public static final Key<String> SOCIALSPY_ONJOIN = new Key<String>("SOCIALSPY_ONJOIN", "msessentials.admin.command.socialspy.onjoin"){
+    };
+    public static final Key<String> STAFFCHAT = new Key<String>("STAFFCHAT", "msessentials.admin.command.staffchat"){
+    };
+    public static final Key<String> STAFFLIST_ADMIN = new Key<String>("STAFFLIST_ADMIN", "msessentials.stafflist.admin") {
+    };
+    public static final Key<String> STAFFLIST_BASE = new Key<String>("STAFFLIST_BASE", "msessentials.stafflist.base"){
+    };
+    public static final Key<String> STAFFLIST_OWNER = new Key<String>("STAFFLIST_OWNER", "msessentials.stafflist.owner"){
+    };
+    public static final Key<String> STAFFLIST_STAFF = new Key<String>("STAFFLIST_STAFF", "msessentials.stafflist.staff") {
+    };
+    public static final Key<String> ALL_CHAT_CHANNELS = new Key<String>("ALL_CHAT_CHANNELS", "msessentials.channel.all"){
+    };
+    public static final Key<String> CHANNEL_BASE = new Key<String>("CHANNEL_BASE","msessentials.channel."){
+    };
 
     static {
         Keys.registerKey(MOTD);
@@ -112,5 +176,37 @@ public final class MSEssentialsKeys {
         Keys.registerKey(TAB_UPDATE);
         Keys.registerKey(CHAT_CHANNELS);
         Keys.registerKey(CHAT_DEFAULT_CHANNEL);
+        Keys.registerKey(BAN);
+        Keys.registerKey(TEMP_BAN);
+        Keys.registerKey(BAN_EXEMPT);
+        Keys.registerKey(BROADCAST);
+        Keys.registerKey(CHAT_COLOR);
+        Keys.registerKey(FIND);
+        Keys.registerKey(GOOGLE);
+        Keys.registerKey(INFO);
+        Keys.registerKey(KICK);
+        Keys.registerKey(KICK_EXEMPT);
+        Keys.registerKey(LANGUAGE_ADMIN);
+        Keys.registerKey(LANGUAGE_LIST);
+        Keys.registerKey(LIST);
+        Keys.registerKey(MESSAGE);
+        Keys.registerKey(MUTE);
+        Keys.registerKey(MUTE_EXEMPT);
+        Keys.registerKey(NICKNAME);
+        Keys.registerKey(NICKNAME_COLOR);
+        Keys.registerKey(NICKNAME_OTHER);
+        Keys.registerKey(RELOAD);
+        Keys.registerKey(SEND);
+        Keys.registerKey(SERVER_BASE);
+        Keys.registerKey(SENDGOOGLE);
+        Keys.registerKey(SOCIALSPY);
+        Keys.registerKey(SOCIALSPY_ONJOIN);
+        Keys.registerKey(STAFFCHAT);
+        Keys.registerKey(STAFFLIST_ADMIN);
+        Keys.registerKey(STAFFLIST_BASE);
+        Keys.registerKey(STAFFLIST_OWNER);
+        Keys.registerKey(STAFFLIST_STAFF);
+        Keys.registerKey(ALL_CHAT_CHANNELS);
+        Keys.registerKey(CHANNEL_BASE);
     }
 }

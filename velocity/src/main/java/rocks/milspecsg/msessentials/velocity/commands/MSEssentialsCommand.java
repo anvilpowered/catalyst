@@ -7,9 +7,9 @@ import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.utils.CommandUtils;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class MSEssentialsCommand implements Command {
 
@@ -33,7 +33,7 @@ public class MSEssentialsCommand implements Command {
                 return;
             }
             case "reload": {
-                if (source.hasPermission(PluginPermissions.RELOAD)) {
+                if (source.hasPermission(registry.getOrDefault(MSEssentialsKeys.RELOAD))) {
                     source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Reloading")));
                     registry.load();
                 } else {

@@ -40,7 +40,6 @@ import rocks.milspecsg.msessentials.velocity.listeners.ProxyJoinListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyLeaveListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyPingEventListener;
 import rocks.milspecsg.msessentials.velocity.listeners.ProxyStaffChatListener;
-import rocks.milspecsg.msessentials.velocity.listeners.ProxyTeleportRequestListener;
 import rocks.milspecsg.msessentials.velocity.module.VelocityModule;
 import rocks.milspecsg.msessentials.velocity.tab.GlobalTab;
 import rocks.milspecsg.msessentials.velocity.tab.TabUtils;
@@ -124,7 +123,6 @@ public class MSEssentials implements rocks.milspecsg.anvil.api.plugin.Plugin<Plu
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyLeaveListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyChatListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyStaffChatListener.class));
-        proxyServer.getEventManager().register(this, injector.getInstance(ProxyTeleportRequestListener.class));
         proxyServer.getEventManager().register(this, injector.getInstance(ProxyPingEventListener.class));
     }
 

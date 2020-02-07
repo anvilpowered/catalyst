@@ -26,7 +26,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
 import rocks.milspecsg.anvil.api.plugin.PluginInfo;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 
 public class ServerCommand implements Command {
@@ -40,6 +42,9 @@ public class ServerCommand implements Command {
     @Inject
     private ProxyServer proxyServer;
 
+    @Inject
+    private Registry registry;
+
     private RegisteredServer registeredServer;
 
     public void setRegisteredServer(String serverName) {
@@ -52,7 +57,7 @@ public class ServerCommand implements Command {
     public void execute(CommandSource source, @NonNull String[] args) {
         if (source instanceof Player) {
             Player player = (Player) source;
-            if (player.hasPermission("msessentials.server.join." + registeredServer.getServerInfo().getName())) {
+            if (player.hasPermission(registry.getOrDefault(MSEssentialsKeys.SERVER_BASE) + registeredServer.getServerInfo().getName())) {
                 if (registeredServer.ping().join().getVersion().getName().equals(player.getProtocolVersion().getName())) {
                     player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {
                         if (connection.isSuccessful()) {

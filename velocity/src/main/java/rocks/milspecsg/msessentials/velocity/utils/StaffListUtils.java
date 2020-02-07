@@ -18,9 +18,12 @@
 
 package rocks.milspecsg.msessentials.velocity.utils;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +31,18 @@ import java.util.List;
 @Singleton
 public class StaffListUtils {
 
+    @Inject
+    private Registry registry;
+
     public List<TextComponent> staffNames = new ArrayList<>();
     public List<TextComponent> adminNames = new ArrayList<>();
     public List<TextComponent> ownerNames = new ArrayList<>();
 
     public void getStaffNames(Player player) {
-        if (player.hasPermission(PluginPermissions.STAFFLIST_OWNER)) {
+        if (player.hasPermission(registry.getOrDefault(MSEssentialsKeys.STAFFLIST_OWNER))) {
             ownerNames.add(TextComponent.of(player.getUsername()));
-        } else if (player.hasPermission(PluginPermissions.STAFFLIST_STAFF)) {
-            if (player.hasPermission(PluginPermissions.STAFFLIST_ADMIN)) {
+        } else if (player.hasPermission(registry.getOrDefault(MSEssentialsKeys.STAFFLIST_STAFF))) {
+            if (player.hasPermission(registry.getOrDefault(MSEssentialsKeys.STAFFLIST_ADMIN))) {
                 adminNames.add(TextComponent.of(player.getUsername()));
             } else {
                 staffNames.add(TextComponent.of(player.getUsername()));

@@ -25,9 +25,10 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import rocks.milspecsg.anvil.api.data.registry.Registry;
+import rocks.milspecsg.msessentials.api.data.key.MSEssentialsKeys;
 import rocks.milspecsg.msessentials.api.plugin.PluginMessages;
 import rocks.milspecsg.msessentials.velocity.events.ProxyStaffChatEvent;
-import rocks.milspecsg.msessentials.velocity.utils.PluginPermissions;
 
 public class StaffChatCommand implements Command {
 
@@ -37,9 +38,12 @@ public class StaffChatCommand implements Command {
     @Inject
     private ProxyServer proxyServer;
 
+    @Inject
+    private Registry registry;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(PluginPermissions.STAFFCHAT)) {
+        if (!source.hasPermission(registry.getOrDefault(MSEssentialsKeys.STAFFCHAT))) {
             source.sendMessage(pluginMessages.getNoPermission());
         }
 
@@ -64,7 +68,7 @@ public class StaffChatCommand implements Command {
                 source.sendMessage(pluginMessages.getNotEnoughArgs());
             } else {
                 String message = String.join(" ", args);
-                proxyServer.getAllPlayers().stream().filter(target -> target.hasPermission(PluginPermissions.STAFFCHAT))
+                proxyServer.getAllPlayers().stream().filter(target -> target.hasPermission(registry.getOrDefault(MSEssentialsKeys.STAFFCHAT)))
                     .forEach(target ->
                         target.sendMessage(pluginMessages.getStaffChatMessageFormattedConsole(TextComponent.of(message)))
                     );
