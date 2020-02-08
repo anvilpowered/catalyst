@@ -1,5 +1,5 @@
-# MSEssentials
-The first rocks.milspecsg.essentials plugin for Velocity!
+# Catalyst
+An Essentials plugin for Velocity!
 
 [![Discord](https://img.shields.io/discord/619325430431875072?style=for-the-badge)](https://discord.gg/6cXUEQJ)
 
@@ -27,7 +27,7 @@ stafflist
 
 discord intergration (Still in dev, missing topic updater and webhook)
 
-Commands/Permissions : [Click Here](https://github.com/STG-Allen/MSEssentials/wiki/Commands)
+Commands/Permissions : [Click Here](https://github.com/STG-Allen/Catalyst/wiki/Commands)
 
 Luckperms Support
 -

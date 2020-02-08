@@ -1,4 +1,4 @@
-rootProject.name = 'MSEssentials'
+rootProject.name = 'Catalyst'
 include 'api'
 include 'common'
 include 'velocity'

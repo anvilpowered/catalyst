@@ -21,7 +21,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - Velocity Version: 
- - MSEssentials Version:
+ - Catalyst Version:
  - Additional Plugins installed on velocity: 
 
 **Additional context**

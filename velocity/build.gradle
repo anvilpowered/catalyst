@@ -44,7 +44,7 @@ dependencies {
 }
 
 shadowJar {
-    String jarName = "MSEssentials-Velocity-${project.version}.jar"
+    String jarName = "Catalyst-Velocity-${project.version}.jar"
     println "Building: " + jarName
     archiveFileName = jarName
 

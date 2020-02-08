@@ -1,0 +1,83 @@
+/*
+ *     Copyright (C) 2020 STG_Allen
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package org.anvilpowered.catalyst.common.module;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.AbstractModule;
+import org.anvilpowered.catalyst.common.chat.CommonChatService;
+import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
+import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
+import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
+import org.anvilpowered.anvil.api.data.config.ConfigurationService;
+import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.misc.BindingExtensions;
+import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
+import org.anvilpowered.anvil.api.plugin.PluginInfo;
+import org.anvilpowered.anvil.common.misc.CommonBindingExtensions;
+import org.anvilpowered.catalyst.api.chat.ChatService;
+import org.anvilpowered.catalyst.api.member.MemberManager;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.common.member.CommonMemberManager;
+import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
+
+@SuppressWarnings({"UnstableApiUsage"})
+public class CommonModule<
+    TUser,
+    TPlayer extends TCommandSource,
+    TString,
+    TCommandSource>
+    extends AbstractModule {
+
+    @Override
+    protected void configure() {
+
+        BindingExtensions be = new CommonBindingExtensions(binder());
+
+        be.bind(new TypeToken<PluginInfo<TString>>(getClass()) {
+        }, new TypeToken<CatalystPluginInfo<TString, TCommandSource>>(getClass()) {
+        });
+
+        be.bind(new TypeToken<BasicPluginInfo>(getClass()) {
+        }, new TypeToken<CatalystPluginInfo<TString, TCommandSource>>(getClass()) {
+        });
+
+        be.bind(
+            new TypeToken<PluginMessages<TString>>(getClass()) {
+            },
+            new TypeToken<CatalystPluginMessages<TString, TCommandSource>>(getClass()) {
+            }
+        );
+
+        be.bind(
+            new TypeToken<MemberManager<TString>>(getClass()) {
+            },
+            new TypeToken<CommonMemberManager<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
+            }
+        );
+
+        be.bind(
+            new TypeToken<ChatService<TString>>(getClass()) {
+            },
+            new TypeToken<CommonChatService<TPlayer, TString, TCommandSource>>(getClass()) {
+            }
+        );
+
+        bind(ConfigurationService.class).to(CatalystConfigurationService.class);
+        bind(Registry.class).to(CatalystRegistry.class);
+    }
+}
