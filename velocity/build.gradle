@@ -23,22 +23,9 @@ dependencies {
     implementation project(':common')
 
     implementation project (':Anvil:anvil-api')
-    implementation project (':Anvil:anvil-api:anvil-api-mongodb')
-    implementation project (':Anvil:anvil-api:anvil-api-mariadb')
-    implementation project (':Anvil:anvil-api:anvil-api-xodus')
+    implementation project (':Anvil:anvil-base')
 
-    implementation project (':Anvil:anvil-common')
-    implementation project (':Anvil:anvil-common:anvil-common-mongodb')
-    implementation project (':Anvil:anvil-common:anvil-common-mariadb')
-    implementation project (':Anvil:anvil-common:anvil-common-xodus')
 
-    implementation project (':Anvil:anvil-core')
-    implementation project (':Anvil:anvil-core:anvil-core-api')
-    implementation project (':Anvil:anvil-core:anvil-core-common')
-    implementation project (':Anvil:anvil-core:anvil-core-sponge')
-    implementation project (':Anvil:anvil-core:anvil-core-velocity')
-
-    implementation project (':Anvil:anvil-velocity')
     implementation guice
     implementation sponge
 }

@@ -17,19 +17,16 @@
 
 package org.anvilpowered.catalyst.common.member;
 
+import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.anvil.api.util.CurrentServerService;
-import org.anvilpowered.anvil.api.util.KickService;
-import org.anvilpowered.anvil.api.util.StringResult;
-import org.anvilpowered.anvil.api.util.TimeFormatService;
-import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.anvil.common.manager.CommonManager;
+import org.anvilpowered.anvil.api.util.*;
+import org.anvilpowered.anvil.base.manager.BaseManager;
+import org.anvilpowered.anvil.core.api.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.core.api.coremember.repository.CoreMemberRepository;
 import org.anvilpowered.anvil.core.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.core.api.plugin.PluginMessages;
-import org.anvilpowered.anvil.core.common.plugin.AnvilCore;
 import org.anvilpowered.catalyst.api.chat.ChatService;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 
@@ -47,7 +44,7 @@ public class CommonMemberManager<
     TPlayer extends TCommandSource,
     TString,
     TCommandSource>
-    extends CommonManager<CoreMemberRepository<?, ?>>
+    extends BaseManager<CoreMemberRepository<?, ?>>
     implements MemberManager<TString> {
 
     @Inject
@@ -82,7 +79,7 @@ public class CommonMemberManager<
 
     @Override
     public CoreMemberRepository<?, ?> getPrimaryComponent() {
-        return AnvilCore.getCoreMemberRepository();
+        return Anvil.getEnvironmentManager().getCoreEnvironment().getInjector().getInstance(CoreMemberManager.class).getPrimaryComponent();
     }
 
     @Override
@@ -174,7 +171,7 @@ public class CommonMemberManager<
                     )
                     .append(
                         stringResult.builder()
-                            .gold().append(currentServerService.getCurrentServerName(member.getUserUUID()).orElse("Offline User."))
+                            .gold().append(currentServerService.getName(member.getUserUUID()).orElse("Offline User."))
                     )
                     .build();
             }

@@ -20,10 +20,10 @@ package org.anvilpowered.catalyst.common.data.registry;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.data.key.Keys;
-import org.anvilpowered.anvil.common.data.registry.CommonExtendedRegistry;
+import org.anvilpowered.anvil.base.data.registry.BaseExtendedRegistry;
 
 @Singleton
-public class CatalystRegistry extends CommonExtendedRegistry {
+public class CatalystRegistry extends BaseExtendedRegistry {
 
     @Inject
     public CatalystRegistry() {

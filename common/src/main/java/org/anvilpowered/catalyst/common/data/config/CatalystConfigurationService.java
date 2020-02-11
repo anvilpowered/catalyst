@@ -21,11 +21,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.anvilpowered.anvil.base.data.config.BaseConfigurationService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.anvil.common.data.config.CommonConfigurationService;
 
 @Singleton
-public class CatalystConfigurationService extends CommonConfigurationService {
+public class CatalystConfigurationService extends BaseConfigurationService {
 
     @Inject
     public CatalystConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {

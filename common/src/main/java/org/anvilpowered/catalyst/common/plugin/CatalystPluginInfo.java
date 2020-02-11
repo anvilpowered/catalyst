@@ -18,19 +18,21 @@
 package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Inject;
+import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.util.StringResult;
-import org.anvilpowered.anvil.core.common.plugin.AnvilCorePluginInfo;
 
 import javax.inject.Singleton;
 
 @Singleton
-public final class CatalystPluginInfo<TString, TCommandSource> extends AnvilCorePluginInfo<TString, TCommandSource> {
+public final class CatalystPluginInfo<TString, TCommandSource> implements PluginInfo<TString> {
     public static final String id = "catalyst";
     public static final String name = "Catalyst";
     public static final String version = "$modVersion";
     public static final String description = "An essentials plugin for velocity";
-    public static final String url = "https://github.com/MilSpecSG/Catalyst";
+    public static final String url = "https://github.com/AnvilPowered/Catalyst";
     public static final String[] authors = {"STG_Allen", "Cableguy20"};
+    public static final String organizationName = "AnvilPowered";
+    public static final String buildDate = "$buildDate";
     public TString pluginPrefix;
 
     @Inject
@@ -58,13 +60,24 @@ public final class CatalystPluginInfo<TString, TCommandSource> extends AnvilCore
         return description;
     }
 
-    public String getURL() {
+    @Override
+    public String getUrl() {
         return url;
     }
 
     @Override
     public String[] getAuthors() {
         return authors;
+    }
+
+    @Override
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    @Override
+    public String getBuildDate() {
+        return buildDate;
     }
 
     @Override

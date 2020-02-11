@@ -32,20 +32,15 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import org.anvilpowered.anvil.api.Environment;
+import org.anvilpowered.anvil.base.plugin.BasePlugin;
+import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.velocity.commands.CatalystCommandManager;
+import org.anvilpowered.catalyst.velocity.listeners.*;
 import org.anvilpowered.catalyst.velocity.module.VelocityModule;
 import org.anvilpowered.catalyst.velocity.tab.GlobalTab;
 import org.anvilpowered.catalyst.velocity.tab.TabUtils;
 import org.slf4j.Logger;
-import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.anvil.common.plugin.CommonPlugin;
-import org.anvilpowered.anvil.velocity.module.ApiVelocityModule;
-import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
-import org.anvilpowered.catalyst.velocity.listeners.ProxyChatListener;
-import org.anvilpowered.catalyst.velocity.listeners.ProxyJoinListener;
-import org.anvilpowered.catalyst.velocity.listeners.ProxyLeaveListener;
-import org.anvilpowered.catalyst.velocity.listeners.ProxyPingEventListener;
-import org.anvilpowered.catalyst.velocity.listeners.ProxyStaffChatListener;
 
 
 @Plugin(
@@ -57,7 +52,7 @@ import org.anvilpowered.catalyst.velocity.listeners.ProxyStaffChatListener;
     url = CatalystPluginInfo.url,
     dependencies = @Dependency(id = "anvil")
 )
-public class Catalyst extends CommonPlugin<PluginContainer> {
+public class Catalyst extends BasePlugin<PluginContainer> {
 
     @Inject
     Logger logger;
@@ -77,22 +72,13 @@ public class Catalyst extends CommonPlugin<PluginContainer> {
 
     @Inject
     public Catalyst(Injector injector) {
-        super(CatalystPluginInfo.id);
+        super(CatalystPluginInfo.id, injector, new VelocityModule(), GlobalTab.class, CatalystCommandManager.class);
         plugin = this;
-        Anvil.environmentBuilder()
-            .setName(CatalystPluginInfo.id)
-            .addModules(new ApiVelocityModule(), new VelocityModule())
-            .setRootInjector(injector)
-            .whenReady(e -> environment = e)
-            .whenReady(e -> this.injector = e.getInjector())
-            .whenReady(e -> api = LuckPermsProvider.get())
-            .addEarlyServices(GlobalTab.class, CatalystCommandManager.class)
-            .register(this);
+        api = LuckPermsProvider.get();
     }
 
     @Subscribe(order = PostOrder.LAST)
     public void onInit(ProxyInitializeEvent event) {
-        initListeners();
         server = proxyServer;
     }
 
@@ -100,13 +86,15 @@ public class Catalyst extends CommonPlugin<PluginContainer> {
         return server;
     }
 
-    private void initListeners() {
+    @Override
+    protected void whenReady(Environment environment) {
+        super.whenReady(environment);
         logger.info("Injecting listeners");
-        proxyServer.getEventManager().register(this, injector.getInstance(ProxyJoinListener.class));
-        proxyServer.getEventManager().register(this, injector.getInstance(ProxyLeaveListener.class));
-        proxyServer.getEventManager().register(this, injector.getInstance(ProxyChatListener.class));
-        proxyServer.getEventManager().register(this, injector.getInstance(ProxyStaffChatListener.class));
-        proxyServer.getEventManager().register(this, injector.getInstance(ProxyPingEventListener.class));
+        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyJoinListener.class));
+        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyLeaveListener.class));
+        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyChatListener.class));
+        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyStaffChatListener.class));
+        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyPingEventListener.class));
     }
 
     @Subscribe

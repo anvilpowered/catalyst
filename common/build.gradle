@@ -17,12 +17,9 @@ dependencies {
 
     implementation project(':api')
     implementation project(':Anvil:anvil-api')
-    implementation project(':Anvil:anvil-api:anvil-api-mongodb')
-    implementation project(':Anvil:anvil-common')
-    implementation project(':Anvil:anvil-common:anvil-common-mongodb')
-    implementation project(':Anvil:anvil-api:anvil-api-xodus')
-    implementation project(':Anvil:anvil-core:anvil-core-api')
-    implementation project(':Anvil:anvil-core:anvil-core-common')
+    implementation project(':Anvil:anvil-api-core')
+    implementation project(':Anvil:anvil-base')
+
     implementation jsondb
     implementation mongodb_driver_sync
     implementation mongo_java_driver

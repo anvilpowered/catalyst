@@ -19,6 +19,7 @@ package org.anvilpowered.catalyst.common.module;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
+import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.catalyst.common.chat.CommonChatService;
 import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
@@ -28,7 +29,6 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.misc.BindingExtensions;
 import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.anvil.common.misc.CommonBindingExtensions;
 import org.anvilpowered.catalyst.api.chat.ChatService;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -46,7 +46,7 @@ public class CommonModule<
     @Override
     protected void configure() {
 
-        BindingExtensions be = new CommonBindingExtensions(binder());
+        BindingExtensions be = Anvil.getBindingExtensions(binder());
 
         be.bind(new TypeToken<PluginInfo<TString>>(getClass()) {
         }, new TypeToken<CatalystPluginInfo<TString, TCommandSource>>(getClass()) {
