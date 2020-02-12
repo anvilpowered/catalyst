@@ -22,12 +22,12 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
-import org.anvilpowered.catalyst.velocity.utils.StaffListUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.plugin.StaffListService;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 //This class was initially written by LGC_McLovin of MilspecSG
 public class StaffListCommand implements Command {
@@ -39,7 +39,7 @@ public class StaffListCommand implements Command {
     private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
-    private StaffListUtils staffListUtils;
+    private StaffListService<TextComponent> staffListUtils;
 
     @Inject
     private Registry registry;
@@ -54,21 +54,21 @@ public class StaffListCommand implements Command {
 
         if (isStaffOnline()) {
             source.sendMessage(getLine());
-            if (!staffListUtils.staffNames.isEmpty()) {
+            if (!staffListUtils.staffNames().isEmpty()) {
                 source.sendMessage(getStaffTitle());
-                for (TextComponent text : staffListUtils.staffNames) {
+                for (TextComponent text : staffListUtils.staffNames()) {
                     source.sendMessage(text);
                 }
             }
-            if (!staffListUtils.adminNames.isEmpty()) {
+            if (!staffListUtils.adminNames().isEmpty()) {
                 source.sendMessage(getAdminTitle());
-                for (TextComponent text : staffListUtils.adminNames) {
+                for (TextComponent text : staffListUtils.adminNames()) {
                     source.sendMessage(text);
                 }
             }
-            if (!staffListUtils.ownerNames.isEmpty()) {
+            if (!staffListUtils.ownerNames().isEmpty()) {
                 source.sendMessage(getOwnerTitle());
-                for (TextComponent text : staffListUtils.ownerNames) {
+                for (TextComponent text : staffListUtils.ownerNames()) {
                     source.sendMessage(text);
                 }
             }
@@ -82,7 +82,7 @@ public class StaffListCommand implements Command {
     }
 
     private boolean isStaffOnline() {
-        return !staffListUtils.staffNames.isEmpty() || !staffListUtils.adminNames.isEmpty() || !staffListUtils.ownerNames.isEmpty();
+        return !staffListUtils.staffNames().isEmpty() || !staffListUtils.adminNames().isEmpty() || !staffListUtils.ownerNames().isEmpty();
     }
 
     public TextComponent getLine() {

@@ -24,12 +24,12 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
+import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.velocity.events.ProxyMessageEvent;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -48,6 +48,9 @@ public class ReplyCommand implements Command {
     @Inject
     private Registry registry;
 
+    @Inject
+    private PrivateMessageService<TextComponent> privateMessageService;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(registry.getOrDefault(CatalystKeys.MESSAGE))) {
@@ -65,13 +68,13 @@ public class ReplyCommand implements Command {
             Player sender = (Player) source;
             UUID senderUUID = sender.getUniqueId();
 
-            if (ProxyMessageEvent.replyMap.containsKey(senderUUID)) {
-                UUID recipientUUID = ProxyMessageEvent.replyMap.get(senderUUID);
+            if (privateMessageService.replyMap().containsKey(senderUUID)) {
+                UUID recipientUUID = privateMessageService.replyMap().get(senderUUID);
                 Optional<Player> recipient = proxyServer.getPlayer(recipientUUID);
 
                 if (recipient.isPresent()) {
-                    ProxyMessageEvent.sendMessage(sender, recipient.get(), message, proxyServer);
-                    ProxyMessageEvent.replyMap.put(recipientUUID, senderUUID);
+                    privateMessageService.sendMessage(sender.getUsername(), recipient.get().getUsername(), message);
+                    privateMessageService.replyMap().put(recipientUUID, senderUUID);
                 } else {
                     source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Invalid of offline player!").color(TextColor.RED)));
                 }

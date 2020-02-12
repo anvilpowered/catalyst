@@ -22,11 +22,11 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.velocity.events.ProxyMessageEvent;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
 
@@ -38,17 +38,20 @@ public class SocialSpyCommand implements Command {
     @Inject
     private Registry registry;
 
+    @Inject
+    private PrivateMessageService<TextComponent> privateMessageService;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (source instanceof Player) {
             Player player = (Player) source;
             if (source.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY)) || source.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN))) {
                 UUID playerUUID = player.getUniqueId();
-                if (ProxyMessageEvent.socialSpySet.contains(playerUUID)) {
-                    ProxyMessageEvent.socialSpySet.remove(playerUUID);
+                if (privateMessageService.socialSpySet().contains(playerUUID)) {
+                    privateMessageService.socialSpySet().remove(playerUUID);
                     source.sendMessage(pluginMessages.getSocialSpy(false));
                 } else {
-                    ProxyMessageEvent.socialSpySet.add(playerUUID);
+                    privateMessageService.socialSpySet().add(playerUUID);
                     source.sendMessage(pluginMessages.getSocialSpy(true));
                 }
             }

@@ -22,12 +22,11 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.velocity.events.ProxyMessageEvent;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -42,11 +41,10 @@ public class MessageCommand implements Command {
     private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
-    private ProxyServer proxyServer;
-
-    @Inject
     private Registry registry;
 
+    @Inject
+    private PrivateMessageService<TextComponent> privateMessageService;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
@@ -64,8 +62,8 @@ public class MessageCommand implements Command {
                 args[0] = "";
 
                 String message = String.join(" ", args);
-                source.sendMessage(ProxyMessageEvent.message("Me", name, message));
-                recipient.get().sendMessage(ProxyMessageEvent.message("Console", "Me", message));
+                privateMessageService.sendMessage("Me", name, message);
+                privateMessageService.sendMessage("Console", "Me", message);
             }
         } else if (source instanceof Player) {
             Player sender = (Player) source;
@@ -76,11 +74,11 @@ public class MessageCommand implements Command {
                         args[0] = args[0].toLowerCase();
                         String recipientName = recipient.get().getUsername();
                         String message = String.join(" ", args).replace(recipientName.toLowerCase(), "");
-                        ProxyMessageEvent.sendMessage(sender, recipient.get(), message, proxyServer);
+                        privateMessageService.sendMessage(sender.getUsername(), recipient.get().getUsername(), message);
                         if (sender.getUniqueId().equals(recipient.get().getUniqueId())) {
                             return;
                         }
-                        ProxyMessageEvent.replyMap.put(recipient.get().getUniqueId(), sender.getUniqueId());
+                        privateMessageService.replyMap().put(recipient.get().getUniqueId(), sender.getUniqueId());
                     }
                 }
             }

@@ -27,15 +27,19 @@ import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.api.chat.ChatFilter;
 import org.anvilpowered.catalyst.api.chat.ChatService;
+import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.plugin.StaffListService;
 import org.anvilpowered.catalyst.common.chat.CommonChatFilter;
 import org.anvilpowered.catalyst.common.chat.CommonChatService;
+import org.anvilpowered.catalyst.common.chat.CommonPrivateMessageService;
 import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.member.CommonMemberManager;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
+import org.anvilpowered.catalyst.common.plugin.CommonStaffListService;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class CommonModule<
@@ -76,6 +80,21 @@ public class CommonModule<
             new TypeToken<ChatService<TString>>(getClass()) {
             },
             new TypeToken<CommonChatService<TPlayer, TString, TCommandSource>>(getClass()) {
+            }
+        );
+
+        be.bind(
+            new TypeToken<PrivateMessageService<TString>>(getClass()){
+            },
+            new TypeToken<CommonPrivateMessageService<TPlayer, TString>>(getClass()){
+            }
+        );
+        
+        be.bind(
+            new TypeToken<StaffListService<TString>>(getClass()){
+            },
+            new TypeToken<CommonStaffListService<TPlayer, TString>>(getClass()){
+            
             }
         );
 

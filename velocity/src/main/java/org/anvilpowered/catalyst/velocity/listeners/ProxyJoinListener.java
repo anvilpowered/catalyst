@@ -22,16 +22,14 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
-import org.anvilpowered.catalyst.velocity.events.ProxyMessageEvent;
-import org.anvilpowered.catalyst.velocity.utils.StaffListUtils;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.plugin.StaffListService;
 
 public class ProxyJoinListener {
-
-    @Inject
-    private StaffListUtils staffListUtils;
 
     @Inject
     private ProxyServer proxyServer;
@@ -39,15 +37,22 @@ public class ProxyJoinListener {
     @Inject
     private Registry registry;
 
+    @Inject
+    private PrivateMessageService<TextComponent> privateMessageService;
+
+    @Inject
+    private StaffListService<TextComponent> staffListService;
+
     @Subscribe
     public void onPlayerJoin(PostLoginEvent event) {
         Player player = event.getPlayer();
 
         if (player.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN))) {
-            ProxyMessageEvent.socialSpySet.add(player.getUniqueId());
+            privateMessageService.socialSpySet().add(player.getUniqueId());
         }
 
-        staffListUtils.getStaffNames(player);
+
+        staffListService.getStaffNames(player.getUsername(), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN)), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF)), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER)));
 
         proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", player.getUsername())));
     }
