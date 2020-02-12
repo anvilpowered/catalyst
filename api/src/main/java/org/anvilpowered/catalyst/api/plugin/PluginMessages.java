@@ -72,4 +72,34 @@ public interface PluginMessages<TString> {
     TString getRemoveException(String exception);
 
     String removeColor(String text);
+
+    TString banCommandUsage();
+
+    TString tempBanCommandUsage();
+
+    TString unbanCommandUsage();
+
+    TString muteCommandUsage();
+
+    TString tempMuteCommandUsage();
+
+    TString unMuteCommandUsage();
+
+    TString kickCommandUsage();
+
+    TString findCommandUsage();
+
+    TString sendCommandUsage();
+
+    TString messageCommandUsage();
+
+    TString nickNameCommandUsage();
+
+    TString broadcastCommandUsage();
+
+    TString infoCommandUsage();
+
+    TString swearAddCommandUsage();
+
+    TString exceptionAddCommandUsage();
 }

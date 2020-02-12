@@ -22,11 +22,10 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.catalyst.velocity.messages.CommandUsageMessages;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BroadcastCommand implements Command {
 
@@ -35,9 +34,6 @@ public class BroadcastCommand implements Command {
 
     @Inject
     private ProxyServer proxyServer;
-
-    @Inject
-    private CommandUsageMessages commandUsage;
 
     @Inject
     private Registry registry;
@@ -52,7 +48,7 @@ public class BroadcastCommand implements Command {
 
         if (args[0].isEmpty()) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(commandUsage.broadcastCommandUsage);
+            source.sendMessage(pluginMessages.broadcastCommandUsage());
             return;
         }
         proxyServer.broadcast(pluginMessages.getBroadcast(String.join(" ", args)));

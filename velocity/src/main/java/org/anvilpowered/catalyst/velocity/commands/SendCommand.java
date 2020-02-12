@@ -26,12 +26,11 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import net.kyori.text.TextComponent;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.velocity.messages.CommandUsageMessages;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Optional;
 
@@ -47,9 +46,6 @@ public class SendCommand implements Command {
     private ProxyServer proxyServer;
 
     @Inject
-    private CommandUsageMessages commandUsage;
-
-    @Inject
     private Registry registry;
 
     @Override
@@ -61,7 +57,7 @@ public class SendCommand implements Command {
 
         if (args.length < 2) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(commandUsage.sendCommandUsage);
+            source.sendMessage(pluginMessages.sendCommandUsage());
             return;
         }
 

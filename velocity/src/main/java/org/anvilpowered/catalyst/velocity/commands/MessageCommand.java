@@ -24,13 +24,12 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.velocity.events.ProxyMessageEvent;
-import org.anvilpowered.catalyst.velocity.messages.CommandUsageMessages;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,9 +45,6 @@ public class MessageCommand implements Command {
     private ProxyServer proxyServer;
 
     @Inject
-    private CommandUsageMessages commandUsageMessages;
-
-    @Inject
     private Registry registry;
 
 
@@ -57,7 +53,7 @@ public class MessageCommand implements Command {
         String name;
         if (args.length < 1) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(commandUsageMessages.messageCommandUsage);
+            source.sendMessage(pluginMessages.messageCommandUsage());
             return;
         }
 

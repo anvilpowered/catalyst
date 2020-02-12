@@ -20,20 +20,22 @@ package org.anvilpowered.catalyst.common.module;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.catalyst.common.chat.CommonChatService;
-import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
-import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
-import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 import org.anvilpowered.anvil.api.data.config.ConfigurationService;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.misc.BindingExtensions;
 import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
+import org.anvilpowered.catalyst.api.chat.ChatFilter;
 import org.anvilpowered.catalyst.api.chat.ChatService;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.common.chat.CommonChatFilter;
+import org.anvilpowered.catalyst.common.chat.CommonChatService;
+import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
+import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.member.CommonMemberManager;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
+import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class CommonModule<
@@ -77,6 +79,7 @@ public class CommonModule<
             }
         );
 
+        bind(ChatFilter.class).to(CommonChatFilter.class);
         bind(ConfigurationService.class).to(CatalystConfigurationService.class);
         bind(Registry.class).to(CatalystRegistry.class);
     }

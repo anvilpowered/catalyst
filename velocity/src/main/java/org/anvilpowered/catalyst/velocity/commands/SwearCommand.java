@@ -21,17 +21,13 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.config.ConfigurationService;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.velocity.messages.CommandUsageMessages;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class SwearCommand implements Command {
-
-    @Inject
-    private CommandUsageMessages commandUsage;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -47,7 +43,7 @@ public class SwearCommand implements Command {
 
         if (args.length < 1) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(commandUsage.swearAddCommandUsage);
+            source.sendMessage(pluginMessages.swearAddCommandUsage());
             return;
         }
 

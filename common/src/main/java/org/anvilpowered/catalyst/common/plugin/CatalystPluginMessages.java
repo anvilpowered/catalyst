@@ -237,4 +237,109 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
             .replaceAll("&n", "").replaceAll("&o", "").replaceAll("&r", "")
             .replaceAll("&k", "").replaceAll("&9", "");
     }
+
+    @Override
+    public TString banCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage:  &e/ban <user> [reason]")
+            .build();
+    }
+
+    @Override
+    public TString tempBanCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage:  &e/tempban <user> <duration> [reason]")
+            .build();
+    }
+
+    @Override
+    public TString unbanCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: &e/unban <user>")
+            .build();
+    }
+
+    @Override
+    public TString muteCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: &e/mute <user> [reason]")
+            .build();
+    }
+
+    @Override
+    public TString tempMuteCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: &e/tempmute <user> <duration> [reason]")
+            .build();
+    }
+
+    @Override
+    public TString unMuteCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: &e/unmute <player>")
+            .build();
+    }
+
+    @Override
+    public TString kickCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: &e/kick <user> [reason]")
+            .build();
+    }
+
+    @Override
+    public TString findCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: /find <user>")
+            .build();
+    }
+
+    @Override
+    public TString sendCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: /send <user> <server>")
+            .build();
+    }
+
+    @Override
+    public TString messageCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: /message <user> <message>")
+            .build();
+    }
+
+    @Override
+    public TString nickNameCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: /nick <nickname>")
+            .build();
+    }
+
+    @Override
+    public TString broadcastCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: /broadcast <message>")
+            .build();
+    }
+
+    @Override
+    public TString infoCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: /info <user>")
+            .build();
+    }
+
+    @Override
+    public TString swearAddCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: /swear (add|remove <word>) |list")
+            .build();
+    }
+
+    @Override
+    public TString exceptionAddCommandUsage() {
+        return stringResult.builder()
+            .append("&4Usage: /exception (add|remove <word>) |list")
+            .build();
+    }
 }

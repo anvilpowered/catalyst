@@ -24,12 +24,11 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.catalyst.velocity.messages.CommandUsageMessages;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,9 +47,6 @@ public class FindCommand implements Command {
     private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
-    private CommandUsageMessages commandUsage;
-
-    @Inject
     private Registry registry;
 
     @Override
@@ -62,7 +58,7 @@ public class FindCommand implements Command {
 
         if (!(args.length >= 1)) {
             source.sendMessage(pluginMessages.getNoPermission());
-            source.sendMessage(commandUsage.findCommandUsage);
+            source.sendMessage(pluginMessages.findCommandUsage());
         } else {
             Optional<Player> player = proxyServer.getPlayer(args[0]);
 

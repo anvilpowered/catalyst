@@ -23,12 +23,11 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.catalyst.velocity.messages.CommandUsageMessages;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,9 +45,6 @@ public class InfoCommand implements Command {
     private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
-    private CommandUsageMessages commandUsage;
-
-    @Inject
     private Registry registry;
 
     @Override
@@ -61,7 +57,7 @@ public class InfoCommand implements Command {
 
         if (args.length == 0) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(commandUsage.infoCommandUsage);
+            source.sendMessage(pluginMessages.infoCommandUsage());
         } else {
             boolean isActive = proxyServer.getPlayer(args[0]).isPresent();
             memberManager.info(args[0], isActive).thenAcceptAsync(source::sendMessage);

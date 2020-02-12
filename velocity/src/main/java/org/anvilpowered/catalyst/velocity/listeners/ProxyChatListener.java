@@ -24,15 +24,15 @@ import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
+import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.chat.ChatFilter;
+import org.anvilpowered.catalyst.api.chat.ChatService;
+import org.anvilpowered.catalyst.api.data.config.Channel;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.velocity.events.ProxyChatEvent;
 import org.anvilpowered.catalyst.velocity.events.ProxyStaffChatEvent;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.chat.ChatService;
-import org.anvilpowered.catalyst.api.data.config.Channel;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.velocity.chatutils.ChatFilter;
 
 import java.util.List;
 import java.util.Optional;
@@ -131,11 +131,10 @@ public class ProxyChatListener {
             for (Player p : proxyServer.getAllPlayers()) {
                 if (p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)) || p.hasPermission(registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + channelId)) {
                     p.sendMessage(optionalMessage);
-                } else
-                    if (chatService.getChannelIdForUser(p.getUniqueId()).equals(channelId)) {
-                        chatService.sendMessageToChannel(channelId, optionalMessage);
-                    }
+                } else if (chatService.getChannelIdForUser(p.getUniqueId()).equals(channelId)) {
+                    chatService.sendMessageToChannel(channelId, optionalMessage);
                 }
+            }
         });
     }
 }

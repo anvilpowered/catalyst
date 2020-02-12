@@ -15,25 +15,22 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.chatutils;
+package org.anvilpowered.catalyst.common.chat;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.chat.ChatFilter;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class ChatFilter {
-
-    private Registry registry;
+public class CommonChatFilter implements ChatFilter {
 
     @Inject
-    public ChatFilter(Registry registry) {
-        this.registry = registry;
-    }
+    private Registry registry;
 
+    @Override
     public List<String> aggressiveMode(String swear) {
         List<String> finalWords = new ArrayList<>();
 
@@ -47,12 +44,14 @@ public class ChatFilter {
         return finalWords;
     }
 
+    @Override
     public String removeDuplicates(String s) {
         if (s.length() <= 1) return s;
         if (s.substring(1, 2).equalsIgnoreCase(s.substring(0, 1))) return removeDuplicates(s.substring(1));
         else return s.substring(0, 1) + removeDuplicates(s.substring(1));
     }
 
+    @Override
     public List<String> checkSwear(List<String> finalWords) {
         List<String> swearList = new ArrayList<>();
         for (String exception : registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS)) {
@@ -77,6 +76,7 @@ public class ChatFilter {
         return swearList;
     }
 
+    @Override
     public List<String> isSwear(String swear) {
         return checkSwear(aggressiveMode(swear));
     }

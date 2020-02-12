@@ -21,17 +21,13 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.catalyst.velocity.messages.CommandUsageMessages;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.config.ConfigurationService;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ExceptionCommand implements Command {
-
-    @Inject
-    private CommandUsageMessages commandUsage;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -47,7 +43,7 @@ public class ExceptionCommand implements Command {
 
         if (args.length == 0) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(commandUsage.exceptionAddCommandUsage);
+            source.sendMessage(pluginMessages.exceptionAddCommandUsage());
             return;
         }
 

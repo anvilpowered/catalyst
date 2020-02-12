@@ -23,7 +23,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.catalyst.velocity.messages.CommandUsageMessages;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
@@ -35,9 +34,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UnBanCommand implements Command {
-
-    @Inject
-    private CommandUsageMessages commandUsage;
 
     @Inject
     private MemberManager<TextComponent> memberManager;
@@ -59,7 +55,7 @@ public class UnBanCommand implements Command {
         }
         if (!(args.length > 0)) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(commandUsage.unbanCommandUsage);
+            source.sendMessage(pluginMessages.unbanCommandUsage());
             return;
         }
         memberManager.unBan(args[0]).thenAcceptAsync(source::sendMessage);
