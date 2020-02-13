@@ -86,14 +86,14 @@ public class CommonModule<
         be.bind(
             new TypeToken<PrivateMessageService<TString>>(getClass()){
             },
-            new TypeToken<CommonPrivateMessageService<TPlayer, TString>>(getClass()){
+            new TypeToken<CommonPrivateMessageService<TPlayer, TString, TCommandSource>>(getClass()){
             }
         );
         
         be.bind(
             new TypeToken<StaffListService<TString>>(getClass()){
             },
-            new TypeToken<CommonStaffListService<TPlayer, TString>>(getClass()){
+            new TypeToken<CommonStaffListService<TPlayer, TString, TCommandSource>>(getClass()){
             
             }
         );

@@ -36,7 +36,7 @@ import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.anvil.base.plugin.BasePlugin;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.velocity.commands.CatalystCommandManager;
-import org.anvilpowered.catalyst.velocity.listeners.*;
+import org.anvilpowered.catalyst.velocity.listeners.PlayerListener;
 import org.anvilpowered.catalyst.velocity.module.VelocityModule;
 import org.anvilpowered.catalyst.velocity.tab.GlobalTab;
 import org.anvilpowered.catalyst.velocity.tab.TabUtils;
@@ -90,11 +90,7 @@ public class Catalyst extends BasePlugin<PluginContainer> {
     protected void whenReady(Environment environment) {
         super.whenReady(environment);
         logger.info("Injecting listeners");
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyJoinListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyLeaveListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyChatListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyStaffChatListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyPingEventListener.class));
+        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(PlayerListener.class));
     }
 
     @Subscribe

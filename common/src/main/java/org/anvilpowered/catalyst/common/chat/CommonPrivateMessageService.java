@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 @Singleton
-public class CommonPrivateMessageService<TPlayer, TString> implements PrivateMessageService<TString> {
+public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString, TCommandSource> implements PrivateMessageService<TString> {
 
     private Set<UUID> socialSpySet = new HashSet<>();
     private Map<UUID, UUID> replyMap = new HashMap<>();
@@ -44,7 +44,7 @@ public class CommonPrivateMessageService<TPlayer, TString> implements PrivateMes
     private UserService<TPlayer, TPlayer> userService;
 
     @Inject
-    private StringResult<TString, TPlayer> stringResult;
+    private StringResult<TString, TCommandSource> stringResult;
 
     @Override
     public Set<UUID> socialSpySet() {

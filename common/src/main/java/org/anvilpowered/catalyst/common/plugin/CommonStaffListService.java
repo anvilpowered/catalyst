@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class CommonStaffListService<TPlayer, TString> implements StaffListService<TString> {
+public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCommandSource> implements StaffListService<TString> {
     
     @Inject
-    private StringResult<TString, TPlayer> stringResult;
+    private StringResult<TString, TCommandSource> stringResult;
     
     public List<TString> staffNames = new ArrayList<>();
     public List<TString> adminNames = new ArrayList<>();

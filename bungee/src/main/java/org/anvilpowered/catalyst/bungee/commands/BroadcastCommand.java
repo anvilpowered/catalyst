@@ -1,5 +1,6 @@
 /*
- *     Copyright (C) 2020 STG_Allen
+ *   OnTime - AnvilPowered
+ *   Copyright (C) 2020 STG_Allen
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -15,32 +16,45 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.listeners;
+package org.anvilpowered.catalyst.bungee.commands;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.text.TextComponent;
-import org.anvilpowered.catalyst.velocity.events.ProxyStaffChatEvent;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.plugin.Command;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-public class ProxyStaffChatListener {
+public class BroadcastCommand extends Command {
 
     @Inject
-    private ProxyServer proxyServer;
+    private Registry registry;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
-    private Registry registry;
+    private ProxyServer proxyServer;
 
-    @Subscribe
-    public void staffChatEvent(ProxyStaffChatEvent event) {
-        proxyServer.getAllPlayers().stream().filter(target -> target
-            .hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT)))
-            .forEach(target -> target.sendMessage(pluginMessages.getStaffChatMessageFormatted(event.getSender().getUsername(), event.getMessage())));
+    public BroadcastCommand(String name) {
+        super(name);
+    }
+
+    @Override
+    public void execute(CommandSender sender, String[] args) {
+        if (!sender.hasPermission(registry.getOrDefault(CatalystKeys.BROADCAST))) {
+            sender.sendMessage(pluginMessages.getNoPermission());
+            return;
+        }
+
+        if(args[0].isEmpty()) {
+            sender.sendMessage(pluginMessages.getNotEnoughArgs());
+            sender.sendMessage(pluginMessages.broadcastCommandUsage());
+            return;
+        }
+
+        proxyServer.broadcast(pluginMessages.getBroadcast(String.join(" ", args)));
     }
 }
