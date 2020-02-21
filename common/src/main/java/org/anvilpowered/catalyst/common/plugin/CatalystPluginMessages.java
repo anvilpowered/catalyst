@@ -240,106 +240,76 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString banCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage:  &e/ban <user> [reason]")
-            .build();
+        return stringResult.deserialize("&4Usage:  &e/ban <user> [reason]");
     }
 
     @Override
     public TString tempBanCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage:  &e/tempban <user> <duration> [reason]")
-            .build();
+        return stringResult.deserialize("&4Usage:  &e/tempban <user> <duration> [reason]");
     }
 
     @Override
     public TString unbanCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: &e/unban <user>")
-            .build();
+        return stringResult.deserialize("&4Usage: &e/unban <user>");
     }
 
     @Override
     public TString muteCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: &e/mute <user> [reason]")
-            .build();
+        return stringResult.deserialize("&4Usage: &e/mute <user> [reason]");
     }
 
     @Override
     public TString tempMuteCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: &e/tempmute <user> <duration> [reason]")
-            .build();
+        return stringResult.deserialize("&4Usage: &e/tempmute <user> <duration> [reason]");
     }
 
     @Override
     public TString unMuteCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: &e/unmute <player>")
-            .build();
+        return stringResult.deserialize("&4Usage: &e/unmute <player>");
     }
 
     @Override
     public TString kickCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: &e/kick <user> [reason]")
-            .build();
+        return stringResult.deserialize("&4Usage: &e/kick <user> [reason]");
     }
 
     @Override
     public TString findCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: /find <user>")
-            .build();
+        return stringResult.deserialize("&4Usage: /find <user>");
     }
 
     @Override
     public TString sendCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: /send <user> <server>")
-            .build();
+        return stringResult.deserialize("&4Usage: /send <user> <server>");
     }
 
     @Override
     public TString messageCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: /message <user> <message>")
-            .build();
+        return stringResult.deserialize("&4Usage: /message <user> <message>");
     }
 
     @Override
     public TString nickNameCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: /nick <nickname>")
-            .build();
+        return stringResult.deserialize("&4Usage: /nick <nickname>");
     }
 
     @Override
     public TString broadcastCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: /broadcast <message>")
-            .build();
+        return stringResult.deserialize("&4Usage: /broadcast <message>");
     }
 
     @Override
     public TString infoCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: /info <user>")
-            .build();
+        return stringResult.deserialize("&4Usage: /info <user>");
     }
 
     @Override
     public TString swearAddCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: /swear (add|remove <word>) |list")
-            .build();
+        return stringResult.deserialize("&4Usage: /swear (add|remove <word>) |list");
     }
 
     @Override
     public TString exceptionAddCommandUsage() {
-        return stringResult.builder()
-            .append("&4Usage: /exception (add|remove <word>) |list")
-            .build();
+        return stringResult.deserialize("&4Usage: /exception (add|remove <word>) |list");
     }
 }

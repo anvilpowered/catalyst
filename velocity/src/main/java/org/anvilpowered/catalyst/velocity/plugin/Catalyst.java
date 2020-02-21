@@ -73,13 +73,13 @@ public class Catalyst extends BasePlugin<PluginContainer> {
     @Inject
     public Catalyst(Injector injector) {
         super(CatalystPluginInfo.id, injector, new VelocityModule(), GlobalTab.class, CatalystCommandManager.class);
-        plugin = this;
-        api = LuckPermsProvider.get();
     }
 
     @Subscribe(order = PostOrder.LAST)
     public void onInit(ProxyInitializeEvent event) {
         server = proxyServer;
+        plugin = this;
+        api = LuckPermsProvider.get();
     }
 
     public static ProxyServer getServer() {
