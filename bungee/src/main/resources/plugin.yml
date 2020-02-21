@@ -1,6 +1,0 @@
-name: Catalyst
-main: org.anvilpowered.catalyst.bungee.plugin.Catalyst
-version: 1.0.0-SNAPSHOT
-author: STG_Allen
-depend:
-  - anvil
