@@ -53,6 +53,21 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         nodeNameMap.put(CatalystKeys.TAB_UPDATE, "tab.updateDelay");
         nodeNameMap.put(CatalystKeys.CHAT_CHANNELS, "chat.channels");
         nodeNameMap.put(CatalystKeys.CHAT_DEFAULT_CHANNEL, "chat.channelDefault");
+        nodeNameMap.put(CatalystKeys.BOT_TOKEN, "discord.bot.token");
+        nodeNameMap.put(CatalystKeys.MAIN_CHANNEL, "discord.channel.main");
+        nodeNameMap.put(CatalystKeys.STAFF_CHANNEL, "discord.channel.staff");
+        nodeNameMap.put(CatalystKeys.PLAYER_CHAT_FORMAT, "discord.format.proxy");
+        nodeNameMap.put(CatalystKeys.JOIN_FORMAT, "discord.format.join");
+        nodeNameMap.put(CatalystKeys.LEAVE_FORMAT, "discord.format.leave");
+        nodeNameMap.put(CatalystKeys.DISCORD_CHAT_FORMAT, "discord.format.discord");
+        nodeNameMap.put(CatalystKeys.DISCORD_STAFF_FORMAT, "discord.format.staff");
+        nodeNameMap.put(CatalystKeys.TOPIC_FORMAT, "discord.format.topic");
+        nodeNameMap.put(CatalystKeys.TOPIC_UPDATE_DELAY, "discord.time.topicUpdateFrequency");
+        nodeNameMap.put(CatalystKeys.NOW_PLAYING_MESSAGE, "discord.format.playing");
+        nodeNameMap.put(CatalystKeys.WEBHOOK_URL, "discord.url.webhook");
+        nodeNameMap.put(CatalystKeys.DISCORD_URL, "discord.url.invite");
+        nodeNameMap.put(CatalystKeys.DISCORD_ENABLE, "discord.enabled");
+        ;
     }
 
     @Override
@@ -77,5 +92,19 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         nodeDescriptionMap.put(CatalystKeys.TAB_UPDATE, "\nTime setting for how often the tab updates in seconds");
         nodeDescriptionMap.put(CatalystKeys.CHAT_CHANNELS, "\nChat Channels");
         nodeDescriptionMap.put(CatalystKeys.CHAT_DEFAULT_CHANNEL, "\nDefault chat channel");
+        nodeDescriptionMap.put(CatalystKeys.BOT_TOKEN, "\nToken for the discord bot that you would like to use when sending messages to discord \n For help creating a bot token, please see the wiki");
+        nodeDescriptionMap.put(CatalystKeys.MAIN_CHANNEL, "\nChannel id of the main channel that you would like in-game chat sent to.");
+        nodeDescriptionMap.put(CatalystKeys.STAFF_CHANNEL, "\nChannel id of the staff-chat channel that you would like staff chat messages sent to.");
+        nodeDescriptionMap.put(CatalystKeys.PLAYER_CHAT_FORMAT, "\nFormat of the message to be sent to discord from in-game");
+        nodeDescriptionMap.put(CatalystKeys.JOIN_FORMAT, "\nMessage to be sent to the discord each time a player joins.");
+        nodeDescriptionMap.put(CatalystKeys.LEAVE_FORMAT, "\nMessage to be sent to the discord each time a player leaves.");
+        nodeDescriptionMap.put(CatalystKeys.DISCORD_CHAT_FORMAT, "\nFormat of the message being sent from discord to in-game");
+        nodeDescriptionMap.put(CatalystKeys.DISCORD_STAFF_FORMAT, "\nFormat of the message being sent from staff chat to in-game");
+        nodeDescriptionMap.put(CatalystKeys.TOPIC_FORMAT, "\nFormat of the main channel topic updater");
+        nodeDescriptionMap.put(CatalystKeys.TOPIC_UPDATE_DELAY, "\nHow often you would like the topic to be updated in seconds");
+        nodeDescriptionMap.put(CatalystKeys.NOW_PLAYING_MESSAGE, "\nThe message being shown as the \"now playing\" for the discord bot.");
+        nodeDescriptionMap.put(CatalystKeys.WEBHOOK_URL, "\nURL that gets the player avatar when sending messages to discord");
+        nodeDescriptionMap.put(CatalystKeys.DISCORD_URL, "\nDiscord invite link that allows players to join the discord");
+        nodeDescriptionMap.put(CatalystKeys.DISCORD_ENABLE, "\nEnable or Disable the discord bot (false = disabled).");
     }
 }

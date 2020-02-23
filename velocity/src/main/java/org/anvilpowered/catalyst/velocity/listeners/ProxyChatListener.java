@@ -40,7 +40,7 @@ import java.util.Optional;
 public class ProxyChatListener {
 
     @Inject
-    public ChatService<TextComponent> chatService;
+    public ChatService<TextComponent, Player> chatService;
 
     @Inject
     public ChatFilter chatFilter;
@@ -91,8 +91,9 @@ public class ProxyChatListener {
 
     public String checkPlayerName(String message) {
         for (Player onlinePlayer : Catalyst.getServer().getAllPlayers()) {
-            if (message.toLowerCase().equalsIgnoreCase(onlinePlayer.getUsername())) {
-                message = message.replaceAll(onlinePlayer.getUsername().toLowerCase(), "&b@" + onlinePlayer.getUsername() + "&r");
+            if (message.contains(onlinePlayer.getUsername())) {
+                message = message.replaceAll(onlinePlayer.getUsername().toUpperCase(), "&b@" + onlinePlayer.getUsername() + "&r")
+                    .replaceAll(onlinePlayer.getUsername().toLowerCase(), "&b@" + onlinePlayer.getUsername() + "&r");
             }
         }
         return message;
@@ -127,14 +128,6 @@ public class ProxyChatListener {
             server,
             channelId,
             channelPrefix
-        ).thenAcceptAsync(optionalMessage -> {
-            for (Player p : proxyServer.getAllPlayers()) {
-                if (p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)) || p.hasPermission(registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + channelId)) {
-                    p.sendMessage(optionalMessage);
-                } else if (chatService.getChannelIdForUser(p.getUniqueId()).equals(channelId)) {
-                    chatService.sendMessageToChannel(channelId, optionalMessage);
-                }
-            }
-        });
+        ).thenAcceptAsync(optionalMessage -> chatService.sendMessageToChannel(channelId, optionalMessage, p -> p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))));
     }
 }

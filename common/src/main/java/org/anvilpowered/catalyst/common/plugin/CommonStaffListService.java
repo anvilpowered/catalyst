@@ -20,7 +20,6 @@ package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.StringResult;
 import org.anvilpowered.catalyst.api.plugin.StaffListService;
 
@@ -29,10 +28,10 @@ import java.util.List;
 
 @Singleton
 public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCommandSource> implements StaffListService<TString> {
-    
+
     @Inject
     private StringResult<TString, TCommandSource> stringResult;
-    
+
     public List<TString> staffNames = new ArrayList<>();
     public List<TString> adminNames = new ArrayList<>();
     public List<TString> ownerNames = new ArrayList<>();
@@ -51,8 +50,8 @@ public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCo
     public List<TString> ownerNames() {
         return ownerNames;
     }
-    
-    
+
+
     @Override
     public void getStaffNames(String player, boolean adminPermission, boolean staffPermission, boolean ownerPermission) {
         if (ownerPermission) {
@@ -65,11 +64,23 @@ public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCo
             }
         }
     }
-    
+
     @Override
     public void removeStaffNames(String player) {
-        staffNames.remove(player);
-        adminNames.remove(player);
-        ownerNames.remove(player);
+        staffNames.forEach(p -> {
+            if (p.equals(player)) {
+                staffNames.remove(p);
+            }
+        });
+        adminNames.forEach(a -> {
+            if(a.equals(player)) {
+                adminNames.remove(a);
+            }
+        });
+        ownerNames.forEach(o -> {
+            if(o.equals(player)) {
+                ownerNames.remove(o);
+            }
+        });
     }
 }

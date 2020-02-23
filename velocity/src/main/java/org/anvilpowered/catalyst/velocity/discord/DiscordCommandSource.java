@@ -15,36 +15,42 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.commands;
+package org.anvilpowered.catalyst.velocity.discord;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.Command;
+import com.google.inject.Singleton;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
-import net.kyori.text.TextComponent;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import com.velocitypowered.api.permission.Tristate;
+import net.kyori.text.Component;
+import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.chat.ChatService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-public class ListCommand implements Command {
+import java.util.Objects;
 
-    @Inject
-    ChatService<TextComponent, Player> chatService;
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
+@Singleton
+public class DiscordCommandSource implements CommandSource {
 
     @Inject
     private Registry registry;
 
+    @Inject
+    private JDAHook jdaHook;
+
+
     @Override
-    public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.LIST))) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
-        source.sendMessage(chatService.list());
+    public boolean hasPermission(String permission) {
+        return true;
+    }
+
+    @Override
+    public void sendMessage(Component component) {
+        Objects.requireNonNull(jdaHook.getJDA().getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL)))
+            .sendMessage(LegacyComponentSerializer.legacy().serialize(component)).queue();
+    }
+
+    @Override
+    public Tristate getPermissionValue(String permission) {
+        return null;
     }
 }

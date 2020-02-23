@@ -116,25 +116,25 @@ public class CatalystCommandManager {
     public void registryLoaded() {
         if (alreadyLoaded) return;
         alreadyLoaded = true;
-        proxyServer.getCommandManager().register("ban", banCommand, "msban");
-        proxyServer.getCommandManager().register("tempban", tempBanCommand, "mstempban");
+        proxyServer.getCommandManager().register("ban", banCommand, "cban");
+        proxyServer.getCommandManager().register("tempban", tempBanCommand, "ctempban");
         proxyServer.getCommandManager().register("broadcast", broadcastCommand);
-        proxyServer.getCommandManager().register("delnick", deleteNicknameCommand, "msdelnick", "deletenick");
-        proxyServer.getCommandManager().register("find", findCommand, "msfind");
-        proxyServer.getCommandManager().register("list", listCommand, "mslist");
-        proxyServer.getCommandManager().register("info", infoCommand, "msinfo");
-        proxyServer.getCommandManager().register("kick", kickCommand, "mskick");
-        proxyServer.getCommandManager().register("mute", muteCommand, "msmute");
+        proxyServer.getCommandManager().register("delnick", deleteNicknameCommand, "cdelnick", "deletenick");
+        proxyServer.getCommandManager().register("find", findCommand, "cfind");
+        proxyServer.getCommandManager().register("list", listCommand, "clist");
+        proxyServer.getCommandManager().register("info", infoCommand, "cinfo");
+        proxyServer.getCommandManager().register("kick", kickCommand, "ckick");
+        proxyServer.getCommandManager().register("mute", muteCommand, "cmute");
         proxyServer.getCommandManager().register("tempmute", tempMuteCommand, "mstempmmute");
-        proxyServer.getCommandManager().register("msg", messageCommand, "w", "tell", "whisper", "m", "t");
-        proxyServer.getCommandManager().register("nick", nicknameCommand, "msnick");
+        proxyServer.getCommandManager().register("msg", messageCommand, "w", "tell", "whisper", "m", "t", "pm");
+        proxyServer.getCommandManager().register("nick", nicknameCommand, "cnick");
         proxyServer.getCommandManager().register("reply", replyCommand, "r");
-        proxyServer.getCommandManager().register("send", sendCommand, "mssend");
+        proxyServer.getCommandManager().register("send", sendCommand, "csend");
         proxyServer.getCommandManager().register("socialspy", socialSpyCommand, "ss");
         proxyServer.getCommandManager().register("stafflist", staffListCommand);
         proxyServer.getCommandManager().register("staffchat", staffChatCommand, "sc");
-        proxyServer.getCommandManager().register("unban", unBanCommand, "msunban", "pardon", "mspardon");
-        proxyServer.getCommandManager().register("unmute", unMuteCommand, "msunmute");
+        proxyServer.getCommandManager().register("unban", unBanCommand, "cunban", "pardon", "cpardon");
+        proxyServer.getCommandManager().register("unmute", unMuteCommand, "cunmute");
         if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND)) {
             for (RegisteredServer server : proxyServer.getAllServers()) {
                 String serverName = server.getServerInfo().getName();
@@ -150,6 +150,6 @@ public class CatalystCommandManager {
         });
         proxyServer.getCommandManager().register("swear", swearCommand);
         proxyServer.getCommandManager().register("exception", exceptionCommand);
-        proxyServer.getCommandManager().register("catalyst", msEssentialsCommand, "mse");
+        proxyServer.getCommandManager().register("catalyst", msEssentialsCommand);
     }
 }

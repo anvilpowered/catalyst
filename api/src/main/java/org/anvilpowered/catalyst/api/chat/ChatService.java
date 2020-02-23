@@ -22,8 +22,9 @@ import org.anvilpowered.catalyst.api.data.config.Channel;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 
-public interface ChatService<TString> {
+public interface ChatService<TString, TPlayer> {
 
     void switchChannel(UUID userUUID, String channelId);
 
@@ -37,7 +38,7 @@ public interface ChatService<TString> {
 
     TString getUsersInChannel(String channelId);
 
-    CompletableFuture<Void> sendMessageToChannel(String channelId, TString message);
+    CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, Predicate<? super TPlayer> checkOverridePerm);
 
     CompletableFuture<Void> sendGlobalMessage (TString message);
 

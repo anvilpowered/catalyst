@@ -34,7 +34,7 @@ public class ChannelCommand implements Command {
     private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
-    private ChatService<TextComponent> chatService;
+    private ChatService<TextComponent, Player> chatService;
 
     @Inject
     private Registry registry;

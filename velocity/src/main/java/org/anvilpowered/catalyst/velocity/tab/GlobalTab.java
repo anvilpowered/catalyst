@@ -27,6 +27,7 @@ import com.velocitypowered.api.util.GameProfile;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
+import org.anvilpowered.catalyst.velocity.discord.JDAHook;
 
 import java.util.ArrayList;
 import java.util.HashMap;

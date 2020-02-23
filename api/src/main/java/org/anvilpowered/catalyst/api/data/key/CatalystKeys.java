@@ -126,33 +126,61 @@ public final class CatalystKeys {
     };
     public static final Key<String> NICKNAME_COLOR = new Key<String>("NICKNAME_COLOR", "catalyst.command.nickname.color") {
     };
-    public static final Key<String> NICKNAME_OTHER = new Key<String>("NICKNAME_OTHER", "catalyst.command.nickname.other"){
+    public static final Key<String> NICKNAME_OTHER = new Key<String>("NICKNAME_OTHER", "catalyst.command.nickname.other") {
     };
-    public static final Key<String> RELOAD = new Key<String>("RELOAD", "catalyst.command.reload"){
+    public static final Key<String> RELOAD = new Key<String>("RELOAD", "catalyst.command.reload") {
     };
-    public static final Key<String> SEND = new Key<String>("SEND", "catalyst.admin.command.send"){
+    public static final Key<String> SEND = new Key<String>("SEND", "catalyst.admin.command.send") {
     };
-    public static final Key<String> SERVER_BASE = new Key<String>("SERVER_BASE", "catalyst.server."){
+    public static final Key<String> SERVER_BASE = new Key<String>("SERVER_BASE", "catalyst.server.") {
     };
-    public static final Key<String> SENDGOOGLE = new Key<String>("SENDGOOGLE", "catalyst.admin.command.sendgoogle"){
+    public static final Key<String> SENDGOOGLE = new Key<String>("SENDGOOGLE", "catalyst.admin.command.sendgoogle") {
     };
-    public static final Key<String> SOCIALSPY = new Key<String>("SOCIALSPY", "catalyst.admin.command.socialspy"){
+    public static final Key<String> SOCIALSPY = new Key<String>("SOCIALSPY", "catalyst.admin.command.socialspy") {
     };
-    public static final Key<String> SOCIALSPY_ONJOIN = new Key<String>("SOCIALSPY_ONJOIN", "catalyst.admin.command.socialspy.onjoin"){
+    public static final Key<String> SOCIALSPY_ONJOIN = new Key<String>("SOCIALSPY_ONJOIN", "catalyst.admin.command.socialspy.onjoin") {
     };
-    public static final Key<String> STAFFCHAT = new Key<String>("STAFFCHAT", "catalyst.admin.command.staffchat"){
+    public static final Key<String> STAFFCHAT = new Key<String>("STAFFCHAT", "catalyst.admin.command.staffchat") {
     };
     public static final Key<String> STAFFLIST_ADMIN = new Key<String>("STAFFLIST_ADMIN", "catalyst.stafflist.admin") {
     };
-    public static final Key<String> STAFFLIST_BASE = new Key<String>("STAFFLIST_BASE", "catalyst.stafflist.base"){
+    public static final Key<String> STAFFLIST_BASE = new Key<String>("STAFFLIST_BASE", "catalyst.stafflist.base") {
     };
-    public static final Key<String> STAFFLIST_OWNER = new Key<String>("STAFFLIST_OWNER", "catalyst.stafflist.owner"){
+    public static final Key<String> STAFFLIST_OWNER = new Key<String>("STAFFLIST_OWNER", "catalyst.stafflist.owner") {
     };
     public static final Key<String> STAFFLIST_STAFF = new Key<String>("STAFFLIST_STAFF", "catalyst.stafflist.staff") {
     };
-    public static final Key<String> ALL_CHAT_CHANNELS = new Key<String>("ALL_CHAT_CHANNELS", "catalyst.channel.all"){
+    public static final Key<String> ALL_CHAT_CHANNELS = new Key<String>("ALL_CHAT_CHANNELS", "catalyst.channel.all") {
     };
-    public static final Key<String> CHANNEL_BASE = new Key<String>("CHANNEL_BASE","catalyst.channel."){
+    public static final Key<String> CHANNEL_BASE = new Key<String>("CHANNEL_BASE", "catalyst.channel.") {
+    };
+    public static final Key<String> BOT_TOKEN = new Key<String>("BOT_TOKEN", "bot token") {
+    };
+    public static final Key<String> MAIN_CHANNEL = new Key<String>("MAIN_CHANNEL", "mainchannelid") {
+    };
+    public static final Key<String> STAFF_CHANNEL = new Key<String>("STAFF_CHANNEL", "staffchannelid") {
+    };
+    public static final Key<String> PLAYER_CHAT_FORMAT = new Key<String>("PLAYER_CHAT_FORMAT", "%prefix% %username% %suffix%") {
+    };
+    public static final Key<String> JOIN_FORMAT = new Key<String>("JOIN_FORMAT", " has joined the game.") {
+    };
+    public static final Key<String> LEAVE_FORMAT = new Key<String>("LEAVE_FORMAT", " has left the game.") {
+    };
+    public static final Key<String> DISCORD_CHAT_FORMAT = new Key<String>("DISCORD_CHAT_FORMAT", "&6[Discord]&7 %name% : %message%") {
+    };
+    public static final Key<String> DISCORD_STAFF_FORMAT = new Key<String>("DISCORD_STAFF_FORMAT", "&b[STAFF] &7Discord %name%:&b %message%") {
+    };
+    public static final Key<String> TOPIC_FORMAT = new Key<String>("TOPIC_FORMAT", "Player Count : %players%") {
+    };
+    public static final Key<Integer> TOPIC_UPDATE_DELAY = new Key<Integer>("TOPIC_UPDATE_DELAY", 10) {
+    };
+    public static final Key<String> NOW_PLAYING_MESSAGE = new Key<String>("NOW_PLAYING_MESSAGE", "A MilspecSG Server!") {
+    };
+    public static final Key<String> WEBHOOK_URL = new Key<String>("WEBHOOK_URL", "https://crafatar.com/avatars/%uuid%?default=MHF_Alex") {
+    };
+    public static final Key<String> DISCORD_URL = new Key<String>("DISCORD_URL", "https://discord.gg/hZpQ5Sg") {
+    };
+    public static final Key<Boolean> DISCORD_ENABLE = new Key<Boolean>("DISCORD_ENABLE", true) {
     };
 
     static {
@@ -207,5 +235,20 @@ public final class CatalystKeys {
         Keys.registerKey(STAFFLIST_STAFF);
         Keys.registerKey(ALL_CHAT_CHANNELS);
         Keys.registerKey(CHANNEL_BASE);
+        Keys.registerKey(BOT_TOKEN);
+        Keys.registerKey(MAIN_CHANNEL);
+        Keys.registerKey(STAFF_CHANNEL);
+        Keys.registerKey(PLAYER_CHAT_FORMAT);
+        Keys.registerKey(JOIN_FORMAT);
+        Keys.registerKey(LEAVE_FORMAT);
+        Keys.registerKey(DISCORD_CHAT_FORMAT);
+        Keys.registerKey(DISCORD_STAFF_FORMAT);
+        Keys.registerKey(TOPIC_FORMAT);
+        Keys.registerKey(TOPIC_FORMAT);
+        Keys.registerKey(TOPIC_UPDATE_DELAY);
+        Keys.registerKey(NOW_PLAYING_MESSAGE);
+        Keys.registerKey(WEBHOOK_URL);
+        Keys.registerKey(DISCORD_URL);
+        Keys.registerKey(DISCORD_ENABLE);
     }
 }

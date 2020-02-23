@@ -77,7 +77,7 @@ public class CommonModule<
         );
 
         be.bind(
-            new TypeToken<ChatService<TString>>(getClass()) {
+            new TypeToken<ChatService<TString, TPlayer>>(getClass()) {
             },
             new TypeToken<CommonChatService<TPlayer, TString, TCommandSource>>(getClass()) {
             }

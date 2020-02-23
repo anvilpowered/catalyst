@@ -15,19 +15,20 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation 'net.luckperms:api:5.0'
-    compile 'com.velocitypowered:velocity-api:1.1.0-SNAPSHOT'
+    compileOnly 'net.luckperms:api:5.0'
+    compileOnly 'com.velocitypowered:velocity-api:1.1.0-SNAPSHOT'
     annotationProcessor 'com.velocitypowered:velocity-api:1.1.0-SNAPSHOT'
 
     implementation project(':api')
     implementation project(':common')
 
-    implementation project (':Anvil:anvil-api')
-    implementation project (':Anvil:anvil-base')
+    compileOnly project (':Anvil:anvil-api')
+    compileOnly project (':Anvil:anvil-base')
 
-
-    implementation guice
-    implementation sponge
+    implementation jda
+    compileOnly guice
+    compileOnly sponge
+    implementation unirest
 }
 
 shadowJar {
@@ -36,8 +37,7 @@ shadowJar {
     archiveFileName = jarName
 
     dependencies {
-        include project(':api')
-        include project(':common')
+        exclude(dependency('net.java.dev.jna:jna'))
     }
 }
 

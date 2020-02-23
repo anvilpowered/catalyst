@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -41,7 +42,7 @@ public class CommonChatService<
     TPlayer extends TCommandSource,
     TString,
     TCommandSource>
-    implements ChatService<TString> {
+    implements ChatService<TString, TPlayer> {
 
     @Inject
     Registry registry;
@@ -110,9 +111,9 @@ public class CommonChatService<
     }
 
     @Override
-    public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message) {
+    public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, Predicate<? super TPlayer> checkOverridePerm) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
-            if (getChannelIdForUser(userService.getUUID(p)).equals(channelId)) {
+            if (checkOverridePerm.test(p) || getChannelIdForUser(userService.getUUID(p)).equals(channelId)) {
                 stringResult.send(message, p);
             }
         }));
@@ -142,9 +143,9 @@ public class CommonChatService<
 
             String finalName = optionalMember.get().getUserName();
             if (optionalMember.get().getNickName() != null) {
-                finalName = optionalMember.get().getNickName();
+                finalName = optionalMember.get().getNickName() + "&r";
             } else {
-                finalName = nameColor + finalName;
+                finalName = nameColor + finalName + "&r";
             }
             return stringResult
                 .builder()
