@@ -97,7 +97,7 @@ public class Catalyst extends BasePlugin<PluginContainer> {
         proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyLeaveListener.class));
         proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyChatListener.class));
         proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyStaffChatListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyPingEventListener.class));
+        //proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyPingEventListener.class));
         proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyListener.class));
     }
 

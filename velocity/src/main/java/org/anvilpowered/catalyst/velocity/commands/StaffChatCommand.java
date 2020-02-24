@@ -57,7 +57,6 @@ public class StaffChatCommand implements Command {
                     source.sendMessage(pluginMessages.getStaffChat(true));
                 }
             } else {
-                ProxyStaffChatEvent.staffChatSet.add(player.getUniqueId());
                 String message = String.join(" ", args);
                 ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(player, message, TextComponent.of(message));
                 proxyServer.getEventManager().fire(proxyStaffChatEvent).join();

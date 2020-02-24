@@ -23,6 +23,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
+import com.velocitypowered.api.util.ModInfo;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.StringResult;
@@ -48,6 +49,8 @@ public class ProxyPingEventListener {
         serverPing.getFavicon().ifPresent(builder::favicon);
         builder.version(serverPing.getVersion());
         builder.onlinePlayers(playerCount);
+        builder.samplePlayers();
+        builder.mods(serverPing.getModinfo().orElse(ModInfo.DEFAULT));
         builder.description(stringResult.deserialize(registry.getOrDefault(CatalystKeys.MOTD)));
         builder.maximumPlayers(proxyServer.getConfiguration().getShowMaxPlayers());
 
