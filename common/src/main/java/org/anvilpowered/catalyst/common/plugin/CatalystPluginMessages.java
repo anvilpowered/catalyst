@@ -67,6 +67,14 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     }
 
     @Override
+    public TString getNoNickMagicPermission() {
+        return stringResult.builder()
+            .append(pluginInfo.getPrefix())
+            .red().append("You do not have permission for a magical nickname!")
+            .build();
+    }
+
+    @Override
     public TString getCurrentServer(String userName, String serverName) {
         return stringResult.builder()
             .append(pluginInfo.getPrefix())

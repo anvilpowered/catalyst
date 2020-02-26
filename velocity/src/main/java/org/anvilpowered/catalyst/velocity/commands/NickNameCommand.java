@@ -77,8 +77,14 @@ public class NickNameCommand implements Command {
             }
 
             if (nick.contains("&") && player.hasPermission(registry.getOrDefault(CatalystKeys.NICKNAME_COLOR))) {
-                memberManager.setNickName(player.getUsername(), args[0]).thenAcceptAsync(source::sendMessage);
+                if (nick.contains("&k") && player.hasPermission(registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC))) {
+                    memberManager.setNickName(player.getUsername(), args[0]).thenAcceptAsync(source::sendMessage);
+                } else {
+                    source.sendMessage(pluginMessages.getNoNickMagicPermission());
+                    memberManager.setNickName(player.getUsername(), args[0].replace("&k", "")).thenAcceptAsync(source::sendMessage);
+                }
             } else {
+                source.sendMessage(pluginMessages.getNoNickColorPermission());
                 memberManager.setNickName(player.getUsername(), pluginMessages.removeColor(nick)).thenAccept(source::sendMessage);
             }
 

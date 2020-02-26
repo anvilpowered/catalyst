@@ -29,6 +29,8 @@ public interface PluginMessages<TString> {
 
     TString getNoNickColorPermission();
 
+    TString getNoNickMagicPermission();
+
     TString getCurrentServer(String userName, String serverName);
 
     TString getMuted();

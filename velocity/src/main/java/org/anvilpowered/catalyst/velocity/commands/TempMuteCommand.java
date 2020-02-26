@@ -56,7 +56,7 @@ public class TempMuteCommand implements Command {
 
         if (args.length < 2) {
             source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(pluginMessages.tempBanCommandUsage());
+            source.sendMessage(pluginMessages.tempMuteCommandUsage());
             return;
         }
         String username = args[0];

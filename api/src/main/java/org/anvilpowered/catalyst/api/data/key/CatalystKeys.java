@@ -126,6 +126,8 @@ public final class CatalystKeys {
     };
     public static final Key<String> NICKNAME_COLOR = new Key<String>("NICKNAME_COLOR", "catalyst.command.nickname.color") {
     };
+    public static final Key<String> NICKNAME_MAGIC = new Key<String>("NICKNAME_COLOR", "catalyst.command.nickname.magic") {
+    };
     public static final Key<String> NICKNAME_OTHER = new Key<String>("NICKNAME_OTHER", "catalyst.command.nickname.other") {
     };
     public static final Key<String> RELOAD = new Key<String>("RELOAD", "catalyst.command.reload") {
@@ -221,6 +223,7 @@ public final class CatalystKeys {
         Keys.registerKey(MUTE_EXEMPT);
         Keys.registerKey(NICKNAME);
         Keys.registerKey(NICKNAME_COLOR);
+        Keys.registerKey(NICKNAME_MAGIC);
         Keys.registerKey(NICKNAME_OTHER);
         Keys.registerKey(RELOAD);
         Keys.registerKey(SEND);
