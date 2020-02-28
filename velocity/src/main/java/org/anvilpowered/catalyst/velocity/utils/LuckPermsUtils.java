@@ -85,11 +85,23 @@ public class LuckPermsUtils {
     }
 
     public String getPrefix(Player player) {
-        return getCachedPlayerData(player).isPresent() ? getCachedPlayerData(player).get().getPrefix() : "";
+        if (getCachedPlayerData(player).isPresent()) {
+            if (getCachedPlayerData(player).get().getPrefix() != null) {
+                return getCachedPlayerData(player).get().getPrefix();
+            }
+            return "";
+        }
+        return "";
     }
 
     public String getSuffix(Player player) {
-        return getCachedPlayerData(player).isPresent() ? getCachedPlayerData(player).get().getSuffix() : "";
+        if (getCachedPlayerData(player).isPresent()) {
+            if (getCachedPlayerData(player).get().getSuffix() != null) {
+                return getCachedPlayerData(player).get().getSuffix();
+            }
+            return "";
+        }
+        return "";
     }
 
     private QueryOptions getQueryOptions(User user) {
