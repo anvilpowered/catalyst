@@ -51,6 +51,9 @@ public class ProxyChatListener {
     @Inject
     private Registry registry;
 
+    @Inject
+    private LuckPermsUtils luckPermsUtils;
+
     @Subscribe
     public void onChat(PlayerChatEvent e) {
         String message = e.getMessage();
@@ -105,10 +108,10 @@ public class ProxyChatListener {
         Player player = e.getPlayer();
         //Grab all the information we will need from luckperms
         //The only supported permissions plugin to date
-        String prefix = LuckPermsUtils.getPrefix(player);
-        String chatColor = LuckPermsUtils.getChatColor(player);
-        String nameColor = LuckPermsUtils.getNameColor(player);
-        String suffix = LuckPermsUtils.getSuffix(player);
+        String prefix = luckPermsUtils.getPrefix(player);
+        String chatColor = luckPermsUtils.getChatColor(player);
+        String nameColor = luckPermsUtils.getNameColor(player);
+        String suffix = luckPermsUtils.getSuffix(player);
         String server = player.getCurrentServer().orElseThrow(() -> new IllegalStateException("Invalid Server!")).getServer().getServerInfo().getName();
         Optional<Channel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(player.getUniqueId()));
         String channelId = chatService.getChannelIdForUser(player.getUniqueId());

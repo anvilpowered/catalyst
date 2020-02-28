@@ -18,13 +18,16 @@ public class ProxyListener {
     @Inject
     private WebhookSender webhookSender;
 
+    @Inject
+    private LuckPermsUtils luckPermsUtils;
+
     @Subscribe
     public void onChatEvent(ProxyChatEvent event) {
         if (event.getSender().isActive()) {
             String message = event.getRawMessage();
             String name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT).replace("%player%", event.getSender().getUsername())
-                .replace("%prefix%", LuckPermsUtils.getPrefix(event.getSender()))
-                .replace("%suffix%", LuckPermsUtils.getSuffix(event.getSender()));
+                .replace("%prefix%", luckPermsUtils.getPrefix(event.getSender()))
+                .replace("%suffix%", luckPermsUtils.getSuffix(event.getSender()));
             webhookSender.sendWebhookMessage(registry.getOrDefault(CatalystKeys.WEBHOOK_URL), name, message, registry.getOrDefault(CatalystKeys.MAIN_CHANNEL), event.getSender());
         }
     }
@@ -32,8 +35,8 @@ public class ProxyListener {
     @Subscribe
     public void onStaffChatEvent(ProxyStaffChatEvent event) {
         String name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
-            .replace("%prefix%", LuckPermsUtils.getPrefix(event.getSender()))
-            .replace("%suffix%", LuckPermsUtils.getSuffix(event.getSender()))
+            .replace("%prefix%", luckPermsUtils.getPrefix(event.getSender()))
+            .replace("%suffix%", luckPermsUtils.getSuffix(event.getSender()))
             .replace("%player%", event.getSender().getUsername());
         String message = event.getRawMessage();
 
@@ -42,11 +45,11 @@ public class ProxyListener {
 
     @Subscribe
     public void onPlayerJoinEvent(PostLoginEvent event) {
-        webhookSender.sendWebhookMessage(registry.getOrDefault(CatalystKeys.WEBHOOK_URL), "MilspecSG", event.getPlayer().getUsername() + registry.getOrDefault(CatalystKeys.JOIN_FORMAT), registry.getOrDefault(CatalystKeys.MAIN_CHANNEL), event.getPlayer());
+        webhookSender.sendWebhookMessage(registry.getOrDefault(CatalystKeys.WEBHOOK_URL), registry.getOrDefault(CatalystKeys.BOT_NAME), event.getPlayer().getUsername() + registry.getOrDefault(CatalystKeys.JOIN_FORMAT), registry.getOrDefault(CatalystKeys.MAIN_CHANNEL), event.getPlayer());
     }
 
     @Subscribe
     public void onPlayerLeaveEvent(DisconnectEvent event) {
-        webhookSender.sendWebhookMessage(registry.getOrDefault(CatalystKeys.WEBHOOK_URL), "MilspecSG", event.getPlayer().getUsername() + registry.getOrDefault(CatalystKeys.LEAVE_FORMAT), registry.getOrDefault(CatalystKeys.MAIN_CHANNEL), event.getPlayer());
+        webhookSender.sendWebhookMessage(registry.getOrDefault(CatalystKeys.WEBHOOK_URL), registry.getOrDefault(CatalystKeys.BOT_NAME), event.getPlayer().getUsername() + registry.getOrDefault(CatalystKeys.LEAVE_FORMAT), registry.getOrDefault(CatalystKeys.MAIN_CHANNEL), event.getPlayer());
     }
 }

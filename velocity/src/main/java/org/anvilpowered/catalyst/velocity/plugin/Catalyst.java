@@ -43,6 +43,7 @@ import org.anvilpowered.catalyst.velocity.listeners.*;
 import org.anvilpowered.catalyst.velocity.module.VelocityModule;
 import org.anvilpowered.catalyst.velocity.tab.GlobalTab;
 import org.anvilpowered.catalyst.velocity.tab.TabUtils;
+import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
 import org.slf4j.Logger;
 
 
@@ -75,7 +76,7 @@ public class Catalyst extends BasePlugin<PluginContainer> {
 
     @Inject
     public Catalyst(Injector injector) {
-        super(CatalystPluginInfo.id, injector, new VelocityModule(), GlobalTab.class, CatalystCommandManager.class, JDAHook.class);
+        super(CatalystPluginInfo.id, injector, new VelocityModule(), GlobalTab.class, CatalystCommandManager.class, JDAHook.class, LuckPermsUtils.class);
     }
 
     @Subscribe(order = PostOrder.LAST)

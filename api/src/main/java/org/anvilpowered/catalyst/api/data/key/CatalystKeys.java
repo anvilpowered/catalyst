@@ -156,6 +156,8 @@ public final class CatalystKeys {
     };
     public static final Key<String> CHANNEL_BASE = new Key<String>("CHANNEL_BASE", "catalyst.channel.") {
     };
+    public static final Key<String> BOT_NAME = new Key<String>("BOT_NAME", "System") {
+    };
     public static final Key<String> BOT_TOKEN = new Key<String>("BOT_TOKEN", "bot token") {
     };
     public static final Key<String> MAIN_CHANNEL = new Key<String>("MAIN_CHANNEL", "mainchannelid") {
@@ -184,6 +186,9 @@ public final class CatalystKeys {
     };
     public static final Key<Boolean> DISCORD_ENABLE = new Key<Boolean>("DISCORD_ENABLE", true) {
     };
+    public static final Key<String> WEBSITE_URL = new Key<String>("WEBSITE_URL", "http://ci.anvilpowered.org") {
+    };
+
 
     static {
         Keys.registerKey(MOTD);
@@ -238,6 +243,7 @@ public final class CatalystKeys {
         Keys.registerKey(STAFFLIST_STAFF);
         Keys.registerKey(ALL_CHAT_CHANNELS);
         Keys.registerKey(CHANNEL_BASE);
+        Keys.registerKey(BOT_NAME);
         Keys.registerKey(BOT_TOKEN);
         Keys.registerKey(MAIN_CHANNEL);
         Keys.registerKey(STAFF_CHANNEL);
@@ -253,5 +259,6 @@ public final class CatalystKeys {
         Keys.registerKey(WEBHOOK_URL);
         Keys.registerKey(DISCORD_URL);
         Keys.registerKey(DISCORD_ENABLE);
+        Keys.registerKey(WEBSITE_URL);
     }
 }

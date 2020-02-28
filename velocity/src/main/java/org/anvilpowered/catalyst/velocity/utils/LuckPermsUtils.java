@@ -17,18 +17,102 @@
 
 package org.anvilpowered.catalyst.velocity.utils;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import net.luckperms.api.cacheddata.CachedMetaData;
 import net.luckperms.api.context.ContextManager;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
+import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+@Singleton
 public class LuckPermsUtils {
 
+    @Inject
+    private ProxyServer proxyServer;
+
+    @Inject
+    Plugin<?> catalyst;
+
+    private Registry registry;
+
+    private static Map<Player, CachedMetaData> cachedPlayers = new HashMap<>();
+
+    @Inject
+    public LuckPermsUtils(Registry registry) {
+        this.registry = registry;
+        this.registry.addRegistryLoadedListener(this::syncPlayerCache);
+    }
+
+
+    public void syncPlayerCache() {
+        proxyServer.getScheduler().buildTask(catalyst, () -> {
+            for (Player player : proxyServer.getAllPlayers()) {
+                addPlayerToCache(player);
+            }
+        }).repeat(5, TimeUnit.MINUTES).schedule();
+    }
+
+    public void addPlayerToCache(Player player) {
+        UUID playerUUID = player.getUniqueId();
+        User temp = Catalyst.api.getUserManager().getUser(playerUUID);
+        if (temp != null) {
+            if (!cachedPlayers.containsKey(player)) {
+                cachedPlayers.put(player, temp.getCachedData().getMetaData(getQueryOptions(temp)));
+            }
+        } else {
+            throw new IllegalStateException("Failed to find the user " + player.getUsername() + " inside luckperms. Please report this on github");
+        }
+    }
+
+    public void removePlayerFromCache(Player player) {
+        cachedPlayers.remove(player);
+    }
+
+    public Optional<CachedMetaData> getCachedPlayerData(Player player) {
+        return Optional.of(cachedPlayers.get(player));
+    }
+
+    public String getPrefix(Player player) {
+        return getCachedPlayerData(player).isPresent() ? getCachedPlayerData(player).get().getPrefix() : "";
+    }
+
+    public String getSuffix(Player player) {
+        return getCachedPlayerData(player).isPresent() ? getCachedPlayerData(player).get().getSuffix() : "";
+    }
+
+    private QueryOptions getQueryOptions(User user) {
+        final ContextManager contextManager = Catalyst.api.getContextManager();
+        return contextManager.getQueryOptions(user)
+            .orElseGet(contextManager::getStaticQueryOptions);
+    }
+
+    public String getChatColor(Player player) {
+        if (getCachedPlayerData(player).isPresent()) {
+            return Objects.requireNonNull(getCachedPlayerData(player).get().getMetaValue("chat-color")).isEmpty() ? "" : getCachedPlayerData(player).get().getMetaValue("name-color");
+        }
+        return "";
+    }
+
+    public String getNameColor(Player player) {
+        if (getCachedPlayerData(player).isPresent()) {
+            return Objects.requireNonNull(getCachedPlayerData(player).get().getMetaValue("name-color")).isEmpty() ? "" : getCachedPlayerData(player).get().getMetaValue("name-color");
+        }
+        return "";
+    }
+
+    /*
     public static String getPrefix(Player player) {
         if (getMetaData(player).isPresent()) {
             if (getMetaData(player).get().getPrefix() == null) {
@@ -79,9 +163,6 @@ public class LuckPermsUtils {
         return "";
     }
 
-    private static QueryOptions getQueryOptions(Optional<User> user) {
-        final ContextManager contextManager = Catalyst.api.getContextManager();
-        return user.flatMap(contextManager::getQueryOptions)
-            .orElseGet(contextManager::getStaticQueryOptions);
-    }
+
+    */
 }

@@ -46,7 +46,7 @@ public class DiscordListener extends ListenerAdapter {
 
             String message = registry.getOrDefault(CatalystKeys.DISCORD_STAFF_FORMAT).replace("%name%", event.getAuthor().getName()).replace("%message%", event.getMessage().getContentRaw());
             for (Player p : proxyServer.getAllPlayers()) {
-                if(p.hasPermission("catalyst.admin.command.staffchat")) {
+                if(p.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
                     p.sendMessage(legacyColor(message).clickEvent(ClickEvent.openUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))));
                 }
             }

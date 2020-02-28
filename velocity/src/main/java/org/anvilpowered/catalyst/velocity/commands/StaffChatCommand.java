@@ -44,6 +44,7 @@ public class StaffChatCommand implements Command {
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
             source.sendMessage(pluginMessages.getNoPermission());
+            return;
         }
 
         if (source instanceof Player) {

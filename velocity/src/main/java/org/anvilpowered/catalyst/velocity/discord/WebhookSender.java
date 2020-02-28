@@ -49,7 +49,7 @@ public class WebhookSender {
         ScheduledTask task = proxyServer.getScheduler().buildTask(Catalyst.plugin, () -> {
             Webhook webhook = getWebhook(channelID);
             if (webHook == null) return;
-            sendWebhook(webhook, WebhookUtils.of(format, removeCodes(player), removeCodes(removeDiscordFormatting(content))));
+            sendWebhook(webhook, WebhookUtils.of(format, removeCodes(player), removeCodes(content)));
         }).schedule();
     }
 

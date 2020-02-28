@@ -27,6 +27,7 @@ import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.StaffListService;
+import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
 
 public class ProxyLeaveListener {
 
@@ -39,10 +40,14 @@ public class ProxyLeaveListener {
     @Inject
     private Registry registry;
 
+    @Inject
+    private LuckPermsUtils luckPermsUtils;
+
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
         Player player = event.getPlayer();
         staffListService.removeStaffNames(player.getUsername());
-        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE).replace("%player%", player.getUsername())));
+        luckPermsUtils.removePlayerFromCache(player);
+        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE).replace("%player%", player.getUsername()), '&'));
     }
 }

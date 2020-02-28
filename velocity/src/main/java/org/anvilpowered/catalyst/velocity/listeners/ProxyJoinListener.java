@@ -28,6 +28,7 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.StaffListService;
+import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
 
 public class ProxyJoinListener {
 
@@ -43,6 +44,9 @@ public class ProxyJoinListener {
     @Inject
     private StaffListService<TextComponent> staffListService;
 
+    @Inject
+    private LuckPermsUtils luckPermsUtils;
+
     @Subscribe
     public void onPlayerJoin(PostLoginEvent event) {
         Player player = event.getPlayer();
@@ -51,7 +55,8 @@ public class ProxyJoinListener {
             privateMessageService.socialSpySet().add(player.getUniqueId());
         }
 
+        luckPermsUtils.addPlayerToCache(player);
         staffListService.getStaffNames(player.getUsername(), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN)), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF)), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER)));
-        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", player.getUsername())));
+        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", player.getUsername()), '&'));
     }
 }

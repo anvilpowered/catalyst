@@ -36,11 +36,14 @@ public class TabBuilder {
     @Inject
     private TabUtils tabUtils;
 
+    @Inject
+    private LuckPermsUtils luckPermsUtils;
+
 
     public TextComponent formatPlayerTab(String raw, Player player) {
         raw = raw.replace("%player%", player.getUsername());
-        raw = raw.replace("%prefix%", LuckPermsUtils.getPrefix(player));
-        raw = raw.replace("%suffix%", LuckPermsUtils.getSuffix(player));
+        raw = raw.replace("%prefix%", luckPermsUtils.getPrefix(player));
+        raw = raw.replace("%suffix%", luckPermsUtils.getSuffix(player));
 
         raw = raw.replace("%server%", player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("null"));
 
@@ -49,8 +52,8 @@ public class TabBuilder {
 
     public TextComponent formatTab(String raw, Player player) {
         raw = raw.replace("%player%", player.getUsername())
-            .replace("%prefix%", LuckPermsUtils.getPrefix(player))
-            .replace("%suffix%", LuckPermsUtils.getSuffix(player))
+            .replace("%prefix%", luckPermsUtils.getPrefix(player))
+            .replace("%suffix%", luckPermsUtils.getSuffix(player))
             .replace("%server%", player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("null"))
             .replace("%ping%", String.valueOf(player.getPing()))
             .replace("%playercount%", String.valueOf(proxyServer.getPlayerCount()))
