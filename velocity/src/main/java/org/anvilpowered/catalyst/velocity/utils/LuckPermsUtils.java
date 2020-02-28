@@ -31,7 +31,6 @@ import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -112,14 +111,18 @@ public class LuckPermsUtils {
 
     public String getChatColor(Player player) {
         if (getCachedPlayerData(player).isPresent()) {
-            return Objects.requireNonNull(getCachedPlayerData(player).get().getMetaValue("chat-color")).isEmpty() ? "" : getCachedPlayerData(player).get().getMetaValue("name-color");
+            if (getCachedPlayerData(player).get().getMetaValue("chat-color") != null) {
+                return getCachedPlayerData(player).get().getMetaValue("chat-color");
+            }
         }
         return "";
     }
 
     public String getNameColor(Player player) {
         if (getCachedPlayerData(player).isPresent()) {
-            return Objects.requireNonNull(getCachedPlayerData(player).get().getMetaValue("name-color")).isEmpty() ? "" : getCachedPlayerData(player).get().getMetaValue("name-color");
+            if (getCachedPlayerData(player).get().getMetaValue("name-color") != null) {
+                return getCachedPlayerData(player).get().getMetaValue("name-color");
+            }
         }
         return "";
     }
