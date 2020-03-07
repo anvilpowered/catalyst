@@ -26,7 +26,7 @@ import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
+import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.checkerframework.checker.nullness.qual.NonNull;

@@ -24,7 +24,7 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
+import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
