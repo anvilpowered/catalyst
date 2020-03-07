@@ -24,10 +24,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.player.TabList;
 import com.velocitypowered.api.proxy.player.TabListEntry;
 import com.velocitypowered.api.util.GameProfile;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
-import org.anvilpowered.catalyst.velocity.discord.JDAHook;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,8 +120,7 @@ public class GlobalTab {
                                         tabBuilder.formatTab(customtabs.get(i3), currentPlayerToProcess))
                                     .tabList(currentPlayerToProcess.getTabList()).build();
 
-                                insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry,
-                                    toKeep);
+                                insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry, toKeep);
                             }
                         }
 

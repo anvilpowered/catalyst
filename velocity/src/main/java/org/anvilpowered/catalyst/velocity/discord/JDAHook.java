@@ -3,7 +3,6 @@ package org.anvilpowered.catalyst.velocity.discord;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.scheduler.ScheduledTask;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -11,7 +10,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 
 import javax.security.auth.login.LoginException;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +25,7 @@ public class JDAHook {
     Plugin<?> catalyst;
 
     @Inject
-    private DiscordListener discordListener;
+    private DiscordProxyListener discordProxyListener;
 
     @Inject
     private ProxyServer proxyServer;
@@ -50,7 +48,7 @@ public class JDAHook {
             } catch (LoginException | InterruptedException e) {
                 e.printStackTrace();
             }
-            jda.addEventListener(discordListener);
+            jda.addEventListener(discordProxyListener);
             updateTopic();
         }
     }

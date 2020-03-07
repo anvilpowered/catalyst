@@ -24,7 +24,6 @@ import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
@@ -36,10 +35,10 @@ import net.luckperms.api.LuckPermsProvider;
 import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.anvil.base.plugin.BasePlugin;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
-import org.anvilpowered.catalyst.velocity.commands.CatalystCommandManager;
+import org.anvilpowered.catalyst.velocity.command.CatalystCommandManager;
+import org.anvilpowered.catalyst.velocity.discord.DiscordProxyListener;
 import org.anvilpowered.catalyst.velocity.discord.JDAHook;
-import org.anvilpowered.catalyst.velocity.discord.ProxyListener;
-import org.anvilpowered.catalyst.velocity.listeners.*;
+import org.anvilpowered.catalyst.velocity.listener.ProxyListener;
 import org.anvilpowered.catalyst.velocity.module.VelocityModule;
 import org.anvilpowered.catalyst.velocity.tab.GlobalTab;
 import org.anvilpowered.catalyst.velocity.tab.TabUtils;
@@ -94,11 +93,8 @@ public class Catalyst extends BasePlugin<PluginContainer> {
     protected void whenReady(Environment environment) {
         super.whenReady(environment);
         logger.info("Injecting listeners");
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyJoinListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyLeaveListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyChatListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyStaffChatListener.class));
         proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyListener.class));
+        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(DiscordProxyListener.class));
     }
 
     @Subscribe

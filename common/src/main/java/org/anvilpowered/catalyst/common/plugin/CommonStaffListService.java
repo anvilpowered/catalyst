@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.anvilpowered.anvil.api.util.StringResult;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.plugin.StaffListService;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import java.util.List;
 public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCommandSource> implements StaffListService<TString> {
 
     @Inject
-    private StringResult<TString, TCommandSource> stringResult;
+    private TextService<TString, TCommandSource> textService;
 
     public List<TString> staffNames = new ArrayList<>();
     public List<TString> adminNames = new ArrayList<>();
@@ -55,12 +55,12 @@ public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCo
     @Override
     public void getStaffNames(String player, boolean adminPermission, boolean staffPermission, boolean ownerPermission) {
         if (ownerPermission) {
-            ownerNames.add(stringResult.builder().append(player).build());
+            ownerNames.add(textService.builder().append(player).build());
         } else if (staffPermission) {
             if (adminPermission) {
-                adminNames.add(stringResult.builder().append(player).build());
+                adminNames.add(textService.builder().append(player).build());
             } else {
-                staffNames.add(stringResult.builder().append(player).build());
+                staffNames.add(textService.builder().append(player).build());
             }
         }
     }

@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.anvil.api.util.StringResult;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
 public class CatalystPluginMessages<TString, TCommandSource> implements PluginMessages<TString> {
@@ -28,23 +28,23 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     protected PluginInfo<TString> pluginInfo;
 
     @Inject
-    protected StringResult<TString, TCommandSource> stringResult;
+    protected TextService<TString, TCommandSource> textService;
 
     @Override
     public TString getBroadcast(TString message) {
-        return stringResult.builder()
+        return textService.builder()
             .green().append("[Broadcast] ", message)
             .build();
     }
 
     @Override
     public TString getBroadcast(String message) {
-        return getBroadcast(stringResult.deserialize(message));
+        return getBroadcast(textService.deserialize(message));
     }
 
     @Override
     public TString getNotEnoughArgs() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("Not enough arguments!")
             .build();
@@ -52,7 +52,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getNoPermission() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append(("Insufficient permissions!"))
             .build();
@@ -60,7 +60,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getNoNickColorPermission() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("You do not have permission for a colored nickname!")
             .build();
@@ -68,7 +68,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getNoNickMagicPermission() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("You do not have permission for a magical nickname!")
             .build();
@@ -76,7 +76,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getCurrentServer(String userName, String serverName) {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .gold().append(userName)
             .gray().append(" is connected to ")
@@ -86,7 +86,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getMuted() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("You are muted!")
             .build();
@@ -94,7 +94,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getMuteExempt() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("This user is exempt from being muted.")
             .build();
@@ -102,7 +102,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getBanExempt() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("This user is exempt from being banned.")
             .build();
@@ -110,7 +110,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getKickExempt() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("This user is exempt from being kicked.")
             .build();
@@ -118,7 +118,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getSocialSpy(boolean enabled) {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .green().append("Socialspy ", enabled ? "enabled" : "disabled")
             .build();
@@ -126,7 +126,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getStaffChat(boolean enabled) {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .green().append("Staff chat ", enabled ? "enabled" : "disabled")
             .build();
@@ -134,7 +134,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getStaffChatMessageFormatted(String userName, TString message) {
-        return stringResult.builder()
+        return textService.builder()
             .aqua().append("[STAFF] ")
             .light_purple().append(userName, ": ", message)
             .build();
@@ -142,7 +142,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getStaffChatMessageFormattedConsole(TString message) {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .aqua().append("[STAFF] ")
             .light_purple().append("CONSOLE: ", message)
@@ -151,7 +151,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getTeleportRequestSent(String targetUserName) {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .green().append("Requested to teleport to ")
             .gold().append(targetUserName, ".")
@@ -160,18 +160,18 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getTeleportRequestReceived(String requesterUserName) {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .gold().append(requesterUserName)
             .green().append(" has requested to teleport to you")
-            .onHoverShowText(stringResult.builder().green().append("Click to accept"))
+            .onHoverShowText(textService.builder().green().append("Click to accept"))
             .onClickRunCommand("/tpaccept")
             .build();
     }
 
     @Override
     public TString getTeleportToSelf() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("You cannot teleport to yourself!")
             .build();
@@ -179,7 +179,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getIncompatibleServerVersion() {
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("The server you are attempting to connect to is running a different Minecraft version!")
             .build();
@@ -187,7 +187,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     private TString getForList(boolean a, boolean b, boolean c, String value) {
         String _a = a ? "swear" : "exception";
-        return stringResult.builder()
+        return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("The ", _a, " ")
             .yellow().append(value)
@@ -248,76 +248,76 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString banCommandUsage() {
-        return stringResult.deserialize("&4Usage:  &e/ban <user> [reason]");
+        return textService.deserialize("&4Usage:  &e/ban <user> [reason]");
     }
 
     @Override
     public TString tempBanCommandUsage() {
-        return stringResult.deserialize("&4Usage:  &e/tempban <user> <duration> [reason]");
+        return textService.deserialize("&4Usage:  &e/tempban <user> <duration> [reason]");
     }
 
     @Override
     public TString unbanCommandUsage() {
-        return stringResult.deserialize("&4Usage: &e/unban <user>");
+        return textService.deserialize("&4Usage: &e/unban <user>");
     }
 
     @Override
     public TString muteCommandUsage() {
-        return stringResult.deserialize("&4Usage: &e/mute <user> [reason]");
+        return textService.deserialize("&4Usage: &e/mute <user> [reason]");
     }
 
     @Override
     public TString tempMuteCommandUsage() {
-        return stringResult.deserialize("&4Usage: &e/tempmute <user> <duration> [reason]");
+        return textService.deserialize("&4Usage: &e/tempmute <user> <duration> [reason]");
     }
 
     @Override
     public TString unMuteCommandUsage() {
-        return stringResult.deserialize("&4Usage: &e/unmute <player>");
+        return textService.deserialize("&4Usage: &e/unmute <player>");
     }
 
     @Override
     public TString kickCommandUsage() {
-        return stringResult.deserialize("&4Usage: &e/kick <user> [reason]");
+        return textService.deserialize("&4Usage: &e/kick <user> [reason]");
     }
 
     @Override
     public TString findCommandUsage() {
-        return stringResult.deserialize("&4Usage: /find <user>");
+        return textService.deserialize("&4Usage: /find <user>");
     }
 
     @Override
     public TString sendCommandUsage() {
-        return stringResult.deserialize("&4Usage: /send <user> <server>");
+        return textService.deserialize("&4Usage: /send <user> <server>");
     }
 
     @Override
     public TString messageCommandUsage() {
-        return stringResult.deserialize("&4Usage: /message <user> <message>");
+        return textService.deserialize("&4Usage: /message <user> <message>");
     }
 
     @Override
     public TString nickNameCommandUsage() {
-        return stringResult.deserialize("&4Usage: /nick <nickname>");
+        return textService.deserialize("&4Usage: /nick <nickname>");
     }
 
     @Override
     public TString broadcastCommandUsage() {
-        return stringResult.deserialize("&4Usage: /broadcast <message>");
+        return textService.deserialize("&4Usage: /broadcast <message>");
     }
 
     @Override
     public TString infoCommandUsage() {
-        return stringResult.deserialize("&4Usage: /info <user>");
+        return textService.deserialize("&4Usage: /info <user>");
     }
 
     @Override
     public TString swearAddCommandUsage() {
-        return stringResult.deserialize("&4Usage: /swear (add|remove <word>) |list");
+        return textService.deserialize("&4Usage: /swear (add|remove <word>) |list");
     }
 
     @Override
     public TString exceptionAddCommandUsage() {
-        return stringResult.deserialize("&4Usage: /exception (add|remove <word>) |list");
+        return textService.deserialize("&4Usage: /exception (add|remove <word>) |list");
     }
 }

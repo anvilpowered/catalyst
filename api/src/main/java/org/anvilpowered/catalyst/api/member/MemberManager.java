@@ -17,8 +17,8 @@
 
 package org.anvilpowered.catalyst.api.member;
 
+import org.anvilpowered.anvil.api.core.coremember.repository.CoreMemberRepository;
 import org.anvilpowered.anvil.api.manager.Manager;
-import org.anvilpowered.anvil.core.api.coremember.repository.CoreMemberRepository;
 
 import java.util.concurrent.CompletableFuture;
 

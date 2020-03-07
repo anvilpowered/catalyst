@@ -32,24 +32,23 @@ public class CommandUtils {
     private PluginInfo<TextComponent> pluginInfo;
 
 
-    public void createPluginInfoPage(final CommandSource source, final boolean hasPermissionForCommand)
-    {
+    public void createPluginInfoPage(final CommandSource source, final boolean hasPermissionForCommand) {
         source.sendMessage(
-                TextComponent.builder()
-                        .color(TextColor.GOLD)
-                        .append(pluginInfo.getPrefix())
-                        .append(TextComponent.of("Running Version "))
-                        .color(TextColor.GREEN)
-                        .append(pluginInfo.getVersion())
-                        .color(TextColor.AQUA)
-                        .append(TextComponent.of("\n") + "[ Plugin Page ]")
-                        //.hoverEvent(HoverEvent.showText(TextComponent.of(pluginInfo.getURL())))
-                        //.clickEvent(ClickEvent.openUrl(pluginInfo.getURL()))
-                        .append(TextComponent.of("\n") + "[ AnvilPowered ]")
-                        .hoverEvent(HoverEvent.showText(TextComponent.of("https://www.milspecsg.rocks/")))
-                        .clickEvent(ClickEvent.openUrl("https://www.milspecsg.rocks/"))
-                        .append(TextComponent.of("\n"))
-                        .build()
+            TextComponent.builder()
+                .color(TextColor.GOLD)
+                .append(pluginInfo.getPrefix())
+                .append(TextComponent.of("Running Version "))
+                .color(TextColor.GREEN)
+                .append(pluginInfo.getVersion())
+                .color(TextColor.AQUA)
+                .append(TextComponent.of("\n") + "[ Plugin Page ]")
+                //.hoverEvent(HoverEvent.showText(TextComponent.of(pluginInfo.getURL())))
+                //.clickEvent(ClickEvent.openUrl(pluginInfo.getURL()))
+                .append(TextComponent.of("\n") + "[ AnvilPowered ]")
+                .hoverEvent(HoverEvent.showText(TextComponent.of("https://www.milspecsg.rocks/")))
+                .clickEvent(ClickEvent.openUrl("https://www.milspecsg.rocks/"))
+                .append(TextComponent.of("\n"))
+                .build()
         );
     }
 }

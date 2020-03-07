@@ -19,9 +19,9 @@ package org.anvilpowered.catalyst.common.chat;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.anvilpowered.anvil.api.util.StringResult;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.chat.PrivateMessageService;
+import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +44,7 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
     private UserService<TPlayer, TPlayer> userService;
 
     @Inject
-    private StringResult<TString, TCommandSource> stringResult;
+    private TextService<TString, TCommandSource> textService;
 
     @Override
     public Set<UUID> socialSpySet() {
@@ -88,7 +88,7 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
 
     @Override
     public TString formatMessage(String sender, String recipient, String rawMessage) {
-        return stringResult.builder()
+        return textService.builder()
             .dark_gray().append("[")
             .blue().append(sender)
             .gold().append(" -> ")
@@ -101,9 +101,9 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
     @Override
     public CompletableFuture<Void> sendMessage(String sender, String recipient, String rawMessage) {
         return CompletableFuture.runAsync(() -> userService.get(sender).ifPresent(src -> {
-            stringResult.send(formatMessage("Me", recipient, rawMessage), src);
+            textService.send(formatMessage("Me", recipient, rawMessage), src);
             userService.get(recipient).ifPresent(rec -> {
-                stringResult.send(formatMessage(sender, "Me", rawMessage), rec);
+                textService.send(formatMessage(sender, "Me", rawMessage), rec);
             });
             socialSpy(sender, recipient, rawMessage);
         }));
@@ -116,14 +116,14 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
                     if (userService.getUserName(p).equalsIgnoreCase(sender) || userService.getUserName(p).equalsIgnoreCase(recipient)) {
                         return;
                     }
-                    stringResult.send(formatSocialSpyMessage(sender, recipient, rawMessage), p);
+                    textService.send(formatSocialSpyMessage(sender, recipient, rawMessage), p);
                 }
             }
         ));
     }
 
     public TString formatSocialSpyMessage(String sender, String recipient, String rawMessage) {
-        return stringResult.
+        return textService.
             builder()
             .gray().append("[SocialSpy] ")
             .dark_gray().append("[")

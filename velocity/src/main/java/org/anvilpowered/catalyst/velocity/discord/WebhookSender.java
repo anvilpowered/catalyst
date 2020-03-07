@@ -25,7 +25,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.Webhook;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
@@ -47,13 +46,13 @@ public class WebhookSender {
         String content = message.replaceAll("&(0-9a-fA-FlkKrR)", "");
         String format = registry.getOrDefault(CatalystKeys.WEBHOOK_URL).replace("%uuid%", source.getUniqueId().toString());
         ScheduledTask task = proxyServer.getScheduler().buildTask(Catalyst.plugin, () -> {
-            Webhook webhook = getWebhook(channelID);
+            net.dv8tion.jda.api.entities.Webhook webhook = getWebhook(channelID);
             if (webHook == null) return;
-            sendWebhook(webhook, WebhookUtils.of(format, removeCodes(player), removeCodes(content)));
+            sendWebhook(webhook, Webhook.of(format, removeCodes(player), removeCodes(content)));
         }).schedule();
     }
 
-    public static void sendWebhook(Webhook webhook, WebhookUtils webhookUtils) {
+    public static void sendWebhook(net.dv8tion.jda.api.entities.Webhook webhook, Webhook webhookUtils) {
         JSONObject json = new JSONObject();
         json.put("content", webhookUtils.message);
         json.put("username", webhookUtils.name.replaceAll("&([0-9a-fA-FlLkKrR])", ""));
@@ -65,13 +64,13 @@ public class WebhookSender {
         }
     }
 
-    private Webhook getWebhook(String channelId) {
+    private net.dv8tion.jda.api.entities.Webhook getWebhook(String channelId) {
         TextChannel textChannel = jdaHook.getJDA().getTextChannelById(channelId);
         if (!textChannel.getGuild().getSelfMember().hasPermission(Permission.MANAGE_WEBHOOKS)) {
             System.out.println("Please allow the discord bridge to handle webhooks!");
         }
 
-        Webhook w = textChannel.getGuild().retrieveWebhooks().complete().stream().filter(wh -> wh.getName().equals("MS-DB: " + textChannel.getName())).findFirst().orElse(null);
+        net.dv8tion.jda.api.entities.Webhook w = textChannel.getGuild().retrieveWebhooks().complete().stream().filter(wh -> wh.getName().equals("MS-DB: " + textChannel.getName())).findFirst().orElse(null);
 
         if (w == null) {
             w = textChannel.createWebhook("MS-DB: " + textChannel.getName()).complete();

@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.anvil.api.util.StringResult;
+import org.anvilpowered.anvil.api.util.TextService;
 
 import javax.inject.Singleton;
 
@@ -36,8 +36,8 @@ public final class CatalystPluginInfo<TString, TCommandSource> implements Plugin
     public TString pluginPrefix;
 
     @Inject
-    public void setPluginPrefix(StringResult<TString, TCommandSource> stringResult) {
-        pluginPrefix = stringResult.builder().gold().append("[", name, "] ").build();
+    public void setPluginPrefix(TextService<TString, TCommandSource> textService) {
+        pluginPrefix = textService.builder().gold().append("[", name, "] ").build();
     }
 
     @Override

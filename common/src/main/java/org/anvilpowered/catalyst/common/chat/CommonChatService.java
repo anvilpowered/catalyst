@@ -21,13 +21,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.data.key.Key;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.util.StringResult;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.chat.ChatService;
 import org.anvilpowered.catalyst.api.data.config.Channel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
+import org.anvilpowered.catalyst.api.service.ChatService;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class CommonChatService<
     MemberManager<TString> memberManager;
 
     @Inject
-    StringResult<TString, TCommandSource> stringResult;
+    TextService<TString, TCommandSource> textService;
 
     @Inject
     private UserService<TPlayer, TPlayer> userService;
@@ -102,7 +103,7 @@ public class CommonChatService<
             .map(p -> userService.getUserName(p))
             .collect(Collectors.toList());
 
-        return stringResult.builder()
+        return textService.builder()
             .green().append("------------------- ")
             .gold().append(channelId)
             .green().append(" --------------------\n")
@@ -114,14 +115,14 @@ public class CommonChatService<
     public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, Predicate<? super TPlayer> checkOverridePerm) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
             if (checkOverridePerm.test(p) || getChannelIdForUser(userService.getUUID(p)).equals(channelId)) {
-                stringResult.send(message, p);
+                textService.send(message, p);
             }
         }));
     }
 
     @Override
     public CompletableFuture<Void> sendGlobalMessage(TString message) {
-        return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> stringResult.send(message, p)));
+        return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> textService.send(message, p)));
     }
 
     @Override
@@ -138,7 +139,7 @@ public class CommonChatService<
     ) {
         return memberManager.getPrimaryComponent().getOneForUser(userName).thenApplyAsync(optionalMember -> {
             if (!optionalMember.isPresent()) {
-                return stringResult.fail("Couldn't find a user matching that name!");
+                return textService.fail("Couldn't find a user matching that name!");
             }
 
             String finalName = optionalMember.get().getUserName();
@@ -147,10 +148,10 @@ public class CommonChatService<
             } else {
                 finalName = nameColor + finalName + "&r";
             }
-            return stringResult
+            return textService
                 .builder()
-                .append(stringResult.deserialize(replacePlaceholders(message, prefix, finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE)))
-                .onHoverShowText(stringResult.deserialize(replacePlaceholders(message, prefix, finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_HOVER)))
+                .append(textService.deserialize(replacePlaceholders(message, prefix, finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE)))
+                .onHoverShowText(textService.deserialize(replacePlaceholders(message, prefix, finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_HOVER)))
                 .onClickSuggestCommand(replacePlaceholders(message, prefix, userName, hasChatColorPermission, suffix, finalName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND))
                 .build();
         });
@@ -173,7 +174,7 @@ public class CommonChatService<
             .replace("%suffix%", suffix)
             .replace("%server%", serverName)
             .replace("%channel%", channelPrefix)
-            .replace("%message%", hasChatColorPermission ? rawMessage : stringResult.removeColor(rawMessage));
+            .replace("%message%", hasChatColorPermission ? rawMessage : textService.removeColor(rawMessage));
     }
 
     @Override
@@ -183,9 +184,18 @@ public class CommonChatService<
 
     @Override
     public TString list() {
-        return stringResult.builder()
+        return textService.builder()
             .green().append("------------------- Online Players --------------------\n")
             .gray().append(getPlayerList())
             .build();
+    }
+
+    @Override
+    public TString createTempChannel(String name, UUID creator) {
+        Channel channel = new Channel();
+        channel.aliases = Arrays.asList(name);
+        channel.id = name;
+        channel.prefix = name;
+        return textService.success("Created the channel " + name + " successfully");
     }
 }

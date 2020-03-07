@@ -22,13 +22,13 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.util.StringResult;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
 
 public class TabBuilder {
 
     @Inject
-    private StringResult<TextComponent, CommandSource> stringResult;
+    private TextService<TextComponent, CommandSource> textService;
 
     @Inject
     private ProxyServer proxyServer;
@@ -47,7 +47,7 @@ public class TabBuilder {
 
         raw = raw.replace("%server%", player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("null"));
 
-        return stringResult.deserialize(raw);
+        return textService.deserialize(raw);
     }
 
     public TextComponent formatTab(String raw, Player player) {
@@ -59,7 +59,7 @@ public class TabBuilder {
             .replace("%playercount%", String.valueOf(proxyServer.getPlayerCount()))
             .replace("%balance%", getBalance(player));
 
-        return stringResult.deserialize(raw);
+        return textService.deserialize(raw);
     }
 
     private String getBalance(Player player) {

@@ -19,16 +19,20 @@ package org.anvilpowered.catalyst.common.member;
 
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.Environment;
+import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
+import org.anvilpowered.anvil.api.core.coremember.repository.CoreMemberRepository;
+import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
+import org.anvilpowered.anvil.api.core.plugin.PluginMessages;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.anvil.api.util.*;
+import org.anvilpowered.anvil.api.util.CurrentServerService;
+import org.anvilpowered.anvil.api.util.KickService;
+import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.anvil.api.util.TimeFormatService;
+import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.anvil.base.manager.BaseManager;
-import org.anvilpowered.anvil.core.api.coremember.CoreMemberManager;
-import org.anvilpowered.anvil.core.api.coremember.repository.CoreMemberRepository;
-import org.anvilpowered.anvil.core.api.model.coremember.CoreMember;
-import org.anvilpowered.anvil.core.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.api.chat.ChatService;
 import org.anvilpowered.catalyst.api.member.MemberManager;
+import org.anvilpowered.catalyst.api.service.ChatService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -60,7 +64,7 @@ public class CommonMemberManager<
     protected PluginMessages<TString> pluginMessages;
 
     @Inject
-    protected StringResult<TString, TCommandSource> stringResult;
+    protected TextService<TString, TCommandSource> textService;
 
     @Inject
     protected TimeFormatService timeFormatService;
@@ -86,7 +90,7 @@ public class CommonMemberManager<
     public CompletableFuture<TString> info(String userName, boolean isOnline) {
         return getPrimaryComponent().getOneForUser(userName).thenApplyAsync(optionalMember -> {
                 if (!optionalMember.isPresent()) {
-                    return stringResult.fail("Could not get user data");
+                    return textService.fail("Could not get user data");
                 }
                 CoreMember<?> member = optionalMember.get();
                 String nick;
@@ -108,69 +112,69 @@ public class CommonMemberManager<
                     banReason = "This user is not banned.";
                 }
 
-                return stringResult.builder()
+                return textService.builder()
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("----------------Player Info----------------"))
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("\nUsername : ")
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .green().append(userName))
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("\nNickname : ")
                     )
                     .append(
-                        stringResult
+                        textService
                             .deserialize(nick)
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("\nIP : ")
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .green().append(member.getIpAddress())
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("\nJoined Date : ")
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .green().append(member.getCreatedUtc().toString())
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("\nLast Seen : ")
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .green().append(lastSeen))
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("\nBanned : ")
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .green().append(banReason))
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("\nChannel : ")
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .green().append(chatService.getChannelIdForUser(member.getUserUUID()))
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .blue().append("\nCurrent Server : ")
                     )
                     .append(
-                        stringResult.builder()
+                        textService.builder()
                             .gold().append(currentServerService.getName(member.getUserUUID()).orElse("Offline User."))
                     )
                     .build();
@@ -185,9 +189,9 @@ public class CommonMemberManager<
     public CompletableFuture<TString> setNickName(String userName, String nickName) {
         return getPrimaryComponent().setNickNameForUser(userName, "~" + nickName).thenApplyAsync(result -> {
             if (result) {
-                return stringResult.success("Set nickname to " + nickName);
+                return textService.success("Set nickname to " + nickName);
             } else {
-                return stringResult.fail("Failed to set the nickname " + nickName);
+                return textService.fail("Failed to set the nickname " + nickName);
             }
         });
     }
@@ -196,10 +200,10 @@ public class CommonMemberManager<
     public CompletableFuture<TString> setNickNameForUser(String userName, String nickName) {
         return getPrimaryComponent().setNickNameForUser(userName, "~" + nickName).thenApplyAsync(result -> {
             if (result) {
-                userService.getPlayer(userName).ifPresent(stringResult.builder().green().append("Your nickname was set to " + nickName)::sendTo);
-                return stringResult.success("Set " + userName + "'s nickname to " + nickName);
+                userService.getPlayer(userName).ifPresent(textService.builder().green().append("Your nickname was set to " + nickName)::sendTo);
+                return textService.success("Set " + userName + "'s nickname to " + nickName);
             } else {
-                return stringResult.fail("Failed to set the nickname for " + userName);
+                return textService.fail("Failed to set the nickname for " + userName);
             }
         });
     }
@@ -208,10 +212,10 @@ public class CommonMemberManager<
     public CompletableFuture<TString> deleteNickNameForUser(String userName) {
         return getPrimaryComponent().deleteNickNameForUser(userName).thenApplyAsync(result -> {
             if (result) {
-                userService.getPlayer(userName).ifPresent(stringResult.builder().green().append("Your nickname was deleted.")::sendTo);
-                return stringResult.success("Successfully deleted " + userName + "'s nickname.");
+                userService.getPlayer(userName).ifPresent(textService.builder().green().append("Your nickname was deleted.")::sendTo);
+                return textService.success("Successfully deleted " + userName + "'s nickname.");
             } else {
-                return stringResult.fail("Failed to delete " + userName + "'s nickname.");
+                return textService.fail("Failed to delete " + userName + "'s nickname.");
             }
         });
     }
@@ -220,9 +224,9 @@ public class CommonMemberManager<
     public CompletableFuture<TString> deleteNickName(String userName) {
         return getPrimaryComponent().deleteNickNameForUser(userName).thenApplyAsync(result -> {
             if (result) {
-                return stringResult.success("Successfully deleted your nickname.");
+                return textService.success("Successfully deleted your nickname.");
             } else {
-                return stringResult.fail("Failed to delete your nickname.");
+                return textService.fail("Failed to delete your nickname.");
             }
         });
     }
@@ -233,9 +237,9 @@ public class CommonMemberManager<
         return getPrimaryComponent().banUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
                 kickService.kick(userName, pluginMessages.getBanMessage(reason, endUtc));
-                return stringResult.success("Banned " + userName + " for " + reason);
+                return textService.success("Banned " + userName + " for " + reason);
             }
-            return stringResult.fail("Invalid user.");
+            return textService.fail("Invalid user.");
         });
     }
 
@@ -248,16 +252,16 @@ public class CommonMemberManager<
     public CompletableFuture<TString> tempBan(String userName, String duration, String reason) {
         Optional<Duration> optionalDuration = timeFormatService.parseDuration(duration);
         if (!optionalDuration.isPresent()) {
-            return CompletableFuture.completedFuture(stringResult.fail("Invalid input for duration"));
+            return CompletableFuture.completedFuture(textService.fail("Invalid input for duration"));
         }
         Duration dur = optionalDuration.get();
         Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(dur);
         return getPrimaryComponent().banUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
                 kickService.kick(userName, pluginMessages.getBanMessage(reason, endUtc));
-                return stringResult.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur));
+                return textService.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur));
             }
-            return stringResult.fail("Invalid user.");
+            return textService.fail("Invalid user.");
         });
     }
 
@@ -270,9 +274,9 @@ public class CommonMemberManager<
     public CompletableFuture<TString> unBan(String userName) {
         return getPrimaryComponent().unBanUser(userName).thenApplyAsync(b -> {
             if (b) {
-                return stringResult.success("Unbanned " + userName);
+                return textService.success("Unbanned " + userName);
             }
-            return stringResult.fail("Invalid user.");
+            return textService.fail("Invalid user.");
         });
     }
 
@@ -281,10 +285,10 @@ public class CommonMemberManager<
         Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(Duration.ofDays(3600));
         return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
-                userService.getPlayer(userName).ifPresent(p -> stringResult.send(pluginMessages.getMuteMessage(reason, endUtc), p));
-                return stringResult.success("Muted " + userName);
+                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), p));
+                return textService.success("Muted " + userName);
             }
-            return stringResult.fail("Invalid user.");
+            return textService.fail("Invalid user.");
         });
     }
 
@@ -297,16 +301,16 @@ public class CommonMemberManager<
     public CompletableFuture<TString> tempMute(String userName, String duration, String reason) {
         Optional<Duration> optionalDuration = timeFormatService.parseDuration(duration);
         if (!optionalDuration.isPresent()) {
-            return CompletableFuture.completedFuture(stringResult.fail("Invalid input for duration"));
+            return CompletableFuture.completedFuture(textService.fail("Invalid input for duration"));
         }
         Duration dur = optionalDuration.get();
         Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(dur);
         return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
-                userService.getPlayer(userName).ifPresent(p -> stringResult.send(pluginMessages.getMuteMessage(reason, endUtc), p));
-                return stringResult.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur));
+                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), p));
+                return textService.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur));
             }
-            return stringResult.fail("Invalid user.");
+            return textService.fail("Invalid user.");
         });
     }
 
@@ -320,14 +324,14 @@ public class CommonMemberManager<
         return getPrimaryComponent().unMuteUser(userName).thenApplyAsync(b -> {
             if (b) {
                 userService.getPlayer(userName).ifPresent(p -> {
-                    stringResult.builder()
+                    textService.builder()
                         .append(pluginInfo.getPrefix())
                         .yellow().append("You have been unmuted.")
                         .sendTo(p);
                 });
-                return stringResult.success("UnMuted " + userName);
+                return textService.success("UnMuted " + userName);
             }
-            return stringResult.fail("Invalid user.");
+            return textService.fail("Invalid user.");
         });
     }
 }
