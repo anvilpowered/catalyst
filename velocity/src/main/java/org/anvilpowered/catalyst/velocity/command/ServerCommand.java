@@ -57,21 +57,23 @@ public class ServerCommand implements Command {
         if (source instanceof Player) {
             Player player = (Player) source;
             if (player.hasPermission(registry.getOrDefault(CatalystKeys.SERVER_BASE) + registeredServer.getServerInfo().getName())) {
-                if (registeredServer.ping().join().getVersion().getName().equals(player.getProtocolVersion().getName())) {
-                    player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {
-                        if (connection.isSuccessful()) {
-                            player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Connected to server " + registeredServer.getServerInfo().getName())));
-                        } else {
-                            if (player.getCurrentServer().map(s -> s.getServerInfo().getName().equals(registeredServer.getServerInfo().getName())).orElse(false)) {
-                                player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("You are already connected to " + registeredServer.getServerInfo().getName())));
+                registeredServer.ping().thenAcceptAsync(ping -> {
+                    if (ping.getVersion().getName().equals(player.getProtocolVersion().getName())) {
+                        player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {
+                            if (connection.isSuccessful()) {
+                                player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Connected to server " + registeredServer.getServerInfo().getName())));
                             } else {
-                                player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Failed to connect to " + registeredServer.getServerInfo().getName())));
+                                if (player.getCurrentServer().map(s -> s.getServerInfo().getName().equals(registeredServer.getServerInfo().getName())).orElse(false)) {
+                                    player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("You are already connected to " + registeredServer.getServerInfo().getName())));
+                                } else {
+                                    player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Failed to connect to " + registeredServer.getServerInfo().getName())));
+                                }
                             }
-                        }
-                    });
-                } else {
-                    source.sendMessage(pluginMessages.getIncompatibleServerVersion());
-                }
+                        });
+                    } else {
+                        source.sendMessage(pluginMessages.getIncompatibleServerVersion());
+                    }
+                });
             } else {
                 player.sendMessage(pluginMessages.getNoPermission());
             }
