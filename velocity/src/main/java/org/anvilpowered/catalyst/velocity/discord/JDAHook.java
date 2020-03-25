@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 
 import javax.security.auth.login.LoginException;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +43,7 @@ public class JDAHook {
 
     public void registryLoaded() {
         if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
+            proxyServer.getEventManager().register(catalyst, catalyst.getPrimaryEnvironment().getInjector().getInstance(DiscordProxyListener.class));
             try {
                 jda = new JDABuilder(registry.getOrDefault(CatalystKeys.BOT_TOKEN)).build().awaitReady();
                 jda.getPresence().setActivity(Activity.playing(registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE)));

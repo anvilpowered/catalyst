@@ -94,7 +94,6 @@ public class Catalyst extends BasePlugin<PluginContainer> {
         super.whenReady(environment);
         logger.info("Injecting listeners");
         proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyListener.class));
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(DiscordProxyListener.class));
     }
 
     @Subscribe
