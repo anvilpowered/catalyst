@@ -25,10 +25,10 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.misc.BindingExtensions;
 import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.catalyst.api.chat.ChatFilter;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.plugin.StaffListService;
+import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.common.chat.CommonChatFilter;
@@ -84,17 +84,17 @@ public class CommonModule<
         );
 
         be.bind(
-            new TypeToken<PrivateMessageService<TString>>(getClass()){
+            new TypeToken<PrivateMessageService<TString>>(getClass()) {
             },
-            new TypeToken<CommonPrivateMessageService<TPlayer, TString, TCommandSource>>(getClass()){
+            new TypeToken<CommonPrivateMessageService<TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
-        
+
         be.bind(
-            new TypeToken<StaffListService<TString>>(getClass()){
+            new TypeToken<StaffListService<TString>>(getClass()) {
             },
-            new TypeToken<CommonStaffListService<TPlayer, TString, TCommandSource>>(getClass()){
-            
+            new TypeToken<CommonStaffListService<TPlayer, TString, TCommandSource>>(getClass()) {
+
             }
         );
 

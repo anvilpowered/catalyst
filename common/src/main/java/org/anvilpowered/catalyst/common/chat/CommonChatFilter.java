@@ -19,8 +19,8 @@ package org.anvilpowered.catalyst.common.chat;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.chat.ChatFilter;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.service.ChatFilter;
 
 import java.util.ArrayList;
 import java.util.List;
