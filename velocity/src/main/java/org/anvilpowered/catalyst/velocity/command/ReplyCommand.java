@@ -73,13 +73,18 @@ public class ReplyCommand implements Command {
                 Optional<Player> recipient = proxyServer.getPlayer(recipientUUID);
 
                 if (recipient.isPresent()) {
-                    privateMessageService.sendMessage(sender.getUsername(), recipient.get().getUsername(), message);
+                    privateMessageService.sendMessage(
+                        sender.getUsername(), recipient.get().getUsername(), message);
                     privateMessageService.replyMap().put(recipientUUID, senderUUID);
                 } else {
-                    source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Invalid of offline player!").color(TextColor.RED)));
+                    source.sendMessage(
+                        pluginInfo.getPrefix().append(
+                            TextComponent.of("Invalid of offline player!").color(TextColor.RED)));
                 }
             } else {
-                source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Nobody to reply to!").color(TextColor.RED)));
+                source.sendMessage(
+                    pluginInfo.getPrefix().append(
+                        TextComponent.of("Nobody to reply to!").color(TextColor.RED)));
             }
         }
     }

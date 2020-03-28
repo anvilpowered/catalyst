@@ -27,6 +27,6 @@ public class CatalystRegistry extends BaseExtendedRegistry {
 
     @Inject
     public CatalystRegistry() {
-        defaultMap.put(Keys.BASE_SCAN_PACKAGE, "org.anvilpowered.catalyst.common.model");
+        setDefault(Keys.BASE_SCAN_PACKAGE, "org.anvilpowered.catalyst.common.model");
     }
 }

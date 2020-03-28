@@ -1,30 +1,42 @@
+import java.text.SimpleDateFormat
+
 plugins {
     id 'java'
+    id "net.kyori.blossom" version "1.1.0"
 }
 
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
     maven { url 'https://repo.spongepowered.org/maven' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     jcenter()
 }
 
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compileOnly 'org.spongepowered:configurate-hocon:3.6'
-    compileOnly 'org.spongepowered:configurate-core:3.6'
+    implementation 'org.spongepowered:configurate-hocon:3.6'
+    implementation 'org.spongepowered:configurate-core:3.6'
 
-    compileOnly project(':api')
-    compileOnly project(':Anvil:anvil-api')
-    compileOnly project(':Anvil:anvil-api-core')
-    compileOnly project(':Anvil:anvil-base')
+    implementation project(':api')
+    implementation anvil_api
+    implementation anvil_api_core
+    implementation anvil_base
 
-    compileOnly jsondb
-    compileOnly mongodb_driver_sync
-    compileOnly mongo_java_driver
-    compileOnly morphia
-    compileOnly guice
-    compileOnly xodus
-    compileOnly xodus_entity_store
+    implementation jsondb
+    implementation mongodb_driver_sync
+    implementation mongo_java_driver
+    implementation morphia
+    implementation guice
+    implementation xodus
+    implementation xodus_entity_store
+}
+
+blossom {
+    replaceToken '$modVersion', version
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss z")
+    format.setTimeZone(TimeZone.getTimeZone("UTC"))
+    String buildDate = format.format(new Date())
+    replaceToken '$buildDate', buildDate
 }

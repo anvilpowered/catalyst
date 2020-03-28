@@ -56,11 +56,12 @@ public class DeleteNicknameCommand implements Command {
 
         if (source instanceof Player) {
             Player player = (Player) source;
-            if(args.length == 0) {
+            if (args.length == 0) {
                 memberManager.deleteNickName(player.getUsername());
                 return;
             }
-            if (args[0].equals("other") && source.hasPermission(registry.getOrDefault(CatalystKeys.NICKNAME_OTHER))) {
+            if (args[0].equals("other") && source.hasPermission(
+                registry.getOrDefault(CatalystKeys.NICKNAME_OTHER))) {
                 memberManager.deleteNickNameForUser(args[1]).thenAcceptAsync(source::sendMessage);
             } else {
                 memberManager.deleteNickName(player.getUsername()).thenAcceptAsync(source::sendMessage);

@@ -59,7 +59,11 @@ public class StaffChatCommand implements Command {
                 }
             } else {
                 String message = String.join(" ", args);
-                ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(player, message, TextComponent.of(message));
+                ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(
+                    player,
+                    message,
+                    TextComponent.of(message)
+                );
                 proxyServer.getEventManager().fire(proxyStaffChatEvent).join();
             }
         } else {
@@ -67,9 +71,11 @@ public class StaffChatCommand implements Command {
                 source.sendMessage(pluginMessages.getNotEnoughArgs());
             } else {
                 String message = String.join(" ", args);
-                proxyServer.getAllPlayers().stream().filter(target -> target.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT)))
+                proxyServer.getAllPlayers().stream().filter(target ->
+                    target.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT)))
                     .forEach(target ->
-                        target.sendMessage(pluginMessages.getStaffChatMessageFormattedConsole(TextComponent.of(message)))
+                        target.sendMessage(pluginMessages
+                            .getStaffChatMessageFormattedConsole(TextComponent.of(message)))
                     );
             }
         }

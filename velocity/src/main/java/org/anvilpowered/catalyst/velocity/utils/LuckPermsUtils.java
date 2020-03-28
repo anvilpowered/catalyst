@@ -46,7 +46,7 @@ public class LuckPermsUtils {
 
     private Registry registry;
 
-    private static Map<Player, CachedMetaData> cachedPlayers = new HashMap<>();
+    private static Map<UUID, CachedMetaData> cachedPlayers = new HashMap<>();
 
     @Inject
     public LuckPermsUtils(Registry registry) {
@@ -67,8 +67,10 @@ public class LuckPermsUtils {
         UUID playerUUID = player.getUniqueId();
         User temp = Catalyst.api.getUserManager().getUser(playerUUID);
         if (temp != null) {
-            if (!cachedPlayers.containsKey(player)) {
-                cachedPlayers.put(player, temp.getCachedData().getMetaData(getQueryOptions(temp)));
+            if (cachedPlayers.containsKey(playerUUID)) {
+                cachedPlayers.replace(player.getUniqueId(), temp.getCachedData().getMetaData(getQueryOptions(temp)));
+            } else {
+                cachedPlayers.put(player.getUniqueId(), temp.getCachedData().getMetaData(getQueryOptions(temp)));
             }
         } else {
             throw new IllegalStateException("Failed to find the user " + player.getUsername() + " inside luckperms. Please report this on github");
@@ -126,58 +128,4 @@ public class LuckPermsUtils {
         }
         return "";
     }
-
-    /*
-    public static String getPrefix(Player player) {
-        if (getMetaData(player).isPresent()) {
-            if (getMetaData(player).get().getPrefix() == null) {
-                return "";
-            }
-            return getMetaData(player).get().getPrefix();
-        }
-        return "";
-    }
-
-    public static String getSuffix(Player player) {
-        if (getMetaData(player).isPresent()) {
-            if (getMetaData(player).get().getSuffix() == null) {
-                return "";
-            }
-            return getMetaData(player).get().getSuffix();
-        }
-        return "";
-    }
-
-    private static Optional<CachedMetaData> getMetaData(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        User tempUser = Catalyst.api.getUserManager().getUser(playerUUID);
-
-        return Optional.ofNullable(tempUser).map(User::getCachedData)
-            .map(data -> data.getMetaData(getQueryOptions(Optional.of(tempUser))));
-    }
-
-    public static String getNameColor(Player player) {
-        if (getMetaData(player).isPresent()) {
-            if (getMetaData(player).get().getMetaValue("name-color") != null) {
-                return getMetaData(player).get().getMetaValue("name-color");
-            } else {
-                return "";
-            }
-        }
-        return "";
-    }
-
-    public static String getChatColor(Player player) {
-        if (getMetaData(player).isPresent()) {
-            if (getMetaData(player).get().getMetaValue("chat-color") != null) {
-                return getMetaData(player).get().getMetaValue("chat-color");
-            } else {
-                return "";
-            }
-        }
-        return "";
-    }
-
-
-    */
 }

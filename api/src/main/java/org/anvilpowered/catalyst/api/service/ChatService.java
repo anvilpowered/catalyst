@@ -19,12 +19,13 @@ package org.anvilpowered.catalyst.api.service;
 
 import org.anvilpowered.catalyst.api.data.config.Channel;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
-public interface ChatService<TString, TPlayer> {
+public interface ChatService<TString, TPlayer, TCommandSource> {
 
     void switchChannel(UUID userUUID, String channelId);
 
@@ -42,11 +43,11 @@ public interface ChatService<TString, TPlayer> {
 
     CompletableFuture<Void> sendGlobalMessage (TString message);
 
-    CompletableFuture<TString> formatMessage(String prefix, String nameColor, String userName, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
+    CompletableFuture<Optional<TString>> formatMessage(String prefix, String nameColor, String userName, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
 
-    String getPlayerList();
+    List<TString> getPlayerList();
 
-    TString list();
+    void sendList(TCommandSource commandSource);
 
     TString createTempChannel(String prefix, UUID creator);
 }

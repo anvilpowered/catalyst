@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.common.chat;
+package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

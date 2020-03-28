@@ -49,8 +49,9 @@ public class ExceptionCommand implements Command {
 
         switch (args[0]) {
             case "list": {
-                if(source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_LIST))) {
-                    source.sendMessage(TextComponent.of(String.join(", ", registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS))));
+                if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_LIST))) {
+                    source.sendMessage(TextComponent.of(String.join(", ",
+                        registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS))));
                     return;
                 } else {
                     source.sendMessage(pluginMessages.getNoPermission());
@@ -58,15 +59,17 @@ public class ExceptionCommand implements Command {
                 return;
             }
             case "add": {
-                if(source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
+                if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
                     if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS).isEmpty()) {
-                        configurationService.addToCollection(CatalystKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                        configurationService
+                            .addToCollection(CatalystKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
                         configurationService.save();
                         source.sendMessage(pluginMessages.getNewException(args[1]));
                     } else if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
                         source.sendMessage(pluginMessages.getExistingException(args[1]));
                     } else {
-                        configurationService.addToCollection(CatalystKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                        configurationService
+                            .addToCollection(CatalystKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
                         configurationService.save();
                         source.sendMessage(pluginMessages.getNewException(args[1]));
                     }
@@ -77,11 +80,12 @@ public class ExceptionCommand implements Command {
                 return;
             }
             case "remove": {
-                if(source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
+                if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
                     if (!registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
                         source.sendMessage(pluginMessages.getMissingSwear(args[1]));
                     } else {
-                        configurationService.removeFromCollection(CatalystKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
+                        configurationService
+                            .removeFromCollection(CatalystKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
                         configurationService.save();
                         source.sendMessage(pluginMessages.getRemoveException(args[1]));
                     }

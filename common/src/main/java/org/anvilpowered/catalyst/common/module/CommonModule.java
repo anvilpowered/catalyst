@@ -31,15 +31,17 @@ import org.anvilpowered.catalyst.api.plugin.StaffListService;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
-import org.anvilpowered.catalyst.common.chat.CommonChatFilter;
-import org.anvilpowered.catalyst.common.chat.CommonChatService;
-import org.anvilpowered.catalyst.common.chat.CommonPrivateMessageService;
+import org.anvilpowered.catalyst.api.service.TabService;
+import org.anvilpowered.catalyst.common.service.CommonChatFilter;
+import org.anvilpowered.catalyst.common.service.CommonChatService;
+import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService;
 import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.member.CommonMemberManager;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 import org.anvilpowered.catalyst.common.plugin.CommonStaffListService;
+import org.anvilpowered.catalyst.common.service.CommonTabService;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class CommonModule<
@@ -77,7 +79,7 @@ public class CommonModule<
         );
 
         be.bind(
-            new TypeToken<ChatService<TString, TPlayer>>(getClass()) {
+            new TypeToken<ChatService<TString, TPlayer, TCommandSource>>(getClass()) {
             },
             new TypeToken<CommonChatService<TPlayer, TString, TCommandSource>>(getClass()) {
             }
@@ -94,7 +96,12 @@ public class CommonModule<
             new TypeToken<StaffListService<TString>>(getClass()) {
             },
             new TypeToken<CommonStaffListService<TPlayer, TString, TCommandSource>>(getClass()) {
-
+            }
+        );
+        be.bind(
+            new TypeToken<TabService<TString>>(getClass()) {
+            },
+            new TypeToken<CommonTabService<TString, TCommandSource>>(getClass()){
             }
         );
 

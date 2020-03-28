@@ -82,7 +82,9 @@ public class StaffListCommand implements Command {
     }
 
     private boolean isStaffOnline() {
-        return !staffListUtils.staffNames().isEmpty() || !staffListUtils.adminNames().isEmpty() || !staffListUtils.ownerNames().isEmpty();
+        return !staffListUtils.staffNames().isEmpty()
+            || !staffListUtils.adminNames().isEmpty()
+            || !staffListUtils.ownerNames().isEmpty();
     }
 
     public TextComponent getLine() {

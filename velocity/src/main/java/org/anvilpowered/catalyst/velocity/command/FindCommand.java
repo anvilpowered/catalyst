@@ -63,10 +63,13 @@ public class FindCommand implements Command {
             Optional<Player> player = proxyServer.getPlayer(args[0]);
 
             if (player.isPresent()) {
-                String serverName = player.get().getCurrentServer().map(ServerConnection::getServerInfo).get().getName();
-                source.sendMessage(pluginMessages.getCurrentServer(player.get().getUsername(), serverName));
+                String serverName = player.get()
+                    .getCurrentServer().map(ServerConnection::getServerInfo).get().getName();
+                source.sendMessage(
+                    pluginMessages.getCurrentServer(player.get().getUsername(), serverName));
             } else {
-                source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
+                source.sendMessage(
+                    pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
             }
         }
     }
@@ -74,7 +77,8 @@ public class FindCommand implements Command {
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return proxyServer.matchPlayer(args[0])
+                .stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

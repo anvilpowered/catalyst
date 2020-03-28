@@ -15,16 +15,16 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.tab;
+package org.anvilpowered.catalyst.api.service;
 
-import com.google.inject.Singleton;
+public interface TabService<TString> {
 
-import java.util.HashMap;
-import java.util.Map;
+    TString formatTab(String format, String userName, String prefix, String suffix);
 
-@Singleton
-public class TabUtils {
+    TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, int ping, int playerCount);
 
-    public Map<String, Double> playerBalances = new HashMap<>();
+    String getBalance(String userName);
+
+    void setBalance(String userName, double balance);
 
 }

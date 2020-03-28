@@ -62,7 +62,8 @@ public class TempMuteCommand implements Command {
         String username = args[0];
         String duration = args[1];
 
-        if (proxyServer.getPlayer(username).filter(p -> p.hasPermission(registry.getOrDefault(CatalystKeys.MUTE_EXEMPT))).isPresent()) {
+        if (proxyServer.getPlayer(username).filter(p ->
+            p.hasPermission(registry.getOrDefault(CatalystKeys.MUTE_EXEMPT))).isPresent()) {
             source.sendMessage(pluginMessages.getMuteExempt());
             return;
         }
@@ -70,15 +71,18 @@ public class TempMuteCommand implements Command {
         if (args.length == 2) {
             memberManager.tempMute(username, duration).thenAcceptAsync(source::sendMessage);
         } else {
-            String reason = String.join(" ", args).replace(username + " ", "").replace(duration, "");
-            memberManager.tempMute(username, duration, reason).thenAcceptAsync(source::sendMessage);
+            String reason = String.join(" ", args)
+                .replace(username + " ", "").replace(duration, "");
+            memberManager.tempMute(username, duration, reason)
+                .thenAcceptAsync(source::sendMessage);
         }
     }
 
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return proxyServer.matchPlayer(args[0]).stream()
+                .map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

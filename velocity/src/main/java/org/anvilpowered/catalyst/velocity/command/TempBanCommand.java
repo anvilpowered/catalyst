@@ -62,7 +62,8 @@ public class TempBanCommand implements Command {
         String username = args[0];
         String duration = args[1];
 
-        if (proxyServer.getPlayer(username).filter(p -> p.hasPermission(registry.getOrDefault(CatalystKeys.BAN_EXEMPT))).isPresent()) {
+        if (proxyServer.getPlayer(username).filter(p ->
+            p.hasPermission(registry.getOrDefault(CatalystKeys.BAN_EXEMPT))).isPresent()) {
             source.sendMessage(pluginMessages.getBanExempt());
             return;
         }
@@ -70,7 +71,8 @@ public class TempBanCommand implements Command {
         if (args.length == 2) {
             memberManager.tempBan(username, duration).thenAcceptAsync(source::sendMessage);
         } else {
-            String reason = String.join(" ", args).replace(username + " ", "").replace(duration, "");
+            String reason = String.join(" ", args)
+                .replace(username + " ", "").replace(duration, "");
             memberManager.tempBan(username, duration, reason).thenAcceptAsync(source::sendMessage);
         }
     }
@@ -78,7 +80,8 @@ public class TempBanCommand implements Command {
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return proxyServer.matchPlayer(args[0])
+                .stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

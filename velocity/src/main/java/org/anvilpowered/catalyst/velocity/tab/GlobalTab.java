@@ -24,9 +24,12 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.player.TabList;
 import com.velocitypowered.api.proxy.player.TabListEntry;
 import com.velocitypowered.api.util.GameProfile;
+import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.service.TabService;
+import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +47,10 @@ public class GlobalTab {
     private Registry registry;
 
     @Inject
-    private TabBuilder tabBuilder;
+    private TabService<TextComponent> tabService;
+
+    @Inject
+    private LuckPermsUtils luckPermsUtils;
 
     @Inject
     Plugin<?> catalyst;
@@ -98,11 +104,19 @@ public class GlobalTab {
                         List<UUID> toKeep = new ArrayList<>();
 
                         for (int i2 = 0; i2 < proxyServer.getPlayerCount(); i2++) {
-                            Player currentPlayer = (Player) proxyServer.getAllPlayers().toArray()[i2];
+                            Player currentPlayer = (Player) proxyServer
+                                .getAllPlayers().toArray()[i2];
 
-                            TabListEntry currentEntry = TabListEntry.builder().profile(currentPlayer.getGameProfile())
-                                .displayName(tabBuilder.formatPlayerTab(
-                                    registry.getOrDefault(CatalystKeys.TAB_FORMAT), currentPlayer))
+                            TabListEntry currentEntry = TabListEntry.builder().
+                                profile(currentPlayer.getGameProfile())
+                                .displayName(tabService.formatPlayerSpecificTab(
+                                    registry.getOrDefault(CatalystKeys.TAB_FORMAT),
+                                    currentPlayer.getUsername(),
+                                    luckPermsUtils.getPrefix(currentPlayer),
+                                    luckPermsUtils.getSuffix(currentPlayer),
+                                    (int) currentPlayer.getPing(),
+                                    proxyServer.getPlayerCount())
+                                )
                                 .tabList(currentPlayerToProcess.getTabList()).build();
 
                             insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry,
@@ -110,30 +124,54 @@ public class GlobalTab {
                         }
 
                         if (registry.getOrDefault(CatalystKeys.TAB_ENABLED)) {
-                            List<String> customtabs = new ArrayList<>(registry.getOrDefault(CatalystKeys.TAB_FORMAT_CUSTOM));
+                            List<String> customtabs = new ArrayList<>(
+                                registry.getOrDefault(CatalystKeys.TAB_FORMAT_CUSTOM));
 
                             for (int i3 = 0; i3 < customtabs.size(); i3++) {
                                 GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
 
                                 TabListEntry currentEntry = TabListEntry.builder().profile(tabProfile)
                                     .displayName(
-                                        tabBuilder.formatTab(customtabs.get(i3), currentPlayerToProcess))
+                                        tabService.formatTab(customtabs.get(i3),
+                                            currentPlayerToProcess.getUsername(),
+                                            luckPermsUtils.getPrefix(currentPlayerToProcess),
+                                            luckPermsUtils.getSuffix(currentPlayerToProcess))
+                                    )
                                     .tabList(currentPlayerToProcess.getTabList()).build();
 
-                                insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry, toKeep);
+                                insertIntoTab(
+                                    currentPlayerToProcess.getTabList(),
+                                    currentEntry,
+                                    toKeep
+                                );
                             }
                         }
 
-                        for (TabListEntry current : currentPlayerToProcess.getTabList().getEntries()) {
+                        for (TabListEntry current : currentPlayerToProcess
+                            .getTabList().getEntries()) {
                             if (!toKeep.contains(current.getProfile().getId()))
-                                currentPlayerToProcess.getTabList().removeEntry(current.getProfile().getId());
+                                currentPlayerToProcess.getTabList().
+                                    removeEntry(current.getProfile().getId());
                         }
 
                         currentPlayerToProcess.getTabList().setHeaderAndFooter(
-                            tabBuilder.formatTab(registry.getOrDefault(CatalystKeys.TAB_HEADER),
-                                currentPlayerToProcess),
-                            tabBuilder.formatTab(registry.getOrDefault(CatalystKeys.TAB_FOOTER),
-                                currentPlayerToProcess));
+                            tabService.formatPlayerSpecificTab(
+                                registry.getOrDefault(CatalystKeys.TAB_HEADER),
+                                currentPlayerToProcess.getUsername(),
+                                luckPermsUtils.getPrefix(currentPlayerToProcess),
+                                luckPermsUtils.getSuffix(currentPlayerToProcess),
+                                (int) currentPlayerToProcess.getPing(),
+                                proxyServer.getPlayerCount()
+                            ),
+                            tabService.formatPlayerSpecificTab(
+                                registry.getOrDefault(CatalystKeys.TAB_FOOTER),
+                                currentPlayerToProcess.getUsername(),
+                                luckPermsUtils.getPrefix(currentPlayerToProcess),
+                                luckPermsUtils.getSuffix(currentPlayerToProcess),
+                                (int) currentPlayerToProcess.getPing(),
+                                proxyServer.getPlayerCount()
+                            )
+                        );
                     }
                 }
             } catch (Exception e) {

@@ -61,7 +61,8 @@ public class MuteCommand implements Command {
         }
         String username = args[0];
 
-        if (proxyServer.getPlayer(username).filter(p -> p.hasPermission(registry.getOrDefault(CatalystKeys.MUTE_EXEMPT))).isPresent()) {
+        if (proxyServer.getPlayer(username).filter(p ->
+            p.hasPermission(registry.getOrDefault(CatalystKeys.MUTE_EXEMPT))).isPresent()) {
             source.sendMessage(pluginMessages.getMuteExempt());
             return;
         }
@@ -76,7 +77,8 @@ public class MuteCommand implements Command {
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return proxyServer.matchPlayer(args[0])
+                .stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

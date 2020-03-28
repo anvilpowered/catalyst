@@ -67,20 +67,8 @@ public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCo
 
     @Override
     public void removeStaffNames(String player) {
-        staffNames.forEach(p -> {
-            if (p.equals(player)) {
-                staffNames.remove(p);
-            }
-        });
-        adminNames.forEach(a -> {
-            if(a.equals(player)) {
-                adminNames.remove(a);
-            }
-        });
-        ownerNames.forEach(o -> {
-            if(o.equals(player)) {
-                ownerNames.remove(o);
-            }
-        });
+        staffNames.remove(player);
+        adminNames.remove(player);
+        ownerNames.remove(player);
     }
 }

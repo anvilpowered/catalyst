@@ -45,7 +45,9 @@ public class DiscordCommandSource implements CommandSource {
 
     @Override
     public void sendMessage(Component component) {
-        Objects.requireNonNull(jdaHook.getJDA().getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL)))
+        Objects.requireNonNull(
+            jdaHook.getJDA()
+            .getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL)))
             .sendMessage(LegacyComponentSerializer.legacy().serialize(component)).queue();
     }
 
