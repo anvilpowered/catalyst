@@ -87,7 +87,6 @@ public class NickNameCommand implements Command {
                 source.sendMessage(pluginMessages.getNoNickColorPermission());
                 memberManager.setNickName(player.getUsername(), pluginMessages.removeColor(nick)).thenAccept(source::sendMessage);
             }
-
         } else
             source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Player only command!")));
     }

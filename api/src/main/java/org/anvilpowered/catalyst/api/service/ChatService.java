@@ -42,7 +42,7 @@ public interface ChatService<TString, TPlayer> {
 
     CompletableFuture<Void> sendGlobalMessage (TString message);
 
-    CompletableFuture<TString> formatMessage(String prefix, String nameColor, String userName, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
+    CompletableFuture<Optional<TString>> formatMessage(String prefix, String nameColor, String userName, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
 
     String getPlayerList();
 

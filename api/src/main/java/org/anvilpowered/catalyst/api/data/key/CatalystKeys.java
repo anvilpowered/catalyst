@@ -130,6 +130,8 @@ public final class CatalystKeys {
     };
     public static final Key<String> NICKNAME_OTHER = new Key<String>("NICKNAME_OTHER", "catalyst.command.nickname.other") {
     };
+    public static final Key<String> NICKNAME_PREFIX = new Key<String>("NICKNAME_PREFIX", "~") {
+    };
     public static final Key<String> RELOAD = new Key<String>("RELOAD", "catalyst.command.reload") {
     };
     public static final Key<String> SEND = new Key<String>("SEND", "catalyst.admin.command.send") {
@@ -178,7 +180,7 @@ public final class CatalystKeys {
     };
     public static final Key<Integer> TOPIC_UPDATE_DELAY = new Key<Integer>("TOPIC_UPDATE_DELAY", 10) {
     };
-    public static final Key<String> NOW_PLAYING_MESSAGE = new Key<String>("NOW_PLAYING_MESSAGE", "A MilspecSG Server!") {
+    public static final Key<String> NOW_PLAYING_MESSAGE = new Key<String>("NOW_PLAYING_MESSAGE", "A Minecraft Server!") {
     };
     public static final Key<String> WEBHOOK_URL = new Key<String>("WEBHOOK_URL", "https://crafatar.com/avatars/%uuid%?default=MHF_Alex") {
     };
@@ -230,6 +232,7 @@ public final class CatalystKeys {
         Keys.registerKey(NICKNAME_COLOR);
         Keys.registerKey(NICKNAME_MAGIC);
         Keys.registerKey(NICKNAME_OTHER);
+        Keys.registerKey(NICKNAME_PREFIX);
         Keys.registerKey(RELOAD);
         Keys.registerKey(SEND);
         Keys.registerKey(SERVER_BASE);

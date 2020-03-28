@@ -95,7 +95,7 @@ public class ProxyListener {
         Optional<Channel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(player.getUniqueId()));
 
         List<String> swearList = chatFilter.isSwear(message);
-        if(channel.isPresent()) {
+        if (channel.isPresent()) {
             if (swearList != null) {
                 if (e.getResult().isAllowed()) {
                     if (!player.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
@@ -163,6 +163,11 @@ public class ProxyListener {
             server,
             channelId,
             channelPrefix
-        ).thenAcceptAsync(optionalMessage -> chatService.sendMessageToChannel(channelId, optionalMessage, p -> p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))));
+        ).thenAcceptAsync(optionalMessage -> {
+            if (optionalMessage.equals(TextComponent.of("muted"))) {
+                return;
+            }
+            chatService.sendMessageToChannel(channelId, optionalMessage, p -> p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)));
+        });
     }
 }

@@ -19,6 +19,8 @@ package org.anvilpowered.catalyst.common.chat;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.internal.cglib.core.$DefaultNamingPolicy;
+import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.data.key.Key;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -126,7 +128,7 @@ public class CommonChatService<
     }
 
     @Override
-    public CompletableFuture<TString> formatMessage(
+    public CompletableFuture<Optional<TString>> formatMessage(
         String prefix,
         String nameColor,
         String userName,
@@ -139,8 +141,13 @@ public class CommonChatService<
     ) {
         return memberManager.getPrimaryComponent().getOneForUser(userName).thenApplyAsync(optionalMember -> {
             if (!optionalMember.isPresent()) {
-                return textService.fail("Couldn't find a user matching that name!");
+                return Optional.of(textService.fail("Couldn't find a user matching that name!"));
             }
+
+            CoreMember<?> optionalCoreMember = optionalMember.get();
+            if(optionalMember.get().isMuted()) {
+                return Optional.empty();
+            };
 
             String finalName = optionalMember.get().getUserName();
             if (optionalMember.get().getNickName() != null) {
@@ -148,12 +155,12 @@ public class CommonChatService<
             } else {
                 finalName = nameColor + finalName + "&r";
             }
-            return textService
+            return Optional.of(textService
                 .builder()
                 .append(textService.deserialize(replacePlaceholders(message, prefix, finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE)))
                 .onHoverShowText(textService.deserialize(replacePlaceholders(message, prefix, finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_HOVER)))
                 .onClickSuggestCommand(replacePlaceholders(message, prefix, userName, hasChatColorPermission, suffix, finalName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND))
-                .build();
+                .build());
         });
     }
 
@@ -174,7 +181,7 @@ public class CommonChatService<
             .replace("%suffix%", suffix)
             .replace("%server%", serverName)
             .replace("%channel%", channelPrefix)
-            .replace("%message%", hasChatColorPermission ? rawMessage : textService.removeColor(rawMessage));
+            .replace("%message%", hasChatColorPermission ? rawMessage : textService.toPlain(rawMessage));
     }
 
     @Override

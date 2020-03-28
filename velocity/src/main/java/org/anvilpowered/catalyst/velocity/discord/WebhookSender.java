@@ -70,10 +70,10 @@ public class WebhookSender {
             System.out.println("Please allow the discord bridge to handle webhooks!");
         }
 
-        net.dv8tion.jda.api.entities.Webhook w = textChannel.getGuild().retrieveWebhooks().complete().stream().filter(wh -> wh.getName().equals("MS-DB: " + textChannel.getName())).findFirst().orElse(null);
+        net.dv8tion.jda.api.entities.Webhook w = textChannel.getGuild().retrieveWebhooks().complete().stream().filter(wh -> wh.getName().equals("Catalyst-DB: " + textChannel.getName())).findFirst().orElse(null);
 
         if (w == null) {
-            w = textChannel.createWebhook("MS-DB: " + textChannel.getName()).complete();
+            w = textChannel.createWebhook("Catalyst-DB: " + textChannel.getName()).complete();
         }
 
         return w;
@@ -88,14 +88,8 @@ public class WebhookSender {
             .replace("&d", "").replace("&e", "").replace("&f", "")
             .replace("&k", "").replace("&l", "").replace("&m", "")
             .replace("&n", "").replace("&o", "").replace("&r", "")
-            .replace("&k", "").replace("&9", "").replaceAll("\\*", "")
-            .replaceAll("_", "");
+            .replace("&k", "").replace("&9", "").replaceAll("\\*", "");
 
 
-    }
-
-    private String removeDiscordFormatting(String message) {
-        return message.replaceAll("\\*", "")
-            .replaceAll("_", "");
     }
 }
