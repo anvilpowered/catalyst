@@ -1,13 +1,17 @@
 package org.anvilpowered.catalyst.velocity.listener;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
@@ -18,6 +22,7 @@ import org.anvilpowered.catalyst.api.plugin.StaffListService;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
+import org.anvilpowered.catalyst.api.service.TabService;
 import org.anvilpowered.catalyst.velocity.event.ProxyChatEvent;
 import org.anvilpowered.catalyst.velocity.event.ProxyStaffChatEvent;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
@@ -52,6 +57,9 @@ public class ProxyListener {
 
     @Inject
     private ChatFilter chatFilter;
+
+    @Inject
+    private TabService tabService;
 
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
@@ -201,5 +209,28 @@ public class ProxyListener {
                 player.sendMessage(pluginMessages.getMuted());
             }
         });
+    }
+
+    @Subscribe
+    public void onPluginMessage(PluginMessageEvent event) {
+        if (!event.getIdentifier().equals(new LegacyChannelIdentifier("GlobalTab"))) {
+            return;
+        }
+
+        event.setResult(PluginMessageEvent.ForwardResult.handled());
+
+        if (!(event.getSource() instanceof ServerConnection)) {
+            return;
+        }
+
+        ByteArrayDataInput in = event.dataAsDataStream();
+        String subChannel = in.readUTF();
+
+        if (subChannel.endsWith("Balance")) {
+            String[] packet = in.readUTF().split(":");
+            String userName = packet[0];
+            Double balance = Double.parseDouble(packet[1]);
+            tabService.setBalance(userName, balance);
+        }
     }
 }

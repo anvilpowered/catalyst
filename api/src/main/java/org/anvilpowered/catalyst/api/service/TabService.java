@@ -19,8 +19,12 @@ package org.anvilpowered.catalyst.api.service;
 
 public interface TabService<TString> {
 
-    TString formatPlayerTab(String raw, String userName);
+    TString formatTab(String format, String userName, String prefix, String suffix);
 
-    TString formatTab(String raw, String userName);
+    TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, int ping, int playerCount);
+
+    String getBalance(String userName);
+
+    void setBalance(String userName, double balance);
 
 }

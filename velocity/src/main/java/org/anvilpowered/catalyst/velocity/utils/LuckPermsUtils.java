@@ -46,7 +46,7 @@ public class LuckPermsUtils {
 
     private Registry registry;
 
-    private static Map<Player, CachedMetaData> cachedPlayers = new HashMap<>();
+    private static Map<UUID, CachedMetaData> cachedPlayers = new HashMap<>();
 
     @Inject
     public LuckPermsUtils(Registry registry) {
@@ -67,8 +67,10 @@ public class LuckPermsUtils {
         UUID playerUUID = player.getUniqueId();
         User temp = Catalyst.api.getUserManager().getUser(playerUUID);
         if (temp != null) {
-            if (!cachedPlayers.containsKey(player)) {
-                cachedPlayers.put(player, temp.getCachedData().getMetaData(getQueryOptions(temp)));
+            if (cachedPlayers.containsKey(playerUUID)) {
+                cachedPlayers.replace(player.getUniqueId(), temp.getCachedData().getMetaData(getQueryOptions(temp)));
+            } else {
+                cachedPlayers.put(player.getUniqueId(), temp.getCachedData().getMetaData(getQueryOptions(temp)));
             }
         } else {
             throw new IllegalStateException("Failed to find the user " + player.getUsername() + " inside luckperms. Please report this on github");
