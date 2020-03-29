@@ -45,7 +45,8 @@ public class SocialSpyCommand implements Command {
     public void execute(CommandSource source, @NonNull String[] args) {
         if (source instanceof Player) {
             Player player = (Player) source;
-            if (source.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY)) || source.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN))) {
+            if (source.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY))
+                || source.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN))) {
                 UUID playerUUID = player.getUniqueId();
                 if (privateMessageService.socialSpySet().contains(playerUUID)) {
                     privateMessageService.socialSpySet().remove(playerUUID);

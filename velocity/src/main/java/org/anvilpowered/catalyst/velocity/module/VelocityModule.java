@@ -51,6 +51,8 @@ public class VelocityModule extends CommonModule<
         }
 
         bind(new TypeLiteral<ConfigurationLoader<CommentedConfigurationNode>>() {
-        }).toInstance(HoconConfigurationLoader.builder().setPath(Paths.get(configFilesLocation + "/catalyst.conf")).build());
+        }).toInstance(HoconConfigurationLoader.builder()
+            .setPath(Paths.get(configFilesLocation + "/catalyst.conf"))
+            .build());
     }
 }

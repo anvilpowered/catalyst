@@ -98,9 +98,11 @@ public class GlobalTab {
                         List<UUID> toKeep = new ArrayList<>();
 
                         for (int i2 = 0; i2 < proxyServer.getPlayerCount(); i2++) {
-                            Player currentPlayer = (Player) proxyServer.getAllPlayers().toArray()[i2];
+                            Player currentPlayer = (Player) proxyServer
+                                .getAllPlayers().toArray()[i2];
 
-                            TabListEntry currentEntry = TabListEntry.builder().profile(currentPlayer.getGameProfile())
+                            TabListEntry currentEntry = TabListEntry.builder().
+                                profile(currentPlayer.getGameProfile())
                                 .displayName(tabBuilder.formatPlayerTab(
                                     registry.getOrDefault(CatalystKeys.TAB_FORMAT), currentPlayer))
                                 .tabList(currentPlayerToProcess.getTabList()).build();
@@ -110,7 +112,8 @@ public class GlobalTab {
                         }
 
                         if (registry.getOrDefault(CatalystKeys.TAB_ENABLED)) {
-                            List<String> customtabs = new ArrayList<>(registry.getOrDefault(CatalystKeys.TAB_FORMAT_CUSTOM));
+                            List<String> customtabs = new ArrayList<>(
+                                registry.getOrDefault(CatalystKeys.TAB_FORMAT_CUSTOM));
 
                             for (int i3 = 0; i3 < customtabs.size(); i3++) {
                                 GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
@@ -120,13 +123,19 @@ public class GlobalTab {
                                         tabBuilder.formatTab(customtabs.get(i3), currentPlayerToProcess))
                                     .tabList(currentPlayerToProcess.getTabList()).build();
 
-                                insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry, toKeep);
+                                insertIntoTab(
+                                    currentPlayerToProcess.getTabList(),
+                                    currentEntry,
+                                    toKeep
+                                );
                             }
                         }
 
-                        for (TabListEntry current : currentPlayerToProcess.getTabList().getEntries()) {
+                        for (TabListEntry current : currentPlayerToProcess
+                            .getTabList().getEntries()) {
                             if (!toKeep.contains(current.getProfile().getId()))
-                                currentPlayerToProcess.getTabList().removeEntry(current.getProfile().getId());
+                                currentPlayerToProcess.getTabList().
+                                    removeEntry(current.getProfile().getId());
                         }
 
                         currentPlayerToProcess.getTabList().setHeaderAndFooter(

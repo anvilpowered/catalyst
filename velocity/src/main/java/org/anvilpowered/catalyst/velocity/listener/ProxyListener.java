@@ -58,14 +58,19 @@ public class ProxyListener {
         Player player = event.getPlayer();
         staffListService.removeStaffNames(player.getUsername());
         luckPermsUtils.removePlayerFromCache(player);
-        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE).replace("%player%", player.getUsername()), '&'));
+        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(
+            registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
+                .replace("%player%", player.getUsername()),
+            '&'));
     }
 
     @Subscribe
     public void staffChatEvent(ProxyStaffChatEvent event) {
         proxyServer.getAllPlayers().stream().filter(target -> target
             .hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT)))
-            .forEach(target -> target.sendMessage(pluginMessages.getStaffChatMessageFormatted(event.getSender().getUsername(), event.getMessage())));
+            .forEach(target -> target.sendMessage(pluginMessages.getStaffChatMessageFormatted(
+                event.getSender().getUsername(),
+                event.getMessage())));
     }
 
     @Subscribe
@@ -77,7 +82,11 @@ public class ProxyListener {
         }
 
         luckPermsUtils.addPlayerToCache(player);
-        staffListService.getStaffNames(player.getUsername(), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN)), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF)), player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER)));
+        staffListService.getStaffNames(
+            player.getUsername(),
+            player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN)),
+            player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF)),
+            player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER)));
         proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", player.getUsername()), '&'));
     }
 
@@ -87,7 +96,10 @@ public class ProxyListener {
         Player player = e.getPlayer();
 
         if (ProxyStaffChatEvent.staffChatSet.contains(player.getUniqueId())) {
-            ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(player, message, TextComponent.of(message));
+            ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(
+                player,
+                message,
+                TextComponent.of(message));
             proxyServer.getEventManager().fire(proxyStaffChatEvent).join();
             e.setResult(PlayerChatEvent.ChatResult.denied());
             return;
@@ -103,32 +115,46 @@ public class ProxyListener {
                         for (String swear : swearList) {
                             message = message.replace(swear, "****");
                         }
-                        ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), checkPlayerName(message), TextComponent.of(checkPlayerName(message)), channel.get());
+                        ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(),
+                            checkPlayerName(message),
+                            TextComponent.of(checkPlayerName(message)),
+                            channel.get());
                         proxyServer.getEventManager().fire(proxyChatEvent).join();
 
                     } else {
-                        ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), checkPlayerName(message), TextComponent.of(checkPlayerName(message)), channel.get());
+                        ProxyChatEvent proxyChatEvent = new ProxyChatEvent(
+                            e.getPlayer(),
+                            checkPlayerName(message),
+                            TextComponent.of(
+                                checkPlayerName(message)),
+                            channel.get());
                         proxyServer.getEventManager().fire(proxyChatEvent).join();
                     }
                     sendMessage(e, checkPlayerName(message));
                 }
             } else {
                 if (e.getResult().isAllowed()) {
-                    ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), message, TextComponent.of(message), channel.get());
+                    ProxyChatEvent proxyChatEvent = new ProxyChatEvent(
+                        e.getPlayer(), message, TextComponent.of(message), channel.get());
                     proxyServer.getEventManager().fire(proxyChatEvent).join();
                     sendMessage(e, checkPlayerName(message));
                 }
             }
         } else {
-            throw new AssertionError("Unable to find a chat channel for " + player.getUsername() + " please report this on github.");
+            throw new AssertionError(
+                "Unable to find a chat channel for " + player.getUsername() +
+                    " please report this on github.");
         }
     }
 
     public String checkPlayerName(String message) {
         for (Player onlinePlayer : Catalyst.getServer().getAllPlayers()) {
             if (message.contains(onlinePlayer.getUsername())) {
-                message = message.replaceAll(onlinePlayer.getUsername().toUpperCase(), "&b@" + onlinePlayer.getUsername() + "&r")
-                    .replaceAll(onlinePlayer.getUsername().toLowerCase(), "&b@" + onlinePlayer.getUsername() + "&r");
+                message = message.replaceAll(
+                    onlinePlayer.getUsername().toUpperCase(),
+                    "&b@" + onlinePlayer.getUsername() + "&r")
+                    .replaceAll(onlinePlayer.getUsername().toLowerCase(),
+                        "&b@" + onlinePlayer.getUsername() + "&r");
             }
         }
         return message;
@@ -144,14 +170,18 @@ public class ProxyListener {
         String chatColor = luckPermsUtils.getChatColor(player);
         String nameColor = luckPermsUtils.getNameColor(player);
         String suffix = luckPermsUtils.getSuffix(player);
-        String server = player.getCurrentServer().orElseThrow(() -> new IllegalStateException("Invalid Server!")).getServer().getServerInfo().getName();
-        Optional<Channel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(player.getUniqueId()));
+        String server = player.getCurrentServer().orElseThrow(() ->
+            new IllegalStateException("Invalid Server!")).getServer().getServerInfo().getName();
+        Optional<Channel> channel = chatService.getChannelFromId(
+            chatService.getChannelIdForUser(player.getUniqueId()));
         String channelId = chatService.getChannelIdForUser(player.getUniqueId());
-        String channelPrefix = chatService.getChannelPrefix(channelId).orElseThrow(() -> new IllegalStateException("Please specify a prefix for " + channelId));
+        String channelPrefix = chatService.getChannelPrefix(channelId).orElseThrow(() ->
+            new IllegalStateException("Please specify a prefix for " + channelId));
 
         if (!channel.isPresent()) throw new IllegalStateException("Invalid chat channel!");
 
-        Tristate hasColorPermission = player.getPermissionValue(registry.getOrDefault(CatalystKeys.CHAT_COLOR));
+        Tristate hasColorPermission = player.getPermissionValue(
+            registry.getOrDefault(CatalystKeys.CHAT_COLOR));
 
         chatService.formatMessage(
             prefix,
@@ -165,7 +195,8 @@ public class ProxyListener {
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
             if (optionalMessage.isPresent()) {
-                chatService.sendMessageToChannel(channelId, optionalMessage.get(), p -> p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)));
+                chatService.sendMessageToChannel(channelId, optionalMessage.get(), p ->
+                    p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)));
             } else {
                 player.sendMessage(pluginMessages.getMuted());
             }

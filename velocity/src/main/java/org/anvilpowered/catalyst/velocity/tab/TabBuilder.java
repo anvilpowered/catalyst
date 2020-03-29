@@ -45,7 +45,9 @@ public class TabBuilder {
         raw = raw.replace("%prefix%", luckPermsUtils.getPrefix(player));
         raw = raw.replace("%suffix%", luckPermsUtils.getSuffix(player));
 
-        raw = raw.replace("%server%", player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("null"));
+        raw = raw.replace("%server%",
+            player.getCurrentServer().map(s ->
+                s.getServerInfo().getName()).orElse("null"));
 
         return textService.deserialize(raw);
     }
@@ -54,7 +56,8 @@ public class TabBuilder {
         raw = raw.replace("%player%", player.getUsername())
             .replace("%prefix%", luckPermsUtils.getPrefix(player))
             .replace("%suffix%", luckPermsUtils.getSuffix(player))
-            .replace("%server%", player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("null"))
+            .replace("%server%", player.getCurrentServer().map(s ->
+                s.getServerInfo().getName()).orElse("null"))
             .replace("%ping%", String.valueOf(player.getPing()))
             .replace("%playercount%", String.valueOf(proxyServer.getPlayerCount()))
             .replace("%balance%", getBalance(player));

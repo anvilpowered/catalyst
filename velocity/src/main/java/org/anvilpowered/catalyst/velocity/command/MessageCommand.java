@@ -73,12 +73,15 @@ public class MessageCommand implements Command {
                     if (args[0].equalsIgnoreCase(recipient.get().getUsername())) {
                         args[0] = args[0].toLowerCase();
                         String recipientName = recipient.get().getUsername();
-                        String message = String.join(" ", args).replace(recipientName.toLowerCase(), "");
-                        privateMessageService.sendMessage(sender.getUsername(), recipient.get().getUsername(), message);
+                        String message = String.join(" ", args)
+                            .replace(recipientName.toLowerCase(), "");
+                        privateMessageService.sendMessage(
+                            sender.getUsername(), recipient.get().getUsername(), message);
                         if (sender.getUniqueId().equals(recipient.get().getUniqueId())) {
                             return;
                         }
-                        privateMessageService.replyMap().put(recipient.get().getUniqueId(), sender.getUniqueId());
+                        privateMessageService.replyMap().put(
+                            recipient.get().getUniqueId(), sender.getUniqueId());
                     }
                 }
             }
@@ -88,7 +91,8 @@ public class MessageCommand implements Command {
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return Catalyst.getServer().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return Catalyst.getServer().matchPlayer(args[0])
+                .stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

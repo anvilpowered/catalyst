@@ -51,7 +51,8 @@ public class BaseChannelCommand implements Command {
 
             switch (args[0]) {
                 case ("info"): {
-                    if (source.hasPermission(registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + args[1])) {
+                    if (source.hasPermission(
+                        registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + args[1])) {
 
                         source.sendMessage(textService.builder()
                             .gold().append(args[1])
@@ -64,7 +65,8 @@ public class BaseChannelCommand implements Command {
                     return;
                 }
                 case ("join"): {
-                    if (source.hasPermission(registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + args[1])) {
+                    if (source.hasPermission(
+                        registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + args[1])) {
                         chatService.switchChannel(player.getUniqueId(), args[1]);
                     } else {
                         source.sendMessage(pluginMessages.getNoPermission());

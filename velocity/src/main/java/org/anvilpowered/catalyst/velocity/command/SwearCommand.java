@@ -49,8 +49,11 @@ public class SwearCommand implements Command {
 
         switch (args[0]) {
             case "list": {
-                if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN)) || source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_LIST))) {
-                    source.sendMessage(TextComponent.of(String.join(", ", registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS))));
+                if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))
+                    || source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_LIST))) {
+                    source.sendMessage(TextComponent.of(
+                        String.join(", ",
+                            registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS))));
                 } else {
                     source.sendMessage(pluginMessages.getNoPermission());
                 }
@@ -61,7 +64,8 @@ public class SwearCommand implements Command {
                     if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
                         source.sendMessage(pluginMessages.getExistingSwear(args[1]));
                     } else {
-                        configurationService.addToCollection(CatalystKeys.CHAT_FILTER_SWEARS, args[1]);
+                        configurationService
+                            .addToCollection(CatalystKeys.CHAT_FILTER_SWEARS, args[1]);
                         configurationService.save();
                         source.sendMessage(pluginMessages.getNewSwear(args[1]));
                     }
@@ -72,10 +76,12 @@ public class SwearCommand implements Command {
             }
             case "remove": {
                 if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
-                    if (!registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
+                    if (!registry.getOrDefault(
+                        CatalystKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
                         source.sendMessage(pluginMessages.getMissingSwear(args[1]));
                     } else {
                         configurationService.removeFromCollection(CatalystKeys.CHAT_FILTER_SWEARS, args[1]);
+
                         configurationService.save();
                         source.sendMessage(pluginMessages.getRemoveSwear(args[1]));
                     }

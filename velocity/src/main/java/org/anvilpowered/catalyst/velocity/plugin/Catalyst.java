@@ -75,7 +75,14 @@ public class Catalyst extends BasePlugin<PluginContainer> {
 
     @Inject
     public Catalyst(Injector injector) {
-        super(CatalystPluginInfo.id, injector, new VelocityModule(), GlobalTab.class, CatalystCommandManager.class, JDAHook.class, LuckPermsUtils.class);
+        super(CatalystPluginInfo.id,
+            injector,
+            new VelocityModule(),
+            GlobalTab.class,
+            CatalystCommandManager.class,
+            JDAHook.class,
+            LuckPermsUtils.class
+        );
     }
 
     @Subscribe(order = PostOrder.LAST)
@@ -93,7 +100,10 @@ public class Catalyst extends BasePlugin<PluginContainer> {
     protected void whenReady(Environment environment) {
         super.whenReady(environment);
         logger.info("Injecting listeners");
-        proxyServer.getEventManager().register(this, environment.getInjector().getInstance(ProxyListener.class));
+        proxyServer.getEventManager().register(
+            this,
+            environment.getInjector().getInstance(ProxyListener.class)
+        );
     }
 
     @Subscribe

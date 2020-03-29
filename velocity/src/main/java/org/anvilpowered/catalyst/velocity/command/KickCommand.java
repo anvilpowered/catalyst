@@ -69,7 +69,8 @@ public class KickCommand implements Command {
             }
             player.get().disconnect(TextComponent.of(kickReason));
         } else {
-            source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
+            source.sendMessage(
+                pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
         }
     }
 }

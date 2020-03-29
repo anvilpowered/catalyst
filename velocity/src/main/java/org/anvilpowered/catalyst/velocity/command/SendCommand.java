@@ -65,19 +65,35 @@ public class SendCommand implements Command {
         if (player.isPresent()) {
             Optional<RegisteredServer> server = proxyServer.getServer(args[1]);
             if (server.isPresent()) {
-                if (player.get().getCurrentServer().map(ServerConnection::getServerInfo).map(ServerInfo::getName).map(s -> s.equalsIgnoreCase(server.get().getServerInfo().getName())).orElse(false)) {
-                    source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of(player.get().getUsername() + " is already connected to that server.")));
+                if (player.get().getCurrentServer()
+                    .map(ServerConnection::getServerInfo).map(ServerInfo::getName)
+                    .map(s ->
+                        s.equalsIgnoreCase(
+                            server.get().getServerInfo().getName())).orElse(false)) {
+                    source.sendMessage(
+                        pluginInfo.getPrefix().append(
+                            TextComponent.of(player.get().getUsername()
+                                + " is already connected to that server.")));
                 } else {
                     Player sender = (Player) source;
-                    source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("sending " + player.get().getUsername() + " to " + server.get().getServerInfo().getName())));
-                    player.get().sendMessage(pluginInfo.getPrefix().append(TextComponent.of("you have been sent to " + server.get().getServerInfo().getName() + " by " + sender.getUsername())));
+                    source.sendMessage(
+                        pluginInfo.getPrefix().append(
+                            TextComponent.of("sending " + player.get().getUsername()
+                                + " to " + server.get().getServerInfo().getName())));
+                    player.get().sendMessage(
+                        pluginInfo.getPrefix().append(
+                            TextComponent.of("you have been sent to "
+                                + server.get().getServerInfo().getName()
+                                + " by " + sender.getUsername())));
                     player.get().createConnectionRequest(server.get()).fireAndForget();
                 }
             } else {
-                source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Invalid or offline server.")));
+                source.sendMessage(
+                    pluginInfo.getPrefix().append(TextComponent.of("Invalid or offline server.")));
             }
         } else {
-            source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
+            source.sendMessage(
+                pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
         }
     }
 }
