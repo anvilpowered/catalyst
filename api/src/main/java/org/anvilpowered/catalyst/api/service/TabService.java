@@ -15,18 +15,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.common.data.registry;
+package org.anvilpowered.catalyst.api.service;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.anvilpowered.anvil.api.data.key.Keys;
-import org.anvilpowered.anvil.base.data.registry.BaseExtendedRegistry;
+public interface TabService<TString> {
 
-@Singleton
-public class CatalystRegistry extends BaseExtendedRegistry {
+    TString formatPlayerTab(String raw, String userName);
 
-    @Inject
-    public CatalystRegistry() {
-        setDefault(Keys.BASE_SCAN_PACKAGE, "org.anvilpowered.catalyst.common.model");
-    }
+    TString formatTab(String raw, String userName);
+
 }

@@ -164,10 +164,11 @@ public class ProxyListener {
             channelId,
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
-            if (optionalMessage.equals(TextComponent.of("muted"))) {
-                return;
+            if (optionalMessage.isPresent()) {
+                chatService.sendMessageToChannel(channelId, optionalMessage.get(), p -> p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)));
+            } else {
+                player.sendMessage(pluginMessages.getMuted());
             }
-            chatService.sendMessageToChannel(channelId, optionalMessage, p -> p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)));
         });
     }
 }
