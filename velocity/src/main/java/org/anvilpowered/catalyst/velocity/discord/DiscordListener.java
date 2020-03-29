@@ -1,7 +1,6 @@
 package org.anvilpowered.catalyst.velocity.discord;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.dv8tion.jda.api.Permission;

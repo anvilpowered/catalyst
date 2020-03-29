@@ -64,6 +64,7 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.TOPIC_FORMAT, "discord.format.topic");
         setName(CatalystKeys.TOPIC_UPDATE_DELAY, "discord.time.topicUpdateFrequency");
         setName(CatalystKeys.NOW_PLAYING_MESSAGE, "discord.format.playing");
+        setName(CatalystKeys.DISCORD_HOVER_MESSAGE, "discord.format.hover");
         setName(CatalystKeys.WEBHOOK_URL, "discord.url.webhook");
         setName(CatalystKeys.DISCORD_URL, "discord.url.invite");
         setName(CatalystKeys.DISCORD_ENABLE, "discord.enabled");
@@ -103,6 +104,7 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.TOPIC_FORMAT, "\nFormat of the main channel topic updater");
         setDescription(CatalystKeys.TOPIC_UPDATE_DELAY, "\nHow often you would like the topic to be updated in seconds");
         setDescription(CatalystKeys.NOW_PLAYING_MESSAGE, "\nThe message being shown as the \"now playing\" for the discord bot.");
+        setDescription(CatalystKeys.DISCORD_HOVER_MESSAGE, "\nThe message being shown when a player hovers over a message sent from discord");
         setDescription(CatalystKeys.WEBHOOK_URL, "\nURL that gets the player avatar when sending messages to discord");
         setDescription(CatalystKeys.DISCORD_URL, "\nDiscord invite link that allows players to join the discord");
         setDescription(CatalystKeys.DISCORD_ENABLE, "\nEnable or Disable the discord bot (false = disabled).");

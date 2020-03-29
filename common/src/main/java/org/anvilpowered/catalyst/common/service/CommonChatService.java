@@ -19,7 +19,6 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.internal.cglib.core.$DefaultNamingPolicy;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.data.key.Key;
 import org.anvilpowered.anvil.api.data.registry.Registry;
@@ -45,7 +44,7 @@ public class CommonChatService<
     TPlayer extends TCommandSource,
     TString,
     TCommandSource>
-    implements ChatService<TString, TPlayer> {
+    implements ChatService<TString, TPlayer, TCommandSource> {
 
     @Inject
     Registry registry;
@@ -145,12 +144,12 @@ public class CommonChatService<
             }
 
             CoreMember<?> optionalCoreMember = optionalMember.get();
-            if(optionalMember.get().isMuted()) {
+            if (optionalMember.get().isMuted()) {
                 return Optional.empty();
-            };
+            }
 
             String finalName = optionalMember.get().getUserName();
-            if (optionalMember.get().getNickName() != null) {
+            if (optionalCoreMember.getNickName() != null) {
                 finalName = optionalMember.get().getNickName() + "&r";
             } else {
                 finalName = nameColor + finalName + "&r";
@@ -185,16 +184,19 @@ public class CommonChatService<
     }
 
     @Override
-    public String getPlayerList() {
-        return userService.getOnlinePlayers().stream().map(userService::getUserName).collect(Collectors.joining(", \n"));
+    public List<TString> getPlayerList() {
+        return userService.getOnlinePlayers().stream()
+            .map(userService::getUserName)
+            .map(textService::of).collect(Collectors.toList());
     }
 
     @Override
-    public TString list() {
-        return textService.builder()
-            .green().append("------------------- Online Players --------------------\n")
-            .gray().append(getPlayerList())
-            .build();
+    public void sendList(TCommandSource commandSource) {
+            textService.paginationBuilder()
+                .header(textService.of("------------------- Online Players --------------------"))
+                .contents(getPlayerList())
+                .build()
+                .sendTo(commandSource);
     }
 
     @Override

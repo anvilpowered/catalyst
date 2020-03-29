@@ -188,6 +188,8 @@ public final class CatalystKeys {
     };
     public static final Key<Boolean> DISCORD_ENABLE = new Key<Boolean>("DISCORD_ENABLE", false) {
     };
+    public static final Key<String> DISCORD_HOVER_MESSAGE = new Key<String> ("DISCORD_HOVER_MESSAGE", "Click here to join our discord!"){
+    };
     public static final Key<String> WEBSITE_URL = new Key<String>("WEBSITE_URL", "http://ci.anvilpowered.org") {
     };
 
@@ -262,6 +264,7 @@ public final class CatalystKeys {
         Keys.registerKey(WEBHOOK_URL);
         Keys.registerKey(DISCORD_URL);
         Keys.registerKey(DISCORD_ENABLE);
+        Keys.registerKey(DISCORD_HOVER_MESSAGE);
         Keys.registerKey(WEBSITE_URL);
     }
 }

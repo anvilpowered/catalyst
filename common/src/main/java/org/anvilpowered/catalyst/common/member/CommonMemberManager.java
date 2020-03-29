@@ -74,7 +74,7 @@ public class CommonMemberManager<
     protected UserService<TUser, TPlayer> userService;
 
     @Inject
-    protected ChatService<TString, TPlayer> chatService;
+    protected ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
     public CommonMemberManager(Registry registry, @Named("anvil") Environment anvilEnvironment) {

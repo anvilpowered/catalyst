@@ -104,13 +104,12 @@ public class ProxyListener {
                         }
                         ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), checkPlayerName(message), TextComponent.of(checkPlayerName(message)), channel.get());
                         proxyServer.getEventManager().fire(proxyChatEvent).join();
-                        sendMessage(e, checkPlayerName(message));
 
                     } else {
                         ProxyChatEvent proxyChatEvent = new ProxyChatEvent(e.getPlayer(), checkPlayerName(message), TextComponent.of(checkPlayerName(message)), channel.get());
                         proxyServer.getEventManager().fire(proxyChatEvent).join();
-                        sendMessage(e, checkPlayerName(message));
                     }
+                    sendMessage(e, checkPlayerName(message));
                 }
             } else {
                 if (e.getResult().isAllowed()) {
