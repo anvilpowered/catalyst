@@ -186,7 +186,7 @@ public final class CatalystKeys {
     };
     public static final Key<String> DISCORD_URL = new Key<String>("DISCORD_URL", "https://discord.gg/hZpQ5Sg") {
     };
-    public static final Key<Boolean> DISCORD_ENABLE = new Key<Boolean>("DISCORD_ENABLE", true) {
+    public static final Key<Boolean> DISCORD_ENABLE = new Key<Boolean>("DISCORD_ENABLE", false) {
     };
     public static final Key<String> WEBSITE_URL = new Key<String>("WEBSITE_URL", "http://ci.anvilpowered.org") {
     };

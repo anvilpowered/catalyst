@@ -11,6 +11,7 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
+import org.slf4j.Logger;
 
 import javax.security.auth.login.LoginException;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,9 @@ public class JDAHook {
 
     @Inject
     private ProxyServer proxyServer;
+
+    @Inject
+    private Logger logger;
 
     @Inject
     public JDAHook(Registry registry) {
@@ -52,6 +56,8 @@ public class JDAHook {
             }
             jda.addEventListener(discordProxyListener);
             updateTopic();
+        } else {
+            logger.warn("The discord module is currently disabled! Chat will not be transmitted to discord.");
         }
     }
 
