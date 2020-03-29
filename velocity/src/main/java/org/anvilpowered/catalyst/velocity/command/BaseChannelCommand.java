@@ -35,7 +35,7 @@ public class BaseChannelCommand implements Command {
     private Registry registry;
 
     @Inject
-    private ChatService<TextComponent, Player> chatService;
+    private ChatService<TextComponent, Player, CommandSource> chatService;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;

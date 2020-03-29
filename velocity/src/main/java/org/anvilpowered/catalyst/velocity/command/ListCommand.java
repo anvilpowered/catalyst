@@ -31,7 +31,7 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 public class ListCommand implements Command {
 
     @Inject
-    ChatService<TextComponent, Player> chatService;
+    ChatService<TextComponent, Player, CommandSource> chatService;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -45,6 +45,6 @@ public class ListCommand implements Command {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }
-        source.sendMessage(chatService.list());
+        chatService.sendList(source);
     }
 }

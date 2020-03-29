@@ -22,6 +22,7 @@ import org.anvilpowered.catalyst.velocity.event.ProxyChatEvent;
 import org.anvilpowered.catalyst.velocity.event.ProxyStaffChatEvent;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
+import org.spongepowered.api.command.CommandSource;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,7 @@ import java.util.Optional;
 public class ProxyListener {
 
     @Inject
-    public ChatService<TextComponent, Player> chatService;
+    public ChatService<TextComponent, Player, CommandSource> chatService;
 
     @Inject
     private StaffListService<TextComponent> staffListService;
