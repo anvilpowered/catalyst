@@ -2,6 +2,7 @@ package org.anvilpowered.catalyst.velocity.listener;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -27,7 +28,6 @@ import org.anvilpowered.catalyst.velocity.event.ProxyChatEvent;
 import org.anvilpowered.catalyst.velocity.event.ProxyStaffChatEvent;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
-import org.spongepowered.api.command.CommandSource;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +59,7 @@ public class ProxyListener {
     private ChatFilter chatFilter;
 
     @Inject
-    private TabService tabService;
+    private TabService<TextComponent> tabService;
 
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {

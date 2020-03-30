@@ -15,7 +15,6 @@ dependencies {
     implementation anvil_api
     implementation anvil_api_core
     implementation anvil_base
-    implementation 'org.anvilpowered:anvil-api:1.0-SNAPSHOT'
 
     implementation configurate_core
     implementation configurate_hocon

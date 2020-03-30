@@ -38,7 +38,9 @@ shadowJar {
     archiveFileName = jarName
 
     dependencies {
-        exclude(dependency('net.java.dev.jna:jna'))
+        include project (':api')
+        include project (':common')
+        include dependency (jda)
     }
 }
 
