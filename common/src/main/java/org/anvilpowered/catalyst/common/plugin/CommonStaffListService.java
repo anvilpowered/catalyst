@@ -55,20 +55,20 @@ public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCo
     @Override
     public void getStaffNames(String player, boolean adminPermission, boolean staffPermission, boolean ownerPermission) {
         if (ownerPermission) {
-            ownerNames.add(textService.builder().append(player).build());
+            ownerNames.add(textService.of(player));
         } else if (staffPermission) {
             if (adminPermission) {
-                adminNames.add(textService.builder().append(player).build());
+                adminNames.add(textService.of(player));
             } else {
-                staffNames.add(textService.builder().append(player).build());
+                staffNames.add(textService.of(player));
             }
         }
     }
 
     @Override
     public void removeStaffNames(String player) {
-        staffNames.remove(player);
-        adminNames.remove(player);
-        ownerNames.remove(player);
+        staffNames.remove(textService.of(player));
+        adminNames.remove(textService.of(player));
+        ownerNames.remove(textService.of(player));
     }
 }

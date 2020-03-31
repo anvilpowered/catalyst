@@ -28,6 +28,7 @@ import net.luckperms.api.query.QueryOptions;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
+import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,9 @@ public class LuckPermsUtils {
     private static Map<UUID, CachedMetaData> cachedPlayers = new HashMap<>();
 
     @Inject
+    private Logger logger;
+
+    @Inject
     public LuckPermsUtils(Registry registry) {
         this.registry = registry;
         this.registry.addRegistryLoadedListener(this::syncPlayerCache);
@@ -60,7 +64,7 @@ public class LuckPermsUtils {
             for (Player player : proxyServer.getAllPlayers()) {
                 addPlayerToCache(player);
             }
-        }).repeat(5, TimeUnit.MINUTES).schedule();
+        }).repeat(5, TimeUnit.SECONDS).schedule();
     }
 
     public void addPlayerToCache(Player player) {
@@ -68,9 +72,13 @@ public class LuckPermsUtils {
         User temp = Catalyst.api.getUserManager().getUser(playerUUID);
         if (temp != null) {
             if (cachedPlayers.containsKey(playerUUID)) {
-                cachedPlayers.replace(player.getUniqueId(), temp.getCachedData().getMetaData(getQueryOptions(temp)));
+                if (temp.getCachedData().getMetaData(getQueryOptions(temp)) != cachedPlayers.get(playerUUID)) {
+                    cachedPlayers.replace(playerUUID, temp.getCachedData().getMetaData(getQueryOptions(temp)));
+                    logger.info("Updated luckperms data for " + player.getUsername());
+                }
             } else {
-                cachedPlayers.put(player.getUniqueId(), temp.getCachedData().getMetaData(getQueryOptions(temp)));
+                cachedPlayers.put(playerUUID, temp.getCachedData().getMetaData(getQueryOptions(temp)));
+                logger.info("Added " + player.getUsername() + " to the luckperms cache!");
             }
         } else {
             throw new IllegalStateException("Failed to find the user " + player.getUsername() + " inside luckperms. Please report this on github");
@@ -78,11 +86,11 @@ public class LuckPermsUtils {
     }
 
     public void removePlayerFromCache(Player player) {
-        cachedPlayers.remove(player);
+        cachedPlayers.remove(player.getUniqueId());
     }
 
     public Optional<CachedMetaData> getCachedPlayerData(Player player) {
-        return Optional.of(cachedPlayers.get(player));
+        return Optional.of(cachedPlayers.get(player.getUniqueId()));
     }
 
     public String getPrefix(Player player) {
@@ -92,7 +100,7 @@ public class LuckPermsUtils {
             }
             return "";
         }
-        return "";
+        return "Unspecified";
     }
 
     public String getSuffix(Player player) {
@@ -102,7 +110,7 @@ public class LuckPermsUtils {
             }
             return "";
         }
-        return "";
+        return "Unspecified";
     }
 
     private QueryOptions getQueryOptions(User user) {

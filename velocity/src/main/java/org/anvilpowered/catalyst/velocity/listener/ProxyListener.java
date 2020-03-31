@@ -15,7 +15,9 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.text.serializer.plain.PlainComponentSerializer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.config.Channel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -28,6 +30,7 @@ import org.anvilpowered.catalyst.velocity.event.ProxyChatEvent;
 import org.anvilpowered.catalyst.velocity.event.ProxyStaffChatEvent;
 import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +64,9 @@ public class ProxyListener {
     @Inject
     private TabService<TextComponent> tabService;
 
+    @Inject
+    private Logger logger;
+
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
         Player player = event.getPlayer();
@@ -70,6 +76,7 @@ public class ProxyListener {
             registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
                 .replace("%player%", player.getUsername()),
             '&'));
+        logger.info(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE).replace("%player%", player.getUsername()).replaceAll("&", ""));
     }
 
     @Subscribe
@@ -96,6 +103,7 @@ public class ProxyListener {
             player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF)),
             player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER)));
         proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", player.getUsername()), '&'));
+        logger.info(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", player.getUsername()).replaceAll("&", ""));
     }
 
     @Subscribe
@@ -203,6 +211,7 @@ public class ProxyListener {
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
             if (optionalMessage.isPresent()) {
+                logger.info(channelId + " : " + PlainComponentSerializer.INSTANCE.serialize(optionalMessage.get()));
                 chatService.sendMessageToChannel(channelId, optionalMessage.get(), p ->
                     p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)));
             } else {

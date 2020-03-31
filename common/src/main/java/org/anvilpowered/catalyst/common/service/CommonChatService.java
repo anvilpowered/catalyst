@@ -29,6 +29,7 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.service.ChatService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -185,18 +186,31 @@ public class CommonChatService<
 
     @Override
     public List<TString> getPlayerList() {
-        return userService.getOnlinePlayers().stream()
-            .map(userService::getUserName)
-            .map(textService::of).collect(Collectors.toList());
+        List<String> playerList = userService.getOnlinePlayers().stream()
+            .map(userService::getUserName).collect(Collectors.toList());
+        List<TString> tempList = new ArrayList<>();
+        StringBuilder builder = null;
+        for (String s : playerList) {
+            if (builder == null) {
+                builder = new StringBuilder(s);
+            } else if (builder.length() + s.length() < 50) {
+                builder.append(" ").append(s);
+            } else {
+                tempList.add(textService.of(builder.toString()));
+                builder = new StringBuilder(s);
+            }
+        }
+        return tempList;
     }
 
     @Override
     public void sendList(TCommandSource commandSource) {
-            textService.paginationBuilder()
-                .header(textService.of("------------------- Online Players --------------------"))
-                .contents(getPlayerList())
-                .build()
-                .sendTo(commandSource);
+        textService.paginationBuilder()
+            .header(textService.builder().green().append(" Online Players ").build())
+            .padding(textService.of("-"))
+            .contents(getPlayerList())
+            .build()
+            .sendTo(commandSource);
     }
 
     @Override

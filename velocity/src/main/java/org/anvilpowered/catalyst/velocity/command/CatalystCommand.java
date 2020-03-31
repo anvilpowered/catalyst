@@ -22,6 +22,7 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.catalyst.velocity.discord.JDAHook;
+import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
@@ -56,7 +57,9 @@ public class CatalystCommand implements Command {
             case "reload": {
                 if (source.hasPermission(registry.getOrDefault(CatalystKeys.RELOAD))) {
                     source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Reloading")));
-                    jdaHook.getJDA().shutdown();
+                    if(registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
+                        jdaHook.getJDA().shutdown();
+                    }
                     registry.load();
 
                 } else {

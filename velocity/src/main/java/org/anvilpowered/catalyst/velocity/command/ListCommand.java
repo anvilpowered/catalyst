@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
@@ -39,10 +40,17 @@ public class ListCommand implements Command {
     @Inject
     private Registry registry;
 
+    @Inject
+    private ProxyServer proxyServer;
+
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (!source.hasPermission(registry.getOrDefault(CatalystKeys.LIST))) {
             source.sendMessage(pluginMessages.getNoPermission());
+            return;
+        }
+        if(proxyServer.getPlayerCount() == 0) {
+            source.sendMessage(TextComponent.of("There are no players online!"));
             return;
         }
         chatService.sendList(source);

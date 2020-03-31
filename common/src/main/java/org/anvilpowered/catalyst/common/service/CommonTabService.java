@@ -49,7 +49,7 @@ public class CommonTabService<TString, TCommandSource> implements TabService<TSt
     }
 
     @Override
-    public TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, int ping, int playerCount) {
+    public TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, long ping, int playerCount) {
         format = format.replace("%player%", userName)
             .replace("%prefix%", prefix)
             .replace("%suffix%", suffix)
