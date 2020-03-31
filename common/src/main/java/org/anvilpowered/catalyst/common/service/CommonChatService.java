@@ -22,13 +22,19 @@ import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.data.key.Key;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.util.CurrentServerService;
+import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.config.Channel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.anvilpowered.catalyst.api.service.LoggerService;
+import org.anvilpowered.catalyst.api.service.LuckpermsService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -43,22 +49,40 @@ import java.util.stream.Collectors;
 public class CommonChatService<
     TPlayer extends TCommandSource,
     TString,
-    TCommandSource>
+    TCommandSource,
+    TSubject>
     implements ChatService<TString, TPlayer, TCommandSource> {
 
     @Inject
-    Registry registry;
+    private Registry registry;
 
     @Inject
-    MemberManager<TString> memberManager;
+    private MemberManager<TString> memberManager;
 
     @Inject
-    TextService<TString, TCommandSource> textService;
+    private TextService<TString, TCommandSource> textService;
 
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
+    @Inject
+    private LuckpermsService<TPlayer> luckpermsService;
+
+    @Inject
+    private CurrentServerService currentServerService;
+
+    @Inject
+    private PermissionService<TSubject> permissionService;
+
+    @Inject
+    private PluginMessages<TString> pluginMessages;
+
+    @Inject
+    private LoggerService<TString> loggerService;
+
     Map<UUID, String> channelMap = new HashMap<>();
+
+    Map<UUID, List<UUID>> ignoreMap = new HashMap<>();
 
     @Override
     public void switchChannel(UUID userUUID, String channelId) {
@@ -113,17 +137,42 @@ public class CommonChatService<
     }
 
     @Override
-    public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, Predicate<? super TPlayer> checkOverridePerm) {
+    public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, String server, String userName, UUID senderUUID, Predicate<? super TPlayer> checkOverridePerm) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
+            TString finalMessage = textService.builder()
+                .append(message)
+                .onHoverShowText(textService.deserialize(
+                    registry.getOrDefault(CatalystKeys.PROXY_CHAT_FORMAT_HOVER)
+                        .replaceAll("%player%", userName)
+                        .replaceAll("%server%", server)
+                    )
+                ).build();
             if (checkOverridePerm.test(p) || getChannelIdForUser(userService.getUUID(p)).equals(channelId)) {
-                textService.send(message, p);
+                if (!senderUUID.equals(userService.getUUID(p))) {
+                    if (!isIgnored(userService.getUUID(p), senderUUID)) {
+                        textService.send(finalMessage, p);
+                    }
+                } else {
+                    textService.send(finalMessage, p);
+                }
             }
         }));
     }
 
     @Override
-    public CompletableFuture<Void> sendGlobalMessage(TString message) {
-        return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> textService.send(message, p)));
+    public CompletableFuture<Void> sendGlobalMessage(TPlayer player, TString message) {
+        return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p ->
+                textService.builder()
+                    .append(message)
+                    .onHoverShowText(textService.of(
+                        registry.getOrDefault(CatalystKeys.PROXY_CHAT_FORMAT_HOVER)
+                            .replaceAll("%player%", userService.getUserName(player))
+                            .replaceAll("%server%", currentServerService.getName(userService.getUserName(player)).get())
+                        )
+                    )
+                    .sendTo(p)
+            )
+        );
     }
 
     @Override
@@ -185,18 +234,31 @@ public class CommonChatService<
 
     @Override
     public List<TString> getPlayerList() {
-        return userService.getOnlinePlayers().stream()
-            .map(userService::getUserName)
-            .map(textService::of).collect(Collectors.toList());
+        List<String> playerList = userService.getOnlinePlayers().stream()
+            .map(userService::getUserName).collect(Collectors.toList());
+        List<TString> tempList = new ArrayList<>();
+        StringBuilder builder = null;
+        for (String s : playerList) {
+            if (builder == null) {
+                builder = new StringBuilder(s);
+            } else if (builder.length() + s.length() < 50) {
+                builder.append(" ").append(s);
+            } else {
+                tempList.add(textService.of(builder.toString()));
+                builder = new StringBuilder(s);
+            }
+        }
+        return tempList;
     }
 
     @Override
     public void sendList(TCommandSource commandSource) {
-            textService.paginationBuilder()
-                .header(textService.of("------------------- Online Players --------------------"))
-                .contents(getPlayerList())
-                .build()
-                .sendTo(commandSource);
+        textService.paginationBuilder()
+            .header(textService.builder().green().append("Online Players").build())
+            .padding(textService.of("-"))
+            .contents(getPlayerList())
+            .build()
+            .sendTo(commandSource);
     }
 
     @Override
@@ -206,5 +268,99 @@ public class CommonChatService<
         channel.id = name;
         channel.prefix = name;
         return textService.success("Created the channel " + name + " successfully");
+    }
+
+    @Override
+    public TString ignore(UUID playerUUID, UUID targetPlayerUUID) {
+        List<UUID> uuidList = new ArrayList<>();
+        if (ignoreMap.get(playerUUID) == null) {
+            uuidList.add(targetPlayerUUID);
+        } else {
+            uuidList = ignoreMap.get(playerUUID);
+            if (uuidList.contains(targetPlayerUUID)) {
+                return unIgnore(playerUUID, targetPlayerUUID);
+            }
+        }
+        ignoreMap.put(playerUUID, uuidList);
+        return textService.success("You are now ignoring " + userService.getUserName(targetPlayerUUID).get());
+    }
+
+    @Override
+    public TString unIgnore(UUID playerUUID, UUID targetPlayerUUID) {
+        List<UUID> uuidList = ignoreMap.get(playerUUID);
+        if (isIgnored(playerUUID, targetPlayerUUID)) {
+            uuidList.remove(targetPlayerUUID);
+            ignoreMap.replace(playerUUID, uuidList);
+        }
+        return textService.success("You are no longer ignoring " + userService.getUserName(targetPlayerUUID).get());
+    }
+
+    @Override
+    public boolean isIgnored(UUID playerUUID, UUID targetPlayerUUID) {
+        List<UUID> uuidList = ignoreMap.get(playerUUID);
+        if (uuidList == null) {
+            return false;
+        }
+        return uuidList.contains(targetPlayerUUID);
+    }
+
+    @Override
+    public String checkPlayerName(String message) {
+        for (TPlayer player : userService.getOnlinePlayers()) {
+            if (message.contains(userService.getUserName(player))) {
+                String userName = userService.getUserName(player);
+                message = message.replaceAll(
+                    userName.toUpperCase(),
+                    "&b@" + userName + "&r")
+                    .replaceAll(
+                        userName.toLowerCase(),
+                        "&b@" + userName + "&r"
+                    );
+            }
+        }
+        return message;
+    }
+
+    @Override
+    public void sendChatMessage(TPlayer player, String message) {
+        String prefix = luckpermsService.getPrefix(player);
+        String chatColor = luckpermsService.getChatColor(player);
+        String nameColor = luckpermsService.getNameColor(player);
+        String suffix = luckpermsService.getSuffix(player);
+        String userName = userService.getUserName(player);
+        UUID userUUID = userService.getUUID(userName).orElseThrow(() ->
+            new IllegalStateException("Unable to find a UUID for " + userName));
+        String server = currentServerService.getName(userName).orElseThrow(() ->
+            new IllegalStateException(userName + " is not in a valid server!"));
+        String channelId = getChannelIdForUser(userService.getUUID(player));
+        Optional<Channel> channel = getChannelFromId(channelId);
+        String channelPrefix = getChannelPrefix(channelId).orElseThrow(() ->
+            new IllegalStateException("Please specify a prefix for " + channelId));
+
+        boolean hasColorPermission = permissionService.hasPermission(
+            (TSubject) player,
+            registry.getOrDefault(CatalystKeys.CHAT_COLOR)
+        );
+
+        formatMessage(
+            prefix,
+            nameColor,
+            userName,
+            chatColor + message,
+            hasColorPermission,
+            suffix,
+            server,
+            channelId,
+            channelPrefix
+        ).thenAcceptAsync(optionalMessage -> {
+            if (optionalMessage.isPresent()) {
+                loggerService.info(channelId + " : " + textService.serializePlain(optionalMessage.get()));
+                sendMessageToChannel(channelId, optionalMessage.get(), server, userName, userUUID, p ->
+                    permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))
+                );
+            } else {
+                textService.send(pluginMessages.getMuted(), player);
+            }
+        });
     }
 }

@@ -17,34 +17,23 @@
 
 package org.anvilpowered.catalyst.velocity.command;
 
-import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
+import org.anvilpowered.catalyst.common.command.CommonListCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.service.ChatService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-public class ListCommand implements Command {
-
-    @Inject
-    ChatService<TextComponent, Player, CommandSource> chatService;
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
-
-    @Inject
-    private Registry registry;
+public class ListCommand extends CommonListCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.LIST))) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
-        chatService.sendList(source);
+        execute(source, source, args);
     }
 }

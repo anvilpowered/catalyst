@@ -28,8 +28,8 @@ import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.TabService;
-import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,23 +42,19 @@ import java.util.concurrent.TimeUnit;
 public class GlobalTab {
 
     @Inject
+    Plugin<?> catalyst;
+    @Inject
     private ProxyServer proxyServer;
-
     private Registry registry;
-
     @Inject
     private TabService<TextComponent> tabService;
-
     @Inject
-    private LuckPermsUtils luckPermsUtils;
-
-    @Inject
-    Plugin<?> catalyst;
+    private LuckpermsService<Player> luckPermsUtils;
 
     @Inject
     public GlobalTab(Registry registry) {
         this.registry = registry;
-        this.registry.addRegistryLoadedListener(this::registryLoaded);
+        this.registry.whenLoaded(this::registryLoaded);
     }
 
     private void registryLoaded() {
@@ -76,7 +72,6 @@ public class GlobalTab {
         List<UUID> contained = new ArrayList<>();
         Map<UUID, TabListEntry> cache = new HashMap<>();
 
-
         for (TabListEntry e : list.getEntries()) {
             contained.add(e.getProfile().getId());
             cache.put(e.getProfile().getId(), e);
@@ -84,15 +79,14 @@ public class GlobalTab {
 
         if (!contained.contains(inUUID)) {
             list.addEntry(entry);
-            toKeep.add(inUUID);
         } else {
             TabListEntry tabListEntry = cache.get(inUUID);
             if (!tabListEntry.getDisplayName().equals(entry.getDisplayName())) {
                 list.removeEntry(inUUID);
                 list.addEntry(entry);
             }
-            toKeep.add(inUUID);
         }
+        toKeep.add(inUUID);
     }
 
     public void schedule() {
@@ -100,45 +94,38 @@ public class GlobalTab {
             try {
                 if (proxyServer.getPlayerCount() > 0) {
                     for (Player currentPlayerToProcess : proxyServer.getAllPlayers()) {
-
                         List<UUID> toKeep = new ArrayList<>();
-
                         for (int i2 = 0; i2 < proxyServer.getPlayerCount(); i2++) {
                             Player currentPlayer = (Player) proxyServer
                                 .getAllPlayers().toArray()[i2];
-
                             TabListEntry currentEntry = TabListEntry.builder().
                                 profile(currentPlayer.getGameProfile())
-                                .displayName(tabService.formatPlayerSpecificTab(
+                                .displayName(tabService.formatTab(
                                     registry.getOrDefault(CatalystKeys.TAB_FORMAT),
                                     currentPlayer.getUsername(),
                                     luckPermsUtils.getPrefix(currentPlayer),
-                                    luckPermsUtils.getSuffix(currentPlayer),
-                                    (int) currentPlayer.getPing(),
-                                    proxyServer.getPlayerCount())
+                                    luckPermsUtils.getSuffix(currentPlayer)
+                                    )
                                 )
                                 .tabList(currentPlayerToProcess.getTabList()).build();
-
                             insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry,
                                 toKeep);
                         }
-
                         if (registry.getOrDefault(CatalystKeys.TAB_ENABLED)) {
-                            List<String> customtabs = new ArrayList<>(
+                            List<String> customTabs = new ArrayList<>(
                                 registry.getOrDefault(CatalystKeys.TAB_FORMAT_CUSTOM));
-
-                            for (int i3 = 0; i3 < customtabs.size(); i3++) {
+                            for (int i3 = 0; i3 < customTabs.size(); i3++) {
                                 GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
-
                                 TabListEntry currentEntry = TabListEntry.builder().profile(tabProfile)
                                     .displayName(
-                                        tabService.formatTab(customtabs.get(i3),
+                                        tabService.formatPlayerSpecificTab(customTabs.get(i3),
                                             currentPlayerToProcess.getUsername(),
                                             luckPermsUtils.getPrefix(currentPlayerToProcess),
-                                            luckPermsUtils.getSuffix(currentPlayerToProcess))
+                                            luckPermsUtils.getSuffix(currentPlayerToProcess),
+                                            currentPlayerToProcess.getPing(),
+                                            proxyServer.getPlayerCount())
                                     )
                                     .tabList(currentPlayerToProcess.getTabList()).build();
-
                                 insertIntoTab(
                                     currentPlayerToProcess.getTabList(),
                                     currentEntry,
@@ -146,14 +133,12 @@ public class GlobalTab {
                                 );
                             }
                         }
-
                         for (TabListEntry current : currentPlayerToProcess
                             .getTabList().getEntries()) {
                             if (!toKeep.contains(current.getProfile().getId()))
                                 currentPlayerToProcess.getTabList().
                                     removeEntry(current.getProfile().getId());
                         }
-
                         currentPlayerToProcess.getTabList().setHeaderAndFooter(
                             tabService.formatPlayerSpecificTab(
                                 registry.getOrDefault(CatalystKeys.TAB_HEADER),

@@ -20,61 +20,30 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.member.MemberManager;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.common.command.CommonTempBanCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TempBanCommand implements Command {
-
-    @Inject
-    private MemberManager<TextComponent> memberManager;
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
+public class TempBanCommand extends CommonTempBanCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
     @Inject
     private ProxyServer proxyServer;
 
-    @Inject
-    private Registry registry;
-
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.TEMP_BAN))) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
-
-        if (args.length < 2) {
-            source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(pluginMessages.tempBanCommandUsage());
-            return;
-        }
-        String username = args[0];
-        String duration = args[1];
-
-        if (proxyServer.getPlayer(username).filter(p ->
-            p.hasPermission(registry.getOrDefault(CatalystKeys.BAN_EXEMPT))).isPresent()) {
-            source.sendMessage(pluginMessages.getBanExempt());
-            return;
-        }
-
-        if (args.length == 2) {
-            memberManager.tempBan(username, duration).thenAcceptAsync(source::sendMessage);
-        } else {
-            String reason = String.join(" ", args)
-                .replace(username + " ", "").replace(duration, "");
-            memberManager.tempBan(username, duration, reason).thenAcceptAsync(source::sendMessage);
-        }
+        execute(source, source, args);
     }
 
     @Override

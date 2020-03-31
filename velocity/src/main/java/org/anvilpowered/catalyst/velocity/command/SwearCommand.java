@@ -17,78 +17,21 @@
 
 package org.anvilpowered.catalyst.velocity.command;
 
-import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.config.ConfigurationService;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.common.command.CommonSwearCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class SwearCommand implements Command {
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
-
-    @Inject
-    private Registry registry;
-
-    @Inject
-    private ConfigurationService configurationService;
+public class SwearCommand extends CommonSwearCommand<
+    TextComponent,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-
-        if (args.length < 1) {
-            source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(pluginMessages.swearAddCommandUsage());
-            return;
-        }
-
-        switch (args[0]) {
-            case "list": {
-                if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))
-                    || source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_LIST))) {
-                    source.sendMessage(TextComponent.of(
-                        String.join(", ",
-                            registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS))));
-                } else {
-                    source.sendMessage(pluginMessages.getNoPermission());
-                }
-                return;
-            }
-            case "add": {
-                if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
-                    if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
-                        source.sendMessage(pluginMessages.getExistingSwear(args[1]));
-                    } else {
-                        configurationService
-                            .addToCollection(CatalystKeys.CHAT_FILTER_SWEARS, args[1]);
-                        configurationService.save();
-                        source.sendMessage(pluginMessages.getNewSwear(args[1]));
-                    }
-                } else {
-                    source.sendMessage(pluginMessages.getNoPermission());
-                }
-                return;
-            }
-            case "remove": {
-                if (source.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
-                    if (!registry.getOrDefault(
-                        CatalystKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
-                        source.sendMessage(pluginMessages.getMissingSwear(args[1]));
-                    } else {
-                        configurationService.removeFromCollection(CatalystKeys.CHAT_FILTER_SWEARS, args[1]);
-
-                        configurationService.save();
-                        source.sendMessage(pluginMessages.getRemoveSwear(args[1]));
-                    }
-                } else {
-                    source.sendMessage(pluginMessages.getNoPermission());
-                }
-            }
-        }
+        execute(source, source, args);
     }
 }

@@ -20,13 +20,22 @@ package org.anvilpowered.catalyst.velocity.module;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.anvilpowered.catalyst.api.service.BroadcastService;
+import org.anvilpowered.catalyst.api.service.EventService;
+import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
+import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
+import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService;
+import org.anvilpowered.catalyst.velocity.service.VelocityEventService;
+import org.anvilpowered.catalyst.velocity.service.VelocityExecuteCommandService;
+import org.anvilpowered.catalyst.velocity.service.VelocityLoggerService;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -37,7 +46,8 @@ public class VelocityModule extends CommonModule<
     Player,
     Player,
     TextComponent,
-    CommandSource> {
+    CommandSource,
+    PermissionSubject> {
 
     @Override
     protected void configure() {
@@ -54,5 +64,13 @@ public class VelocityModule extends CommonModule<
         }).toInstance(HoconConfigurationLoader.builder()
             .setPath(Paths.get(configFilesLocation + "/catalyst.conf"))
             .build());
+
+        bind(new TypeLiteral<BroadcastService<TextComponent>>() {
+        }).to(VelocityBroadcastService.class);
+        bind(new TypeLiteral<LoggerService<TextComponent>>() {
+        }).to(VelocityLoggerService.class);
+        bind(new TypeLiteral<ExecuteCommandService<CommandSource>>(){
+        }).to(VelocityExecuteCommandService.class);
+        bind(EventService.class).to(VelocityEventService.class);
     }
 }

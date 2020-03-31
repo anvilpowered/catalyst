@@ -39,9 +39,9 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     TString getUsersInChannel(String channelId);
 
-    CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, Predicate<? super TPlayer> checkOverridePerm);
+    CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, String server, String userName, UUID userUUID, Predicate<? super TPlayer> checkOverridePerm);
 
-    CompletableFuture<Void> sendGlobalMessage (TString message);
+    CompletableFuture<Void> sendGlobalMessage(TPlayer player, TString message);
 
     CompletableFuture<Optional<TString>> formatMessage(String prefix, String nameColor, String userName, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
 
@@ -50,4 +50,14 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
     void sendList(TCommandSource commandSource);
 
     TString createTempChannel(String prefix, UUID creator);
+
+    TString ignore(UUID playerUUID, UUID targetPlayerUUID);
+
+    TString unIgnore(UUID playerUUID, UUID targetPlayerUUID);
+
+    boolean isIgnored(UUID playerUUID, UUID targetPlayerUUID);
+
+    String checkPlayerName(String message);
+
+    void sendChatMessage(TPlayer player, String message);
 }

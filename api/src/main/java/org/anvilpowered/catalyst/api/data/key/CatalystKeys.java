@@ -166,7 +166,7 @@ public final class CatalystKeys {
     };
     public static final Key<String> STAFF_CHANNEL = new Key<String>("STAFF_CHANNEL", "staffchannelid") {
     };
-    public static final Key<String> PLAYER_CHAT_FORMAT = new Key<String>("PLAYER_CHAT_FORMAT", "%prefix% %username% %suffix%") {
+    public static final Key<String> PLAYER_CHAT_FORMAT = new Key<String>("PLAYER_CHAT_FORMAT", "%prefix% %player% %suffix%") {
     };
     public static final Key<String> JOIN_FORMAT = new Key<String>("JOIN_FORMAT", " has joined the game.") {
     };
@@ -191,6 +191,14 @@ public final class CatalystKeys {
     public static final Key<String> DISCORD_HOVER_MESSAGE = new Key<String> ("DISCORD_HOVER_MESSAGE", "Click here to join our discord!"){
     };
     public static final Key<String> WEBSITE_URL = new Key<String>("WEBSITE_URL", "http://ci.anvilpowered.org") {
+    };
+    public static final Key<String> IGNORE = new Key<String>("IGNORE", "catalyst.command.ignore"){
+    };
+    public static final Key<String> IGNORE_EXEMPT = new Key<String>("IGNORE_EXEMPT", "catalyst.command.ignore.exempt"){
+    };
+    public static final Key<String> SERVER_PING = new Key<String>("SERVER_PING", "PLAYERS"){
+    };
+    public static final Key<String> SERVER_PING_MESSAGE = new Key<String>("SERVER_PING_MESSAGE", "Change this message in the config!"){
     };
 
 
@@ -266,5 +274,9 @@ public final class CatalystKeys {
         Keys.registerKey(DISCORD_ENABLE);
         Keys.registerKey(DISCORD_HOVER_MESSAGE);
         Keys.registerKey(WEBSITE_URL);
+        Keys.registerKey(IGNORE);
+        Keys.registerKey(IGNORE_EXEMPT);
+        Keys.registerKey(SERVER_PING);
+        Keys.registerKey(SERVER_PING_MESSAGE);
     }
 }

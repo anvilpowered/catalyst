@@ -20,57 +20,39 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.common.command.CommonKickCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class KickCommand implements Command {
-
-    @Inject
-    private PluginInfo<TextComponent> pluginInfo;
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
+public class KickCommand extends CommonKickCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
     @Inject
     private ProxyServer proxyServer;
 
-    @Inject
-    private Registry registry;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        String kickReason = "You have been kicked!";
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.KICK))) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
-        if (!(args.length >= 1)) {
-            source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(pluginMessages.kickCommandUsage());
-            return;
-        }
-        if (args.length > 1) {
-            kickReason = args[1];
-        }
+        execute(source, source, args);
+    }
 
-        Optional<Player> player = proxyServer.getPlayer(args[0]);
-        if (player.isPresent()) {
-            if (player.get().hasPermission(registry.getOrDefault(CatalystKeys.KICK_EXEMPT))) {
-                source.sendMessage(pluginMessages.getKickExempt());
-                return;
-            }
-            player.get().disconnect(TextComponent.of(kickReason));
-        } else {
-            source.sendMessage(
-                pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
+    @Override
+    public List<String> suggest(CommandSource src, String[] args) {
+        if (args.length == 1) {
+            return proxyServer.matchPlayer(args[0])
+                .stream().map(Player::getUsername).collect(Collectors.toList());
         }
+        return Collections.emptyList();
     }
 }

@@ -29,70 +29,48 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 public class CatalystCommandManager {
 
     @Inject
+    Provider<ServerCommand> serverCommandProvider;
+    @Inject
     private ProxyServer proxyServer;
-
     private Registry registry;
-
     @Inject
     private BroadcastCommand broadcastCommand;
-
     @Inject
     private InfoCommand infoCommand;
-
     @Inject
     private NickNameCommand nicknameCommand;
-
     @Inject
     private BanCommand banCommand;
-
     @Inject
     private TempBanCommand tempBanCommand;
-
     @Inject
     private UnBanCommand unBanCommand;
-
     @Inject
     private KickCommand kickCommand;
-
     @Inject
     private FindCommand findCommand;
-
     @Inject
     private SendCommand sendCommand;
-
     @Inject
     private MessageCommand messageCommand;
-
     @Inject
     private ReplyCommand replyCommand;
-
     @Inject
     private MuteCommand muteCommand;
-
     @Inject
     private TempMuteCommand tempMuteCommand;
-
     @Inject
     private UnMuteCommand unMuteCommand;
-
     @Inject
     private SocialSpyCommand socialSpyCommand;
-
     @Inject
     private StaffListCommand staffListCommand;
-
     @Inject
     private StaffChatCommand staffChatCommand;
-
     @Inject
     private ListCommand listCommand;
-
     @Inject
     private DeleteNicknameCommand deleteNicknameCommand;
-
-    @Inject
-    Provider<ServerCommand> serverCommandProvider;
-
     @Inject
     private SwearCommand swearCommand;
 
@@ -100,17 +78,17 @@ public class CatalystCommandManager {
     private ExceptionCommand exceptionCommand;
 
     @Inject
-    private CatalystCommand msEssentialsCommand;
+    Provider<ChannelCommand> channelCommandProvider;
 
     @Inject
-    Provider<ChannelCommand> channelCommandProvider;
+    private IgnoreCommand ignoreCommand;
 
     private boolean alreadyLoaded = false;
 
     @Inject
     public CatalystCommandManager(Registry registry) {
         this.registry = registry;
-        this.registry.addRegistryLoadedListener(this::registryLoaded);
+        this.registry.whenLoaded(this::registryLoaded);
     }
 
     public void registryLoaded() {
@@ -173,6 +151,7 @@ public class CatalystCommandManager {
         proxyServer.getCommandManager().register(
             "exception", exceptionCommand);
         proxyServer.getCommandManager().register(
-            "catalyst", msEssentialsCommand);
+            "ignore", ignoreCommand
+        );
     }
 }

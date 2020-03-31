@@ -17,75 +17,24 @@
 
 package org.anvilpowered.catalyst.velocity.command;
 
-import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import net.kyori.text.format.TextColor;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.plugin.PluginInfo;
-import org.anvilpowered.catalyst.api.service.PrivateMessageService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.common.command.CommonReplyCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Optional;
-import java.util.UUID;
+public class ReplyCommand extends CommonReplyCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
-public class ReplyCommand implements Command {
-
-    @Inject
-    private PluginInfo<TextComponent> pluginInfo;
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
-
-    @Inject
-    private ProxyServer proxyServer;
-
-    @Inject
-    private Registry registry;
-
-    @Inject
-    private PrivateMessageService<TextComponent> privateMessageService;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.MESSAGE))) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
-
-        if (args.length == 0) {
-            source.sendMessage(pluginMessages.getNotEnoughArgs());
-            return;
-        }
-
-        if (source instanceof Player) {
-            String message = String.join(" ", args);
-            Player sender = (Player) source;
-            UUID senderUUID = sender.getUniqueId();
-
-            if (privateMessageService.replyMap().containsKey(senderUUID)) {
-                UUID recipientUUID = privateMessageService.replyMap().get(senderUUID);
-                Optional<Player> recipient = proxyServer.getPlayer(recipientUUID);
-
-                if (recipient.isPresent()) {
-                    privateMessageService.sendMessage(
-                        sender.getUsername(), recipient.get().getUsername(), message);
-                    privateMessageService.replyMap().put(recipientUUID, senderUUID);
-                } else {
-                    source.sendMessage(
-                        pluginInfo.getPrefix().append(
-                            TextComponent.of("Invalid of offline player!").color(TextColor.RED)));
-                }
-            } else {
-                source.sendMessage(
-                    pluginInfo.getPrefix().append(
-                        TextComponent.of("Nobody to reply to!").color(TextColor.RED)));
-            }
-        }
+        execute(source, source, args);
     }
 }
