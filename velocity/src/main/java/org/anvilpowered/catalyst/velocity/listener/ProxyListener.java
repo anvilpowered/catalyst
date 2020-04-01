@@ -17,7 +17,6 @@ import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.text.serializer.plain.PlainComponentSerializer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.config.Channel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -212,7 +211,7 @@ public class ProxyListener {
         ).thenAcceptAsync(optionalMessage -> {
             if (optionalMessage.isPresent()) {
                 logger.info(channelId + " : " + PlainComponentSerializer.INSTANCE.serialize(optionalMessage.get()));
-                chatService.sendMessageToChannel(channelId, optionalMessage.get(), p ->
+                chatService.sendMessageToChannel(channelId, optionalMessage.get(), player.getUniqueId(), p ->
                     p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)));
             } else {
                 player.sendMessage(pluginMessages.getMuted());

@@ -47,7 +47,10 @@ import org.slf4j.Logger;
     authors = {"STG_Allen", "Cableguy20"},
     description = CatalystPluginInfo.description,
     url = CatalystPluginInfo.url,
-    dependencies = {@Dependency(id = "anvil"), @Dependency(id = "luckperms")}
+    dependencies = {
+        @Dependency(id = "anvil"),
+        @Dependency(id = "luckperms")
+    }
 )
 public class Catalyst extends BasePlugin<PluginContainer> {
 

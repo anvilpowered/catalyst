@@ -104,4 +104,8 @@ public interface PluginMessages<TString> {
     TString swearAddCommandUsage();
 
     TString exceptionAddCommandUsage();
+
+    TString ignoreCommandUsage();
+
+    TString ignoreExempt();
 }

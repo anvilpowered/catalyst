@@ -320,4 +320,17 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     public TString exceptionAddCommandUsage() {
         return textService.deserialize("&4Usage: /exception (add|remove <word>) |list");
     }
+
+    @Override
+    public TString ignoreCommandUsage() {
+        return textService.deserialize("&4Usage: /ignore (playername)");
+    }
+
+    @Override
+    public TString ignoreExempt() {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .red().append("This user is exempt from being ignored.")
+            .build();
+    }
 }

@@ -39,7 +39,7 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     TString getUsersInChannel(String channelId);
 
-    CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, Predicate<? super TPlayer> checkOverridePerm);
+    CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, UUID senderUUID, Predicate<? super TPlayer> checkOverridePerm);
 
     CompletableFuture<Void> sendGlobalMessage (TString message);
 
@@ -50,4 +50,10 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
     void sendList(TCommandSource commandSource);
 
     TString createTempChannel(String prefix, UUID creator);
+
+    TString ignore(UUID playerUUID, UUID targetPlayerUUID);
+
+    TString unIgnore(UUID playerUUID, UUID targetPlayerUUID);
+
+    boolean isIgnored(UUID playerUUID, UUID targetPlayerUUID);
 }

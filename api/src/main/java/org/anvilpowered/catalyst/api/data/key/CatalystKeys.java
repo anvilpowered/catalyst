@@ -192,6 +192,10 @@ public final class CatalystKeys {
     };
     public static final Key<String> WEBSITE_URL = new Key<String>("WEBSITE_URL", "http://ci.anvilpowered.org") {
     };
+    public static final Key<String> IGNORE = new Key<String>("IGNORE", "catalyst.command.ignore"){
+    };
+    public static final Key<String> IGNORE_EXEMPT = new Key<String>("IGNORE_EXEMPT", "catalyst.command.ignore.exempt"){
+    };
 
 
     static {
@@ -266,5 +270,7 @@ public final class CatalystKeys {
         Keys.registerKey(DISCORD_ENABLE);
         Keys.registerKey(DISCORD_HOVER_MESSAGE);
         Keys.registerKey(WEBSITE_URL);
+        Keys.registerKey(IGNORE);
+        Keys.registerKey(IGNORE_EXEMPT);
     }
 }

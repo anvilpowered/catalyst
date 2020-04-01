@@ -17,6 +17,8 @@
 
 package org.anvilpowered.catalyst.common.service;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
@@ -60,6 +62,8 @@ public class CommonChatService<
     private UserService<TPlayer, TPlayer> userService;
 
     Map<UUID, String> channelMap = new HashMap<>();
+
+    Multimap<UUID, UUID> ignoreMap = ArrayListMultimap.create();
 
     @Override
     public void switchChannel(UUID userUUID, String channelId) {
@@ -114,10 +118,12 @@ public class CommonChatService<
     }
 
     @Override
-    public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, Predicate<? super TPlayer> checkOverridePerm) {
+    public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, UUID senderUUID, Predicate<? super TPlayer> checkOverridePerm) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
             if (checkOverridePerm.test(p) || getChannelIdForUser(userService.getUUID(p)).equals(channelId)) {
-                textService.send(message, p);
+                if (!isIgnored(senderUUID, userService.getUUID(p))) {
+                    textService.send(message, p);
+                }
             }
         }));
     }
@@ -206,7 +212,7 @@ public class CommonChatService<
     @Override
     public void sendList(TCommandSource commandSource) {
         textService.paginationBuilder()
-            .header(textService.builder().green().append(" Online Players ").build())
+            .header(textService.builder().green().append("Online Players").build())
             .padding(textService.of("-"))
             .contents(getPlayerList())
             .build()
@@ -220,5 +226,26 @@ public class CommonChatService<
         channel.id = name;
         channel.prefix = name;
         return textService.success("Created the channel " + name + " successfully");
+    }
+
+    @Override
+    public TString ignore(UUID playerUUID, UUID targetPlayerUUID) {
+        ignoreMap.put(playerUUID, targetPlayerUUID);
+        return textService.success("You are now ignoring " + userService.getUserName(targetPlayerUUID));
+    }
+
+    @Override
+    public TString unIgnore(UUID playerUUID, UUID targetPlayerUUID) {
+        if (ignoreMap.containsEntry(playerUUID, targetPlayerUUID)) {
+            ignoreMap.remove(playerUUID, targetPlayerUUID);
+            return textService.of("You are no longer ignoring " + userService.getUserName(targetPlayerUUID));
+        } else {
+            return ignore(playerUUID, targetPlayerUUID);
+        }
+    }
+
+    @Override
+    public boolean isIgnored(UUID playerUUID, UUID targetPlayerUUID) {
+        return ignoreMap.containsEntry(playerUUID, targetPlayerUUID);
     }
 }
