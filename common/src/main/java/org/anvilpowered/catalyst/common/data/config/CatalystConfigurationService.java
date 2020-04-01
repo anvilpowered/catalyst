@@ -68,7 +68,8 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.WEBHOOK_URL, "discord.url.webhook");
         setName(CatalystKeys.DISCORD_URL, "discord.url.invite");
         setName(CatalystKeys.DISCORD_ENABLE, "discord.enabled");
-        setName(CatalystKeys.SERVER_PING, "ping.format");
+        setName(CatalystKeys.SERVER_PING, "ping.mode");
+        setName(CatalystKeys.SERVER_PING_MESSAGE, "ping.message");
     }
 
     @Override
@@ -109,5 +110,6 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.DISCORD_URL, "\nDiscord invite link that allows players to join the discord");
         setDescription(CatalystKeys.DISCORD_ENABLE, "\nEnable or Disable the discord bot (false = disabled).");
         setDescription(CatalystKeys.SERVER_PING, "\nSpecify what you would like to be shown in the server list, either PLAYERS or MESSAGE");
+        setDescription(CatalystKeys.SERVER_PING_MESSAGE, "\nThis message is shown when players hover over the player count. \nThis message will only appear when the mode is set to MESSAGE");
     }
 }

@@ -21,6 +21,7 @@ import net.kyori.text.format.TextColor;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.text.serializer.plain.PlainComponentSerializer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.config.Channel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -72,6 +73,9 @@ public class ProxyListener {
 
     @Inject
     private Logger logger;
+
+    @Inject
+    private TextService<TextComponent, CommandSource> textService;
 
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
@@ -264,7 +268,6 @@ public class ProxyListener {
                     if (ping == null) continue;
                     serverPing = ping;
                     ping.getModinfo().ifPresent(builder::mods);
-                    System.out.println("Displaying");
                 }
             } catch (InterruptedException | ExecutionException e) {
                 proxyPingEvent.setPing(ServerPing.builder()
@@ -273,17 +276,20 @@ public class ProxyListener {
             }
         }
 
-        if (proxyServer.getPlayerCount() > 0) {
-            ServerPing.SamplePlayer[] samplePlayers = new ServerPing.SamplePlayer[proxyServer.getPlayerCount()];
-            List<Player> proxiedPlayers = new ArrayList<>(proxyServer.getAllPlayers());
-            for (int i = 0; i < proxyServer.getPlayerCount(); i++) {
-                samplePlayers[i] = new ServerPing.SamplePlayer(proxiedPlayers.get(i).getUsername(), UUID.randomUUID());
+        if (registry.getOrDefault(CatalystKeys.SERVER_PING).equalsIgnoreCase("players")) {
+            if (proxyServer.getPlayerCount() > 0) {
+                ServerPing.SamplePlayer[] samplePlayers = new ServerPing.SamplePlayer[proxyServer.getPlayerCount()];
+                List<Player> proxiedPlayers = new ArrayList<>(proxyServer.getAllPlayers());
+                for (int i = 0; i < proxyServer.getPlayerCount(); i++) {
+                    samplePlayers[i] = new ServerPing.SamplePlayer(proxiedPlayers.get(i).getUsername(), UUID.randomUUID());
+                }
+                builder.samplePlayers(samplePlayers);
             }
-            builder.samplePlayers(samplePlayers);
+        } else if (registry.getOrDefault(CatalystKeys.SERVER_PING).equalsIgnoreCase("MESSAGE")) {
+            builder.samplePlayers(new ServerPing.SamplePlayer(registry.getOrDefault(CatalystKeys.SERVER_PING_MESSAGE), UUID.randomUUID()));
         }
 
-        if (serverPing.getFavicon().
-            isPresent()) {
+        if (serverPing.getFavicon().isPresent()) {
             builder.favicon(serverPing.getFavicon().get());
         }
 

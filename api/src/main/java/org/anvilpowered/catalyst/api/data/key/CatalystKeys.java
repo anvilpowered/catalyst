@@ -198,6 +198,8 @@ public final class CatalystKeys {
     };
     public static final Key<String> SERVER_PING = new Key<String>("SERVER_PING", "PLAYERS"){
     };
+    public static final Key<String> SERVER_PING_MESSAGE = new Key<String>("SERVER_PING_MESSAGE", "Change this message in the config!"){
+    };
 
 
     static {
@@ -275,5 +277,6 @@ public final class CatalystKeys {
         Keys.registerKey(IGNORE);
         Keys.registerKey(IGNORE_EXEMPT);
         Keys.registerKey(SERVER_PING);
+        Keys.registerKey(SERVER_PING_MESSAGE);
     }
 }
