@@ -196,6 +196,8 @@ public final class CatalystKeys {
     };
     public static final Key<String> IGNORE_EXEMPT = new Key<String>("IGNORE_EXEMPT", "catalyst.command.ignore.exempt"){
     };
+    public static final Key<String> SERVER_PING = new Key<String>("SERVER_PING", "PLAYERS"){
+    };
 
 
     static {
@@ -272,5 +274,6 @@ public final class CatalystKeys {
         Keys.registerKey(WEBSITE_URL);
         Keys.registerKey(IGNORE);
         Keys.registerKey(IGNORE_EXEMPT);
+        Keys.registerKey(SERVER_PING);
     }
 }

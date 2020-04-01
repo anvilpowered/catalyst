@@ -56,7 +56,7 @@ public class IgnoreCommand implements Command {
             player.sendMessage(
                 chatService.ignore(player.getUniqueId(), proxyServer.getPlayer(userName).get().getUniqueId()));
         } else {
-            source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player."))));
+            source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
         }
     }
 }

@@ -100,10 +100,13 @@ public class CatalystCommandManager {
     private ExceptionCommand exceptionCommand;
 
     @Inject
-    private CatalystCommand msEssentialsCommand;
+    private CatalystCommand catalystCommand;
 
     @Inject
     Provider<ChannelCommand> channelCommandProvider;
+
+    @Inject
+    private IgnoreCommand ignoreCommand;
 
     private boolean alreadyLoaded = false;
 
@@ -173,6 +176,9 @@ public class CatalystCommandManager {
         proxyServer.getCommandManager().register(
             "exception", exceptionCommand);
         proxyServer.getCommandManager().register(
-            "catalyst", msEssentialsCommand);
+            "catalyst", catalystCommand);
+        proxyServer.getCommandManager().register(
+            "ignore", ignoreCommand
+        );
     }
 }

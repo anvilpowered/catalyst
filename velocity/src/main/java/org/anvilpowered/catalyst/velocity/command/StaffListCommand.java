@@ -26,7 +26,7 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.api.plugin.StaffListService;
+import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 //This class was initially written by LGC_McLovin of MilspecSG

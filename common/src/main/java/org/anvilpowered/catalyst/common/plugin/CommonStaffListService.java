@@ -21,7 +21,7 @@ package org.anvilpowered.catalyst.common.plugin;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.plugin.StaffListService;
+import org.anvilpowered.catalyst.api.service.StaffListService;
 
 import java.util.ArrayList;
 import java.util.List;

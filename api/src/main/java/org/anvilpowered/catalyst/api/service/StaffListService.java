@@ -1,6 +1,5 @@
 /*
- *   OnTime - AnvilPowered
- *   Copyright (C) 2020 STG_Allen
+ *     Copyright (C) 2020 STG_Allen
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,7 +15,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.plugin;
+package org.anvilpowered.catalyst.api.service;
 
 import java.util.List;
 

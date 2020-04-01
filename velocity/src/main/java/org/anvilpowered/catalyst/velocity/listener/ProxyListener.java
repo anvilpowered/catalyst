@@ -8,22 +8,26 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
+import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.proxy.server.ServerPing;
 import net.kyori.text.TextComponent;
+import net.kyori.text.format.TextColor;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.text.serializer.plain.PlainComponentSerializer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.config.Channel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.api.plugin.StaffListService;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
+import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.TabService;
 import org.anvilpowered.catalyst.velocity.event.ProxyChatEvent;
 import org.anvilpowered.catalyst.velocity.event.ProxyStaffChatEvent;
@@ -31,8 +35,11 @@ import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class ProxyListener {
 
@@ -240,5 +247,51 @@ public class ProxyListener {
             Double balance = Double.parseDouble(packet[1]);
             tabService.setBalance(userName, balance);
         }
+    }
+
+    @Subscribe
+    public void onServerListPing(ProxyPingEvent proxyPingEvent) {
+
+        ServerPing serverPing = proxyPingEvent.getPing();
+        ServerPing.Builder builder = ServerPing.builder();
+
+        if (proxyServer.getConfiguration().isAnnounceForge()) {
+            try {
+                for (String server : proxyServer.getConfiguration().getAttemptConnectionOrder()) {
+                    Optional<RegisteredServer> registeredServer = proxyServer.getServer(server);
+                    if (!registeredServer.isPresent()) continue;
+                    ServerPing ping = registeredServer.get().ping().get();
+                    if (ping == null) continue;
+                    serverPing = ping;
+                    ping.getModinfo().ifPresent(builder::mods);
+                    System.out.println("Displaying");
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                proxyPingEvent.setPing(ServerPing.builder()
+                    .description(TextComponent.of("The server is offline", TextColor.RED))
+                    .build());
+            }
+        }
+
+        if (proxyServer.getPlayerCount() > 0) {
+            ServerPing.SamplePlayer[] samplePlayers = new ServerPing.SamplePlayer[proxyServer.getPlayerCount()];
+            List<Player> proxiedPlayers = new ArrayList<>(proxyServer.getAllPlayers());
+            for (int i = 0; i < proxyServer.getPlayerCount(); i++) {
+                samplePlayers[i] = new ServerPing.SamplePlayer(proxiedPlayers.get(i).getUsername(), UUID.randomUUID());
+            }
+            builder.samplePlayers(samplePlayers);
+        }
+
+        if (serverPing.getFavicon().
+            isPresent()) {
+            builder.favicon(serverPing.getFavicon().get());
+        }
+
+        builder.onlinePlayers(proxyServer.getPlayerCount());
+        builder.description(proxyServer.getConfiguration().getMotdComponent());
+        builder.version(serverPing.getVersion());
+        builder.maximumPlayers(proxyServer.getConfiguration().getShowMaxPlayers());
+
+        proxyPingEvent.setPing(builder.build());
     }
 }
