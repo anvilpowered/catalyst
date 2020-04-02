@@ -17,8 +17,6 @@
 
 package org.anvilpowered.catalyst.common.service;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
@@ -30,6 +28,7 @@ import org.anvilpowered.catalyst.api.data.config.Channel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -63,7 +63,7 @@ public class CommonChatService<
 
     Map<UUID, String> channelMap = new HashMap<>();
 
-    Multimap<UUID, UUID> ignoreMap = ArrayListMultimap.create();
+    Map<UUID, List<UUID>> ignoreMap = new HashMap<>();
 
     @Override
     public void switchChannel(UUID userUUID, String channelId) {
@@ -121,7 +121,11 @@ public class CommonChatService<
     public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, UUID senderUUID, Predicate<? super TPlayer> checkOverridePerm) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
             if (checkOverridePerm.test(p) || getChannelIdForUser(userService.getUUID(p)).equals(channelId)) {
-                if (!isIgnored(senderUUID, userService.getUUID(p))) {
+                if (!senderUUID.equals(userService.getUUID(p))) {
+                    if (!isIgnored(userService.getUUID(p), senderUUID)) {
+                        textService.send(message, p);
+                    }
+                } else {
                     textService.send(message, p);
                 }
             }
@@ -230,22 +234,35 @@ public class CommonChatService<
 
     @Override
     public TString ignore(UUID playerUUID, UUID targetPlayerUUID) {
-        ignoreMap.put(playerUUID, targetPlayerUUID);
-        return textService.success("You are now ignoring " + userService.getUserName(targetPlayerUUID));
+        List<UUID> uuidList = new ArrayList<>();
+        if (ignoreMap.get(playerUUID) == null) {
+            uuidList.add(targetPlayerUUID);
+        } else {
+            uuidList = ignoreMap.get(playerUUID);
+            if (uuidList.contains(targetPlayerUUID)) {
+                return unIgnore(playerUUID, targetPlayerUUID);
+            }
+        }
+        ignoreMap.put(playerUUID, uuidList);
+        return textService.success("You are now ignoring " + userService.getUserName(targetPlayerUUID).get());
     }
 
     @Override
     public TString unIgnore(UUID playerUUID, UUID targetPlayerUUID) {
-        if (ignoreMap.containsEntry(playerUUID, targetPlayerUUID)) {
-            ignoreMap.remove(playerUUID, targetPlayerUUID);
-            return textService.of("You are no longer ignoring " + userService.getUserName(targetPlayerUUID));
-        } else {
-            return ignore(playerUUID, targetPlayerUUID);
+        List<UUID> uuidList = ignoreMap.get(playerUUID);
+        if (isIgnored(playerUUID, targetPlayerUUID)) {
+            uuidList.remove(targetPlayerUUID);
+            ignoreMap.replace(playerUUID, uuidList);
         }
+        return textService.of("You are no longer ignoring " + userService.getUserName(targetPlayerUUID).get());
     }
 
     @Override
     public boolean isIgnored(UUID playerUUID, UUID targetPlayerUUID) {
-        return ignoreMap.containsEntry(playerUUID, targetPlayerUUID);
+        List<UUID> uuidList = ignoreMap.get(playerUUID);
+        if(uuidList == null) {
+            return false;
+        }
+        return uuidList.contains(targetPlayerUUID);
     }
 }
