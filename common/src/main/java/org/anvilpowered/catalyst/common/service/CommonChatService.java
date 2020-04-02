@@ -254,7 +254,7 @@ public class CommonChatService<
             uuidList.remove(targetPlayerUUID);
             ignoreMap.replace(playerUUID, uuidList);
         }
-        return textService.of("You are no longer ignoring " + userService.getUserName(targetPlayerUUID).get());
+        return textService.success("You are no longer ignoring " + userService.getUserName(targetPlayerUUID).get());
     }
 
     @Override
