@@ -22,13 +22,16 @@ import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.data.key.Key;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.util.CurrentServerService;
+import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.config.Channel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatService;
-import org.checkerframework.checker.units.qual.A;
+import org.anvilpowered.catalyst.api.service.LuckpermsService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +41,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -60,6 +62,18 @@ public class CommonChatService<
 
     @Inject
     private UserService<TPlayer, TPlayer> userService;
+
+    @Inject
+    private LuckpermsService<TPlayer> luckpermsService;
+
+    @Inject
+    private CurrentServerService currentServerService;
+
+    @Inject
+    private PermissionService<TCommandSource> permissionService;
+
+    @Inject
+    private PluginMessages<TString> pluginMessages;
 
     Map<UUID, String> channelMap = new HashMap<>();
 
@@ -260,9 +274,68 @@ public class CommonChatService<
     @Override
     public boolean isIgnored(UUID playerUUID, UUID targetPlayerUUID) {
         List<UUID> uuidList = ignoreMap.get(playerUUID);
-        if(uuidList == null) {
+        if (uuidList == null) {
             return false;
         }
         return uuidList.contains(targetPlayerUUID);
+    }
+
+    @Override
+    public String checkPlayerName(String message) {
+        for (TPlayer player : userService.getOnlinePlayers()) {
+            if (message.contains(userService.getUserName(player))) {
+                String userName = userService.getUserName(player);
+                message = message.replaceAll(
+                    userName.toUpperCase(),
+                    "&b@" + userName + "&r")
+                    .replaceAll(
+                        userName.toLowerCase(),
+                        "&b@" + userName + "&r"
+                    );
+            }
+        }
+        return message;
+    }
+
+    @Override
+    public void sendChatMessage(TPlayer player, String message) {
+        String prefix = luckpermsService.getPrefix(player);
+        String chatColor = luckpermsService.getChatColor(player);
+        String nameColor = luckpermsService.getNameColor(player);
+        String suffix = luckpermsService.getSuffix(player);
+        String userName = userService.getUserName(player);
+        UUID userUUID = userService.getUUID(userName).orElseThrow(() ->
+            new IllegalStateException("Unable to find a UUID for " + userName));
+        String server = currentServerService.getName(userName).orElseThrow(() ->
+            new IllegalStateException(userName + " is not in a valid server!"));
+        String channelId = getChannelIdForUser(userService.getUUID(player));
+        Optional<Channel> channel = getChannelFromId(channelId);
+        String channelPrefix = getChannelPrefix(channelId).orElseThrow(() ->
+            new IllegalStateException("Please specify a prefix for " + channelId));
+
+        boolean hasColorPermission = permissionService.hasPermission(
+            player,
+            registry.getOrDefault(CatalystKeys.CHAT_COLOR)
+        );
+
+        formatMessage(
+            prefix,
+            nameColor,
+            userName,
+            chatColor + message,
+            hasColorPermission,
+            suffix,
+            server,
+            channelId,
+            channelPrefix
+        ).thenAcceptAsync(optionalMessage -> {
+            if (optionalMessage.isPresent()) {
+                sendMessageToChannel(channelId, optionalMessage.get(), userUUID, p ->
+                    permissionService.hasPermission(p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))
+                );
+            } else {
+                textService.send(pluginMessages.getMuted(), player);
+            }
+        });
     }
 }

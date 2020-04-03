@@ -18,8 +18,8 @@
 package org.anvilpowered.catalyst.bungee.listener;
 
 import com.google.inject.Inject;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -34,12 +34,12 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.bungee.event.ProxyChatEvent;
 import org.anvilpowered.catalyst.bungee.event.ProxyStaffChatEvent;
 import org.anvilpowered.catalyst.bungee.plugin.CatalystBungee;
-import org.anvilpowered.catalyst.bungee.utils.LuckPermsUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,11 +64,9 @@ public class BungeeListener implements Listener {
     @Inject
     private ChatFilter chatFilter;
 
-    @Inject
-    private java.util.logging.Logger logger;
 
     @Inject
-    private LuckPermsUtils luckPermsUtils;
+    private LuckpermsService<ProxiedPlayer> luckPermsUtils;
 
     @Inject
     private TextService<TextComponent, CommandSender> textService;
@@ -76,7 +74,6 @@ public class BungeeListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
-
         if (player.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN))) {
             privateMessageService.socialSpySet().add(player.getUniqueId());
         }
@@ -87,10 +84,13 @@ public class BungeeListener implements Listener {
             player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF)),
             player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER)));
 
-        CatalystBungee.plugin.getProxy().broadcast(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
-            .replace("%player%", player.getDisplayName()));
-        logger.info(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
-            .replace("%player%", player.getDisplayName()));
+        ProxyServer.getInstance().broadcast(
+            textService.deserialize(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
+                .replace("%player%", player.getDisplayName())));
+        CatalystBungee.plugin.getLogger().info(
+            registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
+                .replace("%player%", player.getDisplayName()));
+        luckPermsUtils.addPlayerToCache(player);
     }
 
     @EventHandler
@@ -98,10 +98,13 @@ public class BungeeListener implements Listener {
         ProxiedPlayer player = event.getPlayer();
 
         staffListService.removeStaffNames(player.getDisplayName());
-        CatalystBungee.plugin.getProxy().broadcast(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
-            .replace("%player%", player.getDisplayName()));
-        logger.info(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
-            .replace("%player%", player.getDisplayName()));
+        CatalystBungee.plugin.getProxy().broadcast(
+            textService.deserialize(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
+                .replace("%player%", player.getDisplayName())));
+        CatalystBungee.plugin.getLogger().info(
+            registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
+                .replace("%player%", player.getDisplayName()));
+        luckPermsUtils.removePlayerFromCache(player);
     }
 
     @EventHandler
@@ -111,12 +114,13 @@ public class BungeeListener implements Listener {
         if (message.startsWith("/")) {
             return;
         }
+        message = chatService.checkPlayerName(message);
 
         if (ProxyStaffChatEvent.staffChatSet.contains(player.getUniqueId())) {
             ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(
                 player,
                 message,
-                textService.deserialize(checkPlayerName(message))
+                textService.deserialize(message)
             );
             CatalystBungee.plugin.getProxy().getPluginManager().callEvent(proxyStaffChatEvent);
             event.setCancelled(true);
@@ -126,6 +130,7 @@ public class BungeeListener implements Listener {
         Optional<Channel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(player.getUniqueId()));
 
         List<String> swearList = chatFilter.isSwear(message);
+
         if (channel.isPresent()) {
             if (swearList != null) {
                 if (!event.isCancelled()) {
@@ -135,33 +140,32 @@ public class BungeeListener implements Listener {
                         }
                         ProxyChatEvent proxyChatEvent = new ProxyChatEvent(
                             player,
-                            checkPlayerName(message),
-                            textService.deserialize(checkPlayerName(message)),
+                            message,
+                            textService.deserialize(message),
                             channel.get()
                         );
                         CatalystBungee.plugin.getProxy().getPluginManager().callEvent(proxyChatEvent);
                     } else {
                         ProxyChatEvent proxyChatEvent = new ProxyChatEvent(
                             player,
-                            checkPlayerName(message),
-                            textService.deserialize(checkPlayerName(message)),
+                            message,
+                            textService.deserialize(message),
                             channel.get()
                         );
                         CatalystBungee.plugin.getProxy().getPluginManager().callEvent(proxyChatEvent);
                     }
-                    sendMessage(event, checkPlayerName(message));
+                    chatService.sendChatMessage(player, message);
                 }
             } else {
-                if (!event.isCancelled()) {
-                    ProxyChatEvent proxyChatEvent = new ProxyChatEvent(
-                        player,
-                        checkPlayerName(message),
-                        textService.deserialize(checkPlayerName(message)),
-                        channel.get()
-                    );
-                    CatalystBungee.plugin.getProxy().getPluginManager().callEvent(proxyChatEvent);
-                    sendMessage(event, checkPlayerName(message));
-                }
+                ProxyChatEvent proxyChatEvent = new ProxyChatEvent(
+                    player,
+                    message,
+                    textService.deserialize(message),
+                    channel.get()
+                );
+                CatalystBungee.plugin.getProxy().getPluginManager().callEvent(proxyChatEvent);
+                chatService.sendChatMessage(player, message);
+                event.setCancelled(true);
             }
         } else {
             throw new AssertionError(
@@ -170,58 +174,4 @@ public class BungeeListener implements Listener {
             );
         }
     }
-
-    public String checkPlayerName(String message) {
-        for (ProxiedPlayer player : CatalystBungee.plugin.getProxy().getPlayers()) {
-            if (message.contains(player.getDisplayName())) {
-                message = message.replaceAll(
-                    player.getDisplayName().toUpperCase(),
-                    "&b@" + player.getDisplayName() + "&r")
-                    .replaceAll(player.getDisplayName().toLowerCase(),
-                        "&b@" + player.getDisplayName() + "&r");
-            }
-        }
-        return message;
-    }
-
-    public void sendMessage(ChatEvent event, String message) {
-        event.setCancelled(true);
-
-        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-
-        String prefix = luckPermsUtils.getPrefix(player);
-        String chatColor = luckPermsUtils.getChatColor(player);
-        String nameColor = luckPermsUtils.getNameColor(player);
-        String suffix = luckPermsUtils.getSuffix(player);
-        String server = player.getServer().getInfo().getName();
-        String channelId = chatService.getChannelIdForUser(player.getUniqueId());
-        Optional<Channel> channel = chatService.getChannelFromId(channelId);
-        String channelPrefix = chatService.getChannelPrefix(channelId).orElseThrow(() ->
-            new IllegalStateException("Please specify a prefix for " + channelId));
-
-        if (!channel.isPresent()) throw new IllegalStateException("Invalid chat channel!");
-
-
-        boolean hasColorPermission = player.hasPermission(registry.getOrDefault(CatalystKeys.CHAT_COLOR));
-        chatService.formatMessage(
-            prefix,
-            nameColor,
-            player.getDisplayName(),
-            chatColor + message,
-            hasColorPermission,
-            suffix,
-            server,
-            channelId,
-            channelPrefix
-        ).thenAcceptAsync(optionalMessage -> {
-            if (optionalMessage.isPresent()) {
-                chatService.sendMessageToChannel(channelId, optionalMessage.get(), player.getUniqueId(), p ->
-                    p.hasPermission(registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS)));
-            } else {
-                player.sendMessage(pluginMessages.getMuted());
-            }
-        });
-    }
-
-
 }

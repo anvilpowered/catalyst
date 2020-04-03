@@ -21,21 +21,15 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.anvilpowered.anvil.api.Environment;
-import org.anvilpowered.anvil.base.plugin.BasePlugin;
 import org.anvilpowered.catalyst.bungee.listener.BungeeListener;
 import org.anvilpowered.catalyst.bungee.module.BungeeModule;
-import org.anvilpowered.catalyst.bungee.utils.LuckPermsUtils;
+import org.anvilpowered.catalyst.bungee.utils.BungeeLuckpermsService;
+import org.anvilpowered.catalyst.common.plugin.Catalyst;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 
 public class CatalystBungee extends Plugin
     implements org.anvilpowered.anvil.api.plugin.Plugin<Plugin> {
-
-    @Inject
-    private java.util.logging.Logger logger;
 
     private final Inner inner;
     public static CatalystBungee plugin;
@@ -52,20 +46,10 @@ public class CatalystBungee extends Plugin
         inner = injector.getInstance(Inner.class);
     }
 
-    public static class Inner extends BasePlugin<Plugin> {
+    public static class Inner extends Catalyst<Plugin> {
         @Inject
-        public Inner(Injector injector) {
-            super(CatalystPluginInfo.id,
-                injector,
-                new BungeeModule(),
-                LuckPermsUtils.class
-            );
-        }
-
-        @Override
-        protected void whenReady(Environment environment) {
-            System.out.println("Injecting listeners");
-            super.whenReady(environment);
+        public Inner(Injector rootInjector) {
+            super(CatalystPluginInfo.id, rootInjector, new BungeeModule(), BungeeLuckpermsService.class);
         }
     }
 

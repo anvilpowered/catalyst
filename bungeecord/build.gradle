@@ -6,6 +6,7 @@ plugins {
 jar.enabled = false // we only want shadowJar
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
     maven { url "https://jitpack.io" }
@@ -26,7 +27,6 @@ dependencies {
     implementation bungee
     implementation guice
     implementation sponge
-    implementation unirest
 }
 
 shadowJar {

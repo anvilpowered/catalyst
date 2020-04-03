@@ -56,4 +56,8 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
     TString unIgnore(UUID playerUUID, UUID targetPlayerUUID);
 
     boolean isIgnored(UUID playerUUID, UUID targetPlayerUUID);
+
+    String checkPlayerName(String message);
+
+    void sendChatMessage(TPlayer player, String message);
 }

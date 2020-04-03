@@ -27,20 +27,22 @@ import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
+import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.TabService;
-import org.anvilpowered.catalyst.common.service.CommonChatFilter;
-import org.anvilpowered.catalyst.common.service.CommonChatService;
-import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService;
 import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.member.CommonMemberManager;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 import org.anvilpowered.catalyst.common.plugin.CommonStaffListService;
+import org.anvilpowered.catalyst.common.service.CommonChatFilter;
+import org.anvilpowered.catalyst.common.service.CommonChatService;
+import org.anvilpowered.catalyst.common.service.CommonLuckpermsService;
+import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService;
 import org.anvilpowered.catalyst.common.service.CommonTabService;
 
 @SuppressWarnings({"UnstableApiUsage"})
@@ -101,7 +103,13 @@ public class CommonModule<
         be.bind(
             new TypeToken<TabService<TString>>(getClass()) {
             },
-            new TypeToken<CommonTabService<TString, TCommandSource>>(getClass()){
+            new TypeToken<CommonTabService<TString, TCommandSource>>(getClass()) {
+            }
+        );
+        be.bind(
+            new TypeToken<LuckpermsService<TPlayer>>(getClass()) {
+            },
+            new TypeToken<CommonLuckpermsService<TString, TPlayer, TCommandSource>>(getClass()) {
             }
         );
 
