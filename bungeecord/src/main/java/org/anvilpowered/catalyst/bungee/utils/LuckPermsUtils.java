@@ -15,20 +15,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.utils;
+package org.anvilpowered.catalyst.bungee.utils;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedMetaData;
 import net.luckperms.api.context.ContextManager;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.plugin.Plugin;
-import org.anvilpowered.catalyst.velocity.plugin.CatalystVelocity;
-import org.slf4j.Logger;
+import org.anvilpowered.catalyst.bungee.plugin.CatalystBungee;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,61 +38,61 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class LuckPermsUtils {
 
-    @Inject
-    private ProxyServer proxyServer;
-
-    @Inject
-    Plugin<?> catalyst;
-
     private Registry registry;
 
     private static Map<UUID, CachedMetaData> cachedPlayers = new HashMap<>();
 
     @Inject
-    private Logger logger;
+    private java.util.logging.Logger logger;
+
+    public static LuckPerms api;
 
     @Inject
     public LuckPermsUtils(Registry registry) {
+        api = LuckPermsProvider.get();
         this.registry = registry;
         this.registry.addRegistryLoadedListener(this::syncPlayerCache);
     }
 
-
     public void syncPlayerCache() {
-        proxyServer.getScheduler().buildTask(catalyst, () -> {
-            for (Player player : proxyServer.getAllPlayers()) {
+        System.out.println("Running SyncPlayerCache");
+        CatalystBungee.plugin.getProxy().getScheduler().schedule(CatalystBungee.plugin, () -> {
+            System.out.println("SyncPlayerCache");
+            System.out.println(CatalystBungee.plugin.getProxy().getPlayers() );
+            for (ProxiedPlayer player : CatalystBungee.plugin.getProxy().getPlayers()) {
+                System.out.println("Inside for loop???");
                 addPlayerToCache(player);
             }
-        }).repeat(5, TimeUnit.SECONDS).schedule();
+        }, 5, TimeUnit.SECONDS).getTask().run();
     }
 
-    public void addPlayerToCache(Player player) {
+    public void addPlayerToCache(ProxiedPlayer player) {
         UUID playerUUID = player.getUniqueId();
-        User temp = CatalystVelocity.api.getUserManager().getUser(playerUUID);
+        User temp = api.getUserManager().getUser(playerUUID);
         if (temp != null) {
             if (cachedPlayers.containsKey(playerUUID)) {
                 if (temp.getCachedData().getMetaData(getQueryOptions(temp)) != cachedPlayers.get(playerUUID)) {
                     cachedPlayers.replace(playerUUID, temp.getCachedData().getMetaData(getQueryOptions(temp)));
-                    logger.info("Updated luckperms data for " + player.getUsername());
+                    logger.info("Updated luckperms data for " + player.getDisplayName());
                 }
             } else {
                 cachedPlayers.put(playerUUID, temp.getCachedData().getMetaData(getQueryOptions(temp)));
-                logger.info("Added " + player.getUsername() + " to the luckperms cache!");
+                logger.info("Added " + player.getDisplayName() + " to the luckperms cache!");
             }
         } else {
-            throw new IllegalStateException("Failed to find the user " + player.getUsername() + " inside luckperms. Please report this on github");
+            throw new IllegalStateException("Failed to find the user " + player.getDisplayName() + " inside luckperms. Please report this on github");
         }
     }
 
-    public void removePlayerFromCache(Player player) {
+    public void removePlayerFromCache(ProxiedPlayer player) {
         cachedPlayers.remove(player.getUniqueId());
     }
 
-    public Optional<CachedMetaData> getCachedPlayerData(Player player) {
+    public Optional<CachedMetaData> getCachedPlayerData(ProxiedPlayer player) {
         return Optional.of(cachedPlayers.get(player.getUniqueId()));
     }
 
-    public String getPrefix(Player player) {
+    public String getPrefix(ProxiedPlayer player) {
         if (getCachedPlayerData(player).isPresent()) {
             if (getCachedPlayerData(player).get().getPrefix() != null) {
                 return getCachedPlayerData(player).get().getPrefix();
@@ -103,7 +102,7 @@ public class LuckPermsUtils {
         return "Unspecified";
     }
 
-    public String getSuffix(Player player) {
+    public String getSuffix(ProxiedPlayer player) {
         if (getCachedPlayerData(player).isPresent()) {
             if (getCachedPlayerData(player).get().getSuffix() != null) {
                 return getCachedPlayerData(player).get().getSuffix();
@@ -114,12 +113,12 @@ public class LuckPermsUtils {
     }
 
     private QueryOptions getQueryOptions(User user) {
-        final ContextManager contextManager = CatalystVelocity.api.getContextManager();
+        final ContextManager contextManager = api.getContextManager();
         return contextManager.getQueryOptions(user)
             .orElseGet(contextManager::getStaticQueryOptions);
     }
 
-    public String getChatColor(Player player) {
+    public String getChatColor(ProxiedPlayer player) {
         if (getCachedPlayerData(player).isPresent()) {
             if (getCachedPlayerData(player).get().getMetaValue("chat-color") != null) {
                 return getCachedPlayerData(player).get().getMetaValue("chat-color");
@@ -128,7 +127,7 @@ public class LuckPermsUtils {
         return "";
     }
 
-    public String getNameColor(Player player) {
+    public String getNameColor(ProxiedPlayer player) {
         if (getCachedPlayerData(player).isPresent()) {
             if (getCachedPlayerData(player).get().getMetaValue("name-color") != null) {
                 return getCachedPlayerData(player).get().getMetaValue("name-color");

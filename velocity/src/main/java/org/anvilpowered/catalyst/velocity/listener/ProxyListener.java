@@ -32,7 +32,7 @@ import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.TabService;
 import org.anvilpowered.catalyst.velocity.event.ProxyChatEvent;
 import org.anvilpowered.catalyst.velocity.event.ProxyStaffChatEvent;
-import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
+import org.anvilpowered.catalyst.velocity.plugin.CatalystVelocity;
 import org.anvilpowered.catalyst.velocity.utils.LuckPermsUtils;
 import org.slf4j.Logger;
 
@@ -45,7 +45,7 @@ import java.util.concurrent.ExecutionException;
 public class ProxyListener {
 
     @Inject
-    public ChatService<TextComponent, Player, CommandSource> chatService;
+    private ChatService<TextComponent, Player, CommandSource> chatService;
 
     @Inject
     private StaffListService<TextComponent> staffListService;
@@ -112,7 +112,8 @@ public class ProxyListener {
             player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN)),
             player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF)),
             player.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER)));
-        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", player.getUsername()), '&'));
+        proxyServer.broadcast(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
+            .replace("%player%", player.getUsername()), '&'));
         logger.info(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", player.getUsername()).replaceAll("&", ""));
     }
 
@@ -174,7 +175,7 @@ public class ProxyListener {
     }
 
     public String checkPlayerName(String message) {
-        for (Player onlinePlayer : Catalyst.getServer().getAllPlayers()) {
+        for (Player onlinePlayer : CatalystVelocity.getServer().getAllPlayers()) {
             if (message.contains(onlinePlayer.getUsername())) {
                 message = message.replaceAll(
                     onlinePlayer.getUsername().toUpperCase(),

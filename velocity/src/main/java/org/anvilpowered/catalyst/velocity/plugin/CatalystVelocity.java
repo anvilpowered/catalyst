@@ -52,7 +52,7 @@ import org.slf4j.Logger;
         @Dependency(id = "luckperms")
     }
 )
-public class Catalyst extends BasePlugin<PluginContainer> {
+public class CatalystVelocity extends BasePlugin<PluginContainer> {
 
     @Inject
     Logger logger;
@@ -62,13 +62,13 @@ public class Catalyst extends BasePlugin<PluginContainer> {
 
     public static ProxyServer server;
 
-    public static Catalyst plugin = null;
+    public static CatalystVelocity plugin = null;
 
     private Injector injector = null;
     public static LuckPerms api;
 
     @Inject
-    public Catalyst(Injector injector) {
+    public CatalystVelocity(Injector injector) {
         super(CatalystPluginInfo.id,
             injector,
             new VelocityModule(),

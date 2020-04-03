@@ -22,7 +22,6 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.catalyst.velocity.discord.JDAHook;
-import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;

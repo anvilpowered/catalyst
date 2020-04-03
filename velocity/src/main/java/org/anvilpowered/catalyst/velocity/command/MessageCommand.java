@@ -27,7 +27,7 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
+import org.anvilpowered.catalyst.velocity.plugin.CatalystVelocity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class MessageCommand implements Command {
             return;
         }
 
-        Optional<Player> recipient = Catalyst.getServer().getPlayer(args[0]);
+        Optional<Player> recipient = CatalystVelocity.getServer().getPlayer(args[0]);
         if (source instanceof ConsoleCommandSource) {
             if (recipient.isPresent()) {
                 name = args[0];
@@ -91,7 +91,7 @@ public class MessageCommand implements Command {
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return Catalyst.getServer().matchPlayer(args[0])
+            return CatalystVelocity.getServer().matchPlayer(args[0])
                 .stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();

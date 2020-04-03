@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+jar.enabled = false // we only want shadowJar
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://jitpack.io" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url 'https://repo.spongepowered.org/maven' }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'net.luckperms:api:5.0'
+
+    implementation project(':api')
+    implementation project(':common')
+
+    implementation anvil_api
+    implementation anvil_base
+
+    implementation bungee
+    implementation guice
+    implementation sponge
+    implementation unirest
+}
+
+shadowJar {
+    String jarName = "Catalyst-Bungee-${project.version}.jar"
+    println "Building: " + jarName
+    archiveFileName = jarName
+
+    dependencies {
+        include project(':api')
+        include project(':common')
+        include dependency(jda)
+    }
+}
+
+artifacts {
+    archives shadowJar
+}
+

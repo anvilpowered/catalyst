@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
+import org.anvilpowered.catalyst.velocity.plugin.CatalystVelocity;
 import org.json.JSONObject;
 
 @Singleton
@@ -46,7 +46,7 @@ public class WebhookSender {
         String content = message.replaceAll("&(0-9a-fA-FlkKrR)", "");
         String format = registry.getOrDefault(CatalystKeys.WEBHOOK_URL)
             .replace("%uuid%", source.getUniqueId().toString());
-        ScheduledTask task = proxyServer.getScheduler().buildTask(Catalyst.plugin, () -> {
+        ScheduledTask task = proxyServer.getScheduler().buildTask(CatalystVelocity.plugin, () -> {
             net.dv8tion.jda.api.entities.Webhook webhook = getWebhook(channelID);
             if (webHook == null) return;
             sendWebhook(webhook, Webhook.of(format, removeCodes(player), removeCodes(content)));
@@ -77,11 +77,11 @@ public class WebhookSender {
 
         net.dv8tion.jda.api.entities.Webhook w = textChannel.getGuild()
             .retrieveWebhooks().complete().stream().filter(wh ->
-                wh.getName().equals("Catalyst-DB: " + textChannel.getName()))
+                wh.getName().equals("CatalystVelocity-DB: " + textChannel.getName()))
             .findFirst().orElse(null);
 
         if (w == null) {
-            w = textChannel.createWebhook("Catalyst-DB: " + textChannel.getName()).complete();
+            w = textChannel.createWebhook("CatalystVelocity-DB: " + textChannel.getName()).complete();
         }
 
         return w;

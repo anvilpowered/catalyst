@@ -25,4 +25,5 @@ include 'Anvil:anvil-spigot'
 include 'Anvil:anvil-sponge'
 include 'Anvil:anvil-velocity'
 include 'bungee'
+include 'bungeecord'
 
