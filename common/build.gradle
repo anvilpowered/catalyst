@@ -7,10 +7,10 @@ plugins {
 
 repositories {
     mavenCentral()
+    jcenter()
     maven { url "https://jitpack.io" }
     maven { url 'https://repo.spongepowered.org/maven' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    jcenter()
 }
 
 
@@ -24,11 +24,13 @@ dependencies {
     implementation anvil_api_core
     implementation anvil_base
 
+    implementation guice
+    implementation jda
     implementation jsondb
     implementation mongodb_driver_sync
     implementation mongo_java_driver
     implementation morphia
-    implementation guice
+    implementation unirest
     implementation xodus
     implementation xodus_entity_store
 }
