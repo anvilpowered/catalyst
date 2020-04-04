@@ -108,4 +108,6 @@ public interface PluginMessages<TString> {
     TString ignoreCommandUsage();
 
     TString ignoreExempt();
+
+    TString offlineOrInvalidPlayer();
 }

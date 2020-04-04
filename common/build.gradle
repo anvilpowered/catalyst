@@ -7,10 +7,10 @@ plugins {
 
 repositories {
     mavenCentral()
+    jcenter()
     maven { url "https://jitpack.io" }
     maven { url 'https://repo.spongepowered.org/maven' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    jcenter()
 }
 
 

@@ -333,4 +333,12 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
             .red().append("This user is exempt from being ignored.")
             .build();
     }
+
+    @Override
+    public TString offlineOrInvalidPlayer() {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .yellow().append("Invalid or offline player!")
+            .build();
+    }
 }
