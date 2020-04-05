@@ -1,0 +1,8 @@
+name: Catalyst
+version: "1.0.0-SNAPSHOT"
+main: org.anvilpowered.catalyst.bungee.plugin.CatalystBungee
+api-version: 1.13
+authors: [STG_Allen]
+description: A cross-platform Essentials plugin
+website: https://anvilpowered.org
+softdepend: [Anvil, LuckPerms]

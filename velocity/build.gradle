@@ -11,6 +11,7 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url 'https://repo.velocitypowered.com/snapshots/' }
     maven { url 'https://repo.spongepowered.org/maven' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
@@ -22,8 +23,8 @@ dependencies {
     implementation project(':api')
     implementation project(':common')
 
-    compileOnly project (':Anvil:anvil-api')
-    compileOnly project (':Anvil:anvil-base')
+    compileOnly anvil_api
+    compileOnly anvil_base
 
     implementation jda
     compileOnly guice
@@ -37,7 +38,7 @@ shadowJar {
     archiveFileName = jarName
 
     dependencies {
-        exclude(dependency('net.java.dev.jna:jna'))
+
     }
 }
 

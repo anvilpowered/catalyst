@@ -17,46 +17,28 @@
 
 package org.anvilpowered.catalyst.velocity.command;
 
-import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.common.command.CommonChannelCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.anvilpowered.catalyst.api.service.ChatService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-public class ChannelCommand implements Command {
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
-
-    @Inject
-    private ChatService<TextComponent, Player> chatService;
-
-    @Inject
-    private Registry registry;
-
-    String channelId;
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
+public class ChannelCommand extends CommonChannelCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (source.hasPermission(registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + channelId)) {
-            if (args.length == 0) {
-                if (source instanceof Player) {
-                    Player player = (Player) source;
-                    chatService.switchChannel(player.getUniqueId(), channelId);
-                    source.sendMessage(TextComponent.of("Channel switched to " + channelId));
-                }
-            }
-        } else {
-            source.sendMessage(pluginMessages.getNoPermission());
-        }
+        execute(source, source, args);
+    }
+
+    @Override
+    public void setChannelId(String channelId) {
+        super.setChannelId(channelId);
     }
 }

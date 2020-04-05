@@ -24,9 +24,9 @@ import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.ChatService;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BaseChannelCommand implements Command {
@@ -35,7 +35,7 @@ public class BaseChannelCommand implements Command {
     private Registry registry;
 
     @Inject
-    private ChatService<TextComponent, Player> chatService;
+    private ChatService<TextComponent, Player, CommandSource> chatService;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -51,7 +51,8 @@ public class BaseChannelCommand implements Command {
 
             switch (args[0]) {
                 case ("info"): {
-                    if (source.hasPermission(registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + args[1])) {
+                    if (source.hasPermission(
+                        registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + args[1])) {
 
                         source.sendMessage(textService.builder()
                             .gold().append(args[1])
@@ -64,7 +65,8 @@ public class BaseChannelCommand implements Command {
                     return;
                 }
                 case ("join"): {
-                    if (source.hasPermission(registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + args[1])) {
+                    if (source.hasPermission(
+                        registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + args[1])) {
                         chatService.switchChannel(player.getUniqueId(), args[1]);
                     } else {
                         source.sendMessage(pluginMessages.getNoPermission());

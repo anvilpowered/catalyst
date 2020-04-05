@@ -20,54 +20,31 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
+import org.anvilpowered.catalyst.common.command.CommonDeleteNicknameCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.member.MemberManager;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DeleteNicknameCommand implements Command {
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
-
-    @Inject
-    private MemberManager<TextComponent> memberManager;
+public class DeleteNicknameCommand extends CommonDeleteNicknameCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
     @Inject
     private ProxyServer proxyServer;
 
-    @Inject
-    private Registry registry;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.NICKNAME))) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
-
-        if (source instanceof Player) {
-            Player player = (Player) source;
-            if(args.length == 0) {
-                memberManager.deleteNickName(player.getUsername());
-                return;
-            }
-            if (args[0].equals("other") && source.hasPermission(registry.getOrDefault(CatalystKeys.NICKNAME_OTHER))) {
-                memberManager.deleteNickNameForUser(args[1]).thenAcceptAsync(source::sendMessage);
-            } else {
-                memberManager.deleteNickName(player.getUsername()).thenAcceptAsync(source::sendMessage);
-            }
-        } else {
-            source.sendMessage(TextComponent.of("Player only command!"));
-        }
+        execute(source, source, args);
     }
 
     @Override

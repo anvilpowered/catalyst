@@ -20,51 +20,35 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.member.MemberManager;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.common.command.CommonUnMuteCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UnMuteCommand implements Command {
-
-    @Inject
-    private MemberManager<TextComponent> memberManager;
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
+public class UnMuteCommand extends CommonUnMuteCommand<
+    TextComponent,
+    CommandSource,
+    PermissionSubject> implements Command {
 
     @Inject
     private ProxyServer proxyServer;
 
-    @Inject
-    private Registry registry;
-
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.MUTE))) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
-        if (args.length == 0) {
-            source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(pluginMessages.unMuteCommandUsage());
-            return;
-        }
-        memberManager.unMute(args[0]).thenAcceptAsync(source::sendMessage);
+        execute(source, source, args);
     }
 
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return proxyServer.matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return proxyServer.matchPlayer(args[0])
+                .stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

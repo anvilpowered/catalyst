@@ -17,44 +17,28 @@
 
 package org.anvilpowered.catalyst.velocity.command;
 
-import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.service.PrivateMessageService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.common.command.CommonSocialSpyCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.UUID;
+public class SocialSpyCommand extends CommonSocialSpyCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
-public class SocialSpyCommand implements Command {
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
-
-    @Inject
-    private Registry registry;
-
-    @Inject
-    private PrivateMessageService<TextComponent> privateMessageService;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
         if (source instanceof Player) {
-            Player player = (Player) source;
-            if (source.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY)) || source.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN))) {
-                UUID playerUUID = player.getUniqueId();
-                if (privateMessageService.socialSpySet().contains(playerUUID)) {
-                    privateMessageService.socialSpySet().remove(playerUUID);
-                    source.sendMessage(pluginMessages.getSocialSpy(false));
-                } else {
-                    privateMessageService.socialSpySet().add(playerUUID);
-                    source.sendMessage(pluginMessages.getSocialSpy(true));
-                }
-            }
+            execute(source, source, args);
+        } else {
+            source.sendMessage(TextComponent.of("Player only command!"));
         }
     }
 }

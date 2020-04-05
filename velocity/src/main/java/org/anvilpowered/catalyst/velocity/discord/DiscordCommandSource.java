@@ -25,6 +25,7 @@ import net.kyori.text.Component;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.service.JDAService;
 
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ public class DiscordCommandSource implements CommandSource {
     private Registry registry;
 
     @Inject
-    private JDAHook jdaHook;
+    private JDAService jdaHook;
 
 
     @Override
@@ -45,7 +46,9 @@ public class DiscordCommandSource implements CommandSource {
 
     @Override
     public void sendMessage(Component component) {
-        Objects.requireNonNull(jdaHook.getJDA().getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL)))
+        Objects.requireNonNull(
+            jdaHook.getJDA()
+                .getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL)))
             .sendMessage(LegacyComponentSerializer.legacy().serialize(component)).queue();
     }
 

@@ -20,16 +20,22 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.velocity.event.ProxyStaffChatEvent;
+import org.anvilpowered.catalyst.common.command.CommonStaffChatCommand;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class StaffChatCommand implements Command {
+public class StaffChatCommand extends CommonStaffChatCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -42,34 +48,19 @@ public class StaffChatCommand implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
-            source.sendMessage(pluginMessages.getNoPermission());
-            return;
-        }
 
         if (source instanceof Player) {
-            Player player = (Player) source;
-            if (args.length == 0) {
-                if (ProxyStaffChatEvent.staffChatSet.contains(player.getUniqueId())) {
-                    ProxyStaffChatEvent.staffChatSet.remove(player.getUniqueId());
-                    player.sendMessage(pluginMessages.getStaffChat(false));
-                } else {
-                    ProxyStaffChatEvent.staffChatSet.add(player.getUniqueId());
-                    source.sendMessage(pluginMessages.getStaffChat(true));
-                }
-            } else {
-                String message = String.join(" ", args);
-                ProxyStaffChatEvent proxyStaffChatEvent = new ProxyStaffChatEvent(player, message, TextComponent.of(message));
-                proxyServer.getEventManager().fire(proxyStaffChatEvent).join();
-            }
+            execute(source, source, args);
         } else {
             if (args.length == 0) {
                 source.sendMessage(pluginMessages.getNotEnoughArgs());
             } else {
                 String message = String.join(" ", args);
-                proxyServer.getAllPlayers().stream().filter(target -> target.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT)))
+                proxyServer.getAllPlayers().stream().filter(target ->
+                    target.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT)))
                     .forEach(target ->
-                        target.sendMessage(pluginMessages.getStaffChatMessageFormattedConsole(TextComponent.of(message)))
+                        target.sendMessage(pluginMessages
+                            .getStaffChatMessageFormattedConsole(TextComponent.of(message)))
                     );
             }
         }

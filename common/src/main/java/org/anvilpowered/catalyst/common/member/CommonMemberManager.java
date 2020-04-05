@@ -31,6 +31,7 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.TimeFormatService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.anvil.base.manager.BaseManager;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.service.ChatService;
 
@@ -73,7 +74,7 @@ public class CommonMemberManager<
     protected UserService<TUser, TPlayer> userService;
 
     @Inject
-    protected ChatService<TString, TPlayer> chatService;
+    protected ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
     public CommonMemberManager(Registry registry, @Named("anvil") Environment anvilEnvironment) {
@@ -198,7 +199,7 @@ public class CommonMemberManager<
 
     @Override
     public CompletableFuture<TString> setNickNameForUser(String userName, String nickName) {
-        return getPrimaryComponent().setNickNameForUser(userName, "~" + nickName).thenApplyAsync(result -> {
+        return getPrimaryComponent().setNickNameForUser(userName, registry.getOrDefault(CatalystKeys.NICKNAME_PREFIX) + nickName).thenApplyAsync(result -> {
             if (result) {
                 userService.getPlayer(userName).ifPresent(textService.builder().green().append("Your nickname was set to " + nickName)::sendTo);
                 return textService.success("Set " + userName + "'s nickname to " + nickName);

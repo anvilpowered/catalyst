@@ -17,78 +17,43 @@
 
 package org.anvilpowered.catalyst.velocity.command;
 
-import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.ConsoleCommandSource;
+import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.service.PrivateMessageService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.velocity.plugin.Catalyst;
+import org.anvilpowered.catalyst.common.command.CommonMessageCommand;
+import org.anvilpowered.catalyst.velocity.plugin.CatalystVelocity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MessageCommand implements Command {
+public class MessageCommand extends CommonMessageCommand<
+    TextComponent,
+    Player,
+    CommandSource,
+    PermissionSubject>
+    implements Command {
 
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
-
-    @Inject
-    private Registry registry;
-
-    @Inject
-    private PrivateMessageService<TextComponent> privateMessageService;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        String name;
-        if (args.length < 1) {
-            source.sendMessage(pluginMessages.getNotEnoughArgs());
-            source.sendMessage(pluginMessages.messageCommandUsage());
-            return;
+        boolean isConsole = true;
+
+        if (source instanceof Player) {
+            isConsole = false;
         }
 
-        Optional<Player> recipient = Catalyst.getServer().getPlayer(args[0]);
-        if (source instanceof ConsoleCommandSource) {
-            if (recipient.isPresent()) {
-                name = args[0];
-                args[0] = "";
-
-                String message = String.join(" ", args);
-                privateMessageService.sendMessage("Me", name, message);
-                privateMessageService.sendMessage("Console", "Me", message);
-            }
-        } else if (source instanceof Player) {
-            Player sender = (Player) source;
-
-            if (sender.hasPermission(registry.getOrDefault(CatalystKeys.MESSAGE))) {
-                if (recipient.isPresent()) {
-                    if (args[0].equalsIgnoreCase(recipient.get().getUsername())) {
-                        args[0] = args[0].toLowerCase();
-                        String recipientName = recipient.get().getUsername();
-                        String message = String.join(" ", args).replace(recipientName.toLowerCase(), "");
-                        privateMessageService.sendMessage(sender.getUsername(), recipient.get().getUsername(), message);
-                        if (sender.getUniqueId().equals(recipient.get().getUniqueId())) {
-                            return;
-                        }
-                        privateMessageService.replyMap().put(recipient.get().getUniqueId(), sender.getUniqueId());
-                    }
-                }
-            }
-        }
+        execute(source, source, args, isConsole);
     }
 
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return Catalyst.getServer().matchPlayer(args[0]).stream().map(Player::getUsername).collect(Collectors.toList());
+            return CatalystVelocity.getServer().matchPlayer(args[0])
+                .stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
