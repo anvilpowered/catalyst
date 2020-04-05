@@ -61,6 +61,9 @@ public class CommonJDAService<TString,
     @Override
     public void enableDiscordBot() {
         if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
+            if (isLoaded) {
+                jda.shutdownNow();
+            }
             try {
                 jda = new JDABuilder(registry.getOrDefault(CatalystKeys.BOT_TOKEN)).build().awaitReady();
                 jda.getPresence()
