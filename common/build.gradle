@@ -22,9 +22,6 @@ dependencies {
 
     compileOnly project(':api')
     compileOnly anvil_api
-    compileOnly anvil_api_core
-    compileOnly anvil_base
-
     compileOnly guice
     compileOnly guice_extensions
     compileOnly jsondb

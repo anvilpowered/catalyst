@@ -63,6 +63,9 @@ public class CommonMessageCommand<
             args[0] = "";
             String message = String.join(" ", args);
 
+            //memberManger.asQueryForUser() == null
+            //MemberManger.asQueryForNick(name)
+
             if (isConsole) {
                 privateMessageService.sendMessage("Me", name, message);
                 privateMessageService.sendMessage("Console", "Me", message);
@@ -76,6 +79,10 @@ public class CommonMessageCommand<
                 privateMessageService.replyMap().put(
                     userService.getUUID(userService.getPlayer(name).get()),
                     userService.getUUID((TPlayer) source)
+                );
+                privateMessageService.replyMap().put(
+                    userService.getUUID((TPlayer) source),
+                    userService.getUUID(userService.getPlayer(name).get())
                 );
             }
         }

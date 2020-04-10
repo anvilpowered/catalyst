@@ -69,7 +69,9 @@ public class CommonKickCommand<
         }
 
         if (userService.get(args[0]).isPresent()) {
-            if (permissionService.hasPermission((TSubject) userService.getPlayer(args[0]), registry.getOrDefault(CatalystKeys.KICK_EXEMPT))) {
+            if (permissionService.hasPermission(
+                (TSubject) userService.getPlayer(args[0]).get(),
+                registry.getOrDefault(CatalystKeys.KICK_EXEMPT))) {
                 textService.send(pluginMessages.getKickExempt(), source);
                 return;
             }

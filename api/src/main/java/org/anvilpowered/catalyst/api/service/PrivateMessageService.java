@@ -28,9 +28,9 @@ public interface PrivateMessageService<TString> {
 
     Map<UUID, UUID> replyMap();
 
-    void setSender(String sender);
+    void setSource(String sender);
 
-    String getSender();
+    String getSource();
 
     void setRecipient(String recipient);
 

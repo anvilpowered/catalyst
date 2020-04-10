@@ -28,6 +28,7 @@ public class VelocityEventService implements EventService {
 
     @Inject
     Plugin<?> catalyst;
+
     @Inject
     private ProxyServer proxyServer;
 

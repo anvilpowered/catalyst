@@ -19,17 +19,12 @@ package org.anvilpowered.catalyst.velocity.plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.velocitypowered.api.event.PostOrder;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
 import org.anvilpowered.anvil.api.Environment;
-import org.anvilpowered.anvil.base.plugin.BasePlugin;
+import org.anvilpowered.catalyst.common.plugin.Catalyst;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.velocity.command.CatalystCommandManager;
 import org.anvilpowered.catalyst.velocity.listener.VelocityListener;
@@ -52,16 +47,13 @@ import org.slf4j.Logger;
         @Dependency(id = "luckperms")
     }
 )
-public class CatalystVelocity extends BasePlugin<PluginContainer> {
+public class CatalystVelocity extends Catalyst<PluginContainer> {
 
-    public static ProxyServer server;
-    public static CatalystVelocity plugin = null;
-    public static LuckPerms api;
     @Inject
     Logger logger;
+
     @Inject
     private ProxyServer proxyServer;
-    private Injector injector = null;
 
     @Inject
     public CatalystVelocity(Injector injector) {
@@ -73,17 +65,6 @@ public class CatalystVelocity extends BasePlugin<PluginContainer> {
             VelocityJDAService.class,
             VelocityLuckpermsService.class
         );
-    }
-
-    public static ProxyServer getServer() {
-        return server;
-    }
-
-    @Subscribe(order = PostOrder.LAST)
-    public void onInit(ProxyInitializeEvent event) {
-        server = proxyServer;
-        plugin = this;
-        api = LuckPermsProvider.get();
     }
 
     @Override

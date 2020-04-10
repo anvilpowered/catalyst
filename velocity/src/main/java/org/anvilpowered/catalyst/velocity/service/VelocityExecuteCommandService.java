@@ -20,8 +20,10 @@ package org.anvilpowered.catalyst.velocity.service;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
+import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource;
+import org.slf4j.Logger;
 
 public class VelocityExecuteCommandService implements ExecuteCommandService<CommandSource> {
 
@@ -31,6 +33,12 @@ public class VelocityExecuteCommandService implements ExecuteCommandService<Comm
     @Inject
     private DiscordCommandSource discordCommandSource;
 
+    @Inject
+    private Plugin<?> plugin;
+
+    @Inject
+    private Logger logger;
+
     @Override
     public void executeCommand(CommandSource source, String command) {
         proxyServer.getCommandManager().execute(source, command);
@@ -38,7 +46,10 @@ public class VelocityExecuteCommandService implements ExecuteCommandService<Comm
 
     @Override
     public void executeDiscordCommand(String command) {
-        proxyServer.getCommandManager().execute(discordCommandSource, command);
+        proxyServer.getScheduler().buildTask(plugin, () -> {
+            proxyServer.getCommandManager().execute(discordCommandSource, command);
+            logger.info("Discord: " + command);
+        }).schedule();
     }
 
 

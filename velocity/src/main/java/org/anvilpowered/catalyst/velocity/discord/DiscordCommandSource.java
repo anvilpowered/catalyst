@@ -29,7 +29,6 @@ import org.anvilpowered.catalyst.api.service.JDAService;
 
 import java.util.Objects;
 
-@Singleton
 public class DiscordCommandSource implements CommandSource {
 
     @Inject
@@ -37,7 +36,6 @@ public class DiscordCommandSource implements CommandSource {
 
     @Inject
     private JDAService jdaHook;
-
 
     @Override
     public boolean hasPermission(String permission) {
@@ -54,6 +52,6 @@ public class DiscordCommandSource implements CommandSource {
 
     @Override
     public Tristate getPermissionValue(String permission) {
-        return null;
+        return Tristate.TRUE;
     }
 }

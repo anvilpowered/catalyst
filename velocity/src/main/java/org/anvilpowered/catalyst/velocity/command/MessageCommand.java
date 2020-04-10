@@ -17,10 +17,12 @@
 
 package org.anvilpowered.catalyst.velocity.command;
 
+import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.catalyst.common.command.CommonMessageCommand;
 import org.anvilpowered.catalyst.velocity.plugin.CatalystVelocity;
@@ -37,6 +39,8 @@ public class MessageCommand extends CommonMessageCommand<
     PermissionSubject>
     implements Command {
 
+    @Inject
+    private ProxyServer proxyServer;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
@@ -52,7 +56,7 @@ public class MessageCommand extends CommonMessageCommand<
     @Override
     public List<String> suggest(CommandSource src, String[] args) {
         if (args.length == 1) {
-            return CatalystVelocity.getServer().matchPlayer(args[0])
+            return proxyServer.matchPlayer(args[0])
                 .stream().map(Player::getUsername).collect(Collectors.toList());
         }
         return Collections.emptyList();

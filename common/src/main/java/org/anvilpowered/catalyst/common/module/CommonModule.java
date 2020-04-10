@@ -47,7 +47,6 @@ import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.TabService;
 import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
-import org.anvilpowered.catalyst.common.discord.CommonDiscordListener;
 import org.anvilpowered.catalyst.common.discord.CommonJDAService;
 import org.anvilpowered.catalyst.common.discord.CommonWebhookSender;
 import org.anvilpowered.catalyst.common.event.CommonChatEvent;
@@ -84,28 +83,28 @@ public class CommonModule<
 
         BindingExtensions be = Anvil.getBindingExtensions(binder());
 
-        be.bind(new TypeToken<PluginInfo<TString>>(getClass()) {
-        }, new TypeToken<CatalystPluginInfo<TString, TCommandSource>>(getClass()) {
-        });
-
-        be.bind(new TypeToken<BasicPluginInfo>(getClass()) {
-        }, new TypeToken<CatalystPluginInfo<TString, TCommandSource>>(getClass()) {
-        });
-
+        be.bind(
+            new TypeToken<PluginInfo<TString>>(getClass()) {
+            },
+            new TypeToken<CatalystPluginInfo<TString, TCommandSource>>(getClass()) {
+            });
+        be.bind(
+            new TypeToken<BasicPluginInfo>(getClass()) {
+            },
+            new TypeToken<CatalystPluginInfo<TString, TCommandSource>>(getClass()) {
+            });
         be.bind(
             new TypeToken<PluginMessages<TString>>(getClass()) {
             },
             new TypeToken<CatalystPluginMessages<TString, TCommandSource>>(getClass()) {
             }
         );
-
         be.bind(
             new TypeToken<MemberManager<TString>>(getClass()) {
             },
             new TypeToken<CommonMemberManager<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
-
         be.bind(
             new TypeToken<ChatService<TString, TPlayer, TCommandSource>>(getClass()) {
             },
