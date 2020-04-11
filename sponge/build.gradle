@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+jar.enabled = false // we only want shadowJar
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://repo.spongepowered.org/maven' }
+}
+
+dependencies {
+    implementation project(':api')
+    implementation project(':common')
+
+    implementation anvil_api
+    implementation jda
+    implementation guice
+    implementation sponge
+    annotationProcessor sponge
+    implementation unirest
+}
+
+shadowJar {
+    String jarName = "Catalyst-Sponge-${project.version}.jar"
+    println "Building: " + jarName
+    archiveFileName = jarName
+
+    dependencies {
+        include project(':api')
+        include project(':common')
+    }
+}
+
+artifacts {
+    archives shadowJar
+}

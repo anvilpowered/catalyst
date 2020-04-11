@@ -15,13 +15,18 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.sponge.data.config;
 
-public interface ExecuteCommandService<TCommandSource> {
+import com.google.inject.Inject;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
+import org.spongepowered.api.config.DefaultConfig;
 
-    void executeCommand(TCommandSource source, String command);
+public class SpongeConfigurationService extends CatalystConfigurationService {
 
-    void executeAsConsole(String command);
-
-    void executeDiscordCommand(String command);
+    @Inject
+    public SpongeConfigurationService(@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> configLoader) {
+        super(configLoader);
+    }
 }

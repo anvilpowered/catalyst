@@ -15,35 +15,35 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.service;
+package org.anvilpowered.catalyst.sponge.service;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.proxy.ProxyServer;
 import org.anvilpowered.anvil.api.plugin.Plugin;
-import org.anvilpowered.catalyst.api.service.EventService;
+import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.scheduler.Task;
 
-import java.util.concurrent.TimeUnit;
-
-public class VelocityEventService implements EventService<Object> {
-
-    @Inject
-    Plugin<?> catalyst;
+public class SpongeExecuteCommandService implements ExecuteCommandService<CommandSource> {
 
     @Inject
-    private ProxyServer proxyServer;
+    Plugin<?> plugin;
 
     @Override
-    public void fire(Object event) {
-        proxyServer.getEventManager().fire(event).join();
+    public void executeCommand(CommandSource commandSource, String command) {
+        Task.builder()
+            .execute(() -> {
+                Sponge.getCommandManager().process(commandSource, command);
+            })
+            .submit(plugin);
     }
 
     @Override
-    public void schedule(Runnable runnable, TimeUnit timeUnit, int time) {
-        proxyServer.getScheduler().buildTask(catalyst, runnable).repeat(time, timeUnit).schedule();
+    public void executeAsConsole(String command) {
+        executeCommand(Sponge.getServer().getConsole(), command);
     }
 
     @Override
-    public void run(Runnable runnable) {
-        proxyServer.getScheduler().buildTask(catalyst, runnable).schedule();
+    public void executeDiscordCommand(String command) {
     }
 }

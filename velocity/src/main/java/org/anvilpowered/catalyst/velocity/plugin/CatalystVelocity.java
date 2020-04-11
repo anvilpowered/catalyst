@@ -57,8 +57,7 @@ public class CatalystVelocity extends Catalyst<PluginContainer> {
 
     @Inject
     public CatalystVelocity(Injector injector) {
-        super(CatalystPluginInfo.id,
-            injector,
+        super(injector,
             new VelocityModule(),
             GlobalTab.class,
             CatalystCommandManager.class,

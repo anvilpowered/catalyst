@@ -15,13 +15,16 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.sponge.service;
 
-public interface ExecuteCommandService<TCommandSource> {
+import org.anvilpowered.catalyst.api.service.BroadcastService;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.text.Text;
 
-    void executeCommand(TCommandSource source, String command);
+public class SpongeBroadcastService implements BroadcastService<Text> {
 
-    void executeAsConsole(String command);
-
-    void executeDiscordCommand(String command);
+    @Override
+    public void broadcast(Text message) {
+        Sponge.getServer().getBroadcastChannel().send(message);
+    }
 }

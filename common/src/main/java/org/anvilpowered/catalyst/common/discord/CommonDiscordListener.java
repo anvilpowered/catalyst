@@ -65,7 +65,6 @@ public class CommonDiscordListener<
             if (event.getMember().hasPermission(Permission.ADMINISTRATOR)
                 && event.getMessage().toString().contains("!cmd")) {
                 String command = event.getMessage().getContentRaw().replace("!cmd ", "");
-                System.out.println(command);
                 executeCommandService.executeDiscordCommand(command);
                 return;
             } else {

@@ -1,29 +1,8 @@
 rootProject.name = 'Catalyst'
 
 include 'api'
-include 'common'
-include 'velocity'
-
-include 'Anvil'
-
-include 'Anvil:anvil-api'
-include 'Anvil:anvil-api:anvil-api-mariadb'
-include 'Anvil:anvil-api:anvil-api-mongodb'
-include 'Anvil:anvil-api:anvil-api-xodus'
-
-include 'Anvil:anvil-api-core'
-
-include 'Anvil:anvil-base'
-include 'Anvil:anvil-base:anvil-base-mariadb'
-include 'Anvil:anvil-base:anvil-base-mongodb'
-include 'Anvil:anvil-base:anvil-base-xodus'
-
-include 'Anvil:anvil-bungee'
-include 'Anvil:anvil-common'
-include 'Anvil:anvil-md5'
-include 'Anvil:anvil-spigot'
-include 'Anvil:anvil-sponge'
-include 'Anvil:anvil-velocity'
-include 'bungee'
 include 'bungeecord'
+include 'common'
+include 'sponge'
+include 'velocity'
 
