@@ -15,32 +15,29 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.common.plugin;
+package org.anvilpowered.catalyst.sponge.plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import org.anvilpowered.anvil.api.Environment;
-import org.anvilpowered.anvil.base.plugin.BasePlugin;
+import org.anvilpowered.catalyst.common.plugin.Catalyst;
+import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
+import org.anvilpowered.catalyst.sponge.command.CatalystSpongeCommandNode;
+import org.anvilpowered.catalyst.sponge.module.SpongeModule;
+import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 
-public class Catalyst<TPlugin> extends BasePlugin<TPlugin> {
+@Plugin(
+    id = CatalystPluginInfo.id,
+    name = CatalystPluginInfo.name,
+    version = CatalystPluginInfo.version,
+    description = CatalystPluginInfo.description,
+    authors = {"STG_Allen"}
+)
+public class CatalystSponge extends Catalyst<PluginContainer> {
 
-    public LuckPerms api;
-
-    public Catalyst(Injector rootInjector, Module module) {
-        super(CatalystPluginInfo.name, rootInjector, module);
-    }
-
-    public Catalyst(Injector rootInjector, Module module, Class<?>... earlyServices) {
-        super(CatalystPluginInfo.name, rootInjector, module, earlyServices);
-    }
-
-    @Override
-    protected void whenLoaded(Environment environment) {
-        super.whenLoaded(environment);
-        api = LuckPermsProvider.get();
+    @Inject
+    public CatalystSponge(Injector rootInjector) {
+        super(rootInjector, new SpongeModule());
     }
 }

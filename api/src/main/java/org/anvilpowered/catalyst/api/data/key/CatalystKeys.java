@@ -188,19 +188,20 @@ public final class CatalystKeys {
     };
     public static final Key<Boolean> DISCORD_ENABLE = new Key<Boolean>("DISCORD_ENABLE", false) {
     };
-    public static final Key<String> DISCORD_HOVER_MESSAGE = new Key<String> ("DISCORD_HOVER_MESSAGE", "Click here to join our discord!"){
+    public static final Key<String> DISCORD_HOVER_MESSAGE = new Key<String>("DISCORD_HOVER_MESSAGE", "Click here to join our discord!") {
     };
     public static final Key<String> WEBSITE_URL = new Key<String>("WEBSITE_URL", "http://ci.anvilpowered.org") {
     };
-    public static final Key<String> IGNORE = new Key<String>("IGNORE", "catalyst.command.ignore"){
+    public static final Key<String> IGNORE = new Key<String>("IGNORE", "catalyst.command.ignore") {
     };
-    public static final Key<String> IGNORE_EXEMPT = new Key<String>("IGNORE_EXEMPT", "catalyst.command.ignore.exempt"){
+    public static final Key<String> IGNORE_EXEMPT = new Key<String>("IGNORE_EXEMPT", "catalyst.command.ignore.exempt") {
     };
-    public static final Key<String> SERVER_PING = new Key<String>("SERVER_PING", "PLAYERS"){
+    public static final Key<String> SERVER_PING = new Key<String>("SERVER_PING", "PLAYERS") {
     };
-    public static final Key<String> SERVER_PING_MESSAGE = new Key<String>("SERVER_PING_MESSAGE", "Change this message in the config!"){
+    public static final Key<String> SERVER_PING_MESSAGE = new Key<String>("SERVER_PING_MESSAGE", "Change this message in the config!") {
     };
-
+    public static final Key<String> SYNC_COMMAND = new Key<String>("SYNC_COMMAND", "catalyst.admin.command.sync") {
+    };
 
     static {
         Keys.registerKey(MOTD);
@@ -278,5 +279,6 @@ public final class CatalystKeys {
         Keys.registerKey(IGNORE_EXEMPT);
         Keys.registerKey(SERVER_PING);
         Keys.registerKey(SERVER_PING_MESSAGE);
+        Keys.registerKey(SYNC_COMMAND);
     }
 }

@@ -15,13 +15,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.sponge.service;
 
-public interface ExecuteCommandService<TCommandSource> {
+import com.google.inject.Inject;
+import org.anvilpowered.catalyst.api.service.LoggerService;
+import org.slf4j.Logger;
+import org.spongepowered.api.text.Text;
 
-    void executeCommand(TCommandSource source, String command);
+public class SpongeLoggerService implements LoggerService<String> {
 
-    void executeAsConsole(String command);
+    @Inject
+    private Logger logger;
 
-    void executeDiscordCommand(String command);
+    @Override
+    public void info(String message) {
+        logger.info(message);
+    }
+
+    @Override
+    public void warn(String message) {
+        logger.warn(message);
+    }
 }

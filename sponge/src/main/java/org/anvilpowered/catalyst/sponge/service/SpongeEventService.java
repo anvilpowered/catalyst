@@ -15,35 +15,39 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.service;
+package org.anvilpowered.catalyst.sponge.service;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.proxy.ProxyServer;
-import org.anvilpowered.anvil.api.plugin.Plugin;
 import org.anvilpowered.catalyst.api.service.EventService;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 
 import java.util.concurrent.TimeUnit;
 
-public class VelocityEventService implements EventService<Object> {
+public class SpongeEventService implements EventService<Event> {
 
     @Inject
-    Plugin<?> catalyst;
-
-    @Inject
-    private ProxyServer proxyServer;
+    PluginContainer plugin;
 
     @Override
-    public void fire(Object event) {
-        proxyServer.getEventManager().fire(event).join();
+    public void fire(Event event) {
+        Sponge.getEventManager().post(event);
     }
 
     @Override
     public void schedule(Runnable runnable, TimeUnit timeUnit, int time) {
-        proxyServer.getScheduler().buildTask(catalyst, runnable).repeat(time, timeUnit).schedule();
+        Task.builder()
+            .execute(runnable)
+            .interval(time, timeUnit)
+            .submit(plugin);
     }
 
     @Override
     public void run(Runnable runnable) {
-        proxyServer.getScheduler().buildTask(catalyst, runnable).schedule();
+        Task.builder()
+            .execute(runnable)
+            .submit(plugin);
     }
 }

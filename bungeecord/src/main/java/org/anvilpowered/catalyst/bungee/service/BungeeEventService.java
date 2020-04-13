@@ -19,15 +19,16 @@ package org.anvilpowered.catalyst.bungee.service;
 
 import com.google.common.eventbus.EventBus;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Event;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.bungee.plugin.CatalystBungee;
 
 import java.util.concurrent.TimeUnit;
 
-public class BungeeEventService implements EventService {
+public class BungeeEventService implements EventService<Event> {
 
     @Override
-    public <E> void fire(E event) {
+    public void fire(Event event) {
         EventBus eventBus = new EventBus();
         eventBus.post(event);
     }
@@ -35,5 +36,10 @@ public class BungeeEventService implements EventService {
     @Override
     public void schedule(Runnable runnable, TimeUnit timeUnit, int time) {
         ProxyServer.getInstance().getScheduler().schedule(CatalystBungee.plugin, runnable, time, timeUnit);
+    }
+
+    @Override
+    public void run(Runnable runnable) {
+        ProxyServer.getInstance().getScheduler().runAsync(CatalystBungee.plugin, runnable);
     }
 }
