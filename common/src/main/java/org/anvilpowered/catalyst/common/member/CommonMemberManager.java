@@ -22,7 +22,6 @@ import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.api.core.coremember.repository.CoreMemberRepository;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
-import org.anvilpowered.anvil.api.core.plugin.PluginMessages;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.util.CurrentServerService;
@@ -34,9 +33,9 @@ import org.anvilpowered.anvil.base.datastore.BaseManager;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -61,8 +60,8 @@ public class CommonMemberManager<
     @Inject
     protected PluginInfo<TString> pluginInfo;
 
-    // not from this injector
-    protected PluginMessages<TString> pluginMessages;
+    @Inject
+    protected CatalystPluginMessages<TString, TCommandSource> pluginMessages;
 
     @Inject
     protected TextService<TString, TCommandSource> textService;
@@ -77,9 +76,8 @@ public class CommonMemberManager<
     protected ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
-    public CommonMemberManager(Registry registry, @Named("anvil") Environment anvilEnvironment) {
+    public CommonMemberManager(Registry registry) {
         super(registry);
-        pluginMessages = anvilEnvironment.getInstance(PluginMessages.class.getCanonicalName());
     }
 
     @Override

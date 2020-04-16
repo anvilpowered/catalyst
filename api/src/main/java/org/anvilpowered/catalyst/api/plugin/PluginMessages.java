@@ -17,6 +17,8 @@
 
 package org.anvilpowered.catalyst.api.plugin;
 
+import java.time.Instant;
+
 public interface PluginMessages<TString> {
 
     TString getBroadcast(TString message);
@@ -110,4 +112,8 @@ public interface PluginMessages<TString> {
     TString ignoreExempt();
 
     TString offlineOrInvalidPlayer();
+
+    TString getBanMessage(String reason, Instant endUtc);
+
+    TString getMuteMessage(String reason, Instant endUtc);
 }
