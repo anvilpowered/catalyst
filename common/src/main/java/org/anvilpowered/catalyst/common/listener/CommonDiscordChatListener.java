@@ -29,7 +29,7 @@ import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 
-public class CommonDiscordChatListener<TString, TPlayer> implements DiscordChatListener<TString, TPlayer> {
+public class CommonDiscordChatListener<TUser, TString, TPlayer> implements DiscordChatListener<TString, TPlayer> {
 
     @Inject
     private Registry registry;
@@ -41,14 +41,14 @@ public class CommonDiscordChatListener<TString, TPlayer> implements DiscordChatL
     private WebhookSender<TPlayer> webhookSender;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
 
     @Override
     public void onChatEvent(ChatEvent<TString, TPlayer> event) {
         String message = event.getRawMessage();
         String name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
-            .replace("%player%", userService.getUserName(event.getSender()))
+            .replace("%player%", userService.getUserName((TUser) event.getSender()))
             .replace("%prefix%", luckpermsService.getPrefix(event.getSender()))
             .replace("%suffix%", luckpermsService.getSuffix(event.getSender()));
         webhookSender.sendWebhookMessage(
@@ -64,7 +64,7 @@ public class CommonDiscordChatListener<TString, TPlayer> implements DiscordChatL
     public void onStaffChatEvent(StaffChatEvent<TString, TPlayer> event) {
         String message = event.getRawMessage();
         String name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
-            .replace("%player%", userService.getUserName(event.getSender()))
+            .replace("%player%", userService.getUserName((TUser) event.getSender()))
             .replace("%prefix%", luckpermsService.getPrefix(event.getSender()))
             .replace("%suffix%", luckpermsService.getSuffix(event.getSender()));
         webhookSender.sendWebhookMessage(
@@ -83,7 +83,7 @@ public class CommonDiscordChatListener<TString, TPlayer> implements DiscordChatL
             registry.getOrDefault(CatalystKeys.BOT_NAME),
             registry.getOrDefault(CatalystKeys.JOIN_FORMAT).replace(
                 "%player%",
-                userService.getUserName(event.getPlayer())
+                userService.getUserName((TUser) event.getPlayer())
             ),
             registry.getOrDefault(CatalystKeys.MAIN_CHANNEL),
             event.getPlayer()
@@ -97,7 +97,7 @@ public class CommonDiscordChatListener<TString, TPlayer> implements DiscordChatL
             registry.getOrDefault(CatalystKeys.BOT_NAME),
             registry.getOrDefault(CatalystKeys.LEAVE_FORMAT).replace(
                 "%player%",
-                userService.getUserName(event.getPlayer())
+                userService.getUserName((TUser) event.getPlayer())
             ),
             registry.getOrDefault(CatalystKeys.MAIN_CHANNEL),
             event.getPlayer()

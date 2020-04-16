@@ -21,6 +21,7 @@ import com.google.inject.TypeLiteral;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Event;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -45,7 +46,8 @@ public class BungeeModule extends CommonModule<
     ProxiedPlayer,
     TextComponent,
     CommandSender,
-    CommandSender> {
+    CommandSender,
+    Event> {
 
     @Override
     protected void configure() {

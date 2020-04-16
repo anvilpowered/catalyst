@@ -33,14 +33,16 @@ import org.anvilpowered.catalyst.api.service.LoggerService;
 import java.util.UUID;
 
 public class CommonStaffChatListener<
+    TUser,
     TString,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TCommandSource,
-    TSubject>
+    TSubject,
+    TEvent>
     implements StaffChatListener<TPlayer> {
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private PermissionService<TSubject> permissionService;
@@ -58,7 +60,7 @@ public class CommonStaffChatListener<
     private StaffChatEvent<TString, TPlayer> staffChatEvent;
 
     @Inject
-    private EventService eventService;
+    private EventService<TEvent> eventService;
 
     @Inject
     private DiscordChatListener<TString, TPlayer> discordChatListener;
@@ -71,14 +73,14 @@ public class CommonStaffChatListener<
     public void onStaffChatEvent(TPlayer player, UUID playerUUID, String message) {
         userService.getOnlinePlayers().forEach(p -> {
             if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
-                textService.send(pluginMessages.getStaffChatMessageFormatted(userService.getUserName(player), textService.of(message)), p);
+                textService.send(pluginMessages.getStaffChatMessageFormatted(userService.getUserName((TUser) player), textService.of(message)), (TCommandSource) p);
             }
         });
-        loggerService.info("[STAFF] " + userService.getUserName(playerUUID) + " : " + textService.deserialize(message));
+        loggerService.info("[STAFF] " + userService.getUserName(playerUUID).orElse("null") + " : " + message);
         staffChatEvent.setSender(player);
         staffChatEvent.setRawMessage(message);
         staffChatEvent.setMessage(textService.of(message));
-        eventService.fire(staffChatEvent);
+        eventService.fire((TEvent) staffChatEvent);
         discordChatListener.onStaffChatEvent(staffChatEvent);
     }
 }

@@ -44,7 +44,8 @@ import org.slf4j.Logger;
     url = CatalystPluginInfo.url,
     dependencies = {
         @Dependency(id = "anvil"),
-        @Dependency(id = "luckperms")
+        @Dependency(id = "luckperms"),
+        @Dependency(id = "votlin")
     }
 )
 public class CatalystVelocity extends Catalyst<PluginContainer> {

@@ -22,18 +22,28 @@ import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.slf4j.Logger;
 import org.spongepowered.api.text.Text;
 
-public class SpongeLoggerService implements LoggerService<String> {
+public class SpongeLoggerService implements LoggerService<Text> {
 
     @Inject
     private Logger logger;
 
     @Override
+    public void info(Text message) {
+        logger.info(message.toPlain());
+    }
+
+    @Override
     public void info(String message) {
-        logger.info(message);
+        info(Text.of(message));
+    }
+
+    @Override
+    public void warn(Text message) {
+        logger.warn(message.toPlain());
     }
 
     @Override
     public void warn(String message) {
-        logger.warn(message);
+        warn(Text.of(message));
     }
 }

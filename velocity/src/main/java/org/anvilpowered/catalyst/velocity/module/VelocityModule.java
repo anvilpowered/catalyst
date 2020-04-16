@@ -47,7 +47,8 @@ public class VelocityModule extends CommonModule<
     Player,
     TextComponent,
     CommandSource,
-    PermissionSubject> {
+    PermissionSubject,
+    Object> {
 
     @Override
     protected void configure() {
@@ -71,6 +72,7 @@ public class VelocityModule extends CommonModule<
         }).to(VelocityLoggerService.class);
         bind(new TypeLiteral<ExecuteCommandService<CommandSource>>(){
         }).to(VelocityExecuteCommandService.class);
-        bind(EventService.class).to(VelocityEventService.class);
+        bind(new TypeLiteral<EventService<Object>>(){
+        }).to(VelocityEventService.class);
     }
 }

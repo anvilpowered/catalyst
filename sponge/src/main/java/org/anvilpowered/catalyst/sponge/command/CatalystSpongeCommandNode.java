@@ -30,26 +30,25 @@ import org.spongepowered.api.text.Text;
 @Singleton
 public class CatalystSpongeCommandNode {
 
-    private final Registry registry;
-    private boolean alreadyLoaded = false;
-
     @Inject
     private CommandSyncCommand syncCommand;
 
     @Inject
     private Plugin<?> plugin;
 
+    private Registry registry;
+    private boolean alreadyLoaded = false;
+
     @Inject
-    private CatalystSpongeCommandNode(Registry registry) {
+    public CatalystSpongeCommandNode(Registry registry) {
         this.registry = registry;
-        registry.whenLoaded(this::register);
+        registry.whenLoaded(this::loadCommands);
     }
 
-    public void register() {
+    protected void loadCommands() {
         if (alreadyLoaded) return;
         alreadyLoaded = true;
-
-        CommandSpec command = CommandSpec.builder()
+        CommandSpec root = CommandSpec.builder()
             .description(Text.of("Sync commands to other servers!"))
             .arguments(
                 GenericArguments.string(Text.of("server")),
@@ -59,6 +58,6 @@ public class CatalystSpongeCommandNode {
             .executor(syncCommand)
             .build();
         Sponge.getCommandManager()
-            .register(plugin, command, "catalystsync", "csync", "cs");
+            .register(plugin, root, "catalystsync", "cs", "commandsync");
     }
 }

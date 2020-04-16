@@ -34,13 +34,15 @@ import org.anvilpowered.catalyst.api.service.StaffListService;
 import java.util.UUID;
 
 public class CommonLeaveListener<
+    TUser,
     TString,
-    TPlayer extends TCommandSource,
-    TCommandSource>
+    TPlayer,
+    TCommandSource,
+    TEvent>
     implements LeaveListener<TPlayer> {
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -64,28 +66,28 @@ public class CommonLeaveListener<
     private LeaveEvent<TPlayer> leaveEvent;
 
     @Inject
-    private EventService eventService;
+    private EventService<TEvent> eventService;
 
     @Inject
     private DiscordChatListener<TString, TPlayer> discordChatListener;
 
     @Override
     public void onPlayerLeave(TPlayer player, UUID playerUUID) {
-        staffListService.removeStaffNames(userService.getUserName(player));
+        staffListService.removeStaffNames(userService.getUserName((TUser) player));
         luckpermsService.removePlayerFromCache(player);
         broadcastService.broadcast(
             textService.of(
                 registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
-                    .replace("%player%", userService.getUserName(player))
+                    .replace("%player%", userService.getUserName((TUser) player))
             ));
         loggerService.info(
             textService.of(
                 registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
-                    .replace("%player%", userService.getUserName(player))
+                    .replace("%player%", userService.getUserName((TUser) player))
             )
         );
         leaveEvent.setPlayer(player);
-        eventService.fire(leaveEvent);
+        eventService.fire((TEvent) leaveEvent);
         discordChatListener.onPlayerLeaveEvent(leaveEvent);
     }
 }

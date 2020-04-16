@@ -19,11 +19,12 @@ package org.anvilpowered.catalyst.sponge.plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Module;
+import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.catalyst.common.plugin.Catalyst;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.sponge.command.CatalystSpongeCommandNode;
 import org.anvilpowered.catalyst.sponge.module.SpongeModule;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
@@ -32,12 +33,18 @@ import org.spongepowered.api.plugin.PluginContainer;
     name = CatalystPluginInfo.name,
     version = CatalystPluginInfo.version,
     description = CatalystPluginInfo.description,
-    authors = {"STG_Allen"}
+    authors = {"STG_Allen"},
+    dependencies = @Dependency(id = "anvil")
 )
 public class CatalystSponge extends Catalyst<PluginContainer> {
 
     @Inject
     public CatalystSponge(Injector rootInjector) {
-        super(rootInjector, new SpongeModule());
+        super(rootInjector, new SpongeModule(), CatalystSpongeCommandNode.class);
+    }
+
+    @Override
+    protected void whenReady(Environment environment) {
+        super.whenReady(environment);
     }
 }

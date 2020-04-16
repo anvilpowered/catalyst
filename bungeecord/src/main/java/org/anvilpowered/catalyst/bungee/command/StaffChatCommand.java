@@ -22,6 +22,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.Event;
 import org.anvilpowered.catalyst.common.command.CommonStaffChatCommand;
 
 public class StaffChatCommand extends Command {
@@ -31,7 +32,8 @@ public class StaffChatCommand extends Command {
         TextComponent,
         ProxiedPlayer,
         CommandSender,
-        CommandSender> staffChatCommand;
+        CommandSender,
+        Event> staffChatCommand;
 
     public StaffChatCommand() {
         super("staffchat", "", "sc");
