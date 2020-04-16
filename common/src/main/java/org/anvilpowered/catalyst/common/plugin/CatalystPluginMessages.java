@@ -20,7 +20,13 @@ package org.anvilpowered.catalyst.common.plugin;
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.anvil.api.util.TimeFormatService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 public class CatalystPluginMessages<TString, TCommandSource> implements PluginMessages<TString> {
 
@@ -29,6 +35,9 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Inject
     protected TextService<TString, TCommandSource> textService;
+
+    @Inject
+    protected TimeFormatService timeFormatService;
 
     @Override
     public TString getBroadcast(TString message) {
@@ -339,6 +348,24 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
         return textService.builder()
             .append(pluginInfo.getPrefix())
             .yellow().append("Invalid or offline player!")
+            .build();
+    }
+
+    @Override
+    public TString getBanMessage(String reason, Instant endUtc) {
+        return textService.builder()
+            .red().append("You have been banned for: ", textService.deserialize(reason))
+            .yellow().append("\n\nFor another ", timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc)))
+            .append("\n\nUntil ", timeFormatService.format(endUtc))
+            .build();
+    }
+
+    @Override
+    public TString getMuteMessage(String reason, Instant endUtc) {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .red().append("You have been muted for: ", textService.deserialize(reason))
+            .yellow().append("\nFor another ", timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc)))
             .build();
     }
 }
