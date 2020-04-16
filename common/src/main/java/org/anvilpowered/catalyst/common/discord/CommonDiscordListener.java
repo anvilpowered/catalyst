@@ -30,8 +30,9 @@ import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 
 public class CommonDiscordListener<
+    TUser,
     TString,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TCommandSource,
     TSubject>
     extends ListenerAdapter {
@@ -40,7 +41,7 @@ public class CommonDiscordListener<
     private Registry registry;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private ExecuteCommandService<TCommandSource> executeCommandService;
@@ -76,7 +77,7 @@ public class CommonDiscordListener<
                         .append(textService.deserialize(message))
                         .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))
                         .onHoverShowText(textService.of(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)))
-                        .sendTo(p)
+                        .sendTo((TCommandSource) p)
                 );
             }
             loggerService.info("[Discord] " + event.getMember().getEffectiveName() + " : " + event.getMessage().getContentDisplay());
@@ -92,7 +93,7 @@ public class CommonDiscordListener<
                         .append(textService.deserialize(message))
                         .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))
                         .onHoverShowText(textService.of(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)))
-                        .sendTo(p);
+                        .sendTo((TCommandSource) p);
                 }
             });
             loggerService.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + event.getMessage().getContentDisplay());

@@ -52,7 +52,6 @@ public class CatalystBungee extends Plugin
         @Inject
         public Inner(Injector rootInjector) {
             super(
-                CatalystPluginInfo.id,
                 rootInjector,
                 new BungeeModule(),
                 BungeeLuckpermsService.class,

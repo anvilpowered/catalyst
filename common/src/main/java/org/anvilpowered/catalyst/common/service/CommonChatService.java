@@ -47,7 +47,8 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class CommonChatService<
-    TPlayer extends TCommandSource,
+    TUser,
+    TPlayer,
     TString,
     TCommandSource,
     TSubject>
@@ -63,7 +64,7 @@ public class CommonChatService<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private LuckpermsService<TPlayer> luckpermsService;
@@ -116,7 +117,7 @@ public class CommonChatService<
     public int getChannelUserCount(String channelId) {
         return (int) userService.getOnlinePlayers()
             .stream()
-            .filter(p -> getChannelIdForUser(userService.getUUID(p))
+            .filter(p -> getChannelIdForUser(userService.getUUID((TUser) p))
                 .equals(channelId)).count();
     }
 
@@ -124,8 +125,8 @@ public class CommonChatService<
     public TString getUsersInChannel(String channelId) {
         List<String> channelUsersList = userService.getOnlinePlayers()
             .stream()
-            .filter(p -> getChannelIdForUser(userService.getUUID(p)).equals(channelId))
-            .map(p -> userService.getUserName(p))
+            .filter(p -> getChannelIdForUser(userService.getUUID((TUser) p)).equals(channelId))
+            .map(p -> userService.getUserName((TUser) p))
             .collect(Collectors.toList());
 
         return textService.builder()
@@ -147,13 +148,13 @@ public class CommonChatService<
                         .replaceAll("%server%", server)
                     )
                 ).build();
-            if (checkOverridePerm.test(p) || getChannelIdForUser(userService.getUUID(p)).equals(channelId)) {
-                if (!senderUUID.equals(userService.getUUID(p))) {
-                    if (!isIgnored(userService.getUUID(p), senderUUID)) {
-                        textService.send(finalMessage, p);
+            if (checkOverridePerm.test(p) || getChannelIdForUser(userService.getUUID((TUser) p)).equals(channelId)) {
+                if (!senderUUID.equals(userService.getUUID((TUser) p))) {
+                    if (!isIgnored(userService.getUUID((TUser) p), senderUUID)) {
+                        textService.send(finalMessage, (TCommandSource) p);
                     }
                 } else {
-                    textService.send(finalMessage, p);
+                    textService.send(finalMessage, (TCommandSource) p);
                 }
             }
         }));
@@ -166,11 +167,11 @@ public class CommonChatService<
                     .append(message)
                     .onHoverShowText(textService.of(
                         registry.getOrDefault(CatalystKeys.PROXY_CHAT_FORMAT_HOVER)
-                            .replaceAll("%player%", userService.getUserName(player))
-                            .replaceAll("%server%", currentServerService.getName(userService.getUserName(player)).get())
+                            .replaceAll("%player%", userService.getUserName((TUser) player))
+                            .replaceAll("%server%", currentServerService.getName(userService.getUserName((TUser) player)).get())
                         )
                     )
-                    .sendTo(p)
+                    .sendTo((TCommandSource) p)
             )
         );
     }
@@ -234,8 +235,10 @@ public class CommonChatService<
 
     @Override
     public List<TString> getPlayerList() {
-        List<String> playerList = userService.getOnlinePlayers().stream()
-            .map(userService::getUserName).collect(Collectors.toList());
+        List<String> playerList = new ArrayList<>();
+
+        userService.getOnlinePlayers().forEach(p -> playerList.add(userService.getUserName((TUser) p)));
+
         List<TString> tempList = new ArrayList<>();
         StringBuilder builder = null;
         for (String s : playerList) {
@@ -307,8 +310,8 @@ public class CommonChatService<
     @Override
     public String checkPlayerName(String message) {
         for (TPlayer player : userService.getOnlinePlayers()) {
-            if (message.contains(userService.getUserName(player))) {
-                String userName = userService.getUserName(player);
+            if (message.contains(userService.getUserName((TUser) player))) {
+                String userName = userService.getUserName((TUser) player);
                 message = message.replaceAll(
                     userName.toUpperCase(),
                     "&b@" + userName + "&r")
@@ -327,12 +330,12 @@ public class CommonChatService<
         String chatColor = luckpermsService.getChatColor(player);
         String nameColor = luckpermsService.getNameColor(player);
         String suffix = luckpermsService.getSuffix(player);
-        String userName = userService.getUserName(player);
+        String userName = userService.getUserName((TUser) player);
         UUID userUUID = userService.getUUID(userName).orElseThrow(() ->
             new IllegalStateException("Unable to find a UUID for " + userName));
         String server = currentServerService.getName(userName).orElseThrow(() ->
             new IllegalStateException(userName + " is not in a valid server!"));
-        String channelId = getChannelIdForUser(userService.getUUID(player));
+        String channelId = getChannelIdForUser(userService.getUUID((TUser) player));
         Optional<Channel> channel = getChannelFromId(channelId);
         String channelPrefix = getChannelPrefix(channelId).orElseThrow(() ->
             new IllegalStateException("Please specify a prefix for " + channelId));
@@ -359,7 +362,7 @@ public class CommonChatService<
                     permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))
                 );
             } else {
-                textService.send(pluginMessages.getMuted(), player);
+                textService.send(pluginMessages.getMuted(), (TCommandSource) player);
             }
         });
     }

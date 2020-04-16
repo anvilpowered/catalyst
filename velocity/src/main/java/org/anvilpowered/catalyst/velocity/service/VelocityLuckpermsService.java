@@ -32,7 +32,7 @@ public class VelocityLuckpermsService {
     private LuckpermsService<Player> luckpermsService;
 
     @Inject
-    private EventService eventService;
+    private EventService<Object> eventService;
 
     private Registry registry;
 

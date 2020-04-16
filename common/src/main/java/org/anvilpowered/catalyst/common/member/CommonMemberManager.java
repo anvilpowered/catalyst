@@ -30,7 +30,7 @@ import org.anvilpowered.anvil.api.util.KickService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.TimeFormatService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.anvil.base.manager.BaseManager;
+import org.anvilpowered.anvil.base.datastore.BaseManager;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.service.ChatService;
@@ -46,7 +46,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class CommonMemberManager<
     TUser,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TString,
     TCommandSource>
     extends BaseManager<CoreMemberRepository<?, ?>>
@@ -201,7 +201,7 @@ public class CommonMemberManager<
     public CompletableFuture<TString> setNickNameForUser(String userName, String nickName) {
         return getPrimaryComponent().setNickNameForUser(userName, registry.getOrDefault(CatalystKeys.NICKNAME_PREFIX) + nickName).thenApplyAsync(result -> {
             if (result) {
-                userService.getPlayer(userName).ifPresent(textService.builder().green().append("Your nickname was set to " + nickName)::sendTo);
+                userService.getPlayer(userName).ifPresent(p -> textService.builder().green().append("Your nickname was set to " + nickName).sendTo((TCommandSource) p));
                 return textService.success("Set " + userName + "'s nickname to " + nickName);
             } else {
                 return textService.fail("Failed to set the nickname for " + userName);
@@ -213,7 +213,7 @@ public class CommonMemberManager<
     public CompletableFuture<TString> deleteNickNameForUser(String userName) {
         return getPrimaryComponent().deleteNickNameForUser(userName).thenApplyAsync(result -> {
             if (result) {
-                userService.getPlayer(userName).ifPresent(textService.builder().green().append("Your nickname was deleted.")::sendTo);
+                userService.getPlayer(userName).ifPresent(p -> textService.builder().green().append("Your nickname was deleted.").sendTo((TCommandSource) p));
                 return textService.success("Successfully deleted " + userName + "'s nickname.");
             } else {
                 return textService.fail("Failed to delete " + userName + "'s nickname.");
@@ -286,7 +286,7 @@ public class CommonMemberManager<
         Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(Duration.ofDays(3600));
         return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
-                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), p));
+                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), (TCommandSource) p));
                 return textService.success("Muted " + userName);
             }
             return textService.fail("Invalid user.");
@@ -308,7 +308,7 @@ public class CommonMemberManager<
         Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(dur);
         return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
-                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), p));
+                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), (TCommandSource) p));
                 return textService.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur));
             }
             return textService.fail("Invalid user.");
@@ -328,7 +328,7 @@ public class CommonMemberManager<
                     textService.builder()
                         .append(pluginInfo.getPrefix())
                         .yellow().append("You have been unmuted.")
-                        .sendTo(p);
+                        .sendTo((TCommandSource) p);
                 });
                 return textService.success("UnMuted " + userName);
             }

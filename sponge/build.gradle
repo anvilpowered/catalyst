@@ -33,6 +33,7 @@ shadowJar {
     dependencies {
         include project(':api')
         include project(':common')
+        include dependency(jda)
     }
 }
 

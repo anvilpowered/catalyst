@@ -17,9 +17,7 @@
 
 package org.anvilpowered.catalyst.common.plugin;
 
-import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -42,5 +40,10 @@ public class Catalyst<TPlugin> extends BasePlugin<TPlugin> {
     protected void whenLoaded(Environment environment) {
         super.whenLoaded(environment);
         api = LuckPermsProvider.get();
+    }
+
+    @Override
+    protected void whenReady(Environment environment) {
+        super.whenReady(environment);
     }
 }

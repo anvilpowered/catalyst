@@ -72,10 +72,11 @@ import org.anvilpowered.catalyst.common.service.CommonTabService;
 @SuppressWarnings({"UnstableApiUsage"})
 public class CommonModule<
     TUser,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TString,
     TCommandSource,
-    TSubject>
+    TSubject,
+    TEvent>
     extends AbstractModule {
 
     @Override
@@ -108,21 +109,21 @@ public class CommonModule<
         be.bind(
             new TypeToken<ChatService<TString, TPlayer, TCommandSource>>(getClass()) {
             },
-            new TypeToken<CommonChatService<TPlayer, TString, TCommandSource, TSubject>>(getClass()) {
+            new TypeToken<CommonChatService<TUser, TPlayer, TString, TCommandSource, TSubject>>(getClass()) {
             }
         );
 
         be.bind(
             new TypeToken<PrivateMessageService<TString>>(getClass()) {
             },
-            new TypeToken<CommonPrivateMessageService<TPlayer, TString, TCommandSource>>(getClass()) {
+            new TypeToken<CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
 
         be.bind(
             new TypeToken<StaffListService<TString>>(getClass()) {
             },
-            new TypeToken<CommonStaffListService<TPlayer, TString, TCommandSource>>(getClass()) {
+            new TypeToken<CommonStaffListService<TString, TCommandSource>>(getClass()) {
             }
         );
         be.bind(
@@ -134,19 +135,19 @@ public class CommonModule<
         be.bind(
             new TypeToken<LuckpermsService<TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonLuckpermsService<TString, TPlayer, TCommandSource>>(getClass()) {
+            new TypeToken<CommonLuckpermsService<TUser, TString, TPlayer>>(getClass()) {
             }
         );
         be.bind(
             new TypeToken<JDAService>(getClass()) {
             },
-            new TypeToken<CommonJDAService<TString, TPlayer, TCommandSource, TSubject>>(getClass()) {
+            new TypeToken<CommonJDAService<TString, TUser, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
             }
         );
         be.bind(
             new TypeToken<WebhookSender<TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonWebhookSender<TPlayer>>(getClass()) {
+            new TypeToken<CommonWebhookSender<TUser, TPlayer>>(getClass()) {
             }
         );
         be.bind(
@@ -158,7 +159,7 @@ public class CommonModule<
         be.bind(
             new TypeToken<ChatListener<TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonChatListener<TString, TPlayer, TCommandSource, TSubject>>(getClass()) {
+            new TypeToken<CommonChatListener<TUser, TString, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
             }
         );
         be.bind(
@@ -170,13 +171,13 @@ public class CommonModule<
         be.bind(
             new TypeToken<JoinListener<TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonJoinListener<TString, TPlayer, TCommandSource, TSubject>>(getClass()) {
+            new TypeToken<CommonJoinListener<TUser, TString, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
             }
         );
         be.bind(
             new TypeToken<LeaveListener<TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonLeaveListener<TString, TPlayer, TCommandSource>>(getClass()) {
+            new TypeToken<CommonLeaveListener<TUser, TString, TPlayer, TCommandSource, TEvent>>(getClass()) {
             }
         );
         be.bind(
@@ -194,18 +195,18 @@ public class CommonModule<
         be.bind(
             new TypeToken<DiscordChatListener<TString, TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonDiscordChatListener<TString, TPlayer>>(getClass()) {
+            new TypeToken<CommonDiscordChatListener<TUser, TString, TPlayer>>(getClass()) {
             }
         );
         be.bind(
             new TypeToken<StaffChatListener<TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonStaffChatListener<TString, TPlayer, TCommandSource, TSubject>>(getClass()) {
+            new TypeToken<CommonStaffChatListener<TUser, TString, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
             }
         );
 
-        bind(ChatFilter.class).to(CommonChatFilter.class);
         bind(ConfigurationService.class).to(CatalystConfigurationService.class);
+        bind(ChatFilter.class).to(CommonChatFilter.class);
         bind(Registry.class).to(CatalystRegistry.class);
         bind(StaffChatService.class).to(CommonStaffChatService.class);
     }

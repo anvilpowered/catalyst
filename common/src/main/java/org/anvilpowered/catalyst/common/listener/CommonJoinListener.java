@@ -36,14 +36,16 @@ import org.anvilpowered.catalyst.api.service.StaffListService;
 import java.util.UUID;
 
 public class CommonJoinListener<
+    TUser,
     TString,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TCommandSource,
-    TSubject>
+    TSubject,
+    TEvent>
     implements JoinListener<TPlayer> {
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private PermissionService<TSubject> permissionService;
@@ -73,7 +75,7 @@ public class CommonJoinListener<
     private JoinEvent<TPlayer> joinEvent;
 
     @Inject
-    private EventService eventService;
+    private EventService<TEvent> eventService;
 
     @Inject
     private DiscordChatListener<TString, TPlayer> discordChatListener;
@@ -85,7 +87,7 @@ public class CommonJoinListener<
             privateMessageService.socialSpySet().add(playerUUID);
         }
         luckpermsService.addPlayerToCache(player);
-        String userName = userService.getUserName(player);
+        String userName = userService.getUserName((TUser) player);
 
         staffListService.getStaffNames(
             userName,
@@ -115,7 +117,7 @@ public class CommonJoinListener<
             )
         );
         joinEvent.setPlayer(player);
-        eventService.fire(joinEvent);
+        eventService.fire((TEvent) joinEvent);
         discordChatListener.onPlayerJoinEvent(joinEvent);
     }
 }

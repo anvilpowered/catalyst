@@ -34,7 +34,8 @@ public class StaffChatCommand extends CommonStaffChatCommand<
     TextComponent,
     Player,
     CommandSource,
-    PermissionSubject>
+    PermissionSubject,
+    Object>
     implements Command {
 
     @Inject

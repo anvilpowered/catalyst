@@ -38,17 +38,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class CommonChatListener<
+    TUser,
     TString,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TCommandSource,
-    TSubject>
+    TSubject,
+    TEvent>
     implements ChatListener<TPlayer> {
 
     @Inject
     private ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private PermissionService<TSubject> permissionService;
@@ -63,7 +65,7 @@ public class CommonChatListener<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private EventService eventService;
+    private EventService<TEvent> eventService;
 
     @Inject
     private ChatFilter chatFilter;
@@ -99,12 +101,12 @@ public class CommonChatListener<
             chatEvent.setSender(player);
             chatEvent.setMessage(textService.of(message));
             chatEvent.setRawMessage(message);
-            eventService.fire(chatEvent);
+            eventService.fire((TEvent) chatEvent);
             discordChatListener.onChatEvent(chatEvent);
             chatService.sendChatMessage(player, message);
         } else {
             throw new AssertionError(
-                "Unable to find a chat channel for " + userService.getUserName(player) +
+                "Unable to find a chat channel for " + userService.getUserName((TUser) player) +
                     " please report this on github."
             );
         }

@@ -30,10 +30,6 @@ public class CatalystConfigurationService extends BaseConfigurationService {
     @Inject
     public CatalystConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
         super(configLoader);
-    }
-
-    @Override
-    protected void initNodeNameMap() {
         setName(CatalystKeys.MOTD, "motd");
         setName(CatalystKeys.CHAT_FILTER_SWEARS, "chat.filter.swears");
         setName(CatalystKeys.CHAT_FILTER_EXCEPTIONS, "chat.filter.exceptions");
@@ -70,10 +66,6 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.DISCORD_ENABLE, "discord.enabled");
         setName(CatalystKeys.SERVER_PING, "ping.mode");
         setName(CatalystKeys.SERVER_PING_MESSAGE, "ping.message");
-    }
-
-    @Override
-    protected void initNodeDescriptionMap() {
         setDescription(CatalystKeys.MOTD, "\nServer MOTD that is displayed when the proxy is pinged.");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS, "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS, "\nList of words that are caught by the swear detection, but shouldn't be. (ex. A player name that contains 'ass'");
