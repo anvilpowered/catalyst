@@ -23,6 +23,7 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommonChatFilter implements ChatFilter {
@@ -31,43 +32,32 @@ public class CommonChatFilter implements ChatFilter {
     private Registry registry;
 
     @Override
-    public List<String> aggressiveMode(String swear) {
-        List<String> finalWords = new ArrayList<>();
+    public List<String> aggressiveMode(String checkMessage) {
+        String message = checkMessage.toLowerCase()
+                .replaceAll("[*()/.,;'#~^+\\-]", " ").replaceAll("[0@]", "o")
+                .replaceAll("1", "i").replaceAll("\\$", "s"
+                );
 
-        String message = swear.toLowerCase()
-            .replaceAll("[*()/.,;'#~^+-]", " ").replaceAll("[0@]", "o")
-            .replaceAll("1", "i").replaceAll("$", "s"
-            ).replaceAll(" ", "");
-
-        finalWords.add(removeDuplicates(message));
-        finalWords.add(swear.toLowerCase());
-        return finalWords;
-    }
-
-    @Override
-    public String removeDuplicates(String s) {
-        if (s.length() <= 1) return s;
-        if (s.substring(1, 2).equalsIgnoreCase(s.substring(0, 1))) return removeDuplicates(s.substring(1));
-        else return s.substring(0, 1) + removeDuplicates(s.substring(1));
+        return new ArrayList<>(Arrays.asList(message.split(" ")));
     }
 
     @Override
     public List<String> checkSwear(List<String> finalWords) {
         List<String> swearList = new ArrayList<>();
-        for (String exception : registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS)) {
-            for (String swear : finalWords) {
-                if (swear.contains(exception)) {
-                    return null;
+
+        for (String bannedWord : registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS)) {
+            for (String word : finalWords) {
+                if (word.equalsIgnoreCase(bannedWord)) {
+                    if (!(swearList.contains(bannedWord.toLowerCase()))) {
+                        swearList.add(bannedWord.toLowerCase());
+                    }
                 }
             }
         }
-        for (String swears : registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS)) {
-            for (String swear : finalWords) {
-                String newSwear = swear.toLowerCase();
-                if (newSwear.contains(swears.toLowerCase())) {
-                    if (!(swearList.contains(swears.toLowerCase()))) {
-                        swearList.add(swears.toLowerCase());
-                    }
+        for (String exception : registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS)) {
+            for (String swear : swearList) {
+                if (swear.equalsIgnoreCase(exception.toLowerCase())) {
+                    swearList.remove(exception.toLowerCase());
                 }
             }
         }
@@ -77,8 +67,8 @@ public class CommonChatFilter implements ChatFilter {
     }
 
     @Override
-    public List<String> isSwear(String swear) {
-        return checkSwear(aggressiveMode(swear));
+    public List<String> isSwear(String message) {
+        return checkSwear(aggressiveMode(message));
     }
 
 }
