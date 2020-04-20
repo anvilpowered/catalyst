@@ -22,6 +22,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.anvilpowered.catalyst.api.service.ServerInfoService;
 import org.anvilpowered.catalyst.bungee.command.BungeeCatalystCommandManager;
 import org.anvilpowered.catalyst.bungee.listener.BungeeListener;
 import org.anvilpowered.catalyst.bungee.module.BungeeModule;
@@ -33,8 +34,8 @@ import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 public class CatalystBungee extends Plugin
     implements org.anvilpowered.anvil.api.plugin.Plugin<Plugin> {
 
-    private final Inner inner;
     public static CatalystBungee plugin;
+    private final Inner inner;
 
     public CatalystBungee() {
         plugin = this;
@@ -46,18 +47,6 @@ public class CatalystBungee extends Plugin
         };
         Injector injector = Guice.createInjector(module);
         inner = injector.getInstance(Inner.class);
-    }
-
-    public static class Inner extends Catalyst<Plugin> {
-        @Inject
-        public Inner(Injector rootInjector) {
-            super(
-                rootInjector,
-                new BungeeModule(),
-                BungeeLuckpermsService.class,
-                BungeeCatalystCommandManager.class,
-                BungeeJDAService.class);
-        }
     }
 
     @Override
@@ -80,5 +69,19 @@ public class CatalystBungee extends Plugin
     @Override
     public String getName() {
         return CatalystPluginInfo.name;
+    }
+
+    public static class Inner extends Catalyst<Plugin> {
+        @Inject
+        public Inner(Injector rootInjector) {
+            super(
+                rootInjector,
+                new BungeeModule(),
+                BungeeLuckpermsService.class,
+                BungeeCatalystCommandManager.class,
+                BungeeJDAService.class,
+                ServerInfoService.class
+            );
+        }
     }
 }

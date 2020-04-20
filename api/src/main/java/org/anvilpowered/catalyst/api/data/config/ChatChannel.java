@@ -15,19 +15,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.event;
+package org.anvilpowered.catalyst.api.data.config;
 
-public interface StaffChatEvent<TString, TPlayer> {
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-    TPlayer getSender();
+import java.util.List;
 
-    void setSender(TPlayer sender);
+@ConfigSerializable
+public class ChatChannel {
 
-    String getRawMessage();
+    @Setting("id")
+    public String id;
 
-    void setRawMessage(String rawMessage);
+    @Setting("aliases")
+    public List<String> aliases;
 
-    TString getMessage();
+    @Setting("prefix")
+    public String prefix;
 
-    void setMessage(TString message);
+    @Setting("servers")
+    public List<String> servers;
+
+    @Setting(value = "alwaysVisible", comment = "Whether members of this channel will always recieve messages from this channel even when they are not in it. ")
+    public boolean alwaysVisible;
 }

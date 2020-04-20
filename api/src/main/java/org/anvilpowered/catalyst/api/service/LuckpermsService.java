@@ -21,7 +21,6 @@ import net.luckperms.api.cacheddata.CachedMetaData;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
 
-import java.util.Collection;
 import java.util.Optional;
 
 public interface LuckpermsService<TPlayer> {

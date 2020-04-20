@@ -22,7 +22,7 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.data.config.Channel;
+import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
@@ -86,7 +86,8 @@ public class CommonChatListener<
             return;
         }
 
-        Optional<Channel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
+        Optional<ChatChannel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
+        List<String> swearList = chatFilter.isSwear(message);
         message = chatService.checkPlayerName(message);
 
         if (channel.isPresent()) {
@@ -99,7 +100,8 @@ public class CommonChatListener<
             chatEvent.setMessage(textService.of(message));
             chatEvent.setRawMessage(message);
             eventService.fire((TEvent) chatEvent);
-            if (chatService.sendChatMessage(player, message)) discordChatListener.onChatEvent(chatEvent);
+            discordChatListener.onChatEvent(chatEvent);
+            chatService.sendChatMessage(player, playerUUID, message);
         } else {
             throw new AssertionError(
                 "Unable to find a chat channel for " + userService.getUserName((TUser) player) +

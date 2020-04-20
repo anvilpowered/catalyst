@@ -35,7 +35,6 @@ import org.anvilpowered.catalyst.bungee.service.BungeeExecuteCommandService;
 import org.anvilpowered.catalyst.bungee.service.BungeeLoggerService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
-import org.spongepowered.api.command.spec.CommandExecutor;
 
 import java.io.File;
 import java.nio.file.Paths;

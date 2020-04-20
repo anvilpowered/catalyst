@@ -18,7 +18,6 @@
 package org.anvilpowered.catalyst.common.member;
 
 import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.api.core.coremember.repository.CoreMemberRepository;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
@@ -103,7 +102,7 @@ public class CommonMemberManager<
                 if (isOnline) {
                     lastSeen = "Currently Online.";
                 } else {
-                    lastSeen = timeFormatService.format(member.getLastJoinedUtc());
+                    lastSeen = timeFormatService.format(member.getLastJoinedUtc()).get();
                 }
                 if (member.isBanned()) {
                     banReason = member.getBanReason();

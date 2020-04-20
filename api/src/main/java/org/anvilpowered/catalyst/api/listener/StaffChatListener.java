@@ -22,5 +22,5 @@ import java.util.UUID;
 
 public interface StaffChatListener<TPlayer> {
 
-    void onStaffChatEvent(TPlayer player, UUID playerUUID, String message );
+    void onStaffChatEvent(TPlayer player, UUID playerUUID, String message);
 }

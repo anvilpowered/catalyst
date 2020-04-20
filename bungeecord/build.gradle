@@ -12,6 +12,7 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url 'https://repo.spongepowered.org/maven' }
+    maven { url 'https://jetbrains.bintray.com/xodus' }
 }
 
 dependencies {
@@ -25,7 +26,6 @@ dependencies {
     implementation apache_http_mime
     implementation apache_http_nio
     implementation bungee
-    implementation guice
     implementation jackson_annotations
     implementation jackson_core
     implementation jackson_databind

@@ -17,19 +17,17 @@
 
 package org.anvilpowered.catalyst.api.event;
 
-import org.anvilpowered.catalyst.api.data.config.Channel;
-
 public interface ChatEvent<TString, TPlayer> {
 
     TPlayer getSender();
 
+    void setSender(TPlayer sender);
+
     String getRawMessage();
+
+    void setRawMessage(String rawMessage);
 
     TString getMessage();
 
     void setMessage(TString message);
-
-    void setRawMessage(String rawMessage);
-
-    void setSender(TPlayer sender);
 }

@@ -25,7 +25,6 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.catalyst.common.command.CommonMessageCommand;
-import org.anvilpowered.catalyst.velocity.plugin.CatalystVelocity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;

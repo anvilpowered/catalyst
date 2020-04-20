@@ -31,8 +31,18 @@ public class CommonStaffChatEvent<TString, TPlayer> implements StaffChatEvent<TS
     }
 
     @Override
+    public void setSender(TPlayer sender) {
+        this.sender = sender;
+    }
+
+    @Override
     public String getRawMessage() {
         return this.rawMessage;
+    }
+
+    @Override
+    public void setRawMessage(String rawMessage) {
+        this.rawMessage = rawMessage;
     }
 
     @Override
@@ -43,15 +53,5 @@ public class CommonStaffChatEvent<TString, TPlayer> implements StaffChatEvent<TS
     @Override
     public void setMessage(TString message) {
         this.message = message;
-    }
-
-    @Override
-    public void setRawMessage(String rawMessage) {
-        this.rawMessage = rawMessage;
-    }
-
-    @Override
-    public void setSender(TPlayer sender) {
-        this.sender = sender;
     }
 }
