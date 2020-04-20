@@ -80,7 +80,7 @@ public class CommonTempMuteCommand<
         if (args.length == 2) {
             memberManager.tempMute(userName, duration).thenAcceptAsync(m -> textService.send(m, source));
         } else {
-            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length))
+            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
             memberManager.tempMute(userName, duration, reason)
                 .thenAcceptAsync(m -> textService.send(m, source));
         }

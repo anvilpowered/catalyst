@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -306,7 +307,7 @@ public class CommonChatService<
     }
 
     @Override
-    public void sendChatMessage(TPlayer player, UUID playerUUID, String message) {
+    public boolean sendChatMessage(TPlayer player, UUID playerUUID, String message) {
         String prefix = luckpermsService.getPrefix(player);
         String chatColor = luckpermsService.getChatColor(player);
         String nameColor = luckpermsService.getNameColor(player);
@@ -323,7 +324,7 @@ public class CommonChatService<
             (TSubject) player,
             registry.getOrDefault(CatalystKeys.CHAT_COLOR)
         );
-
+        AtomicBoolean returnValue = new AtomicBoolean(false);
         formatMessage(
             prefix,
             nameColor,
@@ -341,11 +342,12 @@ public class CommonChatService<
                 sendMessageToChannel(channelId, optionalMessage.get(), server, userName, playerUUID, p ->
                     permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))
                 );
-                return true;
+                returnValue.set(true);
             } else {
                 textService.send(pluginMessages.getMuted(), (TCommandSource) player);
-                return false;
+                returnValue.set(false);
             }
         });
+        return returnValue.get();
     }
 }
