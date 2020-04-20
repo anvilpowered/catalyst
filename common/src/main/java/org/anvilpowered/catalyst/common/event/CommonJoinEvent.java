@@ -26,7 +26,6 @@ public class CommonJoinEvent<TPlayer> implements JoinEvent<TPlayer> {
     private TPlayer player;
     private InetSocketAddress virtualHost;
 
-
     @Override
     public TPlayer getPlayer() {
         return this.player;
