@@ -17,7 +17,7 @@
 
 package org.anvilpowered.catalyst.api.service;
 
-import org.anvilpowered.catalyst.api.data.config.Channel;
+import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,7 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     String getChannelIdForUser(UUID userUUID);
 
-    Optional<Channel> getChannelFromId(String channelId);
+    Optional<ChatChannel> getChannelFromId(String channelId);
 
     Optional<String> getChannelPrefix(String channelId);
 
@@ -43,7 +43,7 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     CompletableFuture<Void> sendGlobalMessage(TPlayer player, TString message);
 
-    CompletableFuture<Optional<TString>> formatMessage(String prefix, String nameColor, String userName, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
+    CompletableFuture<Optional<TString>> formatMessage(String prefix, String nameColor, String userName, UUID userUUID, String message, boolean hasChatColorPermission, String suffix, String serverName, String channelId, String channelPrefix);
 
     List<TString> getPlayerList();
 
@@ -59,5 +59,5 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     String checkPlayerName(String message);
 
-    void sendChatMessage(TPlayer player, String message);
+    boolean sendChatMessage(TPlayer player, UUID playerUUID, String message);
 }

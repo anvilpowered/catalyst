@@ -30,7 +30,6 @@ public class CatalystConfigurationService extends BaseConfigurationService {
     @Inject
     public CatalystConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
         super(configLoader);
-        setName(CatalystKeys.MOTD, "motd");
         setName(CatalystKeys.CHAT_FILTER_SWEARS, "chat.filter.swears");
         setName(CatalystKeys.CHAT_FILTER_EXCEPTIONS, "chat.filter.exceptions");
         setName(CatalystKeys.CHAT_FILTER_ENABLED, "chat.filter.enabled");
@@ -41,7 +40,6 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.PROXY_CHAT_FORMAT_HOVER, "chat.format.hover");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND, "chat.format.click");
         setName(CatalystKeys.PROXY_CHAT_ENABLED, "chat.proxy.enabled");
-        setName(CatalystKeys.SERVER_COMMAND, "command.server");
         setName(CatalystKeys.TAB_ENABLED, "tab.enabled");
         setName(CatalystKeys.TAB_HEADER, "tab.format.header");
         setName(CatalystKeys.TAB_FOOTER, "tab.format.footer");
@@ -66,7 +64,9 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.DISCORD_ENABLE, "discord.enabled");
         setName(CatalystKeys.SERVER_PING, "ping.mode");
         setName(CatalystKeys.SERVER_PING_MESSAGE, "ping.message");
-        setDescription(CatalystKeys.MOTD, "\nServer MOTD that is displayed when the proxy is pinged.");
+        setName(CatalystKeys.MOTD, "motd.message");
+        setName(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "advanced.server.enabled");
+        setName(CatalystKeys.ADVANCED_SERVER_INFO, "advanced.server.info");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS, "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS, "\nList of words that are caught by the swear detection, but shouldn't be. (ex. A player name that contains 'ass'");
         setDescription(CatalystKeys.CHAT_FILTER_ENABLED, "\nEnable or disable the chat filter. (true = enabled)");
@@ -77,7 +77,6 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.PROXY_CHAT_FORMAT_HOVER, "\nFormat for the hover message");
         setDescription(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND, "\nFormat for click event's");
         setDescription(CatalystKeys.PROXY_CHAT_ENABLED, "\nEnable or Disable the proxy-wide chat. (true = enabled)");
-        setDescription(CatalystKeys.SERVER_COMMAND, "\nEnable or Disable the /(servername) command. (true = enabled)");
         setDescription(CatalystKeys.TAB_ENABLED, "\nEnable or Disable the global tab. (true = enabled)");
         setDescription(CatalystKeys.TAB_HEADER, "\nFormat for the tab header");
         setDescription(CatalystKeys.TAB_FOOTER, "\nFormat for the tab footer");
@@ -87,8 +86,8 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.CHAT_CHANNELS, "\nChat Channels");
         setDescription(CatalystKeys.CHAT_DEFAULT_CHANNEL, "\nDefault chat channel");
         setDescription(CatalystKeys.BOT_TOKEN, "\nToken for the discord bot that you would like to use when sending messages to discord \n For help creating a bot token, please see the wiki");
-        setDescription(CatalystKeys.MAIN_CHANNEL, "\nChannel id of the main channel that you would like in-game chat sent to.");
-        setDescription(CatalystKeys.STAFF_CHANNEL, "\nChannel id of the staff-chat channel that you would like staff chat messages sent to.");
+        setDescription(CatalystKeys.MAIN_CHANNEL, "\nChatChannel id of the main channel that you would like in-game chat sent to.");
+        setDescription(CatalystKeys.STAFF_CHANNEL, "\nChatChannel id of the staff-chat channel that you would like staff chat messages sent to.");
         setDescription(CatalystKeys.PLAYER_CHAT_FORMAT, "\nFormat of the message to be sent to discord from in-game");
         setDescription(CatalystKeys.JOIN_FORMAT, "\nMessage to be sent to the discord each time a player joins.");
         setDescription(CatalystKeys.LEAVE_FORMAT, "\nMessage to be sent to the discord each time a player leaves.");
@@ -103,5 +102,8 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.DISCORD_ENABLE, "\nEnable or Disable the discord bot (false = disabled).");
         setDescription(CatalystKeys.SERVER_PING, "\nSpecify what you would like to be shown in the server list, either PLAYERS or MESSAGE");
         setDescription(CatalystKeys.SERVER_PING_MESSAGE, "\nThis message is shown when players hover over the player count. \nThis message will only appear when the mode is set to MESSAGE");
+        setDescription(CatalystKeys.MOTD, "\nDefault MOTD that catalyst uses if the advanced server information is disabled.");
+        setDescription(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "\nEnable to disable advanced server information settings");
+        setDescription(CatalystKeys.ADVANCED_SERVER_INFO, "\nThis config option is for users that would like to have multiple servers, \neach with differing MOTD and/or Mods ");
     }
 }

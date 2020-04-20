@@ -15,17 +15,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.api.data.config;
+
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.util.List;
 
-public interface ChatFilter {
+@ConfigSerializable
+public class ChatChannel {
 
-    String stripMessage(String swear);
+    @Setting("id")
+    public String id;
 
-    List<Integer> findSpacePositions(String message, String noSpaces);
+    @Setting("aliases")
+    public List<String> aliases;
 
-    List<int[]> findSwears(String message, List<Integer> spacePositions);
+    @Setting("prefix")
+    public String prefix;
 
-    String replaceSwears(String swear);
+    @Setting("servers")
+    public List<String> servers;
+
+    @Setting(value = "alwaysVisible", comment = "Whether members of this channel will always recieve messages from this channel even when they are not in it. ")
+    public boolean alwaysVisible;
 }

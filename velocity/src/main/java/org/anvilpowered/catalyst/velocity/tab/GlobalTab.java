@@ -123,7 +123,8 @@ public class GlobalTab {
                                             luckPermsUtils.getPrefix(currentPlayerToProcess),
                                             luckPermsUtils.getSuffix(currentPlayerToProcess),
                                             currentPlayerToProcess.getPing(),
-                                            proxyServer.getPlayerCount())
+                                            proxyServer.getPlayerCount(),
+                                            registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED))
                                     )
                                     .tabList(currentPlayerToProcess.getTabList()).build();
                                 insertIntoTab(
@@ -146,7 +147,8 @@ public class GlobalTab {
                                 luckPermsUtils.getPrefix(currentPlayerToProcess),
                                 luckPermsUtils.getSuffix(currentPlayerToProcess),
                                 (int) currentPlayerToProcess.getPing(),
-                                proxyServer.getPlayerCount()
+                                proxyServer.getPlayerCount(),
+                                registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
                             ),
                             tabService.formatPlayerSpecificTab(
                                 registry.getOrDefault(CatalystKeys.TAB_FOOTER),
@@ -154,7 +156,8 @@ public class GlobalTab {
                                 luckPermsUtils.getPrefix(currentPlayerToProcess),
                                 luckPermsUtils.getSuffix(currentPlayerToProcess),
                                 (int) currentPlayerToProcess.getPing(),
-                                proxyServer.getPlayerCount()
+                                proxyServer.getPlayerCount(),
+                                registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
                             )
                         );
                     }

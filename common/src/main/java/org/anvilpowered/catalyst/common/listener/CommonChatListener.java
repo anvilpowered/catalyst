@@ -22,7 +22,7 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.data.config.Channel;
+import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
@@ -86,24 +86,20 @@ public class CommonChatListener<
             return;
         }
 
-        Optional<Channel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
-        List<String> swearList = chatFilter.isSwear(message);
+        Optional<ChatChannel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
         message = chatService.checkPlayerName(message);
 
         if (channel.isPresent()) {
-            if (swearList != null) {
-                if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
-                    for (String swear : swearList) {
-                        message = message.replace(swear, "****");
-                    }
-                }
+
+            if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
+                message = chatFilter.replaceSwears(message);
             }
+
             chatEvent.setSender(player);
             chatEvent.setMessage(textService.of(message));
             chatEvent.setRawMessage(message);
             eventService.fire((TEvent) chatEvent);
-            discordChatListener.onChatEvent(chatEvent);
-            chatService.sendChatMessage(player, message);
+            if (chatService.sendChatMessage(player, playerUUID, message)) discordChatListener.onChatEvent(chatEvent);
         } else {
             throw new AssertionError(
                 "Unable to find a chat channel for " + userService.getUserName((TUser) player) +

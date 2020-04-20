@@ -23,7 +23,6 @@ public class CommonJoinEvent<TPlayer> implements JoinEvent<TPlayer> {
 
     private TPlayer player;
 
-
     @Override
     public TPlayer getPlayer() {
         return this.player;

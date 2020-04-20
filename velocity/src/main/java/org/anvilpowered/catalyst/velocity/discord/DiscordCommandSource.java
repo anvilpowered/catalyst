@@ -18,7 +18,6 @@
 package org.anvilpowered.catalyst.velocity.discord;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.permission.Tristate;
 import net.kyori.text.Component;

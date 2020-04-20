@@ -1,25 +1,9 @@
 plugins {
-    id 'java'
-}
-
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://repo.spongepowered.org/maven' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    id 'java-library'
 }
 
 dependencies {
-    implementation anvil_api
-    implementation configurate_core
-    implementation configurate_hocon
-    implementation guice
-    implementation guice_extensions
-    implementation luckperms
-    implementation mongodb_driver_sync
-    implementation morphia
-    implementation jda
-    implementation xodus
-    implementation xodus_entity_store
+    api anvil_api
+    api jda
+    api luckperms
 }

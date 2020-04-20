@@ -21,13 +21,13 @@ public interface StaffChatEvent<TString, TPlayer> {
 
     TPlayer getSender();
 
+    void setSender(TPlayer sender);
+
     String getRawMessage();
+
+    void setRawMessage(String rawMessage);
 
     TString getMessage();
 
     void setMessage(TString message);
-
-    void setRawMessage(String rawMessage);
-
-    void setSender(TPlayer sender);
 }
