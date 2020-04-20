@@ -31,6 +31,7 @@ import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
+import org.anvilpowered.catalyst.api.service.ServerInfoService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 
 import java.util.UUID;
@@ -80,14 +81,21 @@ public class CommonJoinListener<
     @Inject
     private DiscordChatListener<TString, TPlayer> discordChatListener;
 
+    @Inject
+    private ServerInfoService serverService;
+
     @Override
-    public void onPlayerJoin(TPlayer player, UUID playerUUID) {
+    public void onPlayerJoin(TPlayer player, UUID playerUUID, String virtualHost) {
         if (permissionService.hasPermission((TSubject) player,
             registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN))) {
             privateMessageService.socialSpySet().add(playerUUID);
         }
         luckpermsService.addPlayerToCache(player);
         String userName = userService.getUserName((TUser) player);
+
+        if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
+            serverService.insertPlayer(userName, serverService.getPrefix(virtualHost));
+        }
 
         staffListService.getStaffNames(
             userName,
@@ -108,12 +116,14 @@ public class CommonJoinListener<
             textService.of(
                 registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
                     .replace("%player%", userName)
+                    .replace("%server%", serverService.getPrefix(virtualHost))
             )
         );
         loggerService.info(
             textService.of(
                 registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
                     .replace("%player%", userName)
+                    .replace("%server%", serverService.getPrefix(virtualHost))
             )
         );
         joinEvent.setPlayer(player);

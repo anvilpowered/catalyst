@@ -41,7 +41,7 @@ public class BungeeListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PostLoginEvent event) {
-        joinListener.onPlayerJoin(event.getPlayer(), event.getPlayer().getUniqueId());
+        joinListener.onPlayerJoin(event.getPlayer(), event.getPlayer().getUniqueId(), event.getPlayer().getServer().getAddress().getHostString());
     }
 
     @EventHandler

@@ -24,6 +24,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.anvilpowered.anvil.api.Environment;
+import org.anvilpowered.catalyst.api.service.ServerInfoService;
 import org.anvilpowered.catalyst.common.plugin.Catalyst;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.velocity.command.CatalystCommandManager;
@@ -52,7 +53,7 @@ public class CatalystVelocity extends Catalyst<PluginContainer> {
 
     @Inject
     Logger logger;
-
+    boolean alreadyLoaded = false;
     @Inject
     private ProxyServer proxyServer;
 
@@ -63,7 +64,8 @@ public class CatalystVelocity extends Catalyst<PluginContainer> {
             GlobalTab.class,
             CatalystCommandManager.class,
             VelocityJDAService.class,
-            VelocityLuckpermsService.class
+            VelocityLuckpermsService.class,
+            ServerInfoService.class
         );
     }
 
@@ -71,9 +73,12 @@ public class CatalystVelocity extends Catalyst<PluginContainer> {
     protected void whenLoaded(Environment environment) {
         super.whenLoaded(environment);
         logger.info("Injecting listeners");
-        proxyServer.getEventManager().register(
-            this,
-            environment.getInjector().getInstance(VelocityListener.class)
-        );
+        if (!alreadyLoaded) {
+            alreadyLoaded = true;
+            proxyServer.getEventManager().register(
+                this,
+                environment.getInjector().getInstance(VelocityListener.class)
+            );
+        }
     }
 }

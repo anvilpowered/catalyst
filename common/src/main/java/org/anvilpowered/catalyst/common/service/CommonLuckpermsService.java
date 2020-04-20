@@ -36,25 +36,17 @@ import java.util.UUID;
 @Singleton
 public class CommonLuckpermsService<TUser, TString, TPlayer> implements LuckpermsService<TPlayer> {
 
+    private static Map<UUID, CachedMetaData> cachedPlayers = new HashMap<>();
     @Inject
     private UserService<TUser, TPlayer> userService;
-
     @Inject
     private LoggerService<TString> loggerService;
-
-    private static Map<UUID, CachedMetaData> cachedPlayers = new HashMap<>();
-
-    int totalUpdates = 0;
 
     @Override
     public Runnable syncPlayerCache() {
         return () -> {
             if (userService.getOnlinePlayers().size() > 0) {
                 userService.getOnlinePlayers().forEach(this::addPlayerToCache);
-                if (totalUpdates > 0) {
-                    loggerService.info("Updated the luckperms cache for " + totalUpdates + " members!");
-                    totalUpdates = 0;
-                }
             }
         };
     }
@@ -68,7 +60,6 @@ public class CommonLuckpermsService<TUser, TString, TPlayer> implements Luckperm
             if (cachedPlayers.containsKey(playerUUID)) {
                 if (tempUser.getCachedData().getMetaData(getQueryOptions(tempUser)) != cachedPlayers.get(playerUUID)) {
                     cachedPlayers.replace(playerUUID, tempUser.getCachedData().getMetaData(getQueryOptions(tempUser)));
-                    totalUpdates++;
                 }
             } else {
                 cachedPlayers.put(playerUUID, tempUser.getCachedData().getMetaData(getQueryOptions(tempUser)));

@@ -6,34 +6,13 @@ plugins {
 jar.enabled = false // we only want shadowJar
 
 repositories {
-    mavenCentral()
-    jcenter()
-    maven { url "https://jitpack.io" }
     maven { url 'https://repo.velocitypowered.com/snapshots/' }
-    maven { url 'https://repo.spongepowered.org/maven' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
     implementation project(':api')
     implementation project(':common')
 
-    implementation anvil_api
-    implementation apache_http_async
-    implementation apache_http_client
-    implementation apache_http_core
-    implementation apache_http_mime
-    implementation apache_http_nio
-    implementation guice
-    implementation jackson_annotations
-    implementation jackson_core
-    implementation jackson_databind
-    implementation jda
-    implementation json
-    implementation luckperms
-    implementation okio
-    implementation sponge
-    implementation unirest
     implementation velocity
     annotationProcessor velocity
 }

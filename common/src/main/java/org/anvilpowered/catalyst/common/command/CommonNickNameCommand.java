@@ -73,19 +73,16 @@ public class CommonNickNameCommand<
 
         if (nick.contains("&")) {
             if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_COLOR))) {
-                if (nick.contains("&k")
-                    && permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC))) {
-                    memberManager.setNickName(userService.getUserName((TPlayer) source), nick).thenAcceptAsync(m -> textService.send(m, source));
-                } else {
+                if ((!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC)) && nick.contains("&k"))) {
                     textService.send(pluginMessages.getNoNickMagicPermission(), source);
-                    return;
+                    nick = nick.replaceAll("&k", "");
                 }
-                memberManager.setNickName(userService.getUserName((TPlayer) source), nick).thenAcceptAsync(m -> textService.send(m, source));
             } else {
+                nick = pluginMessages.removeColor(nick);
                 textService.send(pluginMessages.getNoNickColorPermission(), source);
             }
-        } else {
-            memberManager.setNickName(userService.getUserName((TPlayer) source), nick).thenAcceptAsync(m -> textService.send(m, source));
         }
+        memberManager.setNickName(userService.getUserName((TPlayer) source), nick).thenAcceptAsync(m -> textService.send(m, source));
     }
 }
+

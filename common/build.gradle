@@ -5,30 +5,8 @@ plugins {
     id "net.kyori.blossom" version "1.1.0"
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url "https://jitpack.io" }
-    maven { url 'https://repo.spongepowered.org/maven' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-}
-
-
 dependencies {
     implementation project(':api')
-
-    implementation anvil_api
-    implementation guice
-    implementation guice_extensions
-    implementation jda
-    implementation luckperms
-    implementation mongodb_driver_sync
-    implementation mongo_java_driver
-    implementation morphia
-    implementation unirest
-    implementation sponge
-    implementation xodus
-    implementation xodus_entity_store
 }
 
 blossom {

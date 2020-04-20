@@ -70,9 +70,9 @@ public class VelocityModule extends CommonModule<
         }).to(VelocityBroadcastService.class);
         bind(new TypeLiteral<LoggerService<TextComponent>>() {
         }).to(VelocityLoggerService.class);
-        bind(new TypeLiteral<ExecuteCommandService<CommandSource>>(){
+        bind(new TypeLiteral<ExecuteCommandService<CommandSource>>() {
         }).to(VelocityExecuteCommandService.class);
-        bind(new TypeLiteral<EventService<Object>>(){
+        bind(new TypeLiteral<EventService<Object>>() {
         }).to(VelocityEventService.class);
     }
 }

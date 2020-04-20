@@ -5,24 +5,12 @@ plugins {
 
 jar.enabled = false // we only want shadowJar
 
-repositories {
-    jcenter()
-    mavenCentral()
-    maven { url "https://jitpack.io" }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url 'https://repo.spongepowered.org/maven' }
-}
-
 dependencies {
     implementation project(':api')
     implementation project(':common')
 
-    implementation anvil_api
-    implementation jda
-    implementation guice
     implementation sponge
     annotationProcessor sponge
-    implementation unirest
 }
 
 shadowJar {

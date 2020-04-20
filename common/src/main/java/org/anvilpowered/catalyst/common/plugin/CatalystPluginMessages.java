@@ -368,4 +368,12 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
             .yellow().append("\nFor another ", timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc)))
             .build();
     }
+
+    @Override
+    public TString getInvalidServer() {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .yellow().append("Invalid server!")
+            .build();
+    }
 }

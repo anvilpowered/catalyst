@@ -21,15 +21,15 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 
 @Singleton
 public class CatalystCommandManager {
 
     @Inject
-    Provider<ServerCommand> serverCommandProvider;
+    ServerCommand serverCommand;
+    @Inject
+    Provider<ChannelCommand> channelCommandProvider;
     @Inject
     private ProxyServer proxyServer;
     private Registry registry;
@@ -73,13 +73,8 @@ public class CatalystCommandManager {
     private DeleteNicknameCommand deleteNicknameCommand;
     @Inject
     private SwearCommand swearCommand;
-
     @Inject
     private ExceptionCommand exceptionCommand;
-
-    @Inject
-    Provider<ChannelCommand> channelCommandProvider;
-
     @Inject
     private IgnoreCommand ignoreCommand;
 
@@ -132,20 +127,8 @@ public class CatalystCommandManager {
             "unban", unBanCommand, "cunban", "pardon", "cpardon");
         proxyServer.getCommandManager().register(
             "unmute", unMuteCommand, "cunmute");
-        if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND)) {
-            for (RegisteredServer server : proxyServer.getAllServers()) {
-                String serverName = server.getServerInfo().getName();
-                ServerCommand command = serverCommandProvider.get();
-                command.setRegisteredServer(serverName);
-                proxyServer.getCommandManager().register(serverName, command);
-            }
-        }
-        registry.getOrDefault(CatalystKeys.CHAT_CHANNELS).forEach(channel -> {
-            ChannelCommand command = channelCommandProvider.get();
-            command.setChannelId(channel.id);
-            proxyServer.getCommandManager().register(
-                channel.id, command, channel.aliases.toArray(new String[0]));
-        });
+        proxyServer.getCommandManager().register(
+            "server", serverCommand);
         proxyServer.getCommandManager().register(
             "swear", swearCommand);
         proxyServer.getCommandManager().register(

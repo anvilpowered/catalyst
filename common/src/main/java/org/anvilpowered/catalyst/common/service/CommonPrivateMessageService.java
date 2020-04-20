@@ -57,18 +57,13 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
     }
 
     @Override
-    public void setSource(String sourceUserName) {
-        this.source = sourceUserName;
-    }
-
-    @Override
     public String getSource() {
         return source;
     }
 
     @Override
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
+    public void setSource(String sourceUserName) {
+        this.source = sourceUserName;
     }
 
     @Override
@@ -77,13 +72,18 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
     }
 
     @Override
-    public void setRawMessage(String rawMessage) {
-        this.rawMessage = rawMessage;
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
     }
 
     @Override
     public String getRawMessage() {
         return rawMessage;
+    }
+
+    @Override
+    public void setRawMessage(String rawMessage) {
+        this.rawMessage = rawMessage;
     }
 
     @Override
