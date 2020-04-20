@@ -91,13 +91,11 @@ public class CommonChatListener<
         message = chatService.checkPlayerName(message);
 
         if (channel.isPresent()) {
-            if (swearList != null) {
-                if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
-                    for (String swear : swearList) {
-                        message = message.replace(swear, "****");
-                    }
-                }
+
+            if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
+                message = chatFilter.replaceSwears(message);
             }
+
             chatEvent.setSender(player);
             chatEvent.setMessage(textService.of(message));
             chatEvent.setRawMessage(message);

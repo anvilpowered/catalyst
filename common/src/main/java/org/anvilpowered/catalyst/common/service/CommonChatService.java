@@ -341,8 +341,10 @@ public class CommonChatService<
                 sendMessageToChannel(channelId, optionalMessage.get(), server, userName, playerUUID, p ->
                     permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))
                 );
+                return true;
             } else {
                 textService.send(pluginMessages.getMuted(), (TCommandSource) player);
+                return false;
             }
         });
     }

@@ -21,11 +21,11 @@ import java.util.List;
 
 public interface ChatFilter {
 
-    List<String> aggressiveMode(String swear);
+    String stripMessage(String swear);
 
-    String removeDuplicates(String swear);
+    List<Integer> findSpacePositions(String message, String noSpaces);
 
-    List<String> checkSwear(List<String> finalWords);
+    List<int[]> findSwears(String message, List<Integer> spacePositions);
 
-    List<String> isSwear(String swear);
+    String replaceSwears(String swear);
 }
