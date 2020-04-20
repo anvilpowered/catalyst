@@ -325,7 +325,7 @@ public class CommonChatService<
     }
 
     @Override
-    public void sendChatMessage(TPlayer player, String message) {
+    public boolean sendChatMessage(TPlayer player, String message) {
         String prefix = luckpermsService.getPrefix(player);
         String chatColor = luckpermsService.getChatColor(player);
         String nameColor = luckpermsService.getNameColor(player);
@@ -361,8 +361,10 @@ public class CommonChatService<
                 sendMessageToChannel(channelId, optionalMessage.get(), server, userName, userUUID, p ->
                     permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))
                 );
+                return true;
             } else {
                 textService.send(pluginMessages.getMuted(), (TCommandSource) player);
+                return false;
             }
         });
     }

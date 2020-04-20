@@ -26,6 +26,7 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class CommonTempMuteCommand<
@@ -64,7 +65,7 @@ public class CommonTempMuteCommand<
             return;
         }
         String userName = args[0];
-        String duration = args[0];
+        String duration = args[1];
         Optional<TPlayer> target = userService.get(userName);
 
         if (target.isPresent()
@@ -79,8 +80,7 @@ public class CommonTempMuteCommand<
         if (args.length == 2) {
             memberManager.tempMute(userName, duration).thenAcceptAsync(m -> textService.send(m, source));
         } else {
-            String reason = String.join(" ", args)
-                .replace(userName + " ", "").replace(duration, "");
+            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length))
             memberManager.tempMute(userName, duration, reason)
                 .thenAcceptAsync(m -> textService.send(m, source));
         }
