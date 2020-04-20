@@ -24,7 +24,6 @@ import java.net.InetSocketAddress;
 public class CommonJoinEvent<TPlayer> implements JoinEvent<TPlayer> {
 
     private TPlayer player;
-    private InetSocketAddress virtualHost;
 
     @Override
     public TPlayer getPlayer() {
@@ -36,13 +35,4 @@ public class CommonJoinEvent<TPlayer> implements JoinEvent<TPlayer> {
         this.player = player;
     }
 
-    @Override
-    public InetSocketAddress getVirtualHost() {
-        return virtualHost;
-    }
-
-    @Override
-    public void setVirtualHost(InetSocketAddress virtualHost) {
-        this.virtualHost = virtualHost;
-    }
 }

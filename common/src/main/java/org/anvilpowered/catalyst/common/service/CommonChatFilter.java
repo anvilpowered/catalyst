@@ -45,9 +45,8 @@ public class CommonChatFilter implements ChatFilter {
     @Override
     public List<Integer> findSpacePositions(String message, String noSpaces) {
         List<Integer> spacePositions = new ArrayList<>();
-        int noSpacesIndex = 0;
         int regularIndex = 0;
-        for (noSpacesIndex++; noSpacesIndex<noSpaces.length();) {
+        for (int noSpacesIndex = 0; noSpacesIndex < noSpaces.length(); noSpacesIndex++) {
             if (message.charAt(regularIndex) == ' ') {
                 spacePositions.add(noSpacesIndex - 1);
                 regularIndex++;
@@ -67,21 +66,25 @@ public class CommonChatFilter implements ChatFilter {
                                                                                             banned word to see if the message contains it.*/
             if (message.contains(bannedWord) && (!exceptions.contains(bannedWord))) { /* If the message contains the
                                                                                          word and the word is not exempt. */
-                int lastWordIndex = 0;
-                while (lastWordIndex != -1) {
-                    int startIndex = message.indexOf(bannedWord, lastWordIndex);
-                    int endIndex = startIndex + bannedWord.length();
+                int startIndex = message.indexOf(bannedWord);
+                while (startIndex != -1) {
+                    int endIndex = startIndex + bannedWord.length() - 1; // Inclusive
                     int extraStartSpace = spacePositions.indexOf(startIndex - 1) + 1; // Adjusts the indexing to account for deleted spaces.
+                    int extraEndSpace = spacePositions.indexOf(endIndex);
                     if (spacePositions.containsAll(Arrays.asList(startIndex - 1, endIndex))) { // If there are spaces before and after the word.
-                        int extraEndSpace = spacePositions.indexOf(endIndex) + 1;
                         // Array to store the full location of the word in the original message.
-                        int[] wordLocation = new int[]{startIndex + extraStartSpace, endIndex + extraEndSpace};
+                        int[] wordLocation = new int[]{startIndex + extraStartSpace, endIndex + extraEndSpace + 1};
                         swearList.add(wordLocation);
-                    } else if (spacePositions.contains(startIndex - 1) && endIndex == message.length()) {
-                        int[] wordLocation = new int[]{startIndex + extraStartSpace, endIndex + spacePositions.size()};
+                    } else if ((spacePositions.contains(startIndex - 1) || startIndex == 0) &&
+                            (endIndex == message.length() - 1|| spacePositions.contains(endIndex))) {
+                        if (endIndex == message.length() - 1) {
+                            extraEndSpace = spacePositions.size();
+                        }
+                        // +1 to extraEndSpace as the next function in replaceSwears is exclusive
+                        int[] wordLocation = new int[]{startIndex + extraStartSpace, endIndex + extraEndSpace + 1};
                         swearList.add(wordLocation);
                     }
-                    lastWordIndex = endIndex;
+                    startIndex = message.indexOf(bannedWord, startIndex+1); // checks for any more instances of the banned word
                 }
             }
         }
@@ -92,19 +95,19 @@ public class CommonChatFilter implements ChatFilter {
     public String replaceSwears(String message) {
         String strippedMessage = stripMessage(message); // Replaces special characters
         String noSpacesMessage = strippedMessage.replaceAll(" ", ""); // Removes spaces
-        List<Integer> spacePositions = findSpacePositions(strippedMessage, noSpacesMessage);
-        List<int[]> swearPositions = findSwears(noSpacesMessage, spacePositions);
-        for (int[] swearPosition : swearPositions) {
-            int swearStart = swearPosition[0];
-            int swearEnd = swearPosition[1];
-            int swearLength = swearEnd - swearStart;
+        List<Integer> spacePositions = findSpacePositions(strippedMessage, noSpacesMessage); // Finds where the spaces are.
+        List<int[]> swearPositions = findSwears(noSpacesMessage, spacePositions); // List of arrays, one for each occurrence
+        for (int[] swearPosition : swearPositions) { // Iterates through each occurrence of swearing
+            int swearStart = swearPosition[0]; // Beginning of the swear, inclusive
+            int swearEnd = swearPosition[1]; // End of the swear, exclusive
+            int swearLength = swearEnd - swearStart; // Length of the swear
             /* If the swear is due to end at the end of the string, add *s for the length of the swear and finish,
             else add the rest of the string after the end of the swear.
              */
-            if (swearEnd >= message.length()) {
+            if (swearEnd >= message.length()) { // If the swear is at the end of the message, skip adding the rest
                 message = message.substring(0, swearStart) + // This join method adds swearLength '*'s.
                         String.join("", Collections.nCopies(swearLength, "*"));
-            } else {
+            } else { // Add the beginning & the end of the message around the swear
                 message = message.substring(0, swearStart) +
                         String.join("", Collections.nCopies(swearLength, "*"))
                         + message.substring(swearEnd);
