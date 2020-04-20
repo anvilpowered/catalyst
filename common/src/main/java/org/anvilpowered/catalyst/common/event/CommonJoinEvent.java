@@ -19,13 +19,9 @@ package org.anvilpowered.catalyst.common.event;
 
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 
-import java.net.InetSocketAddress;
-
 public class CommonJoinEvent<TPlayer> implements JoinEvent<TPlayer> {
 
     private TPlayer player;
-    private InetSocketAddress virtualHost;
-
 
     @Override
     public TPlayer getPlayer() {
@@ -35,15 +31,5 @@ public class CommonJoinEvent<TPlayer> implements JoinEvent<TPlayer> {
     @Override
     public void setPlayer(TPlayer player) {
         this.player = player;
-    }
-
-    @Override
-    public InetSocketAddress getVirtualHost() {
-        return virtualHost;
-    }
-
-    @Override
-    public void setVirtualHost(InetSocketAddress virtualHost) {
-        this.virtualHost = virtualHost;
     }
 }
