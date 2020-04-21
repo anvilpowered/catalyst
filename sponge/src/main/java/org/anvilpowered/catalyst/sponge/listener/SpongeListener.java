@@ -43,6 +43,7 @@ public class SpongeListener {
             .execute(() -> {
                 if (service.teleportationMap.containsKey(player.getName())) {
                     service.teleport(player.getName(), service.teleportationMap.get(player.getName()), true);
+                    service.teleportationMap.remove(player.getName());
                 }
             })
             .delay(10, TimeUnit.SECONDS)

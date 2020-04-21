@@ -26,6 +26,7 @@ import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -52,6 +53,7 @@ public class CommonCrossServerTeleportationHelper<TCommandSource> implements Cro
                 sendTeleportMessage(currentServerService.getName(recipient).get(), sender, recipient);
                 executeCommandService.executeAsConsole("send " + sender + " " + currentServerService.getName(recipient).get());
             }
+            teleportationAcceptMap.remove(sender);
         }
     }
 
@@ -75,19 +77,24 @@ public class CommonCrossServerTeleportationHelper<TCommandSource> implements Cro
         teleportationAcceptMap.put(sender, recipient);
     }
 
+    //To be run when the player being teleported to does /tpaccept
     @Override
-    public String getSender(String recipient) {
+    public Optional<String> getRequestingPlayerName(String recipient) {
         AtomicReference<String> s = new AtomicReference<>("null");
         teleportationAcceptMap.forEach((k, v) -> {
             if (v.equalsIgnoreCase(recipient)) {
-                s.set(v);
+                s.set(k);
             }
         });
-        return s.get();
+        if(s.get().equalsIgnoreCase("null")) {
+            return Optional.empty();
+        }
+        return Optional.of(s.get());
     }
 
     @Override
     public String getRecipient(String sender) {
+        System.out.println(sender);
         return teleportationAcceptMap.get(sender);
     }
 

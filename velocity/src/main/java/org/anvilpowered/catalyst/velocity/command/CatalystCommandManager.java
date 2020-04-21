@@ -22,7 +22,6 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.redis.RedisService;
 
 @Singleton
 public class CatalystCommandManager {
@@ -80,6 +79,9 @@ public class CatalystCommandManager {
     private IgnoreCommand ignoreCommand;
     @Inject
     private TeleportCommand teleportCommand;
+
+    @Inject
+    private TeleportAcceptCommand teleportAcceptCommand;
 
     private boolean alreadyLoaded = false;
 
@@ -141,6 +143,9 @@ public class CatalystCommandManager {
         );
         proxyServer.getCommandManager().register(
             "teleport", teleportCommand
+        );
+        proxyServer.getCommandManager().register(
+            "teleportaccept", teleportAcceptCommand
         );
     }
 }

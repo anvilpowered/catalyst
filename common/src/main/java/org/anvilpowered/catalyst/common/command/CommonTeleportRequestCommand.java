@@ -28,7 +28,7 @@ import org.anvilpowered.catalyst.api.service.CrossServerTeleportationHelper;
 
 import java.util.Optional;
 
-public class CommonTeleportCommand<
+public class CommonTeleportRequestCommand<
     TString,
     TUser,
     TPlayer,
@@ -55,12 +55,22 @@ public class CommonTeleportCommand<
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
         if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TELEPORT_PERMISSION))) {
-            if (teleportationHelper.isPresentInMap(userService.getUserName((TUser) source))
-                && teleportationHelper.getRecipient(userService.getUserName((TUser) source)).equalsIgnoreCase(args[0])) {
-                //TODO Send
-            } else {
-                Optional<TUser> recipient = userService.get(args[0]);
-                if (recipient.isPresent()) {
+            if (args.length == 0) {
+                textService.send(pluginMessages.getNotEnoughArgs(), source);
+                return;
+            }
+            Optional<TUser> recipient = userService.get(args[0]);
+            if (recipient.isPresent()) {
+                if (userService.getUserName(recipient.get()).equalsIgnoreCase(userService.getUserName((TUser) source))) {
+                    textService.send(pluginMessages.getTeleportToSelf(), source);
+                    return;
+                }
+                if (teleportationHelper.isPresentInMap(userService.getUserName((TUser) source))
+                    && teleportationHelper.getRecipient(userService.getUserName((TUser) source)).equalsIgnoreCase(args[0])) {
+                    textService.send(pluginMessages.getTeleportRequestPending(args[0]), source);
+                } else {
+                    //insert them into the map
+                    //source -> recipient
                     teleportationHelper.insertIntoTeleportationMap(userService.getUserName((TUser) source), userService.getUserName(recipient.get()));
                     //Send message to target
                     textService.send(
@@ -72,7 +82,12 @@ public class CommonTeleportCommand<
                         source
                     );
                 }
+            } else {
+                textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
+                return;
             }
+        } else {
+            textService.send(pluginMessages.getNoPermission(), source);
         }
     }
 }

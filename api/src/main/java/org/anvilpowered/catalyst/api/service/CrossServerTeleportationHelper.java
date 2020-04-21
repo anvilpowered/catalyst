@@ -17,6 +17,8 @@
 
 package org.anvilpowered.catalyst.api.service;
 
+import java.util.Optional;
+
 public interface CrossServerTeleportationHelper {
 
     void teleport(String sender, String recipient);
@@ -27,7 +29,7 @@ public interface CrossServerTeleportationHelper {
 
     void insertIntoTeleportationMap(String sender, String recipient);
 
-    String getSender(String recipient);
+    Optional<String> getRequestingPlayerName(String recipient);
 
     String getRecipient(String sender);
 

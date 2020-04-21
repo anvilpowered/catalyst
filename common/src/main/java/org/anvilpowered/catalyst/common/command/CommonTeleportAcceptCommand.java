@@ -17,5 +17,65 @@
 
 package org.anvilpowered.catalyst.common.command;
 
-public class CommonTeleportAcceptCommand {
+import com.google.inject.Inject;
+import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.util.PermissionService;
+import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.anvil.api.util.UserService;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.CrossServerTeleportationHelper;
+
+import java.util.Optional;
+
+public class CommonTeleportAcceptCommand<
+    TString,
+    TUser,
+    TPlayer,
+    TCommandSource,
+    TSubject> {
+
+    @Inject
+    private TextService<TString, TCommandSource> textService;
+
+    @Inject
+    private PluginMessages<TString> pluginMessages;
+
+    @Inject
+    private PermissionService<TSubject> permissionService;
+
+    @Inject
+    private Registry registry;
+
+    @Inject
+    private CrossServerTeleportationHelper teleportationHelper;
+
+    @Inject
+    private UserService<TUser, TPlayer> userService;
+
+    public void execute(TCommandSource source, TSubject subject, String[] args) {
+        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TELEPORT_PERMISSION))) {
+            if (teleportationHelper.getRequestingPlayerName(userService.getUserName((TUser) source)).isPresent()) {
+                Optional<String> requestingPlayerName = teleportationHelper.getRequestingPlayerName(userService.getUserName((TUser) source));
+                if (userService.get(requestingPlayerName.get()).isPresent()) {
+                    System.out.println(requestingPlayerName.get());
+                    TUser requesting = userService.get(requestingPlayerName.get()).get();
+                    textService.send(
+                        pluginMessages.getTeleportRequestAccepted(userService.getUserName((TUser) source)),
+                        (TCommandSource) requesting);
+                    textService.send(
+                        pluginMessages.getSourceAcceptedTeleport(requestingPlayerName.get()),
+                        source
+                    );
+                    teleportationHelper.teleport(requestingPlayerName.get(), userService.getUserName((TUser) source));
+                } else {
+                    textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
+                }
+            } else {
+                textService.send(pluginMessages.getNoPendingRequests(), source);
+            }
+        } else {
+            textService.send(pluginMessages.getNoPermission(), source);
+        }
+    }
 }
