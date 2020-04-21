@@ -28,6 +28,5 @@ public class SpongeConfigurationService extends CatalystConfigurationService {
     @Inject
     public SpongeConfigurationService(@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> configLoader) {
         super(configLoader);
-        withRedis();
     }
 }

@@ -22,6 +22,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.redis.RedisService;
 
 @Singleton
 public class CatalystCommandManager {
@@ -77,6 +78,8 @@ public class CatalystCommandManager {
     private ExceptionCommand exceptionCommand;
     @Inject
     private IgnoreCommand ignoreCommand;
+    @Inject
+    private TeleportCommand teleportCommand;
 
     private boolean alreadyLoaded = false;
 
@@ -135,6 +138,9 @@ public class CatalystCommandManager {
             "exception", exceptionCommand);
         proxyServer.getCommandManager().register(
             "ignore", ignoreCommand
+        );
+        proxyServer.getCommandManager().register(
+            "teleport", teleportCommand
         );
     }
 }

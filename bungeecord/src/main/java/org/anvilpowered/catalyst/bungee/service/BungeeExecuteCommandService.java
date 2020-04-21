@@ -23,6 +23,8 @@ import net.md_5.bungee.api.ProxyServer;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.bungee.discord.DiscordCommandSource;
 
+import java.util.concurrent.CompletableFuture;
+
 public class BungeeExecuteCommandService implements ExecuteCommandService<CommandSender> {
 
     @Inject
@@ -34,8 +36,8 @@ public class BungeeExecuteCommandService implements ExecuteCommandService<Comman
     }
 
     @Override
-    public void executeAsConsole(String command) {
-        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command);
+    public CompletableFuture<Void> executeAsConsole(String command) {
+        return CompletableFuture.runAsync(() -> ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command));
     }
 
     @Override

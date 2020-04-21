@@ -15,15 +15,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.common.command;
 
-import java.util.concurrent.CompletableFuture;
-
-public interface ExecuteCommandService<TCommandSource> {
-
-    void executeCommand(TCommandSource source, String command);
-
-    CompletableFuture<Void> executeAsConsole(String command);
-
-    void executeDiscordCommand(String command);
+public class CommonTeleportAcceptCommand {
 }

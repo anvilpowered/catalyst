@@ -19,13 +19,20 @@ package org.anvilpowered.catalyst.sponge.command;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.anvilpowered.anvil.api.Environment;
+import org.anvilpowered.anvil.api.data.key.Keys;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.Plugin;
+import org.anvilpowered.anvil.api.redis.RedisService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.sponge.listener.SpongeJedisListener;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
+
+import javax.inject.Named;
 
 @Singleton
 public class CatalystSpongeCommandNode {
@@ -34,10 +41,20 @@ public class CatalystSpongeCommandNode {
     private CommandSyncCommand syncCommand;
 
     @Inject
+    private RedisService redisService;
+
+    @Inject
     private Plugin<?> plugin;
+
+    @Inject
+    private SpongeJedisListener spongeJedisListener;
 
     private Registry registry;
     private boolean alreadyLoaded = false;
+
+    @Inject
+    @Named("anvil")
+    Environment environment;
 
     @Inject
     public CatalystSpongeCommandNode(Registry registry) {
@@ -48,6 +65,10 @@ public class CatalystSpongeCommandNode {
     protected void loadCommands() {
         if (alreadyLoaded) return;
         alreadyLoaded = true;
+        Task.builder()
+            .execute(() -> redisService.getJedisPool().getResource().subscribe(spongeJedisListener, environment.getRegistry().getOrDefault(Keys.SERVER_NAME), "all"))
+            .async()
+            .submit(plugin);
         CommandSpec root = CommandSpec.builder()
             .description(Text.of("Sync commands to other servers!"))
             .arguments(

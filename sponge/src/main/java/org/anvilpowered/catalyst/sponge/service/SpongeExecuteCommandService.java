@@ -19,15 +19,22 @@ package org.anvilpowered.catalyst.sponge.service;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.plugin.Plugin;
+import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.event.Event;
 import org.spongepowered.api.scheduler.Task;
+
+import java.util.concurrent.CompletableFuture;
 
 public class SpongeExecuteCommandService implements ExecuteCommandService<CommandSource> {
 
     @Inject
     Plugin<?> plugin;
+
+    @Inject
+    private EventService<Event> eventService;
 
     @Override
     public void executeCommand(CommandSource commandSource, String command) {
@@ -39,8 +46,10 @@ public class SpongeExecuteCommandService implements ExecuteCommandService<Comman
     }
 
     @Override
-    public void executeAsConsole(String command) {
-        executeCommand(Sponge.getServer().getConsole(), command);
+    public CompletableFuture<Void> executeAsConsole(String command) {
+        return CompletableFuture.runAsync(() -> {
+            eventService.run(() -> executeCommand(Sponge.getServer().getConsole(), command));
+        });
     }
 
     @Override

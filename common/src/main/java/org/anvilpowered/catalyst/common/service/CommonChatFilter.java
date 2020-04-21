@@ -36,9 +36,9 @@ public class CommonChatFilter implements ChatFilter {
     @Override
     public String stripMessage(String checkMessage) {
         return checkMessage.toLowerCase()
-                .replaceAll("[*()/.,;'#~^+\\-]", " ").replaceAll("[0@]", "o")
-                .replaceAll("1", "i").replaceAll("\\$", "s"
-                ); // Replaces any special characters with their letter equivalent or a space
+            .replaceAll("[*()/.,;'#~^+\\-]", " ").replaceAll("[0@]", "o")
+            .replaceAll("1", "i").replaceAll("\\$", "s"
+            ); // Replaces any special characters with their letter equivalent or a space
     }
 
     // Generates a list with the locations of all the spaces in the original message - for index replacement later
@@ -60,7 +60,7 @@ public class CommonChatFilter implements ChatFilter {
     public List<int[]> findSwears(String message, List<Integer> spacePositions) {
         List<int[]> swearList = new ArrayList<>(); // List of all swear word locations
         List<String> exceptions = registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS).stream()
-                .map(String::toLowerCase).collect(Collectors.toList()); /* Gets exceptions from API, then, via a map,
+            .map(String::toLowerCase).collect(Collectors.toList()); /* Gets exceptions from API, then, via a map,
                                                                            makes them lowercase. */
         for (String bannedWord : registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS)) { /* Iterates through every
                                                                                             banned word to see if the message contains it.*/
@@ -76,7 +76,7 @@ public class CommonChatFilter implements ChatFilter {
                         int[] wordLocation = new int[]{startIndex + extraStartSpace, endIndex + extraEndSpace + 1};
                         swearList.add(wordLocation);
                     } else if ((spacePositions.contains(startIndex - 1) || startIndex == 0) &&
-                            (endIndex == message.length() - 1|| spacePositions.contains(endIndex))) {
+                        (endIndex == message.length() - 1 || spacePositions.contains(endIndex))) {
                         if (endIndex == message.length() - 1) {
                             extraEndSpace = spacePositions.size();
                         }
@@ -84,7 +84,7 @@ public class CommonChatFilter implements ChatFilter {
                         int[] wordLocation = new int[]{startIndex + extraStartSpace, endIndex + extraEndSpace + 1};
                         swearList.add(wordLocation);
                     }
-                    startIndex = message.indexOf(bannedWord, startIndex+1); // checks for any more instances of the banned word
+                    startIndex = message.indexOf(bannedWord, startIndex + 1); // checks for any more instances of the banned word
                 }
             }
         }
@@ -106,11 +106,11 @@ public class CommonChatFilter implements ChatFilter {
              */
             if (swearEnd >= message.length()) { // If the swear is at the end of the message, skip adding the rest
                 message = message.substring(0, swearStart) + // This join method adds swearLength '*'s.
-                        String.join("", Collections.nCopies(swearLength, "*"));
+                    String.join("", Collections.nCopies(swearLength, "*"));
             } else { // Add the beginning & the end of the message around the swear
                 message = message.substring(0, swearStart) +
-                        String.join("", Collections.nCopies(swearLength, "*"))
-                        + message.substring(swearEnd);
+                    String.join("", Collections.nCopies(swearLength, "*"))
+                    + message.substring(swearEnd);
             }
         }
         return message;

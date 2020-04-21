@@ -46,4 +46,9 @@ public class Catalyst<TPlugin> extends BasePlugin<TPlugin> {
     protected void whenReady(Environment environment) {
         super.whenReady(environment);
     }
+
+    @Override
+    protected void applyToBuilder(Environment.Builder builder) {
+        super.applyToBuilder(builder);
+    }
 }

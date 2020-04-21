@@ -25,6 +25,8 @@ import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource;
 import org.slf4j.Logger;
 
+import java.util.concurrent.CompletableFuture;
+
 public class VelocityExecuteCommandService implements ExecuteCommandService<CommandSource> {
 
     @Inject
@@ -45,8 +47,11 @@ public class VelocityExecuteCommandService implements ExecuteCommandService<Comm
     }
 
     @Override
-    public void executeAsConsole(String command) {
-        proxyServer.getCommandManager().execute(proxyServer.getConsoleCommandSource(), command);
+    public CompletableFuture<Void> executeAsConsole(String command) {
+        return CompletableFuture.runAsync(() ->{
+            System.out.println("Sending Command " + command);
+            proxyServer.getCommandManager().execute(proxyServer.getConsoleCommandSource(), command);
+        });
     }
 
     @Override

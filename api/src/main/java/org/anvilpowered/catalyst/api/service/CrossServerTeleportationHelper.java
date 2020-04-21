@@ -17,13 +17,19 @@
 
 package org.anvilpowered.catalyst.api.service;
 
-import java.util.concurrent.CompletableFuture;
+public interface CrossServerTeleportationHelper {
 
-public interface ExecuteCommandService<TCommandSource> {
+    void teleport(String sender, String recipient);
 
-    void executeCommand(TCommandSource source, String command);
+    boolean isOnSameServer(String sender, String recipient);
 
-    CompletableFuture<Void> executeAsConsole(String command);
+    void sendTeleportMessage(String serverName, String sender, String recipient);
 
-    void executeDiscordCommand(String command);
+    void insertIntoTeleportationMap(String sender, String recipient);
+
+    String getSender(String recipient);
+
+    String getRecipient(String sender);
+
+    boolean isPresentInMap(String sender);
 }

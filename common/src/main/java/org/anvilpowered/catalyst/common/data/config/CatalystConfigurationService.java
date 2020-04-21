@@ -30,6 +30,7 @@ public class CatalystConfigurationService extends BaseConfigurationService {
     @Inject
     public CatalystConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
         super(configLoader);
+        withRedis();
         setName(CatalystKeys.CHAT_FILTER_SWEARS, "chat.filter.swears");
         setName(CatalystKeys.CHAT_FILTER_EXCEPTIONS, "chat.filter.exceptions");
         setName(CatalystKeys.CHAT_FILTER_ENABLED, "chat.filter.enabled");

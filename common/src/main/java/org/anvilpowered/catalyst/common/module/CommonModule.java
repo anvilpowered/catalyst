@@ -45,6 +45,7 @@ import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.TabService;
+import org.anvilpowered.catalyst.api.service.CrossServerTeleportationHelper;
 import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.discord.CommonJDAService;
@@ -68,6 +69,7 @@ import org.anvilpowered.catalyst.common.service.CommonLuckpermsService;
 import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService;
 import org.anvilpowered.catalyst.common.service.CommonStaffChatService;
 import org.anvilpowered.catalyst.common.service.CommonTabService;
+import org.anvilpowered.catalyst.common.service.CommonCrossServerTeleportationHelper;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class CommonModule<
@@ -202,6 +204,12 @@ public class CommonModule<
             new TypeToken<StaffChatListener<TPlayer>>(getClass()) {
             },
             new TypeToken<CommonStaffChatListener<TUser, TString, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
+            }
+        );
+        be.bind(
+            new TypeToken<CrossServerTeleportationHelper>(getClass()) {
+            },
+            new TypeToken<CommonCrossServerTeleportationHelper<TCommandSource>>(getClass()) {
             }
         );
 
