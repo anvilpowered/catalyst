@@ -292,15 +292,18 @@ public class CommonChatService<
     @Override
     public String checkPlayerName(String message) {
         for (TPlayer player : userService.getOnlinePlayers()) {
-            if (message.contains(userService.getUserName((TUser) player))) {
-                String userName = userService.getUserName((TUser) player);
-                message = message.replaceAll(
-                    userName.toUpperCase(),
-                    "&b@" + userName + "&r")
-                    .replaceAll(
-                        userName.toLowerCase(),
-                        "&b@" + userName + "&r"
-                    );
+            String username = userService.getUserName((TUser) player);
+            if (message.toLowerCase().contains(username.toLowerCase())) {
+                List<Integer> occurrences = new ArrayList<>();
+                int startIndex = message.toLowerCase().indexOf(username.toLowerCase());
+                while (startIndex != -1) {
+                    occurrences.add(startIndex);
+                    startIndex = message.toLowerCase().indexOf(username.toLowerCase(), startIndex+1);
+                }
+                for (int occurrence : occurrences) {
+                    message = message.substring(0, occurrence) + "&b@" + username + "&r" +
+                            message.substring(occurrence + username.length());
+                }
             }
         }
         return message;
