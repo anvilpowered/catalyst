@@ -46,7 +46,7 @@ public class CommonUnBanCommand<
     private Registry registry;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.BAN))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.BAN_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

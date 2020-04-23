@@ -53,7 +53,7 @@ public class CommonDeleteNicknameCommand<
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
         if (!permissionService.hasPermission(subject,
-            registry.getOrDefault(CatalystKeys.NICKNAME))) {
+            registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -64,7 +64,7 @@ public class CommonDeleteNicknameCommand<
         }
         if (args[0].equalsIgnoreCase("other")
             && permissionService.hasPermission(
-            subject, registry.getOrDefault(CatalystKeys.NICKNAME_OTHER))) {
+            subject, registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION))) {
             memberManager.deleteNickNameForUser(args[1])
                 .thenAcceptAsync(m -> textService.send(m, source));
         } else {

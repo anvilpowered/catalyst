@@ -51,7 +51,7 @@ public class CommonIgnoreCommand<
     private UserService<TPlayer, TPlayer> userService;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.IGNORE))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.IGNORE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -65,7 +65,7 @@ public class CommonIgnoreCommand<
         if (userService.get(userName).isPresent()) {
             if (permissionService.hasPermission(
                 (TSubject) userService.getPlayer(userName).get(),
-                registry.getOrDefault(CatalystKeys.IGNORE_EXEMPT))) {
+                registry.getOrDefault(CatalystKeys.IGNORE_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.ignoreExempt(), source);
                 return;
             }

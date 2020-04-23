@@ -34,4 +34,7 @@ public class AdvancedServerInfo {
 
     @Setting("prefix")
     public String prefix;
+
+    @Setting("modded")
+    public boolean modded;
 }

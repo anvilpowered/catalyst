@@ -66,7 +66,7 @@ public class CommonStaffChatCommand<
     private StaffChatListener<TPlayer> staffChatListener;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

@@ -33,7 +33,7 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
-import org.anvilpowered.catalyst.api.service.ServerInfoService;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +77,7 @@ public class CommonChatService<
     @Inject
     private LoggerService<TString> loggerService;
     @Inject
-    private ServerInfoService serverService;
+    private AdvancedServerInfoService serverService;
 
     @Override
     public void switchChannel(UUID userUUID, String channelId) {
@@ -204,9 +204,13 @@ public class CommonChatService<
         String channelPrefix,
         Key<String> key
     ) {
+        String server = currentServerService.getName(rawUserName).orElse("null");
+        if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
+            server = serverService.getPrefixForPlayer(rawUserName);
+        }
         return registry.get(key)
             .orElseThrow(() -> new IllegalStateException("Missing chat formatting!"))
-            .replace("%server%", serverService.getPrefixForPlayer(rawUserName))
+            .replace("%server%", server)
             .replace("%servername%", serverName)
             .replace("%prefix%", prefix)
             .replace("%player%", userName)
@@ -267,7 +271,7 @@ public class CommonChatService<
             }
         }
         ignoreMap.put(playerUUID, uuidList);
-        return textService.success("You are now ignoring " + userService.getUserName(targetPlayerUUID).get());
+        return textService.success("You are now ignoring " + userService.getUserName(targetPlayerUUID));
     }
 
     @Override
@@ -277,7 +281,7 @@ public class CommonChatService<
             uuidList.remove(targetPlayerUUID);
             ignoreMap.replace(playerUUID, uuidList);
         }
-        return textService.success("You are no longer ignoring " + userService.getUserName(targetPlayerUUID).get());
+        return textService.success("You are no longer ignoring " + userService.getUserName(targetPlayerUUID));
     }
 
     @Override
@@ -298,11 +302,11 @@ public class CommonChatService<
                 int startIndex = message.toLowerCase().indexOf(username.toLowerCase());
                 while (startIndex != -1) {
                     occurrences.add(startIndex);
-                    startIndex = message.toLowerCase().indexOf(username.toLowerCase(), startIndex+1);
+                    startIndex = message.toLowerCase().indexOf(username.toLowerCase(), startIndex + 1);
                 }
                 for (int occurrence : occurrences) {
                     message = message.substring(0, occurrence) + "&b@" + username + "&r" +
-                            message.substring(occurrence + username.length());
+                        message.substring(occurrence + username.length());
                 }
             }
         }
@@ -325,7 +329,7 @@ public class CommonChatService<
 
         boolean hasColorPermission = permissionService.hasPermission(
             (TSubject) player,
-            registry.getOrDefault(CatalystKeys.CHAT_COLOR)
+            registry.getOrDefault(CatalystKeys.CHAT_COLOR_PERMISSION)
         );
         AtomicBoolean returnValue = new AtomicBoolean(true);
         formatMessage(
@@ -344,7 +348,7 @@ public class CommonChatService<
                 returnValue.set(true);
                 loggerService.info(channelId + " : " + textService.serializePlain(optionalMessage.get()));
                 sendMessageToChannel(channelId, optionalMessage.get(), server, userName, playerUUID, p ->
-                    permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))
+                    permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
                 );
             } else {
                 returnValue.set(false);

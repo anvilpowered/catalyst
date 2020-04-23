@@ -53,7 +53,7 @@ public class CommonBanCommand<
 
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.BAN))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.BAN_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -67,7 +67,7 @@ public class CommonBanCommand<
         if (userService.get(userName).isPresent()) {
             if (permissionService.hasPermission(
                 (TSubject) userService.get(userName).get(),
-                registry.getOrDefault(CatalystKeys.BAN_EXEMPT))) {
+                registry.getOrDefault(CatalystKeys.BAN_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.getBanExempt(), source);
                 return;
             }

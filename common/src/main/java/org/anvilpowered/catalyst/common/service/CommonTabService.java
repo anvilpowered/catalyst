@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.util.CurrentServerService;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.service.ServerInfoService;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.TabService;
 
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class CommonTabService<TString, TCommandSource> implements TabService<TSt
     @Inject
     private CurrentServerService currentServerService;
     @Inject
-    private ServerInfoService serverInfoService;
+    private AdvancedServerInfoService advancedServerInfoService;
 
     @Override
     public TString formatTab(String format, String userName, String prefix, String suffix) {
@@ -56,7 +56,7 @@ public class CommonTabService<TString, TCommandSource> implements TabService<TSt
             .replace("%suffix%", suffix)
             .replace("%server%",
                 useAdvancedServerInfo
-                    ? currentServerService.getName(userName).orElse("null").replace(serverInfoService.getPrefixForPlayer(userName), "")
+                    ? currentServerService.getName(userName).orElse("null").replace(advancedServerInfoService.getPrefixForPlayer(userName), "")
                     : currentServerService.getName(userName).orElse("null"))
             .replace("%ping%", String.valueOf(ping))
             .replace("%playercount%", String.valueOf(playerCount))

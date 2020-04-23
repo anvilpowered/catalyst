@@ -51,7 +51,7 @@ public class CommonInfoCommand<
     private UserService<TPlayer, TPlayer> userService;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.INFO))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.INFO_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

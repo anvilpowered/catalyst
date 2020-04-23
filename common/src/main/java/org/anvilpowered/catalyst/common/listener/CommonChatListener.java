@@ -21,7 +21,6 @@ import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
@@ -33,7 +32,6 @@ import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,9 +46,6 @@ public class CommonChatListener<
 
     @Inject
     private ChatService<TString, TPlayer, TCommandSource> chatService;
-
-    @Inject
-    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private PermissionService<TSubject> permissionService;
@@ -91,7 +86,7 @@ public class CommonChatListener<
 
         if (channel.isPresent()) {
 
-            if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
+            if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
                 message = chatFilter.replaceSwears(message);
             }
 
@@ -102,8 +97,8 @@ public class CommonChatListener<
             if (chatService.sendChatMessage(player, playerUUID, message)) {discordChatListener.onChatEvent(chatEvent);}
         } else {
             throw new AssertionError(
-                "Unable to find a chat channel for " + userService.getUserName((TUser) player) +
-                    " please report this on github."
+                "If this is your first time running anvil, run /av reload Catalyst, if not report this" +
+                    " github."
             );
         }
     }
