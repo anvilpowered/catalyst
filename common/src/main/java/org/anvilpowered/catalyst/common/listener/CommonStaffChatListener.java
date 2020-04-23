@@ -72,11 +72,11 @@ public class CommonStaffChatListener<
     @Override
     public void onStaffChatEvent(TPlayer player, UUID playerUUID, String message) {
         userService.getOnlinePlayers().forEach(p -> {
-            if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
+            if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
                 textService.send(pluginMessages.getStaffChatMessageFormatted(userService.getUserName((TUser) player), textService.of(message)), (TCommandSource) p);
             }
         });
-        loggerService.info("[STAFF] " + userService.getUserName(playerUUID).orElse("null") + " : " + message);
+        loggerService.info("[STAFF] " + userService.getUserName(playerUUID).join() + " : " + message);
         staffChatEvent.setSender(player);
         staffChatEvent.setRawMessage(message);
         staffChatEvent.setMessage(textService.of(message));

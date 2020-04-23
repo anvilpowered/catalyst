@@ -27,10 +27,12 @@ import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
 import net.kyori.text.format.TextColor;
+import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.api.service.ServerInfoService;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -49,10 +51,13 @@ public class ServerCommand implements Command {
     private ProxyServer proxyServer;
 
     @Inject
-    private ServerInfoService serverInfoService;
+    private AdvancedServerInfoService advancedServerInfoService;
 
     @Inject
     private TextService<TextComponent, CommandSource> textService;
+
+    @Inject
+    private Registry registry;
 
     private RegisteredServer registeredServer;
 
@@ -60,13 +65,15 @@ public class ServerCommand implements Command {
     public void execute(CommandSource source, @NonNull String[] args) {
         if (source instanceof Player) {
             Player player = (Player) source;
-            String playerPrefix = serverInfoService.getPrefixForPlayer(((Player) source).getUsername());
+            String playerPrefix = advancedServerInfoService.getPrefixForPlayer(((Player) source).getUsername());
+            final boolean useAdvancedInformation = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED);
+            List<TextComponent> availableServers = new ArrayList<>();
+
             if (args.length == 0) {
                 AtomicInteger count = new AtomicInteger();
-                List<TextComponent> availableServers = new ArrayList<>();
                 proxyServer.getAllServers().forEach(s -> {
-                    if (s.getServerInfo().getName().contains(playerPrefix)) {
-                        if (player.getCurrentServer().isPresent()) {
+                    if (useAdvancedInformation) {
+                        if (s.getServerInfo().getName().contains(playerPrefix) && player.getCurrentServer().isPresent()) {
                             if (count.get() >= 8) {
                                 availableServers.add(textService.of("\n"));
                                 count.set(0);
@@ -79,6 +86,15 @@ public class ServerCommand implements Command {
                                     .clickEvent(ClickEvent.runCommand("/server " + s.getServerInfo().getName()))
                                     .hoverEvent(HoverEvent.showText(textService.of("Online Players : " + s.getPlayersConnected().size()))));
                             }
+                        }
+                    } else {
+                        if (player.getCurrentServer().get().getServer().equals(s)) {
+                            availableServers.add(textService.of(s.getServerInfo().getName() + " ").color(TextColor.GREEN)
+                                .hoverEvent(HoverEvent.showText(textService.of("Online Players: " + s.getPlayersConnected().size()))));
+                        } else {
+                            availableServers.add(textService.of(s.getServerInfo().getName() + " ").color(TextColor.GRAY)
+                                .clickEvent(ClickEvent.runCommand("/server " + s.getServerInfo().getName()))
+                                .hoverEvent(HoverEvent.showText(textService.of("Online Players : " + s.getPlayersConnected().size()))));
                         }
                     }
                     count.getAndIncrement();
@@ -101,37 +117,47 @@ public class ServerCommand implements Command {
                 return;
             }
 
-            if (!args[0].contains(playerPrefix) && !proxyServer.getServer(playerPrefix + args[0]).isPresent()) {
-                source.sendMessage(pluginMessages.getInvalidServer());
-                return;
-            }
-
-            proxyServer.getAllServers().forEach(s -> {
-                if (args[0].contains(playerPrefix)) {
+            if (useAdvancedInformation) {
+                if (!args[0].contains(playerPrefix) && !proxyServer.getServer(playerPrefix + args[0]).isPresent()) {
+                    source.sendMessage(pluginMessages.getInvalidServer());
+                    return;
+                } else {
                     args[0] = args[0].replace(playerPrefix, "");
                 }
-                if (s.getServerInfo().getName().equalsIgnoreCase(playerPrefix + args[0])) {
-                    String serverName = s.getServerInfo().getName();
-                    registeredServer = s;
-                    registeredServer.ping().thenAcceptAsync(ping -> {
-                        if (ping.getVersion().getName().equals(player.getProtocolVersion().getName())) {
-                            player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {
-                                if (connection.isSuccessful()) {
-                                    player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Connected to server " + registeredServer.getServerInfo().getName())));
-                                } else {
-                                    if (player.getCurrentServer().map(se -> se.getServerInfo().getName().equals(serverName)).orElse(false)) {
-                                        player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("You are already connected to " + registeredServer.getServerInfo().getName())));
-                                    } else {
-                                        player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Failed to connect to " + registeredServer.getServerInfo().getName())));
-                                    }
-                                }
-                            });
-                        } else {
-                            source.sendMessage(pluginMessages.getIncompatibleServerVersion());
-                        }
-                    });
-                }
-            });
+                proxyServer.getAllServers().forEach(s -> {
+                    if (s.getServerInfo().getName().equalsIgnoreCase(playerPrefix + args[0])) {
+                        commenceConnection(s, player);
+                    }
+                });
+            } else {
+                proxyServer.getAllServers().forEach(s -> {
+                    if (s.getServerInfo().getName().equalsIgnoreCase(args[0].replaceAll(" ", ""))) {
+                        commenceConnection(s, player);
+                    }
+                });
+            }
         }
+    }
+
+    private void commenceConnection(RegisteredServer s, Player player) {
+        String serverName = s.getServerInfo().getName();
+        registeredServer = s;
+        registeredServer.ping().thenAcceptAsync(ping -> {
+            if (ping.getVersion().getName().equals(player.getProtocolVersion().getName())) {
+                player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {
+                    if (connection.isSuccessful()) {
+                        player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Connected to server " + registeredServer.getServerInfo().getName())));
+                    } else {
+                        if (player.getCurrentServer().map(se -> se.getServerInfo().getName().equals(serverName)).orElse(false)) {
+                            player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("You are already connected to " + registeredServer.getServerInfo().getName())));
+                        } else {
+                            player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Failed to connect to " + registeredServer.getServerInfo().getName())));
+                        }
+                    }
+                });
+            } else {
+                player.sendMessage(pluginMessages.getIncompatibleServerVersion());
+            }
+        });
     }
 }

@@ -57,7 +57,7 @@ public class CommonChannelCommand<
     }
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.CHANNEL_BASE) + channelId)) {
+        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + channelId)) {
             if (args.length == 0) {
                 chatService.switchChannel(userService.getUUID((TPlayer) source), channelId);
                 textService.send(textService.of("Switched channel to " + channelId), source);

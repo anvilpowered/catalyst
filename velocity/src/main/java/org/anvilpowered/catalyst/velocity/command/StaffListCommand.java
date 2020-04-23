@@ -47,7 +47,7 @@ public class StaffListCommand implements Command {
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
 
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_BASE))) {
+        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_BASE_PERMISSION))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }

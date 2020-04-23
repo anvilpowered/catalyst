@@ -19,6 +19,7 @@ package org.anvilpowered.catalyst.common.listener;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.util.CurrentServerService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
@@ -26,12 +27,12 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.listener.JoinListener;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
-import org.anvilpowered.catalyst.api.service.ServerInfoService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 
 import java.util.UUID;
@@ -82,48 +83,53 @@ public class CommonJoinListener<
     private DiscordChatListener<TString, TPlayer> discordChatListener;
 
     @Inject
-    private ServerInfoService serverService;
+    private AdvancedServerInfoService serverService;
+
+    @Inject
+    private CurrentServerService currentServerService;
 
     @Override
     public void onPlayerJoin(TPlayer player, UUID playerUUID, String virtualHost) {
         if (permissionService.hasPermission((TSubject) player,
-            registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN))) {
+            registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN_PERMISSION))) {
             privateMessageService.socialSpySet().add(playerUUID);
         }
         luckpermsService.addPlayerToCache(player);
         String userName = userService.getUserName((TUser) player);
+        String server = currentServerService.getName(userName).orElse("null");
 
         if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
             serverService.insertPlayer(userName, serverService.getPrefix(virtualHost));
+            server = serverService.getPrefixForPlayer(userName);
         }
 
         staffListService.getStaffNames(
             userName,
             permissionService.hasPermission(
                 (TSubject) player,
-                registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN)
+                registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN_PERMISSION)
             ),
             permissionService.hasPermission(
                 (TSubject) player,
-                registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF)
+                registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF_PERMISSION)
             ),
             permissionService.hasPermission(
                 (TSubject) player,
-                registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER)
+                registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER_PERMISSION)
             )
         );
         broadcastService.broadcast(
-            textService.of(
+            textService.deserialize(
                 registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
                     .replace("%player%", userName)
-                    .replace("%server%", serverService.getPrefix(virtualHost))
+                    .replace("%server%", server)
             )
         );
         loggerService.info(
-            textService.of(
+            textService.deserialize(
                 registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
                     .replace("%player%", userName)
-                    .replace("%server%", serverService.getPrefix(virtualHost))
+                    .replace("%server%", server)
             )
         );
         joinEvent.setPlayer(player);

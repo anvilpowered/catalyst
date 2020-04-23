@@ -355,7 +355,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     public TString getBanMessage(String reason, Instant endUtc) {
         return textService.builder()
             .red().append("You have been banned for: ", textService.deserialize(reason))
-            .yellow().append("\n\nFor another ", timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc)))
+            .yellow().append("\n\nFor another ", timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc)).get())
             .append("\n\nUntil ", timeFormatService.format(endUtc))
             .build();
     }
@@ -365,7 +365,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
         return textService.builder()
             .append(pluginInfo.getPrefix())
             .red().append("You have been muted for: ", textService.deserialize(reason))
-            .yellow().append("\nFor another ", timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc)))
+            .yellow().append("\nFor another ", timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc)).get())
             .build();
     }
 

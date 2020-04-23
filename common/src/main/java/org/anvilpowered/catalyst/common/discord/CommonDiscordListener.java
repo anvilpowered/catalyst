@@ -88,7 +88,7 @@ public class CommonDiscordListener<
                 .replace("%name%", event.getAuthor().getName())
                 .replace("%message%", event.getMessage().getContentDisplay());
             userService.getOnlinePlayers().forEach(p -> {
-                if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
+                if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
                     textService.builder()
                         .append(textService.deserialize(message))
                         .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))

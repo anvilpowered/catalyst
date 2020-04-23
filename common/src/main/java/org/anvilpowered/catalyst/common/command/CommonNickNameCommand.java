@@ -52,7 +52,7 @@ public class CommonNickNameCommand<
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
         String nick;
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -63,7 +63,7 @@ public class CommonNickNameCommand<
             return;
         }
 
-        if (args[0].equals("other") && permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_OTHER))) {
+        if (args[0].equals("other") && permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION))) {
             nick = args[2];
             memberManager.setNickNameForUser(args[1], nick).thenAcceptAsync(m -> textService.send(m, source));
             return;
@@ -72,8 +72,8 @@ public class CommonNickNameCommand<
         }
 
         if (nick.contains("&")) {
-            if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_COLOR))) {
-                if ((!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC)) && nick.contains("&k"))) {
+            if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_COLOR_PERMISSION))) {
+                if ((!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC_PERMISSION)) && nick.contains("&k"))) {
                     textService.send(pluginMessages.getNoNickMagicPermission(), source);
                     nick = nick.replaceAll("&k", "");
                 }

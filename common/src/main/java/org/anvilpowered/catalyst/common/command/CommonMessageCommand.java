@@ -67,7 +67,7 @@ public class CommonMessageCommand<
                 privateMessageService.sendMessage("Me", name, message);
                 privateMessageService.sendMessage("Console", "Me", message);
             }
-            if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MESSAGE))) {
+            if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION))) {
                 privateMessageService.sendMessage(
                     userService.getUserName((TPlayer) source),
                     name,

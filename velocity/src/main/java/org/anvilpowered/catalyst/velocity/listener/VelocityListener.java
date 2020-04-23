@@ -2,6 +2,7 @@ package org.anvilpowered.catalyst.velocity.listener;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -17,12 +18,18 @@ import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.util.ModInfo;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import org.anvilpowered.anvil.api.Anvil;
+import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
+import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
 import org.anvilpowered.catalyst.api.listener.JoinListener;
 import org.anvilpowered.catalyst.api.listener.LeaveListener;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.TabService;
 
@@ -55,6 +62,16 @@ public class VelocityListener {
     @Inject
     private LoggerService<TextComponent> loggerService;
 
+
+    @Inject
+    private PluginMessages<TextComponent> pluginMessages;
+
+    @Inject
+    private BroadcastService<TextComponent> broadcastService;
+
+    @Inject
+    private TextService<TextComponent, CommandSource> textService;
+
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
         leaveListener.onPlayerLeave(event.getPlayer(), event.getPlayer().getUniqueId());
@@ -62,6 +79,34 @@ public class VelocityListener {
 
     @Subscribe
     public void onPlayerJoin(PostLoginEvent event) {
+
+        Player player = event.getPlayer();
+        boolean[] flags = new boolean[8];
+        Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()
+            .getOneOrGenerateForUser(
+                player.getUniqueId(),
+                player.getUsername(),
+                player.getRemoteAddress().getHostString(),
+                flags
+            ).thenAcceptAsync(optionalMember -> {
+            if (!optionalMember.isPresent()) {
+                return;
+            }
+            if (flags[0]) {
+                broadcastService.broadcast(
+                    textService.deserialize(
+                        registry.getOrDefault(CatalystKeys.FIRST_JOIN)
+                            .replace("%player%", player.getUsername()))
+                );
+            }
+            CoreMember<?> coreMember = optionalMember.get();
+            if (Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent().checkBanned(coreMember)) {
+                player.disconnect(
+                    pluginMessages.getBanMessage(coreMember.getBanReason(), coreMember.getBanEndUtc())
+                );
+            }
+        }).join();
+
         if (event.getPlayer().getVirtualHost().isPresent()) {
             if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
                 AtomicBoolean hostNameExists = new AtomicBoolean(false);
@@ -80,8 +125,24 @@ public class VelocityListener {
 
     @Subscribe
     public void onChat(PlayerChatEvent e) {
+        Player player = e.getPlayer();
         e.setResult(PlayerChatEvent.ChatResult.denied());
-        chatListener.onPlayerChat(e.getPlayer(), e.getPlayer().getUniqueId(), e.getMessage());
+        Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()
+            .getOneForUser(
+                player.getUniqueId()
+            ).thenAcceptAsync(optionalMember -> {
+            if (!optionalMember.isPresent()) {
+                return;
+            }
+            CoreMember<?> coreMember = optionalMember.get();
+            if (Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent().checkMuted(coreMember)) {
+                player.sendMessage(
+                    pluginMessages.getMuteMessage(coreMember.getMuteReason(), coreMember.getMuteEndUtc())
+                );
+            } else {
+                chatListener.onPlayerChat(e.getPlayer(), e.getPlayer().getUniqueId(), e.getMessage());
+            }
+        });
     }
 
     @Subscribe
@@ -115,19 +176,19 @@ public class VelocityListener {
         ModInfo modInfo = null;
         String playerProvidedHost;
         AtomicBoolean hostNameExists = new AtomicBoolean(false);
+        List<AdvancedServerInfo> advancedServerInfoList = new ArrayList<>();
 
         if (proxyPingEvent.getConnection().getVirtualHost().isPresent()) {
             playerProvidedHost = proxyPingEvent.getConnection().getVirtualHost().get().getHostString();
         } else {
-            loggerService.warn("Unable to get the virtual host from the player, please report this on github!");
             return;
         }
 
-        List<AdvancedServerInfo> advancedServerInfoList = registry.get(CatalystKeys.ADVANCED_SERVER_INFO).orElseThrow(() -> new IllegalArgumentException("Invalid server configuration!"));
         boolean useCatalyst = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED);
 
         builder.description(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.MOTD), '&'));
         if (useCatalyst) {
+            advancedServerInfoList = registry.get(CatalystKeys.ADVANCED_SERVER_INFO).orElseThrow(() -> new IllegalArgumentException("Invalid server configuration!"));
             advancedServerInfoList.forEach(advancedServerInfo -> {
                 if (playerProvidedHost.equals(advancedServerInfo.hostName)) {
                     hostNameExists.set(true);

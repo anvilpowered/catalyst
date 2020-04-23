@@ -29,14 +29,14 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-public class ServerInfoService {
+public class AdvancedServerInfoService {
 
     private Registry registry;
     private List<AdvancedServerInfo> advancedServerInfos = new ArrayList<>();
     private Map<String, String> playerServerMap = new HashMap<>();
 
     @Inject
-    public ServerInfoService(Registry registry) {
+    public AdvancedServerInfoService(Registry registry) {
         this.registry = registry;
         registry.whenLoaded(this::whenLoaded);
     }
