@@ -99,7 +99,7 @@ public class CommonChatListener<
             chatEvent.setMessage(textService.of(message));
             chatEvent.setRawMessage(message);
             eventService.fire((TEvent) chatEvent);
-            if (chatService.sendChatMessage(player, playerUUID, message)) discordChatListener.onChatEvent(chatEvent);
+            if (chatService.sendChatMessage(player, playerUUID, message)) {discordChatListener.onChatEvent(chatEvent);}
         } else {
             throw new AssertionError(
                 "Unable to find a chat channel for " + userService.getUserName((TUser) player) +

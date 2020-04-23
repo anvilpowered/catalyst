@@ -327,7 +327,7 @@ public class CommonChatService<
             (TSubject) player,
             registry.getOrDefault(CatalystKeys.CHAT_COLOR)
         );
-        AtomicBoolean returnValue = new AtomicBoolean(false);
+        AtomicBoolean returnValue = new AtomicBoolean(true);
         formatMessage(
             prefix,
             nameColor,
@@ -341,14 +341,14 @@ public class CommonChatService<
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
             if (optionalMessage.isPresent()) {
+                returnValue.set(true);
                 loggerService.info(channelId + " : " + textService.serializePlain(optionalMessage.get()));
                 sendMessageToChannel(channelId, optionalMessage.get(), server, userName, playerUUID, p ->
                     permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS))
                 );
-                returnValue.set(true);
             } else {
-                textService.send(pluginMessages.getMuted(), (TCommandSource) player);
                 returnValue.set(false);
+                textService.send(pluginMessages.getMuted(), (TCommandSource) player);
             }
         });
         return returnValue.get();
