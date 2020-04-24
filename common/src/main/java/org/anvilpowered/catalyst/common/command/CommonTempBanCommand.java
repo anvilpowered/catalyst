@@ -65,12 +65,13 @@ public class CommonTempBanCommand<
         String userName = args[0];
         String duration = args[1];
 
-        if (userService.getPlayer(userName).isPresent()
-            && permissionService.hasPermission((TSubject) userService.get(userName), registry.getOrDefault(CatalystKeys.BAN_EXEMPT_PERMISSION))) {
-            textService.send(pluginMessages.getBanExempt(), source);
-            return;
+        if (userService.get(userName).isPresent()) {
+            if (permissionService.hasPermission((TSubject) userService.get(userName),
+                registry.getOrDefault(CatalystKeys.BAN_EXEMPT_PERMISSION))) {
+                textService.send(pluginMessages.getBanExempt(), source);
+                return;
+            }
         }
-
         if (args.length == 2) {
             memberManager.tempBan(userName, duration).thenAcceptAsync(m -> textService.send(m, source));
         } else {

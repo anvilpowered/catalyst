@@ -68,7 +68,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
                 registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
                 name,
                 message,
-                registry.getOrDefault(CatalystKeys.STAFF_CHANNEL),
+                registry.getOrDefault(CatalystKeys.MAIN_CHANNEL),
                 event.getSender()
             );
         }

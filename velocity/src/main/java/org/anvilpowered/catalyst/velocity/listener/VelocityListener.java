@@ -227,9 +227,6 @@ public class VelocityListener {
             }
             if (modInfo != null) {
                 builder.mods(modInfo);
-            } else {
-                loggerService.warn("Please disable announceForge if you do not have a forge server running on your proxy." +
-                    "\n If you are utilizing the advanced server info, please ensure that the port specified matches the target server port");
             }
         }
 

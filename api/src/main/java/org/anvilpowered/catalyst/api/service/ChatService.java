@@ -59,5 +59,5 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     String checkPlayerName(String message);
 
-    boolean sendChatMessage(TPlayer player, UUID playerUUID, String message);
+    void sendChatMessage(TPlayer player, UUID playerUUID, String message);
 }
