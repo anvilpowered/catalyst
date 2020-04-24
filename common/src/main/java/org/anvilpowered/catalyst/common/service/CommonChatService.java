@@ -298,6 +298,7 @@ public class CommonChatService<
         for (TPlayer player : userService.getOnlinePlayers()) {
             String username = userService.getUserName((TUser) player);
             if (message.toLowerCase().contains(username.toLowerCase())) {
+                String chatColor = luckpermsService.getChatColor(player);
                 List<Integer> occurrences = new ArrayList<>();
                 int startIndex = message.toLowerCase().indexOf(username.toLowerCase());
                 while (startIndex != -1) {
@@ -305,7 +306,7 @@ public class CommonChatService<
                     startIndex = message.toLowerCase().indexOf(username.toLowerCase(), startIndex + 1);
                 }
                 for (int occurrence : occurrences) {
-                    message = message.substring(0, occurrence) + "&b@" + username + "&r" +
+                    message = message.substring(0, occurrence) + "&b@" + username + chatColor +
                         message.substring(occurrence + username.length());
                 }
             }

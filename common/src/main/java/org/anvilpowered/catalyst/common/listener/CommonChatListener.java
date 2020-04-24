@@ -96,8 +96,8 @@ public class CommonChatListener<
             eventService.fire((TEvent) chatEvent);
             if (chatService.sendChatMessage(player, playerUUID, message)) {discordChatListener.onChatEvent(chatEvent);}
         } else {
-            throw new AssertionError(
-                "If this is your first time running anvil, run /av reload Catalyst, if not report this" +
+            throw new IllegalStateException(
+                "If this is your first time running anvil, run /av reload Catalyst, if not report this on" +
                     " github."
             );
         }
