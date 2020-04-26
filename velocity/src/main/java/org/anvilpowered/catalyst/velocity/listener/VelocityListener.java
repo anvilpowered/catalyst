@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class VelocityListener {
@@ -186,7 +187,7 @@ public class VelocityListener {
 
         boolean useCatalyst = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED);
 
-        builder.description(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.MOTD), '&'));
+
         if (useCatalyst) {
             advancedServerInfoList = registry.get(CatalystKeys.ADVANCED_SERVER_INFO).orElseThrow(() -> new IllegalArgumentException("Invalid server configuration!"));
             advancedServerInfoList.forEach(advancedServerInfo -> {
@@ -198,6 +199,8 @@ public class VelocityListener {
             if (!hostNameExists.get()) {
                 builder.description(LegacyComponentSerializer.legacy().deserialize("&4Using the direct IP to connect has been disabled!", '&'));
             }
+        } else {
+            builder.description(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.MOTD), '&'));
         }
 
         if (proxyServer.getConfiguration().isAnnounceForge()) {
@@ -205,7 +208,11 @@ public class VelocityListener {
                 for (AdvancedServerInfo advancedServerInfo : advancedServerInfoList) {
                     if (playerProvidedHost.equalsIgnoreCase(advancedServerInfo.hostName)) {
                         for (RegisteredServer pServer : proxyServer.getAllServers()) {
-                            serverPing = pServer.ping().join();
+                            try {
+                                serverPing = pServer.ping().get();
+                            } catch (InterruptedException | ExecutionException e) {
+                                return;
+                            }
                             if (advancedServerInfo.port == pServer.getServerInfo().getAddress().getPort()) {
                                 if (serverPing.getModinfo().isPresent()) {
                                     modInfo = serverPing.getModinfo().get();
