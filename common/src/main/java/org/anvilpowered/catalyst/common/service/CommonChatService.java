@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -298,7 +297,6 @@ public class CommonChatService<
         for (TPlayer player : userService.getOnlinePlayers()) {
             String username = userService.getUserName((TUser) player);
             if (message.toLowerCase().contains(username.toLowerCase())) {
-                String chatColor = luckpermsService.getChatColor(player);
                 List<Integer> occurrences = new ArrayList<>();
                 int startIndex = message.toLowerCase().indexOf(username.toLowerCase());
                 while (startIndex != -1) {
@@ -306,7 +304,7 @@ public class CommonChatService<
                     startIndex = message.toLowerCase().indexOf(username.toLowerCase(), startIndex + 1);
                 }
                 for (int occurrence : occurrences) {
-                    message = message.substring(0, occurrence) + "&b@" + username + chatColor +
+                    message = message.substring(0, occurrence) + "&b@" + username + "&r" +
                         message.substring(occurrence + username.length());
                 }
             }
@@ -315,7 +313,7 @@ public class CommonChatService<
     }
 
     @Override
-    public boolean sendChatMessage(TPlayer player, UUID playerUUID, String message) {
+    public void sendChatMessage(TPlayer player, UUID playerUUID, String message) {
         String prefix = luckpermsService.getPrefix(player);
         String chatColor = luckpermsService.getChatColor(player);
         String nameColor = luckpermsService.getNameColor(player);
@@ -332,7 +330,6 @@ public class CommonChatService<
             (TSubject) player,
             registry.getOrDefault(CatalystKeys.CHAT_COLOR_PERMISSION)
         );
-        AtomicBoolean returnValue = new AtomicBoolean(true);
         formatMessage(
             prefix,
             nameColor,
@@ -346,16 +343,13 @@ public class CommonChatService<
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
             if (optionalMessage.isPresent()) {
-                returnValue.set(true);
                 loggerService.info(channelId + " : " + textService.serializePlain(optionalMessage.get()));
                 sendMessageToChannel(channelId, optionalMessage.get(), server, userName, playerUUID, p ->
                     permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
                 );
             } else {
-                returnValue.set(false);
                 textService.send(pluginMessages.getMuted(), (TCommandSource) player);
             }
         });
-        return returnValue.get();
     }
 }

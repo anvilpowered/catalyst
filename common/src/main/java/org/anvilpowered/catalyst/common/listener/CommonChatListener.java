@@ -94,10 +94,11 @@ public class CommonChatListener<
             chatEvent.setMessage(textService.of(message));
             chatEvent.setRawMessage(message);
             eventService.fire((TEvent) chatEvent);
-            if (chatService.sendChatMessage(player, playerUUID, message)) {discordChatListener.onChatEvent(chatEvent);}
+            discordChatListener.onChatEvent(chatEvent);
+            chatService.sendChatMessage(player, playerUUID, message);
         } else {
-            throw new IllegalStateException(
-                "If this is your first time running anvil, run /av reload Catalyst, if not report this on" +
+            throw new AssertionError(
+                "If this is your first time running anvil, run /av reload Catalyst, if not report this" +
                     " github."
             );
         }
