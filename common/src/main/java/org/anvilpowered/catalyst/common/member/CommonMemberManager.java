@@ -257,7 +257,7 @@ public class CommonMemberManager<
         return getPrimaryComponent().banUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
                 kickService.kick(userName, pluginMessages.getBanMessage(reason, endUtc));
-                return textService.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur));
+                return textService.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur).get());
             }
             return textService.fail("Invalid user.");
         });
@@ -306,7 +306,7 @@ public class CommonMemberManager<
         return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
                 userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), (TCommandSource) p));
-                return textService.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur));
+                return textService.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur).get());
             }
             return textService.fail("Invalid user.");
         });
