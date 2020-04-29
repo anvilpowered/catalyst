@@ -67,6 +67,7 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.MOTD, "motd.message");
         setName(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "advanced.server.enabled");
         setName(CatalystKeys.ADVANCED_SERVER_INFO, "advanced.server.info");
+        setName(CatalystKeys.EMOJI_ENABLE, "chat.emoji.enabled");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS,
             "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS,
@@ -147,5 +148,8 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.ADVANCED_SERVER_INFO,
             "\nThis config option is for users that would like to have multiple servers," +
                 " \neach with differing MOTD and/or Mods ");
+        setDescription(CatalystKeys.EMOJI_ENABLE,
+            "\nEnable or disable emojis in chat" +
+                "\n(true = enabled)");
     }
 }

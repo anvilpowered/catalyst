@@ -5,8 +5,10 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.connection.PreLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.Player;
@@ -30,7 +32,6 @@ import org.anvilpowered.catalyst.api.listener.JoinListener;
 import org.anvilpowered.catalyst.api.listener.LeaveListener;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.TabService;
 
 import java.util.ArrayList;
@@ -61,10 +62,6 @@ public class VelocityListener {
     private LeaveListener<Player> leaveListener;
 
     @Inject
-    private LoggerService<TextComponent> loggerService;
-
-
-    @Inject
     private PluginMessages<TextComponent> pluginMessages;
 
     @Inject
@@ -79,8 +76,7 @@ public class VelocityListener {
     }
 
     @Subscribe
-    public void onPlayerJoin(PostLoginEvent event) {
-
+    public void onPlayerJoin(LoginEvent event) {
         Player player = event.getPlayer();
         boolean[] flags = new boolean[8];
         Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()
@@ -126,24 +122,26 @@ public class VelocityListener {
 
     @Subscribe
     public void onChat(PlayerChatEvent e) {
-        Player player = e.getPlayer();
-        e.setResult(PlayerChatEvent.ChatResult.denied());
-        Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()
-            .getOneForUser(
-                player.getUniqueId()
-            ).thenAcceptAsync(optionalMember -> {
-            if (!optionalMember.isPresent()) {
-                return;
-            }
-            CoreMember<?> coreMember = optionalMember.get();
-            if (Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent().checkMuted(coreMember)) {
-                player.sendMessage(
-                    pluginMessages.getMuteMessage(coreMember.getMuteReason(), coreMember.getMuteEndUtc())
-                );
-            } else {
-                chatListener.onPlayerChat(e.getPlayer(), e.getPlayer().getUniqueId(), e.getMessage());
-            }
-        });
+        if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
+            Player player = e.getPlayer();
+            e.setResult(PlayerChatEvent.ChatResult.denied());
+            Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()
+                .getOneForUser(
+                    player.getUniqueId()
+                ).thenAcceptAsync(optionalMember -> {
+                if (!optionalMember.isPresent()) {
+                    return;
+                }
+                CoreMember<?> coreMember = optionalMember.get();
+                if (Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent().checkMuted(coreMember)) {
+                    player.sendMessage(
+                        pluginMessages.getMuteMessage(coreMember.getMuteReason(), coreMember.getMuteEndUtc())
+                    );
+                } else {
+                    chatListener.onPlayerChat(e.getPlayer(), e.getPlayer().getUniqueId(), e.getMessage());
+                }
+            });
+        }
     }
 
     @Subscribe
@@ -211,7 +209,7 @@ public class VelocityListener {
                             try {
                                 serverPing = pServer.ping().get();
                             } catch (InterruptedException | ExecutionException e) {
-                                return;
+                                continue;
                             }
                             if (advancedServerInfo.port == pServer.getServerInfo().getAddress().getPort()) {
                                 if (serverPing.getModinfo().isPresent()) {

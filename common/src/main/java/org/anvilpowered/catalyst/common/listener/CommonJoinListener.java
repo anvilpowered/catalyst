@@ -29,6 +29,7 @@ import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.listener.JoinListener;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
@@ -88,6 +89,9 @@ public class CommonJoinListener<
     @Inject
     private CurrentServerService currentServerService;
 
+    @Inject
+    private EmojiService emojiService;
+
     @Override
     public void onPlayerJoin(TPlayer player, UUID playerUUID, String virtualHost) {
         if (permissionService.hasPermission((TSubject) player,
@@ -96,7 +100,9 @@ public class CommonJoinListener<
         }
         luckpermsService.addPlayerToCache(player);
         String userName = userService.getUserName((TUser) player);
-        String server = currentServerService.getName(userName).orElse("null");
+        String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
+            ? currentServerService.getName(userName).orElse("null")
+            : currentServerService.getName(playerUUID).orElse("null");
 
         if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
             serverService.insertPlayer(userName, serverService.getPrefix(virtualHost));
@@ -118,9 +124,14 @@ public class CommonJoinListener<
                 registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER_PERMISSION)
             )
         );
+
+        String joinMessage = registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
+            ? emojiService.toEmoji(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE), "&f")
+            : registry.getOrDefault(CatalystKeys.JOIN_MESSAGE);
+
         broadcastService.broadcast(
             textService.deserialize(
-                registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
+                joinMessage
                     .replace("%player%", userName)
                     .replace("%server%", server)
             )
