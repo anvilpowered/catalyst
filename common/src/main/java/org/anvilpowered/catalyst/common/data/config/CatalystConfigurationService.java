@@ -68,6 +68,7 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "advanced.server.enabled");
         setName(CatalystKeys.ADVANCED_SERVER_INFO, "advanced.server.info");
         setName(CatalystKeys.EMOJI_ENABLE, "chat.emoji.enabled");
+        setName(CatalystKeys.VIA_VERSION_ENABLED, "advanced.viaversion");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS,
             "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS,
@@ -153,6 +154,9 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.EMOJI_ENABLE,
             "\nEnable or disable emojis in chat" +
                 "\nEnabling emojis means that you will have to have your players download a select texture pack, found on the github page." +
+                "\n(true = enabled)");
+        setDescription(CatalystKeys.VIA_VERSION_ENABLED,
+            "\nIf you are running servers with ViaVersion, this will disable the version checking done in the /server command." +
                 "\n(true = enabled)");
     }
 }

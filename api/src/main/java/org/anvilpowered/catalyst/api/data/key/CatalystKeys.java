@@ -266,6 +266,9 @@ public final class CatalystKeys {
     public static final Key<List<AdvancedServerInfo>> ADVANCED_SERVER_INFO = new Key<List<AdvancedServerInfo>>("ADVANCED_SERVER_INFO",
         advancedServerInfo) {
     };
+    public static final Key<Boolean> VIA_VERSION_ENABLED = new Key<Boolean>("VIA_VERSION_ENABLED",
+        false){
+    };
     static char emojiChar = '\uac00';
 
     static {
@@ -374,6 +377,7 @@ public final class CatalystKeys {
         Keys.registerKey(EMOJI_ENABLE);
         Keys.registerKey(EMOJI_MAP);
         Keys.registerKey(EMOJI_PERMISSION);
+        Keys.registerKey(VIA_VERSION_ENABLED);
     }
 
     static {

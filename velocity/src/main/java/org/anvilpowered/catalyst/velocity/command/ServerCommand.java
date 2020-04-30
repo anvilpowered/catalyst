@@ -143,7 +143,7 @@ public class ServerCommand implements Command {
         String serverName = s.getServerInfo().getName();
         registeredServer = s;
         registeredServer.ping().thenAcceptAsync(ping -> {
-            if (ping.getVersion().getName().equals(player.getProtocolVersion().getName())) {
+            if (ping.getVersion().getName().equals(player.getProtocolVersion().getName()) && !registry.getOrDefault(CatalystKeys.VIA_VERSION_ENABLED)) {
                 player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {
                     if (connection.isSuccessful()) {
                         player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Connected to server " + registeredServer.getServerInfo().getName())));
