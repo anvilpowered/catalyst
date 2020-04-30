@@ -26,6 +26,7 @@ import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 
@@ -55,6 +56,9 @@ public class CommonDiscordListener<
     @Inject
     private LoggerService<TString> loggerService;
 
+    @Inject
+    private EmojiService emojiService;
+
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().getId().equals(event.getJDA().getSelfUser().getId())
             || event.isWebhookMessage()
@@ -69,12 +73,18 @@ public class CommonDiscordListener<
                 executeCommandService.executeDiscordCommand(command);
                 return;
             } else {
-                String message = registry.getOrDefault(CatalystKeys.DISCORD_CHAT_FORMAT)
+                String message = event.getMessage().getContentDisplay();
+                if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
+                    for (String key : emojiService.getEmojis().keySet()) {
+                        message = message.replace(key, emojiService.getEmojis().get(key).toString());
+                    }
+                }
+                String finalMessage = registry.getOrDefault(CatalystKeys.DISCORD_CHAT_FORMAT)
                     .replace("%name%", event.getMember().getEffectiveName())
-                    .replace("%message%", event.getMessage().getContentDisplay());
+                    .replace("%message%", message);
                 userService.getOnlinePlayers().forEach(p ->
                     textService.builder()
-                        .append(textService.deserialize(message))
+                        .append(textService.deserialize(finalMessage))
                         .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))
                         .onHoverShowText(textService.of(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)))
                         .sendTo((TCommandSource) p)
@@ -84,13 +94,19 @@ public class CommonDiscordListener<
         }
 
         if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.STAFF_CHANNEL))) {
-            String message = registry.getOrDefault(CatalystKeys.DISCORD_STAFF_FORMAT)
-                .replace("%name%", event.getAuthor().getName())
-                .replace("%message%", event.getMessage().getContentDisplay());
+            String message = event.getMessage().getContentDisplay();
+            if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
+                for (String key : emojiService.getEmojis().keySet()) {
+                    message = message.replace(key, emojiService.getEmojis().get(key).toString());
+                }
+            }
+            String finalMessage = registry.getOrDefault(CatalystKeys.DISCORD_STAFF_FORMAT)
+                .replace("%name%", event.getMember().getEffectiveName())
+                .replace("%message%", message);
             userService.getOnlinePlayers().forEach(p -> {
                 if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
                     textService.builder()
-                        .append(textService.deserialize(message))
+                        .append(textService.deserialize(finalMessage))
                         .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))
                         .onHoverShowText(textService.of(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)))
                         .sendTo((TCommandSource) p);

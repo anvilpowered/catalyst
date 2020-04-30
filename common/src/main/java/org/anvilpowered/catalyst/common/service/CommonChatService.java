@@ -30,10 +30,11 @@ import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
-import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +78,9 @@ public class CommonChatService<
     private LoggerService<TString> loggerService;
     @Inject
     private AdvancedServerInfoService serverService;
+
+    @Inject
+    private EmojiService emojiService;
 
     @Override
     public void switchChannel(UUID userUUID, String channelId) {
@@ -330,12 +334,18 @@ public class CommonChatService<
             (TSubject) player,
             registry.getOrDefault(CatalystKeys.CHAT_COLOR_PERMISSION)
         );
+        message = chatColor + message;
+        if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
+            && permissionService.hasPermission((TSubject) player,
+            registry.getOrDefault(CatalystKeys.EMOJI_PERMISSION))) {
+            message = emojiService.toEmoji(message, chatColor);
+        }
         formatMessage(
             prefix,
             nameColor,
             userName,
             playerUUID,
-            chatColor + message,
+            message,
             hasColorPermission,
             suffix,
             server,

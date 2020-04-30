@@ -67,6 +67,7 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.MOTD, "motd.message");
         setName(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "advanced.server.enabled");
         setName(CatalystKeys.ADVANCED_SERVER_INFO, "advanced.server.info");
+        setName(CatalystKeys.EMOJI_ENABLE, "chat.emoji.enabled");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS,
             "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS,
@@ -146,6 +147,12 @@ public class CatalystConfigurationService extends BaseConfigurationService {
             "\nEnable to disable advanced server information settings");
         setDescription(CatalystKeys.ADVANCED_SERVER_INFO,
             "\nThis config option is for users that would like to have multiple servers," +
-                " \neach with differing MOTD and/or Mods ");
+                " \neach with differing MOTD and/or Mods \n" +
+                "Note: To do this, the IP specified MUST correlate to the IP defined in the forced host section\n" +
+                "of the velocity config. Also, your players must use the IP defined in this config to connect");
+        setDescription(CatalystKeys.EMOJI_ENABLE,
+            "\nEnable or disable emojis in chat" +
+                "\nEnabling emojis means that you will have to have your players download a select texture pack, found on the github page." +
+                "\n(true = enabled)");
     }
 }
