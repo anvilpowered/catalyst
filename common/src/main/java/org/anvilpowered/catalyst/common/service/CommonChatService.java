@@ -297,7 +297,7 @@ public class CommonChatService<
     }
 
     @Override
-    public String checkPlayerName(String message) {
+    public String checkPlayerName(TPlayer sender, String message) {
         for (TPlayer player : userService.getOnlinePlayers()) {
             String username = userService.getUserName((TUser) player);
             if (message.toLowerCase().contains(username.toLowerCase())) {
@@ -307,8 +307,9 @@ public class CommonChatService<
                     occurrences.add(startIndex);
                     startIndex = message.toLowerCase().indexOf(username.toLowerCase(), startIndex + 1);
                 }
+                String chatColor = luckpermsService.getChatColor(sender);
                 for (int occurrence : occurrences) {
-                    message = message.substring(0, occurrence) + "&b@" + username + "&r" +
+                    message = message.substring(0, occurrence) + "&b@" + username + chatColor +
                         message.substring(occurrence + username.length());
                 }
             }

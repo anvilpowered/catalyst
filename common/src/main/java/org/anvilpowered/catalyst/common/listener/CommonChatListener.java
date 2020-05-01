@@ -82,7 +82,7 @@ public class CommonChatListener<
         }
 
         Optional<ChatChannel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
-        message = chatService.checkPlayerName(message);
+        message = chatService.checkPlayerName(player, message);
 
         if (channel.isPresent()) {
 
