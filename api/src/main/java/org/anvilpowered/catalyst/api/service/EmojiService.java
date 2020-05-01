@@ -24,4 +24,6 @@ public interface EmojiService {
     Map<String, Character> getEmojis();
 
     String toEmoji(String message, String chatColor);
+
+    String toEmojiWithoutColor(String message);
 }

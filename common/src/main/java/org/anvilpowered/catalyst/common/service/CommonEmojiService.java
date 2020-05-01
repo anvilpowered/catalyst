@@ -41,4 +41,12 @@ public class CommonEmojiService implements EmojiService {
         }
         return message;
     }
+
+    @Override
+    public String toEmojiWithoutColor(String message) {
+        for (String key : getEmojis().keySet()) {
+            message = message.replace(key, "" + getEmojis().get(key));
+        }
+        return message;
+    }
 }

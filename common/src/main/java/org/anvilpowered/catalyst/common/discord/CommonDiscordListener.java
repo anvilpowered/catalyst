@@ -18,7 +18,9 @@
 package org.anvilpowered.catalyst.common.discord;
 
 import com.google.inject.Inject;
+import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.anvilpowered.anvil.api.data.registry.Registry;
@@ -67,15 +69,15 @@ public class CommonDiscordListener<
         }
 
         if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL))) {
+            String message = EmojiParser.parseToAliases(event.getMessage().getContentDisplay());
             if (event.getMember().hasPermission(Permission.ADMINISTRATOR)
                 && event.getMessage().toString().contains("!cmd")) {
                 String command = event.getMessage().getContentRaw().replace("!cmd ", "");
                 executeCommandService.executeDiscordCommand(command);
                 return;
             } else {
-                String message = event.getMessage().getContentDisplay();
                 if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
-                    for (String key : emojiService.getEmojis().keySet()) {
+                    for (String key : registry.getOrDefault(CatalystKeys.EMOJI_MAP).keySet()) {
                         message = message.replace(key, emojiService.getEmojis().get(key).toString());
                     }
                 }
@@ -90,11 +92,11 @@ public class CommonDiscordListener<
                         .sendTo((TCommandSource) p)
                 );
             }
-            loggerService.info("[Discord] " + event.getMember().getEffectiveName() + " : " + event.getMessage().getContentDisplay());
+            loggerService.info("[Discord] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
         }
 
         if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.STAFF_CHANNEL))) {
-            String message = event.getMessage().getContentDisplay();
+            String message = EmojiParser.parseToAliases(event.getMessage().getContentDisplay());
             if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
                 for (String key : emojiService.getEmojis().keySet()) {
                     message = message.replace(key, emojiService.getEmojis().get(key).toString());
@@ -112,7 +114,7 @@ public class CommonDiscordListener<
                         .sendTo((TCommandSource) p);
                 }
             });
-            loggerService.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + event.getMessage().getContentDisplay());
+            loggerService.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
         }
 
     }

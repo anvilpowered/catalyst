@@ -25,6 +25,7 @@ subprojects {
         implementation apache_http_core
         implementation apache_http_mime
         implementation apache_http_nio
+        implementation emoji_java
         implementation jackson_annotations
         implementation jackson_core
         implementation jackson_databind
