@@ -145,7 +145,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
     @Override
     public void onPlayerLeaveEvent(LeaveEvent<TPlayer> event) {
         if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
-            String leaveMessage = registry.getOrDefault(CatalystKeys.LEAVE_FORMAT);
+            String leaveMessage = registry.getOrDefault(CatalystKeys.DISCORD_LEAVE_FORMAT);
             if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
                 for (String key : emojiService.getEmojis().keySet()) {
                     leaveMessage = leaveMessage.replace(emojiService.getEmojis().get(key).toString(), key);

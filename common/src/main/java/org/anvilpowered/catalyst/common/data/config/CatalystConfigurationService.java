@@ -52,7 +52,7 @@ public class CatalystConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.STAFF_CHANNEL, "discord.channel.staff");
         setName(CatalystKeys.PLAYER_CHAT_FORMAT, "discord.format.proxy");
         setName(CatalystKeys.JOIN_FORMAT, "discord.format.join");
-        setName(CatalystKeys.LEAVE_FORMAT, "discord.format.leave");
+        setName(CatalystKeys.DISCORD_LEAVE_FORMAT, "discord.format.leave");
         setName(CatalystKeys.DISCORD_CHAT_FORMAT, "discord.format.discord");
         setName(CatalystKeys.DISCORD_STAFF_FORMAT, "discord.format.staff");
         setName(CatalystKeys.TOPIC_FORMAT, "discord.format.topic");
@@ -117,7 +117,7 @@ public class CatalystConfigurationService extends BaseConfigurationService {
             "\nFormat of the message to be sent to discord from in-game");
         setDescription(CatalystKeys.JOIN_FORMAT,
             "\nMessage to be sent to the discord each time a player joins.");
-        setDescription(CatalystKeys.LEAVE_FORMAT,
+        setDescription(CatalystKeys.DISCORD_LEAVE_FORMAT,
             "\nMessage to be sent to the discord each time a player leaves.");
         setDescription(CatalystKeys.DISCORD_CHAT_FORMAT,
             "\nFormat of the message being sent from discord to in-game");

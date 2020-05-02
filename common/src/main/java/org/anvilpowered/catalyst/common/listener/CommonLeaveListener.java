@@ -81,8 +81,8 @@ public class CommonLeaveListener<
         luckpermsService.removePlayerFromCache(player);
 
         String message = registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
-            ? emojiService.toEmoji(registry.getOrDefault(CatalystKeys.LEAVE_FORMAT), "&f")
-            : registry.getOrDefault(CatalystKeys.LEAVE_FORMAT);
+            ? emojiService.toEmoji(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE), "&f")
+            : registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE);
 
         broadcastService.broadcast(
             textService.of(
@@ -92,7 +92,7 @@ public class CommonLeaveListener<
 
         loggerService.info(
             textService.of(
-                registry.getOrDefault(CatalystKeys.LEAVE_FORMAT)
+                registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
                     .replace("%player%", userService.getUserName((TUser) player))
             )
         );

@@ -194,7 +194,7 @@ public final class CatalystKeys {
     public static final Key<String> JOIN_FORMAT = new Key<String>("JOIN_FORMAT",
         "%player% has joined the game.") {
     };
-    public static final Key<String> LEAVE_FORMAT = new Key<String>("LEAVE_FORMAT",
+    public static final Key<String> DISCORD_LEAVE_FORMAT = new Key<String>("DISCORD_LEAVE_FORMAT",
         "%player% has left the game.") {
     };
     public static final Key<String> DISCORD_CHAT_FORMAT = new Key<String>("DISCORD_CHAT_FORMAT",
@@ -354,7 +354,7 @@ public final class CatalystKeys {
         Keys.registerKey(STAFF_CHANNEL);
         Keys.registerKey(PLAYER_CHAT_FORMAT);
         Keys.registerKey(JOIN_FORMAT);
-        Keys.registerKey(LEAVE_FORMAT);
+        Keys.registerKey(DISCORD_LEAVE_FORMAT);
         Keys.registerKey(DISCORD_CHAT_FORMAT);
         Keys.registerKey(DISCORD_STAFF_FORMAT);
         Keys.registerKey(TOPIC_FORMAT);
