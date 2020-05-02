@@ -15,26 +15,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.data.config;
+package org.anvilpowered.catalyst.api.service;
 
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import java.util.Map;
 
-@ConfigSerializable
-public class AdvancedServerInfo {
+public interface EmojiService {
 
-    @Setting("hostname")
-    public String hostName;
+    Map<String, Character> getEmojis();
 
-    @Setting("motd")
-    public String motd;
+    String toEmoji(String message, String chatColor);
 
-    @Setting("port")
-    public int port;
-
-    @Setting("prefix")
-    public String prefix;
-
-    @Setting("modded")
-    public boolean modded;
+    String toEmojiWithoutColor(String message);
 }

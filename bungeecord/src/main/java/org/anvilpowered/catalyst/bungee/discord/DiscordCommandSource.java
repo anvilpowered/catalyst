@@ -50,7 +50,7 @@ public class DiscordCommandSource implements CommandSender {
         Objects.requireNonNull(
             Objects.requireNonNull(jdaService.getJDA()
                 .getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL)))
-                .sendMessage(message)
+                .sendMessage("```" + message + "```")
         ).queue();
     }
 

@@ -51,7 +51,7 @@ public class CommonTempBanCommand<
     private Registry registry;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TEMP_BAN))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TEMP_BAN_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -65,12 +65,13 @@ public class CommonTempBanCommand<
         String userName = args[0];
         String duration = args[1];
 
-        if (userService.getPlayer(userName).isPresent()
-            && permissionService.hasPermission((TSubject) userService.get(userName), registry.getOrDefault(CatalystKeys.BAN_EXEMPT))) {
-            textService.send(pluginMessages.getBanExempt(), source);
-            return;
+        if (userService.get(userName).isPresent()) {
+            if (permissionService.hasPermission((TSubject) userService.get(userName),
+                registry.getOrDefault(CatalystKeys.BAN_EXEMPT_PERMISSION))) {
+                textService.send(pluginMessages.getBanExempt(), source);
+                return;
+            }
         }
-
         if (args.length == 2) {
             memberManager.tempBan(userName, duration).thenAcceptAsync(m -> textService.send(m, source));
         } else {

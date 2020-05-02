@@ -24,14 +24,14 @@ import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.catalyst.common.command.CommonTeleportCommand;
+import org.anvilpowered.catalyst.common.command.CommonTeleportRequestCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TeleportCommand extends CommonTeleportCommand<TextComponent, Player, Player, CommandSource, PermissionSubject> implements Command {
+public class TeleportRequestCommand extends CommonTeleportRequestCommand<TextComponent, Player, Player, CommandSource, PermissionSubject> implements Command {
 
     @Inject
     private ProxyServer proxyServer;

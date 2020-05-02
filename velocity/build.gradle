@@ -32,6 +32,7 @@ shadowJar {
         include dependency(apache_http_core)
         include dependency(apache_http_mime)
         include dependency(apache_http_nio)
+        include dependency(emoji_java)
         include dependency(jackson_annotations)
         include dependency(jackson_core)
         include dependency(jackson_databind)

@@ -51,7 +51,7 @@ public class CommonMuteCommand<
     private TextService<TString, TCommandSource> textService;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MUTE))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -67,7 +67,7 @@ public class CommonMuteCommand<
         if (userService.getPlayer(userName).isPresent()) {
             if (permissionService.hasPermission(
                 (TSubject) userService.get(userName).get(),
-                registry.getOrDefault(CatalystKeys.MUTE_EXEMPT))) {
+                registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.getMuteExempt(), source);
                 return;
             }

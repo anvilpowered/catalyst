@@ -51,7 +51,7 @@ public class CommonListCommand<
     private UserService<TPlayer, TPlayer> userService;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.LIST))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.LIST_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

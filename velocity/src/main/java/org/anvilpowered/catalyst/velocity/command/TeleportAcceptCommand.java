@@ -27,7 +27,7 @@ implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        execute(source, source, args);
+        execute(source, source);
     }
 
     @Override

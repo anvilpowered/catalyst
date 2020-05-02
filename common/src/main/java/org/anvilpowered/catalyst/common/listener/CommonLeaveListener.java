@@ -26,6 +26,7 @@ import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.listener.LeaveListener;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
@@ -71,15 +72,24 @@ public class CommonLeaveListener<
     @Inject
     private DiscordChatListener<TString, TPlayer> discordChatListener;
 
+    @Inject
+    private EmojiService emojiService;
+
     @Override
     public void onPlayerLeave(TPlayer player, UUID playerUUID) {
         staffListService.removeStaffNames(userService.getUserName((TUser) player));
         luckpermsService.removePlayerFromCache(player);
+
+        String message = registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
+            ? emojiService.toEmoji(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE), "&f")
+            : registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE);
+
         broadcastService.broadcast(
             textService.of(
-                registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
+                message
                     .replace("%player%", userService.getUserName((TUser) player))
             ));
+
         loggerService.info(
             textService.of(
                 registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)

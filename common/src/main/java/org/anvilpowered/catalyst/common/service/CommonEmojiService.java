@@ -15,35 +15,38 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.service;
+package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
-import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.EmojiService;
-import org.anvilpowered.catalyst.api.service.JDAService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
 
-public class VelocityJDAService {
+import java.util.Map;
+
+public class CommonEmojiService implements EmojiService {
 
     @Inject
-    private JDAService jdaService;
-
     private Registry registry;
 
-    @Inject
-    private LoggerService<TextComponent> loggerService;
-
-    @Inject
-    public VelocityJDAService(Registry registry) {
-        this.registry = registry;
-        this.registry.whenLoaded(this::enableDiscordBot);
+    @Override
+    public Map<String, Character> getEmojis() {
+        return registry.getOrDefault(CatalystKeys.EMOJI_MAP);
     }
 
-    private void enableDiscordBot() {
-        if (jdaService.isEnabled()) {
-            loggerService.info("Enabling the Discord bot!");
-            jdaService.enableDiscordBot();
+    @Override
+    public String toEmoji(String message, String chatColor) {
+        for (String key : getEmojis().keySet()) {
+            message = message.replace(key, "&f" + getEmojis().get(key) + chatColor);
         }
+        return message;
+    }
+
+    @Override
+    public String toEmojiWithoutColor(String message) {
+        for (String key : getEmojis().keySet()) {
+            message = message.replace(key, "" + getEmojis().get(key));
+        }
+        return message;
     }
 }

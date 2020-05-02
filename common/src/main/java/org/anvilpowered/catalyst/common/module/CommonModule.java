@@ -39,6 +39,7 @@ import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.JDAService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
@@ -65,6 +66,7 @@ import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 import org.anvilpowered.catalyst.common.plugin.CommonStaffListService;
 import org.anvilpowered.catalyst.common.service.CommonChatFilter;
 import org.anvilpowered.catalyst.common.service.CommonChatService;
+import org.anvilpowered.catalyst.common.service.CommonEmojiService;
 import org.anvilpowered.catalyst.common.service.CommonLuckpermsService;
 import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService;
 import org.anvilpowered.catalyst.common.service.CommonStaffChatService;
@@ -217,5 +219,6 @@ public class CommonModule<
         bind(ChatFilter.class).to(CommonChatFilter.class);
         bind(Registry.class).to(CatalystRegistry.class);
         bind(StaffChatService.class).to(CommonStaffChatService.class);
+        bind(EmojiService.class).to(CommonEmojiService.class);
     }
 }

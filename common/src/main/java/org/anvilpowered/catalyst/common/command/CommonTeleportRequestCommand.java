@@ -84,7 +84,6 @@ public class CommonTeleportRequestCommand<
                 }
             } else {
                 textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
-                return;
             }
         } else {
             textService.send(pluginMessages.getNoPermission(), source);

@@ -53,7 +53,7 @@ public class CommonTeleportAcceptCommand<
     @Inject
     private UserService<TUser, TPlayer> userService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
+    public void execute(TCommandSource source, TSubject subject) {
         if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TELEPORT_PERMISSION))) {
             if (teleportationHelper.getRequestingPlayerName(userService.getUserName((TUser) source)).isPresent()) {
                 Optional<String> requestingPlayerName = teleportationHelper.getRequestingPlayerName(userService.getUserName((TUser) source));

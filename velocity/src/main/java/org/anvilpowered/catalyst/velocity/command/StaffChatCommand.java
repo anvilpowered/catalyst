@@ -58,7 +58,7 @@ public class StaffChatCommand extends CommonStaffChatCommand<
             } else {
                 String message = String.join(" ", args);
                 proxyServer.getAllPlayers().stream().filter(target ->
-                    target.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT)))
+                    target.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION)))
                     .forEach(target ->
                         target.sendMessage(pluginMessages
                             .getStaffChatMessageFormattedConsole(TextComponent.of(message)))

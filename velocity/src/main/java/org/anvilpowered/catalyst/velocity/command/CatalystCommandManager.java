@@ -78,7 +78,7 @@ public class CatalystCommandManager {
     @Inject
     private IgnoreCommand ignoreCommand;
     @Inject
-    private TeleportCommand teleportCommand;
+    private TeleportRequestCommand teleportRequestCommand;
 
     @Inject
     private TeleportAcceptCommand teleportAcceptCommand;
@@ -142,7 +142,7 @@ public class CatalystCommandManager {
             "ignore", ignoreCommand
         );
         proxyServer.getCommandManager().register(
-            "teleport", teleportCommand
+            "teleport", teleportRequestCommand
         );
         proxyServer.getCommandManager().register(
             "teleportaccept", teleportAcceptCommand

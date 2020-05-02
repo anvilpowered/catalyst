@@ -28,9 +28,9 @@ import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
-import org.anvilpowered.catalyst.api.service.ServerInfoService;
 
 public class CommonDiscordChatListener<TUser, TString, TPlayer> implements DiscordChatListener<TString, TPlayer> {
 
@@ -38,42 +38,44 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
     private Registry registry;
 
     @Inject
-    private LuckpermsService<TPlayer> luckpermsService;
+    private LuckpermsService<TPlayer> luckPermsService;
 
     @Inject
-    private WebhookSender<TPlayer> webhookSender;
+    private WebhookSender<TPlayer> webHookSender;
 
     @Inject
     private UserService<TUser, TPlayer> userService;
 
     @Inject
-    private PluginMessages<TString> pluginMessages;
-
-    @Inject
-    private ServerInfoService serverService;
+    private AdvancedServerInfoService serverService;
 
     @Inject
     private CurrentServerService currentServerService;
 
+    @Inject
+    private EmojiService emojiService;
+
     @Override
     public void onChatEvent(ChatEvent<TString, TPlayer> event) {
         String message = event.getRawMessage();
-        String name;
-        if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-            name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
-                .replace("%server%", serverService.getPrefixForPlayer(pluginMessages.removeColor(userService.getUserName((TUser) event.getSender()))))
-                .replace("%player%", userService.getUserName((TUser) event.getSender()))
-                .replace("%prefix%", luckpermsService.getPrefix(event.getSender()))
-                .replace("%suffix%", luckpermsService.getSuffix(event.getSender()));
-        } else {
-            name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
-                .replace("%server%", currentServerService.getName(userService.getUUID((TUser) event.getSender())).get())
-                .replace("%player%", userService.getUserName((TUser) event.getSender()))
-                .replace("%prefix%", luckpermsService.getPrefix(event.getSender()))
-                .replace("%suffix%", luckpermsService.getSuffix(event.getSender()));
+
+        if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
+            for (String key : emojiService.getEmojis().keySet()) {
+                message = message.replace(emojiService.getEmojis().get(key).toString(), key);
+            }
         }
+
+        String server = currentServerService.getName(userService.getUserName((TUser) event.getSender())).orElse("null");
+        if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
+            server = serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getSender()));
+        }
+        String name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
+            .replace("%server%", server)
+            .replace("%player%", userService.getUserName((TUser) event.getSender()))
+            .replace("%prefix%", luckPermsService.getPrefix(event.getSender()))
+            .replace("%suffix%", luckPermsService.getSuffix(event.getSender()));
         if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
-            webhookSender.sendWebhookMessage(
+            webHookSender.sendWebhookMessage(
                 registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
                 name,
                 message,
@@ -86,22 +88,24 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
     @Override
     public void onStaffChatEvent(StaffChatEvent<TString, TPlayer> event) {
         String message = event.getRawMessage();
-        String name;
-        if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-            name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
-                .replace("%server%", serverService.getPrefixForPlayer(pluginMessages.removeColor(userService.getUserName((TUser) event.getSender()))))
-                .replace("%player%", userService.getUserName((TUser) event.getSender()))
-                .replace("%prefix%", luckpermsService.getPrefix(event.getSender()))
-                .replace("%suffix%", luckpermsService.getSuffix(event.getSender()));
-        } else {
-            name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
-                .replace("%server%", currentServerService.getName(userService.getUUID((TUser) event.getSender())).get())
-                .replace("%player%", userService.getUserName((TUser) event.getSender()))
-                .replace("%prefix%", luckpermsService.getPrefix(event.getSender()))
-                .replace("%suffix%", luckpermsService.getSuffix(event.getSender()));
+
+        if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
+            for (String key : emojiService.getEmojis().keySet()) {
+                message = message.replace(emojiService.getEmojis().get(key).toString(), key);
+            }
         }
+
+        String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
+            ? serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getSender()))
+            : currentServerService.getName(userService.getUserName((TUser) event.getSender())).orElse("null");
+
+        String name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
+            .replace("%server%", server)
+            .replace("%player%", userService.getUserName((TUser) event.getSender()))
+            .replace("%prefix%", luckPermsService.getPrefix(event.getSender()))
+            .replace("%suffix%", luckPermsService.getSuffix(event.getSender()));
         if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
-            webhookSender.sendWebhookMessage(
+            webHookSender.sendWebhookMessage(
                 registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
                 name,
                 message,
@@ -114,12 +118,23 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
     @Override
     public void onPlayerJoinEvent(JoinEvent<TPlayer> event) {
         if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
-            webhookSender.sendWebhookMessage(
+            String joinMessage = registry.getOrDefault(CatalystKeys.JOIN_FORMAT);
+            if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
+                for (String key : emojiService.getEmojis().keySet()) {
+                    joinMessage = joinMessage.replace(emojiService.getEmojis().get(key).toString(), key);
+                }
+            }
+            String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
+                ? serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()))
+                : currentServerService.getName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
+
+            webHookSender.sendWebhookMessage(
                 registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
                 registry.getOrDefault(CatalystKeys.BOT_NAME),
-                registry.getOrDefault(CatalystKeys.JOIN_FORMAT).replace(
-                    "%player%",
-                    userService.getUserName((TUser) event.getPlayer())
+                joinMessage.replace(
+                    "%player%", userService.getUserName((TUser) event.getPlayer())
+                ).replace(
+                    "%server%", server
                 ),
                 registry.getOrDefault(CatalystKeys.MAIN_CHANNEL),
                 event.getPlayer()
@@ -130,12 +145,24 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
     @Override
     public void onPlayerLeaveEvent(LeaveEvent<TPlayer> event) {
         if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
-            webhookSender.sendWebhookMessage(
+            String leaveMessage = registry.getOrDefault(CatalystKeys.DISCORD_LEAVE_FORMAT);
+            if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
+                for (String key : emojiService.getEmojis().keySet()) {
+                    leaveMessage = leaveMessage.replace(emojiService.getEmojis().get(key).toString(), key);
+                }
+            }
+            String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
+                ? serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()))
+                : currentServerService.getName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
+            webHookSender.sendWebhookMessage(
                 registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
                 registry.getOrDefault(CatalystKeys.BOT_NAME),
-                registry.getOrDefault(CatalystKeys.LEAVE_FORMAT).replace(
+                leaveMessage.replace(
                     "%player%",
                     userService.getUserName((TUser) event.getPlayer())
+                ).replace(
+                    "%server%",
+                    server
                 ),
                 registry.getOrDefault(CatalystKeys.MAIN_CHANNEL),
                 event.getPlayer()
