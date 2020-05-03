@@ -46,7 +46,7 @@ import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.TabService;
-import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
+import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.discord.CommonJDAService;
 import org.anvilpowered.catalyst.common.discord.CommonWebhookSender;
@@ -207,7 +207,6 @@ public class CommonModule<
             }
         );
 
-        bind(ConfigurationService.class).to(CatalystConfigurationService.class);
         bind(ChatFilter.class).to(CommonChatFilter.class);
         bind(Registry.class).to(CatalystRegistry.class);
         bind(StaffChatService.class).to(CommonStaffChatService.class);

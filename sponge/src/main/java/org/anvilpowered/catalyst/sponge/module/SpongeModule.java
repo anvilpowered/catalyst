@@ -22,7 +22,8 @@ import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
-import org.anvilpowered.catalyst.common.data.config.CatalystConfigurationService;
+import org.anvilpowered.catalyst.common.data.config.BackendConfigurationService;
+import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.sponge.data.config.SpongeConfigurationService;
 import org.anvilpowered.catalyst.sponge.service.SpongeBroadcastService;
@@ -42,7 +43,7 @@ public class SpongeModule extends CommonModule<User, Player, Text, CommandSource
     protected void configure() {
         super.configure();
 
-        bind(CatalystConfigurationService.class).to(SpongeConfigurationService.class);
+        bind(BackendConfigurationService.class).to(SpongeConfigurationService.class);
         bind(new TypeLiteral<BroadcastService<Text>>() {
         }).to(SpongeBroadcastService.class);
         bind(new TypeLiteral<EventService<Event>>() {

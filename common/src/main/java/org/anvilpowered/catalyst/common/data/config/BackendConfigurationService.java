@@ -15,20 +15,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.sponge.data.config;
+package org.anvilpowered.catalyst.common.data.config;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.anvilpowered.catalyst.common.data.config.BackendConfigurationService;
-import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
-import org.spongepowered.api.config.DefaultConfig;
+import org.anvilpowered.anvil.base.data.config.BaseConfigurationService;
 
-public class SpongeConfigurationService extends BackendConfigurationService {
+@Singleton
+public class BackendConfigurationService extends BaseConfigurationService {
 
     @Inject
-    public SpongeConfigurationService(@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> configLoader) {
+    public BackendConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
         super(configLoader);
-        withRedis();
     }
 }
