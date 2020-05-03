@@ -28,7 +28,7 @@ import org.anvilpowered.catalyst.api.service.CrossServerTeleportationHelper;
 
 import java.util.Optional;
 
-public class CommonTeleportAcceptCommand<
+public class CommonTeleportAskHereCommand<
     TString,
     TUser,
     TPlayer,
@@ -53,28 +53,24 @@ public class CommonTeleportAcceptCommand<
     @Inject
     private UserService<TUser, TPlayer> userService;
 
-    public void execute(TCommandSource source, TSubject subject) {
-        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TELEPORT_REQUEST_PERMISSION))) {
-            if (teleportationHelper.getRequestingPlayerName(userService.getUserName((TUser) source)).isPresent()) {
-                Optional<String> requestingPlayerName = teleportationHelper.getRequestingPlayerName(userService.getUserName((TUser) source));
-                if (userService.get(requestingPlayerName.get()).isPresent()) {
-                    TUser requesting = userService.get(requestingPlayerName.get()).get();
-                    textService.send(
-                        pluginMessages.getTeleportRequestAccepted(userService.getUserName((TUser) source)),
-                        (TCommandSource) requesting);
-                    textService.send(
-                        pluginMessages.getSourceAcceptedTeleport(requestingPlayerName.get()),
-                        source
-                    );
-                    teleportationHelper.teleport(requestingPlayerName.get(), userService.getUserName((TUser) source));
-                } else {
-                    textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
-                }
-            } else {
-                textService.send(pluginMessages.getNoPendingRequests(), source);
+    public void execute(TCommandSource source, TSubject subject, String[] args) {
+        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TELEPORT_REQUEST_HERE_PERMISSION))) {
+            if (args.length == 0) {
+                textService.send(pluginMessages.getNotEnoughArgs(), source);
+                return;
             }
-        } else {
-            textService.send(pluginMessages.getNoPermission(), source);
+
+            Optional<TUser> target = userService.get(args[0]);
+            if (target.isPresent()) {
+                if (userService.getUserName(target.get()).equalsIgnoreCase(userService.getUserName((TUser) source))) {
+                    textService.send(pluginMessages.getTeleportToSelf(), source);
+                    return;
+                }
+
+
+            } else {
+                textService.send(pluginMessages.getNoPermission(), source);
+            }
         }
     }
 }

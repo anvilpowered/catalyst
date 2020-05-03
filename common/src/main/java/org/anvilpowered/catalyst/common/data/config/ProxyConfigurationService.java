@@ -25,10 +25,10 @@ import org.anvilpowered.anvil.base.data.config.BaseConfigurationService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 
 @Singleton
-public class CatalystConfigurationService extends BaseConfigurationService {
+public class ProxyConfigurationService extends BaseConfigurationService {
 
     @Inject
-    public CatalystConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
+    public ProxyConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
         super(configLoader);
         withRedis();
         setName(CatalystKeys.CHAT_FILTER_SWEARS, "chat.filter.swears");

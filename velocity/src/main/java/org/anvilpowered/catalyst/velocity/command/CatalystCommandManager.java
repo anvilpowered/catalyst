@@ -78,7 +78,7 @@ public class CatalystCommandManager {
     @Inject
     private IgnoreCommand ignoreCommand;
     @Inject
-    private TeleportRequestCommand teleportRequestCommand;
+    private TeleportAskCommand teleportRequestCommand;
 
     @Inject
     private TeleportAcceptCommand teleportAcceptCommand;

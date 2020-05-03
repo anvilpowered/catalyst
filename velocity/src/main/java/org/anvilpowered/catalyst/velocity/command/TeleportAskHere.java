@@ -15,19 +15,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.sponge.data.config;
+package org.anvilpowered.catalyst.velocity.command;
 
-import com.google.inject.Inject;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.anvilpowered.catalyst.common.data.config.BackendConfigurationService;
-import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
-import org.spongepowered.api.config.DefaultConfig;
-
-public class SpongeConfigurationService extends BackendConfigurationService {
-
-    @Inject
-    public SpongeConfigurationService(@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> configLoader) {
-        super(configLoader);
-    }
+public class TeleportAskHere {
 }

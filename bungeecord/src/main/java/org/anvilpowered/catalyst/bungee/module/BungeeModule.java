@@ -25,6 +25,7 @@ import net.md_5.bungee.api.plugin.Event;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.anvilpowered.anvil.api.data.config.ConfigurationService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
@@ -33,6 +34,7 @@ import org.anvilpowered.catalyst.bungee.service.BungeeBroadcastService;
 import org.anvilpowered.catalyst.bungee.service.BungeeEventService;
 import org.anvilpowered.catalyst.bungee.service.BungeeExecuteCommandService;
 import org.anvilpowered.catalyst.bungee.service.BungeeLoggerService;
+import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 
@@ -51,6 +53,7 @@ public class BungeeModule extends CommonModule<
     @Override
     protected void configure() {
         super.configure();
+
         File configFilesLocation = Paths.get("plugins/" + CatalystPluginInfo.id).toFile();
         if (!configFilesLocation.exists()) {
             if (!configFilesLocation.mkdirs()) {
@@ -63,6 +66,7 @@ public class BungeeModule extends CommonModule<
             .setPath(Paths.get(configFilesLocation + "/catalyst.conf"))
             .build());
 
+        bind(ConfigurationService.class).to(ProxyConfigurationService.class);
         bind(new TypeLiteral<BroadcastService<TextComponent>>() {
         }).to(BungeeBroadcastService.class);
         bind(new TypeLiteral<LoggerService<TextComponent>>() {

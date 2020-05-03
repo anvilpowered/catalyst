@@ -28,7 +28,7 @@ import org.anvilpowered.catalyst.api.service.CrossServerTeleportationHelper;
 
 import java.util.Optional;
 
-public class CommonTeleportRequestCommand<
+public class CommonTeleportAskCommand<
     TString,
     TUser,
     TPlayer,
@@ -54,7 +54,7 @@ public class CommonTeleportRequestCommand<
     private UserService<TUser, TPlayer> userService;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TELEPORT_PERMISSION))) {
+        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.TELEPORT_REQUEST_PERMISSION))) {
             if (args.length == 0) {
                 textService.send(pluginMessages.getNotEnoughArgs(), source);
                 return;
