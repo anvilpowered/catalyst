@@ -85,13 +85,13 @@ public class CommonLeaveListener<
             : registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE);
 
         broadcastService.broadcast(
-            textService.of(
+            textService.deserialize(
                 message
                     .replace("%player%", userService.getUserName((TUser) player))
             ));
 
         loggerService.info(
-            textService.of(
+            textService.deserialize(
                 registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
                     .replace("%player%", userService.getUserName((TUser) player))
             )

@@ -100,18 +100,18 @@ public class ServerCommand implements Command {
                     count.getAndIncrement();
                 });
                 TextComponent servers = TextComponent.builder()
-                    .append(textService.of("=========================================================\n").color(TextColor.DARK_AQUA))
+                    .append(textService.of("=====================================================\n").color(TextColor.DARK_AQUA))
                     .append(pluginInfo.getPrefix())
                     .append(textService.of("Green = Current").color(TextColor.GREEN))
                     .append(textService.of(", ").color(TextColor.YELLOW))
                     .append(textService.of("Gray = Available").color(TextColor.GRAY))
                     .append(textService.of(", ").color(TextColor.YELLOW))
                     .append(textService.of("Red = Offline\n").color(TextColor.RED))
-                    .append(textService.of("--------------------------------------------------------\n").color(TextColor.DARK_AQUA))
+                    .append(textService.of("-----------------------------------------------------\n").color(TextColor.DARK_AQUA))
                     .append(availableServers)
-                    .append(textService.of("\n--------------------------------------------------------\n").color(TextColor.DARK_AQUA))
+                    .append(textService.of("\n-----------------------------------------------------\n").color(TextColor.DARK_AQUA))
                     .append(textService.of("Click an available server to join!").color(TextColor.GOLD))
-                    .append(textService.of("\n=========================================================").color(TextColor.DARK_AQUA))
+                    .append(textService.of("\n=====================================================").color(TextColor.DARK_AQUA))
                     .build();
                 player.sendMessage(servers);
                 return;
