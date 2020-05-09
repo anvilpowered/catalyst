@@ -40,24 +40,19 @@ public class BaseChannelCommand implements Command {
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
 
-    @Inject
-    private TextService<TextComponent, Player> textService;
-
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
 
         if (source instanceof Player) {
             Player player = (Player) source;
-
             switch (args[0]) {
                 case ("info"): {
                     if (source.hasPermission(
                         registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + args[1])) {
 
-                        source.sendMessage(textService.builder()
-                            .gold().append(args[1])
-                            .green().append("\n" + chatService.getChannelUserCount(args[1]))
-                            .onClickRunCommand("/channel list " + args[1])
+                        source.sendMessage(TextComponent.builder()
+                            .append(args[1])
+                            .append("\n" + chatService.getChannelUserCount(args[1]))
                             .build());
                     } else {
                         source.sendMessage(pluginMessages.getNoPermission());

@@ -39,4 +39,7 @@ public class ChatChannel {
 
     @Setting(value = "alwaysVisible", comment = "Whether members of this channel will always recieve messages from this channel even when they are not in it. ")
     public boolean alwaysVisible;
+
+    @Setting("format")
+    public String channelFormat;
 }

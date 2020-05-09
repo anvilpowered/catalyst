@@ -53,7 +53,8 @@ public final class CatalystKeys {
         "PROXY_CHAT_ENABLED", true) {
     };
     public static final Key<String> PROXY_CHAT_FORMAT_MESSAGE = new Key<String>(
-        "PROXY_CHAT_FORMAT_MESSAGE", "%prefix% %player% %suffix%: %message% ") {
+        "PROXY_CHAT_FORMAT_MESSAGE",
+        "%channel%%prefix% %player% %suffix%: %message% ") {
     };
     public static final Key<String> PROXY_CHAT_FORMAT_HOVER = new Key<String>(
         "PROXY_CHAT_FORMAT_HOVER", "%player% %server%") {
@@ -264,8 +265,11 @@ public final class CatalystKeys {
         "catalyst.chat.emoji.base") {
     };
     static List<ChatChannel> chatChannels = new LinkedList<>();
-    public static final Key<List<ChatChannel>> CHAT_CHANNELS = new Key<List<ChatChannel>>("CHAT_CHANNELS",
-        chatChannels) {
+    public static final Key<List<ChatChannel>> CHAT_CHANNELS = new Key<List<ChatChannel>>(
+        "CHAT_CHANNELS", chatChannels) {
+    };
+    public static final Key<Boolean> CHAT_CHANNELS_ENABLED = new Key<Boolean> (
+        "CHAT_CHANNELS_ENABLED", true){
     };
     static List<AdvancedServerInfo> advancedServerInfo = new LinkedList<>();
     public static final Key<List<AdvancedServerInfo>> ADVANCED_SERVER_INFO = new Key<List<AdvancedServerInfo>>(
@@ -351,17 +355,19 @@ public final class CatalystKeys {
         ChatChannel global = new ChatChannel();
         global.id = "global";
         global.aliases = Arrays.asList("globalchat", "globalchannel");
-        global.prefix = "[G]";
+        global.prefix = "&a[G]";
         global.servers = Arrays.asList("main", "wild");
         global.alwaysVisible = true;
+        global.channelFormat = CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE.getFallbackValue();
         chatChannels.add(global);
-        ChatChannel staff = new ChatChannel();
-        staff.id = "staff";
-        staff.aliases = Arrays.asList("staffchannel", "staffchat");
-        staff.prefix = "[S]";
-        staff.alwaysVisible = true;
-        staff.servers = Arrays.asList("main", "wild");
-        chatChannels.add(staff);
+        ChatChannel admin = new ChatChannel();
+        admin.id = "admin";
+        admin.aliases = Arrays.asList("adminchannel", "adminchannel");
+        admin.prefix = "&4[AdminChannel]";
+        admin.alwaysVisible = true;
+        admin.servers = Arrays.asList("main", "wild");
+        admin.channelFormat = "%channel%%player%: %message%";
+        chatChannels.add(admin);
     }
 
     static {
@@ -392,6 +398,7 @@ public final class CatalystKeys {
         Keys.registerKey(TAB_UPDATE);
         Keys.registerKey(CHAT_CHANNELS);
         Keys.registerKey(CHAT_DEFAULT_CHANNEL);
+        Keys.registerKey(CHAT_CHANNELS_ENABLED);
         Keys.registerKey(BAN_PERMISSION);
         Keys.registerKey(TEMP_BAN_PERMISSION);
         Keys.registerKey(BAN_EXEMPT_PERMISSION);

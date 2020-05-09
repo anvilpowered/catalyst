@@ -184,8 +184,6 @@ public class VelocityListener {
         }
 
         boolean useCatalyst = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED);
-
-
         if (useCatalyst) {
             advancedServerInfoList = registry.get(CatalystKeys.ADVANCED_SERVER_INFO).orElseThrow(() -> new IllegalArgumentException("Invalid server configuration!"));
             advancedServerInfoList.forEach(advancedServerInfo -> {

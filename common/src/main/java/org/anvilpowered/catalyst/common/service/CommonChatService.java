@@ -58,26 +58,39 @@ public class CommonChatService<
 
     Map<UUID, String> channelMap = new HashMap<>();
     Map<UUID, List<UUID>> ignoreMap = new HashMap<>();
+
     @Inject
     private Registry registry;
+
     @Inject
     private MemberManager<TString> memberManager;
+
     @Inject
     private TextService<TString, TCommandSource> textService;
+
     @Inject
     private UserService<TUser, TPlayer> userService;
+
     @Inject
     private LuckpermsService<TPlayer> luckpermsService;
+
     @Inject
     private CurrentServerService currentServerService;
+
     @Inject
     private PermissionService<TSubject> permissionService;
+
     @Inject
     private PluginMessages<TString> pluginMessages;
+
     @Inject
     private LoggerService<TString> loggerService;
+
     @Inject
     private AdvancedServerInfoService serverService;
+
+    @Inject
+    private ChatChannel chatChannel;
 
     @Inject
     private EmojiService emojiService;
@@ -108,6 +121,11 @@ public class CommonChatService<
     @Override
     public Optional<String> getChannelPrefix(String channelId) {
         return getChannelFromId(channelId).map(c -> c.prefix);
+    }
+
+    @Override
+    public Optional<String> getChannelFormat(String channelId) {
+        return getChannelFromId(channelId).map(c -> c.channelFormat);
     }
 
     @Override
@@ -186,11 +204,28 @@ public class CommonChatService<
             } else {
                 finalName = nameColor + finalName + "&r";
             }
+            String format = registry.getOrDefault(CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE);
+            if (registry.getOrDefault(CatalystKeys.CHAT_CHANNELS_ENABLED)) {
+                if(getChannelFormat(channelId).isPresent()) {
+                    format = getChannelFormat(channelId).get();
+                } else {
+                    loggerService.warn("Could not find a viable format for " + channelId + " make" +
+                        " sure the config setting is correct!");
+                }
+            }
             return Optional.of(textService
                 .builder()
-                .append(textService.deserialize(replacePlaceholders(message, userUUID, prefix, optionalMember.get().getUserName(), finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE)))
-                .onHoverShowText(textService.deserialize(replacePlaceholders(message, userUUID, prefix, optionalMember.get().getUserName(), finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_HOVER)))
-                .onClickSuggestCommand(replacePlaceholders(message, userUUID, prefix, optionalMember.get().getUserName(), userName, hasChatColorPermission, suffix, finalName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND))
+                .append(textService.deserialize(replacePlaceholders(message, userUUID, prefix,
+                    optionalMember.get().getUserName(), finalName, hasChatColorPermission, suffix
+                    , serverName, channelPrefix, format)))
+                .onHoverShowText(textService.deserialize(replacePlaceholders(message, userUUID,
+                    prefix, optionalMember.get().getUserName(), finalName, hasChatColorPermission
+                    , suffix, serverName, channelPrefix,
+                    registry.getOrDefault(CatalystKeys.PROXY_CHAT_FORMAT_HOVER))))
+                .onClickSuggestCommand(replacePlaceholders(message, userUUID, prefix,
+                    optionalMember.get().getUserName(), userName, hasChatColorPermission, suffix,
+                    finalName, channelPrefix,
+                    registry.getOrDefault(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND)))
                 .build());
         });
     }
@@ -205,15 +240,13 @@ public class CommonChatService<
         String suffix,
         String serverName,
         String channelPrefix,
-        Key<String> key
+        String format
     ) {
         String server = currentServerService.getName(rawUserName).orElse("null");
         if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
             server = serverService.getPrefixForPlayer(rawUserName);
         }
-        return registry.get(key)
-            .orElseThrow(() -> new IllegalStateException("Missing chat formatting!"))
-            .replace("%server%", server)
+        return format.replace("%server%", server)
             .replace("%servername%", serverName)
             .replace("%prefix%", prefix)
             .replace("%player%", userName)

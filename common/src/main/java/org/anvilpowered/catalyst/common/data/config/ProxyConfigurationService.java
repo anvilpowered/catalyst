@@ -92,6 +92,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.MOTD_ROOT, "motd");
         setName(CatalystKeys.PING_ROOT, "ping");
         setName(CatalystKeys.TAB_ROOT, "tab");
+        setName(CatalystKeys.CHAT_CHANNELS_ENABLED, "modules.chatChannels");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS,
             "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS,
@@ -234,6 +235,9 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nToggle mute command handling " +
                 "\n(true = enabled | false = disabled)" +
                 "\nPermission : " + CatalystKeys.MUTE_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.CHAT_CHANNELS_ENABLED,
+            "\nToggle chat channels" +
+                "\n(true = enabled | false = disabled)");
         setDescription(CatalystKeys.ADVANCED_ROOT,
             " |------------------------------------------------------------|\n" +
                 " |                           Advanced                         |\n" +

@@ -22,6 +22,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 
 @Singleton
@@ -78,6 +79,9 @@ public class CatalystCommandManager {
     private ExceptionCommand exceptionCommand;
     @Inject
     private IgnoreCommand ignoreCommand;
+
+    @Inject
+    private BaseChannelCommand baseChannelCommand;
 
     private boolean alreadyLoaded = false;
 
@@ -163,5 +167,15 @@ public class CatalystCommandManager {
         proxyServer.getCommandManager().register(
             "ignore", ignoreCommand
         );
+        proxyServer.getCommandManager().register(
+            "channel", baseChannelCommand
+        );
+        for(ChatChannel c : registry.getOrDefault(CatalystKeys.CHAT_CHANNELS)) {
+            ChannelCommand command = channelCommandProvider.get();
+            command.setChannelId(c.id);
+            proxyServer.getCommandManager().register(
+                c.id, command, c.aliases.toArray(new String[0])
+            );
+        }
     }
 }
