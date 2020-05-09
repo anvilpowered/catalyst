@@ -21,8 +21,7 @@ import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.data.config.Channel;
+import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
@@ -33,22 +32,20 @@ import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class CommonChatListener<
+    TUser,
     TString,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TCommandSource,
-    TSubject>
+    TSubject,
+    TEvent>
     implements ChatListener<TPlayer> {
 
     @Inject
     private ChatService<TString, TPlayer, TCommandSource> chatService;
-
-    @Inject
-    private UserService<TPlayer, TPlayer> userService;
 
     @Inject
     private PermissionService<TSubject> permissionService;
@@ -63,7 +60,7 @@ public class CommonChatListener<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private EventService eventService;
+    private EventService<TEvent> eventService;
 
     @Inject
     private ChatFilter chatFilter;
@@ -84,28 +81,25 @@ public class CommonChatListener<
             return;
         }
 
-        Optional<Channel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
-        List<String> swearList = chatFilter.isSwear(message);
-        message = chatService.checkPlayerName(message);
+        Optional<ChatChannel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
+        message = chatService.checkPlayerName(player, message);
 
         if (channel.isPresent()) {
-            if (swearList != null) {
-                if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN))) {
-                    for (String swear : swearList) {
-                        message = message.replace(swear, "****");
-                    }
-                }
+
+            if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
+                message = chatFilter.replaceSwears(message);
             }
+
             chatEvent.setSender(player);
             chatEvent.setMessage(textService.of(message));
             chatEvent.setRawMessage(message);
-            eventService.fire(chatEvent);
+            eventService.fire((TEvent) chatEvent);
             discordChatListener.onChatEvent(chatEvent);
-            chatService.sendChatMessage(player, message);
+            chatService.sendChatMessage(player, playerUUID, message);
         } else {
             throw new AssertionError(
-                "Unable to find a chat channel for " + userService.getUserName(player) +
-                    " please report this on github."
+                "If this is your first time running anvil, run /av reload Catalyst, if not report this" +
+                    " github."
             );
         }
     }

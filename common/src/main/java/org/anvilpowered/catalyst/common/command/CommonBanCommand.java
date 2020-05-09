@@ -53,7 +53,7 @@ public class CommonBanCommand<
 
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.BAN))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.BAN_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -64,21 +64,19 @@ public class CommonBanCommand<
             return;
         }
         String userName = args[0];
-        if (userService.get(userName).isPresent()) {
+        if(userService.get(userName).isPresent()) {
             if (permissionService.hasPermission(
                 (TSubject) userService.get(userName).get(),
-                registry.getOrDefault(CatalystKeys.BAN_EXEMPT))) {
+                registry.getOrDefault(CatalystKeys.BAN_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.getBanExempt(), source);
                 return;
             }
-            if (args.length == 1) {
-                memberManager.ban(userName).thenAcceptAsync(m -> textService.send(m, source));
-            } else {
-                String reason = String.join(" ", args).replace(userName + " ", " ");
-                memberManager.ban(userName, reason).thenAcceptAsync(m -> textService.send(m, source));
-            }
+        }
+        if (args.length == 1) {
+            memberManager.ban(userName).thenAcceptAsync(m -> textService.send(m, source));
         } else {
-            textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
+            String reason = String.join(" ", args).replace(userName + " ", " ");
+            memberManager.ban(userName, reason).thenAcceptAsync(m -> textService.send(m, source));
         }
     }
 }

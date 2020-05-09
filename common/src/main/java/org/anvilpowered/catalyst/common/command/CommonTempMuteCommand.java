@@ -26,7 +26,7 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-import java.util.Optional;
+import java.util.Arrays;
 
 public class CommonTempMuteCommand<
     TString,
@@ -53,7 +53,7 @@ public class CommonTempMuteCommand<
     private Registry registry;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MUTE))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -64,25 +64,21 @@ public class CommonTempMuteCommand<
             return;
         }
         String userName = args[0];
-        String duration = args[0];
-        Optional<TPlayer> target = userService.get(userName);
+        String duration = args[1];
 
-        if (target.isPresent()
-            && permissionService.hasPermission(
-            (TSubject) target,
-            registry.getOrDefault(CatalystKeys.MUTE_EXEMPT))
-        ) {
-            textService.send(pluginMessages.getMuteExempt(), source);
-            return;
+        if (userService.get(userName).isPresent()) {
+            if (permissionService.hasPermission(
+                (TSubject) userService.get(userName).get(),
+                registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
+                textService.send(pluginMessages.getMuteExempt(), source);
+                return;
+            }
         }
-
         if (args.length == 2) {
             memberManager.tempMute(userName, duration).thenAcceptAsync(m -> textService.send(m, source));
         } else {
-            String reason = String.join(" ", args)
-                .replace(userName + " ", "").replace(duration, "");
-            memberManager.tempMute(userName, duration, reason)
-                .thenAcceptAsync(m -> textService.send(m, source));
+            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+            memberManager.tempMute(userName, duration, reason).thenAcceptAsync(m -> textService.send(m, source));
         }
     }
 }

@@ -34,6 +34,11 @@ public class BungeeExecuteCommandService implements ExecuteCommandService<Comman
     }
 
     @Override
+    public void executeAsConsole(String command) {
+        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command);
+    }
+
+    @Override
     public void executeDiscordCommand(String command) {
         ProxyServer.getInstance().getPluginManager().dispatchCommand(discordCommandSource, command);
     }

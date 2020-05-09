@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 @Singleton
-public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString, TCommandSource> implements PrivateMessageService<TString> {
+public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource> implements PrivateMessageService<TString> {
 
     private Set<UUID> socialSpySet = new HashSet<>();
     private Map<UUID, UUID> replyMap = new HashMap<>();
@@ -41,7 +41,7 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
     private String rawMessage;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -57,18 +57,13 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
     }
 
     @Override
-    public void setSource(String sourceUserName) {
-        this.source = sourceUserName;
-    }
-
-    @Override
     public String getSource() {
         return source;
     }
 
     @Override
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
+    public void setSource(String sourceUserName) {
+        this.source = sourceUserName;
     }
 
     @Override
@@ -77,13 +72,18 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
     }
 
     @Override
-    public void setRawMessage(String rawMessage) {
-        this.rawMessage = rawMessage;
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
     }
 
     @Override
     public String getRawMessage() {
         return rawMessage;
+    }
+
+    @Override
+    public void setRawMessage(String rawMessage) {
+        this.rawMessage = rawMessage;
     }
 
     @Override
@@ -101,9 +101,9 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
     @Override
     public CompletableFuture<Void> sendMessage(String sender, String recipient, String rawMessage) {
         return CompletableFuture.runAsync(() -> userService.get(sender).ifPresent(src -> {
-            textService.send(formatMessage("Me", recipient, rawMessage), src);
+            textService.send(formatMessage("Me", recipient, rawMessage), (TCommandSource) src);
             userService.get(recipient).ifPresent(rec -> {
-                textService.send(formatMessage(sender, "Me", rawMessage), rec);
+                textService.send(formatMessage(sender, "Me", rawMessage), (TCommandSource) rec);
             });
             socialSpy(sender, recipient, rawMessage);
         }));
@@ -112,11 +112,11 @@ public class CommonPrivateMessageService<TPlayer extends TCommandSource, TString
     @Override
     public CompletableFuture<Void> socialSpy(String sender, String recipient, String rawMessage) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
-                if (!(socialSpySet.isEmpty()) && socialSpySet.contains(userService.getUUID(p))) {
-                    if (userService.getUserName(p).equalsIgnoreCase(sender) || userService.getUserName(p).equalsIgnoreCase(recipient)) {
+                if (!(socialSpySet.isEmpty()) && socialSpySet.contains(userService.getUUID((TUser) p))) {
+                    if (userService.getUserName((TUser) p).equalsIgnoreCase(sender) || userService.getUserName((TUser) p).equalsIgnoreCase(recipient)) {
                         return;
                     }
-                    textService.send(formatSocialSpyMessage(sender, recipient, rawMessage), p);
+                    textService.send(formatSocialSpyMessage(sender, recipient, rawMessage), (TCommandSource) p);
                 }
             }
         ));

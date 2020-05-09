@@ -18,7 +18,9 @@
 package org.anvilpowered.catalyst.common.discord;
 
 import com.google.inject.Inject;
+import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.anvilpowered.anvil.api.data.registry.Registry;
@@ -26,12 +28,14 @@ import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 
 public class CommonDiscordListener<
+    TUser,
     TString,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TCommandSource,
     TSubject>
     extends ListenerAdapter {
@@ -40,7 +44,7 @@ public class CommonDiscordListener<
     private Registry registry;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private ExecuteCommandService<TCommandSource> executeCommandService;
@@ -54,6 +58,9 @@ public class CommonDiscordListener<
     @Inject
     private LoggerService<TString> loggerService;
 
+    @Inject
+    private EmojiService emojiService;
+
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().getId().equals(event.getJDA().getSelfUser().getId())
             || event.isWebhookMessage()
@@ -62,41 +69,52 @@ public class CommonDiscordListener<
         }
 
         if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL))) {
+            String message = EmojiParser.parseToAliases(event.getMessage().getContentDisplay());
             if (event.getMember().hasPermission(Permission.ADMINISTRATOR)
                 && event.getMessage().toString().contains("!cmd")) {
                 String command = event.getMessage().getContentRaw().replace("!cmd ", "");
-                System.out.println(command);
                 executeCommandService.executeDiscordCommand(command);
                 return;
             } else {
-                String message = registry.getOrDefault(CatalystKeys.DISCORD_CHAT_FORMAT)
+                if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
+                    for (String key : registry.getOrDefault(CatalystKeys.EMOJI_MAP).keySet()) {
+                        message = message.replace(key, emojiService.getEmojis().get(key).toString());
+                    }
+                }
+                String finalMessage = registry.getOrDefault(CatalystKeys.DISCORD_CHAT_FORMAT)
                     .replace("%name%", event.getMember().getEffectiveName())
-                    .replace("%message%", event.getMessage().getContentDisplay());
+                    .replace("%message%", message);
                 userService.getOnlinePlayers().forEach(p ->
                     textService.builder()
-                        .append(textService.deserialize(message))
+                        .append(textService.deserialize(finalMessage))
                         .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))
                         .onHoverShowText(textService.of(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)))
-                        .sendTo(p)
+                        .sendTo((TCommandSource) p)
                 );
             }
-            loggerService.info("[Discord] " + event.getMember().getEffectiveName() + " : " + event.getMessage().getContentDisplay());
+            loggerService.info("[Discord] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
         }
 
         if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.STAFF_CHANNEL))) {
-            String message = registry.getOrDefault(CatalystKeys.DISCORD_STAFF_FORMAT)
-                .replace("%name%", event.getAuthor().getName())
-                .replace("%message%", event.getMessage().getContentDisplay());
+            String message = EmojiParser.parseToAliases(event.getMessage().getContentDisplay());
+            if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
+                for (String key : emojiService.getEmojis().keySet()) {
+                    message = message.replace(key, emojiService.getEmojis().get(key).toString());
+                }
+            }
+            String finalMessage = registry.getOrDefault(CatalystKeys.DISCORD_STAFF_FORMAT)
+                .replace("%name%", event.getMember().getEffectiveName())
+                .replace("%message%", message);
             userService.getOnlinePlayers().forEach(p -> {
-                if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
+                if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
                     textService.builder()
-                        .append(textService.deserialize(message))
+                        .append(textService.deserialize(finalMessage))
                         .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))
                         .onHoverShowText(textService.of(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)))
-                        .sendTo(p);
+                        .sendTo((TCommandSource) p);
                 }
             });
-            loggerService.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + event.getMessage().getContentDisplay());
+            loggerService.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
         }
 
     }

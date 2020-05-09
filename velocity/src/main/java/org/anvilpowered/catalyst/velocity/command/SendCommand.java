@@ -50,7 +50,7 @@ public class SendCommand implements Command {
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.SEND))) {
+        if (!source.hasPermission(registry.getOrDefault(CatalystKeys.SEND_PERMISSION))) {
             source.sendMessage(pluginMessages.getNoPermission());
             return;
         }

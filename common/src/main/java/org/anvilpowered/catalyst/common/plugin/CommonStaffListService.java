@@ -27,14 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class CommonStaffListService<TPlayer extends TCommandSource, TString, TCommandSource> implements StaffListService<TString> {
-
-    @Inject
-    private TextService<TString, TCommandSource> textService;
+public class CommonStaffListService<TString, TCommandSource> implements StaffListService<TString> {
 
     public List<TString> staffNames = new ArrayList<>();
     public List<TString> adminNames = new ArrayList<>();
     public List<TString> ownerNames = new ArrayList<>();
+    @Inject
+    private TextService<TString, TCommandSource> textService;
 
     @Override
     public List<TString> staffNames() {

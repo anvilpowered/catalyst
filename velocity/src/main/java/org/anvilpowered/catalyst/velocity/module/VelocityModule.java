@@ -26,10 +26,12 @@ import net.kyori.text.TextComponent;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.anvilpowered.anvil.api.data.config.ConfigurationService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
+import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService;
@@ -47,7 +49,8 @@ public class VelocityModule extends CommonModule<
     Player,
     TextComponent,
     CommandSource,
-    PermissionSubject> {
+    PermissionSubject,
+    Object> {
 
     @Override
     protected void configure() {
@@ -65,12 +68,14 @@ public class VelocityModule extends CommonModule<
             .setPath(Paths.get(configFilesLocation + "/catalyst.conf"))
             .build());
 
+        bind(ConfigurationService.class).to(ProxyConfigurationService.class);
         bind(new TypeLiteral<BroadcastService<TextComponent>>() {
         }).to(VelocityBroadcastService.class);
         bind(new TypeLiteral<LoggerService<TextComponent>>() {
         }).to(VelocityLoggerService.class);
-        bind(new TypeLiteral<ExecuteCommandService<CommandSource>>(){
+        bind(new TypeLiteral<ExecuteCommandService<CommandSource>>() {
         }).to(VelocityExecuteCommandService.class);
-        bind(EventService.class).to(VelocityEventService.class);
+        bind(new TypeLiteral<EventService<Object>>() {
+        }).to(VelocityEventService.class);
     }
 }

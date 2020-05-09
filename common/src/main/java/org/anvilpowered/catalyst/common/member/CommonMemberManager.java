@@ -18,11 +18,9 @@
 package org.anvilpowered.catalyst.common.member;
 
 import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.api.core.coremember.repository.CoreMemberRepository;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
-import org.anvilpowered.anvil.api.core.plugin.PluginMessages;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.util.CurrentServerService;
@@ -30,13 +28,13 @@ import org.anvilpowered.anvil.api.util.KickService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.TimeFormatService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.anvil.base.manager.BaseManager;
+import org.anvilpowered.anvil.base.datastore.BaseManager;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -46,7 +44,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class CommonMemberManager<
     TUser,
-    TPlayer extends TCommandSource,
+    TPlayer,
     TString,
     TCommandSource>
     extends BaseManager<CoreMemberRepository<?, ?>>
@@ -61,8 +59,8 @@ public class CommonMemberManager<
     @Inject
     protected PluginInfo<TString> pluginInfo;
 
-    // not from this injector
-    protected PluginMessages<TString> pluginMessages;
+    @Inject
+    protected CatalystPluginMessages<TString, TCommandSource> pluginMessages;
 
     @Inject
     protected TextService<TString, TCommandSource> textService;
@@ -77,9 +75,8 @@ public class CommonMemberManager<
     protected ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
-    public CommonMemberManager(Registry registry, @Named("anvil") Environment anvilEnvironment) {
+    public CommonMemberManager(Registry registry) {
         super(registry);
-        pluginMessages = anvilEnvironment.getInstance(PluginMessages.class.getCanonicalName());
     }
 
     @Override
@@ -105,7 +102,7 @@ public class CommonMemberManager<
                 if (isOnline) {
                     lastSeen = "Currently Online.";
                 } else {
-                    lastSeen = timeFormatService.format(member.getLastJoinedUtc());
+                    lastSeen = timeFormatService.format(member.getLastJoinedUtc()).get();
                 }
                 if (member.isBanned()) {
                     banReason = member.getBanReason();
@@ -201,7 +198,7 @@ public class CommonMemberManager<
     public CompletableFuture<TString> setNickNameForUser(String userName, String nickName) {
         return getPrimaryComponent().setNickNameForUser(userName, registry.getOrDefault(CatalystKeys.NICKNAME_PREFIX) + nickName).thenApplyAsync(result -> {
             if (result) {
-                userService.getPlayer(userName).ifPresent(textService.builder().green().append("Your nickname was set to " + nickName)::sendTo);
+                userService.getPlayer(userName).ifPresent(p -> textService.builder().green().append("Your nickname was set to " + nickName).sendTo((TCommandSource) p));
                 return textService.success("Set " + userName + "'s nickname to " + nickName);
             } else {
                 return textService.fail("Failed to set the nickname for " + userName);
@@ -213,7 +210,7 @@ public class CommonMemberManager<
     public CompletableFuture<TString> deleteNickNameForUser(String userName) {
         return getPrimaryComponent().deleteNickNameForUser(userName).thenApplyAsync(result -> {
             if (result) {
-                userService.getPlayer(userName).ifPresent(textService.builder().green().append("Your nickname was deleted.")::sendTo);
+                userService.getPlayer(userName).ifPresent(p -> textService.builder().green().append("Your nickname was deleted.").sendTo((TCommandSource) p));
                 return textService.success("Successfully deleted " + userName + "'s nickname.");
             } else {
                 return textService.fail("Failed to delete " + userName + "'s nickname.");
@@ -260,7 +257,7 @@ public class CommonMemberManager<
         return getPrimaryComponent().banUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
                 kickService.kick(userName, pluginMessages.getBanMessage(reason, endUtc));
-                return textService.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur));
+                return textService.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur).get());
             }
             return textService.fail("Invalid user.");
         });
@@ -286,7 +283,7 @@ public class CommonMemberManager<
         Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(Duration.ofDays(3600));
         return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
-                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), p));
+                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), (TCommandSource) p));
                 return textService.success("Muted " + userName);
             }
             return textService.fail("Invalid user.");
@@ -308,8 +305,8 @@ public class CommonMemberManager<
         Instant endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(dur);
         return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
-                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), p));
-                return textService.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur));
+                userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), (TCommandSource) p));
+                return textService.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur).get());
             }
             return textService.fail("Invalid user.");
         });
@@ -328,7 +325,7 @@ public class CommonMemberManager<
                     textService.builder()
                         .append(pluginInfo.getPrefix())
                         .yellow().append("You have been unmuted.")
-                        .sendTo(p);
+                        .sendTo((TCommandSource) p);
                 });
                 return textService.success("UnMuted " + userName);
             }

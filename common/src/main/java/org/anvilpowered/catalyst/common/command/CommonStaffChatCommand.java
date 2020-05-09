@@ -35,7 +35,8 @@ public class CommonStaffChatCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource,
-    TSubject> {
+    TSubject,
+    TEvent> {
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -56,7 +57,7 @@ public class CommonStaffChatCommand<
     private StaffChatService staffChatService;
 
     @Inject
-    private EventService eventService;
+    private EventService<TEvent> eventService;
 
     @Inject
     private StaffChatEvent<TString, TPlayer> staffChatEvent;
@@ -65,7 +66,7 @@ public class CommonStaffChatCommand<
     private StaffChatListener<TPlayer> staffChatListener;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.STAFFCHAT))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -87,7 +88,7 @@ public class CommonStaffChatCommand<
             staffChatEvent.setRawMessage(message);
             staffChatEvent.setMessage(textService.of(message));
             staffChatEvent.setSender((TPlayer) source);
-            eventService.fire(staffChatEvent);
+            eventService.fire((TEvent) staffChatEvent);
             staffChatListener.onStaffChatEvent((TPlayer) source, playerUUID, message);
         }
     }

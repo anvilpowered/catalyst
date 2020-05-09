@@ -34,51 +34,50 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
-public class CommonLuckpermsService<TString, TPlayer extends TCommandSource, TCommandSource> implements LuckpermsService<TPlayer> {
-
-    @Inject
-    private UserService<TPlayer, TPlayer> userService;
-
-    @Inject
-    private LoggerService<TString> loggerService;
+public class CommonLuckpermsService<TUser, TString, TPlayer> implements LuckpermsService<TPlayer> {
 
     private static Map<UUID, CachedMetaData> cachedPlayers = new HashMap<>();
+    @Inject
+    private UserService<TUser, TPlayer> userService;
+    @Inject
+    private LoggerService<TString> loggerService;
 
     @Override
     public Runnable syncPlayerCache() {
         return () -> {
-            userService.getOnlinePlayers().forEach(this::addPlayerToCache);
+            if (userService.getOnlinePlayers().size() > 0) {
+                userService.getOnlinePlayers().forEach(this::addPlayerToCache);
+            }
         };
     }
 
     @Override
     public void addPlayerToCache(TPlayer player) {
-        UUID playerUUID = userService.getUUID(player);
+        UUID playerUUID = userService.getUUID((TUser) player);
         User tempUser = LuckPermsProvider.get().getUserManager().getUser(playerUUID);
 
         if (tempUser != null) {
             if (cachedPlayers.containsKey(playerUUID)) {
                 if (tempUser.getCachedData().getMetaData(getQueryOptions(tempUser)) != cachedPlayers.get(playerUUID)) {
                     cachedPlayers.replace(playerUUID, tempUser.getCachedData().getMetaData(getQueryOptions(tempUser)));
-                    loggerService.info("Updating LuckPerms cache for " + tempUser.getUsername() + "!");
                 }
             } else {
                 cachedPlayers.put(playerUUID, tempUser.getCachedData().getMetaData(getQueryOptions(tempUser)));
                 loggerService.info("Adding " + tempUser.getUsername() + " to the LuckPerms cache!");
             }
         } else {
-            throw new IllegalStateException("Failed to find the user " + userService.getUserName(player) + " inside luckperms.");
+            throw new IllegalStateException("Failed to find the user " + userService.getUserName((TUser) player) + " inside luckperms.");
         }
     }
 
     @Override
     public void removePlayerFromCache(TPlayer player) {
-        cachedPlayers.remove(userService.getUUID(player));
+        cachedPlayers.remove(userService.getUUID((TUser) player));
     }
 
     @Override
     public Optional<CachedMetaData> getCachedPlayerData(TPlayer player) {
-        return Optional.of(cachedPlayers.get(userService.getUUID(player)));
+        return Optional.of(cachedPlayers.get(userService.getUUID((TUser) player)));
     }
 
     @Override

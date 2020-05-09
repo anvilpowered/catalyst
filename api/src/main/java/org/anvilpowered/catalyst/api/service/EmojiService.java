@@ -15,28 +15,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.data.config;
+package org.anvilpowered.catalyst.api.service;
 
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import java.util.Map;
 
-import java.util.List;
+public interface EmojiService {
 
-@ConfigSerializable
-public class Channel {
+    Map<String, Character> getEmojis();
 
-    @Setting("id")
-    public String id;
+    String toEmoji(String message, String chatColor);
 
-    @Setting("aliases")
-    public List<String> aliases;
-
-    @Setting("prefix")
-    public String prefix;
-
-    @Setting("servers")
-    public List<String> servers;
-
-    @Setting(value = "alwaysVisible", comment = "Whether members of this channel will always recieve messages from this channel even when they are not in it. ")
-    public boolean alwaysVisible;
+    String toEmojiWithoutColor(String message);
 }

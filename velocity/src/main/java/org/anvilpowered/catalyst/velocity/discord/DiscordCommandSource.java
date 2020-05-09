@@ -18,12 +18,12 @@
 package org.anvilpowered.catalyst.velocity.discord;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.permission.Tristate;
 import net.kyori.text.Component;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.JDAService;
 
@@ -37,6 +37,9 @@ public class DiscordCommandSource implements CommandSource {
     @Inject
     private JDAService jdaHook;
 
+    @Inject
+    private TextService<TextComponent, CommandSource> textService;
+
     @Override
     public boolean hasPermission(String permission) {
         return true;
@@ -47,7 +50,8 @@ public class DiscordCommandSource implements CommandSource {
         Objects.requireNonNull(
             jdaHook.getJDA()
                 .getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL)))
-            .sendMessage(LegacyComponentSerializer.legacy().serialize(component)).queue();
+            .sendMessage("```" + textService.serializePlain((TextComponent) component) + "```")
+            .queue();
     }
 
     @Override

@@ -20,6 +20,7 @@ package org.anvilpowered.catalyst.velocity.service;
 import com.google.inject.Inject;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.JDAService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 

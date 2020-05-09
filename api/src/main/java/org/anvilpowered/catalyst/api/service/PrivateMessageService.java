@@ -28,17 +28,17 @@ public interface PrivateMessageService<TString> {
 
     Map<UUID, UUID> replyMap();
 
-    void setSource(String sender);
-
     String getSource();
 
-    void setRecipient(String recipient);
+    void setSource(String sender);
 
     String getRecipient();
 
-    void setRawMessage(String rawMessage);
+    void setRecipient(String recipient);
 
     String getRawMessage();
+
+    void setRawMessage(String rawMessage);
 
     TString formatMessage(String sender, String recipient, String rawMessage);
 

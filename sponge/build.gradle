@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+jar.enabled = false // we only want shadowJar
+
+dependencies {
+    implementation project(':api')
+    implementation project(':common')
+
+    implementation sponge
+    annotationProcessor sponge
+}
+
+shadowJar {
+    String jarName = "Catalyst-Sponge-${project.version}.jar"
+    println "Building: " + jarName
+    archiveFileName = jarName
+
+    dependencies {
+        include project(':api')
+        include project(':common')
+        include dependency(jda)
+    }
+}
+
+artifacts {
+    archives shadowJar
+}

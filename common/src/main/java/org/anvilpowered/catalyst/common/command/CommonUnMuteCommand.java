@@ -46,7 +46,7 @@ public class CommonUnMuteCommand<
     private Registry registry;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MUTE))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

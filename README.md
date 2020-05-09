@@ -27,7 +27,7 @@ stafflist
 
 discord intergration (Still in dev, missing topic updater and webhook)
 
-Commands/Permissions : [Click Here](https://github.com/STG-Allen/Catalyst/wiki/Commands)
+Commands/Permissions : [Click Here](https://github.com/AnvilPowered/Catalyst/wiki/Commands)
 
 Luckperms Support
 -

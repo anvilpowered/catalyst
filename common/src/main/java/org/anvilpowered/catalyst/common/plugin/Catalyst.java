@@ -18,24 +18,28 @@
 package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.Environment;
+import org.anvilpowered.anvil.api.data.key.Keys;
+import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.base.plugin.BasePlugin;
 
 public class Catalyst<TPlugin> extends BasePlugin<TPlugin> {
 
-    public LuckPerms api;
-
-    public Catalyst(String name, Injector rootInjector, Module module, Class<?>... earlyServices) {
-        super(name, rootInjector, module, earlyServices);
+    public Catalyst(Injector rootInjector, Module module, Class<?>... earlyServices) {
+        super(CatalystPluginInfo.id, rootInjector, module, earlyServices);
     }
 
     @Override
     protected void whenLoaded(Environment environment) {
         super.whenLoaded(environment);
-        api = LuckPermsProvider.get();
+    }
+
+    @Override
+    protected void whenReady(Environment environment) {
+        super.whenReady(environment);
     }
 }

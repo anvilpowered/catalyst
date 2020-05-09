@@ -1,27 +1,9 @@
 plugins {
-    id 'java'
-}
-
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://repo.spongepowered.org/maven' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    id 'java-library'
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-
-    compileOnly anvil_api
-    compileOnly configurate_core
-    compileOnly configurate_hocon
-    compileOnly guice
-    compileOnly guice_extensions
-    compileOnly luckperms
-    compileOnly mongodb_driver_sync
-    compileOnly morphia
-    compileOnly jda
-    compileOnly xodus
-    compileOnly xodus_entity_store
+    api anvil_api
+    api jda
+    api luckperms
 }

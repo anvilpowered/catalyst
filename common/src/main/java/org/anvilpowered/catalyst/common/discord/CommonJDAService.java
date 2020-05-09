@@ -34,10 +34,13 @@ import javax.security.auth.login.LoginException;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class CommonJDAService<TString,
-    TPlayer extends TCommandSource,
+public class CommonJDAService<
+    TString,
+    TUser,
+    TPlayer,
     TCommandSource,
-    TSubject> implements JDAService {
+    TSubject,
+    TEvent> implements JDAService {
 
     @Inject
     private Registry registry;
@@ -47,20 +50,23 @@ public class CommonJDAService<TString,
     private boolean isLoaded = false;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private LoggerService<TString> loggerService;
 
     @Inject
-    private EventService eventService;
+    private EventService<TEvent> eventService;
 
     @Inject
-    private CommonDiscordListener<TString, TPlayer, TCommandSource, TSubject> discordListener;
+    private CommonDiscordListener<TUser, TString, TPlayer, TCommandSource, TSubject> discordListener;
 
     @Override
     public void enableDiscordBot() {
         if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
+            if (isLoaded) {
+                jda.shutdownNow();
+            }
             try {
                 jda = new JDABuilder(registry.getOrDefault(CatalystKeys.BOT_TOKEN)).build().awaitReady();
                 jda.getPresence()

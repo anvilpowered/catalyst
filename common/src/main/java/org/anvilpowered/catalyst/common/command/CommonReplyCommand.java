@@ -54,7 +54,7 @@ public class CommonReplyCommand<
     private PrivateMessageService<TString> privateMessageService;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MESSAGE))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -74,8 +74,8 @@ public class CommonReplyCommand<
 
             if (recipient.isPresent()) {
                 privateMessageService.sendMessage(
-                    userService.getUserName(senderUUID).get(),
-                    userService.getUserName(recipientUUID).get(),
+                    userService.getUserName((TPlayer) source),
+                    userService.getUserName(recipient.get()),
                     message
                 );
                 privateMessageService.replyMap().put(

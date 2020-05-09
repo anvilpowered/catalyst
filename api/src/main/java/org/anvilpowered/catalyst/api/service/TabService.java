@@ -21,7 +21,7 @@ public interface TabService<TString> {
 
     TString formatTab(String format, String userName, String prefix, String suffix);
 
-    TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, long ping, int playerCount);
+    TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, long ping, int playerCount, boolean useAdvancedServerInfo);
 
     String getBalance(String userName);
 

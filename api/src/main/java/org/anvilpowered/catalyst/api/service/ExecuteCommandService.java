@@ -21,5 +21,7 @@ public interface ExecuteCommandService<TCommandSource> {
 
     void executeCommand(TCommandSource source, String command);
 
+    void executeAsConsole(String command);
+
     void executeDiscordCommand(String command);
 }

@@ -26,6 +26,7 @@ import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.listener.LeaveListener;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
@@ -34,13 +35,15 @@ import org.anvilpowered.catalyst.api.service.StaffListService;
 import java.util.UUID;
 
 public class CommonLeaveListener<
+    TUser,
     TString,
-    TPlayer extends TCommandSource,
-    TCommandSource>
+    TPlayer,
+    TCommandSource,
+    TEvent>
     implements LeaveListener<TPlayer> {
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -64,28 +67,37 @@ public class CommonLeaveListener<
     private LeaveEvent<TPlayer> leaveEvent;
 
     @Inject
-    private EventService eventService;
+    private EventService<TEvent> eventService;
 
     @Inject
     private DiscordChatListener<TString, TPlayer> discordChatListener;
 
+    @Inject
+    private EmojiService emojiService;
+
     @Override
     public void onPlayerLeave(TPlayer player, UUID playerUUID) {
-        staffListService.removeStaffNames(userService.getUserName(player));
+        staffListService.removeStaffNames(userService.getUserName((TUser) player));
         luckpermsService.removePlayerFromCache(player);
+
+        String message = registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
+            ? emojiService.toEmoji(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE), "&f")
+            : registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE);
+
         broadcastService.broadcast(
-            textService.of(
-                registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
-                    .replace("%player%", userService.getUserName(player))
+            textService.deserialize(
+                message
+                    .replace("%player%", userService.getUserName((TUser) player))
             ));
+
         loggerService.info(
-            textService.of(
+            textService.deserialize(
                 registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
-                    .replace("%player%", userService.getUserName(player))
+                    .replace("%player%", userService.getUserName((TUser) player))
             )
         );
         leaveEvent.setPlayer(player);
-        eventService.fire(leaveEvent);
+        eventService.fire((TEvent) leaveEvent);
         discordChatListener.onPlayerLeaveEvent(leaveEvent);
     }
 }

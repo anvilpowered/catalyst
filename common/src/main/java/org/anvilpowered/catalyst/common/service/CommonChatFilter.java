@@ -23,7 +23,10 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommonChatFilter implements ChatFilter {
 
@@ -31,54 +34,86 @@ public class CommonChatFilter implements ChatFilter {
     private Registry registry;
 
     @Override
-    public List<String> aggressiveMode(String swear) {
-        List<String> finalWords = new ArrayList<>();
-
-        String message = swear.toLowerCase()
-            .replaceAll("[*()/.,;'#~^+-]", " ").replaceAll("[0@]", "o")
-            .replaceAll("1", "i").replaceAll("$", "s"
-            ).replaceAll(" ", "");
-
-        finalWords.add(removeDuplicates(message));
-        finalWords.add(swear.toLowerCase());
-        return finalWords;
+    public String stripMessage(String checkMessage) {
+        return checkMessage.toLowerCase()
+                .replaceAll("[*()/.,;'#~^+\\-]", " ").replaceAll("[0@]", "o")
+                .replaceAll("1", "i").replaceAll("\\$", "s"
+                ); // Replaces any special characters with their letter equivalent or a space
     }
 
+    // Generates a list with the locations of all the spaces in the original message - for index replacement later
     @Override
-    public String removeDuplicates(String s) {
-        if (s.length() <= 1) return s;
-        if (s.substring(1, 2).equalsIgnoreCase(s.substring(0, 1))) return removeDuplicates(s.substring(1));
-        else return s.substring(0, 1) + removeDuplicates(s.substring(1));
-    }
-
-    @Override
-    public List<String> checkSwear(List<String> finalWords) {
-        List<String> swearList = new ArrayList<>();
-        for (String exception : registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS)) {
-            for (String swear : finalWords) {
-                if (swear.contains(exception)) {
-                    return null;
-                }
+    public List<Integer> findSpacePositions(String message, String noSpaces) {
+        List<Integer> spacePositions = new ArrayList<>();
+        int regularIndex = 0;
+        for (int noSpacesIndex = 0; noSpacesIndex < noSpaces.length(); noSpacesIndex++) {
+            if (message.charAt(regularIndex) == ' ') {
+                spacePositions.add(noSpacesIndex - 1);
+                regularIndex++;
             }
+            regularIndex++;
         }
-        for (String swears : registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS)) {
-            for (String swear : finalWords) {
-                String newSwear = swear.toLowerCase();
-                if (newSwear.contains(swears.toLowerCase())) {
-                    if (!(swearList.contains(swears.toLowerCase()))) {
-                        swearList.add(swears.toLowerCase());
+        return spacePositions;
+    }
+
+    @Override
+    public List<int[]> findSwears(String message, List<Integer> spacePositions) {
+        List<int[]> swearList = new ArrayList<>(); // List of all swear word locations
+        List<String> exceptions = registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS).stream()
+                .map(String::toLowerCase).collect(Collectors.toList()); /* Gets exceptions from API, then, via a map,
+                                                                           makes them lowercase. */
+        for (String bannedWord : registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS)) { /* Iterates through every
+                                                                                            banned word to see if the message contains it.*/
+            if (message.contains(bannedWord) && (!exceptions.contains(bannedWord))) { /* If the message contains the
+                                                                                         word and the word is not exempt. */
+                int startIndex = message.indexOf(bannedWord);
+                while (startIndex != -1) {
+                    int endIndex = startIndex + bannedWord.length() - 1; // Inclusive
+                    int extraStartSpace = spacePositions.indexOf(startIndex - 1) + 1; // Adjusts the indexing to account for deleted spaces.
+                    int extraEndSpace = spacePositions.indexOf(endIndex);
+                    if (spacePositions.containsAll(Arrays.asList(startIndex - 1, endIndex))) { // If there are spaces before and after the word.
+                        // Array to store the full location of the word in the original message.
+                        int[] wordLocation = new int[]{startIndex + extraStartSpace, endIndex + extraEndSpace + 1};
+                        swearList.add(wordLocation);
+                    } else if ((spacePositions.contains(startIndex - 1) || startIndex == 0) &&
+                            (endIndex == message.length() - 1|| spacePositions.contains(endIndex))) {
+                        if (endIndex == message.length() - 1) {
+                            extraEndSpace = spacePositions.size();
+                        }
+                        // +1 to extraEndSpace as the next function in replaceSwears is exclusive
+                        int[] wordLocation = new int[]{startIndex + extraStartSpace, endIndex + extraEndSpace + 1};
+                        swearList.add(wordLocation);
                     }
+                    startIndex = message.indexOf(bannedWord, startIndex+1); // checks for any more instances of the banned word
                 }
             }
         }
-        if (swearList.isEmpty()) return null;
-
         return swearList;
     }
 
     @Override
-    public List<String> isSwear(String swear) {
-        return checkSwear(aggressiveMode(swear));
+    public String replaceSwears(String message) {
+        String strippedMessage = stripMessage(message); // Replaces special characters
+        String noSpacesMessage = strippedMessage.replaceAll(" ", ""); // Removes spaces
+        List<Integer> spacePositions = findSpacePositions(strippedMessage, noSpacesMessage); // Finds where the spaces are.
+        List<int[]> swearPositions = findSwears(noSpacesMessage, spacePositions); // List of arrays, one for each occurrence
+        for (int[] swearPosition : swearPositions) { // Iterates through each occurrence of swearing
+            int swearStart = swearPosition[0]; // Beginning of the swear, inclusive
+            int swearEnd = swearPosition[1]; // End of the swear, exclusive
+            int swearLength = swearEnd - swearStart; // Length of the swear
+            /* If the swear is due to end at the end of the string, add *s for the length of the swear and finish,
+            else add the rest of the string after the end of the swear.
+             */
+            if (swearEnd >= message.length()) { // If the swear is at the end of the message, skip adding the rest
+                message = message.substring(0, swearStart) + // This join method adds swearLength '*'s.
+                        String.join("", Collections.nCopies(swearLength, "*"));
+            } else { // Add the beginning & the end of the message around the swear
+                message = message.substring(0, swearStart) +
+                        String.join("", Collections.nCopies(swearLength, "*"))
+                        + message.substring(swearEnd);
+            }
+        }
+        return message;
     }
 
 }

@@ -53,7 +53,7 @@ public class CommonSocialSpyCommand<
     private PrivateMessageService<TString> privateMessageService;
 
     public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.SOCIALSPY))) {
+        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.SOCIALSPY_PERMISSION))) {
             UUID playerUUID = userService.getUUID((TPlayer) source);
             if (privateMessageService.socialSpySet().contains(playerUUID)) {
                 privateMessageService.socialSpySet().remove(playerUUID);

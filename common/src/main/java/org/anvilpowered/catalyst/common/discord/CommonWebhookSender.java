@@ -29,7 +29,7 @@ import org.anvilpowered.catalyst.api.discord.WebhookSender;
 import org.anvilpowered.catalyst.api.service.JDAService;
 import org.json.JSONObject;
 
-public class CommonWebhookSender<TPlayer> implements WebhookSender<TPlayer> {
+public class CommonWebhookSender<TUser, TPlayer> implements WebhookSender<TPlayer> {
 
     @Inject
     private Registry registry;
@@ -38,13 +38,13 @@ public class CommonWebhookSender<TPlayer> implements WebhookSender<TPlayer> {
     private JDAService jdaService;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private UserService<TUser, TPlayer> userService;
 
     @Override
     public void sendWebhookMessage(String webHook, String player, String message, String channelId, TPlayer source) {
         String content = message.replaceAll("&(0-9a-fA-FlkKrR)", "");
         String format = registry.getOrDefault(CatalystKeys.WEBHOOK_URL)
-            .replace("%uuid%", userService.getUUID(source).toString());
+            .replace("%uuid%", userService.getUUID((TUser) source).toString());
         Webhook webhook = getWebhook(channelId);
         if (webHook == null) return;
         sendWebhook(webhook, org.anvilpowered.catalyst.api.discord.Webhook.of(format, removeCodes(player), removeCodes(content)));

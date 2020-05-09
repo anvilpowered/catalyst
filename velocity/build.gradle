@@ -6,28 +6,15 @@ plugins {
 jar.enabled = false // we only want shadowJar
 
 repositories {
-    mavenCentral()
-    jcenter()
-    maven { url "https://jitpack.io" }
     maven { url 'https://repo.velocitypowered.com/snapshots/' }
-    maven { url 'https://repo.spongepowered.org/maven' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compileOnly 'net.luckperms:api:5.0'
-    compileOnly 'com.velocitypowered:velocity-api:1.1.0-SNAPSHOT'
-    annotationProcessor 'com.velocitypowered:velocity-api:1.1.0-SNAPSHOT'
-
     implementation project(':api')
     implementation project(':common')
 
-    compileOnly anvil_api
-    implementation jda
-    compileOnly guice
-    compileOnly sponge
-    implementation unirest
+    implementation velocity
+    annotationProcessor velocity
 }
 
 shadowJar {
@@ -36,7 +23,26 @@ shadowJar {
     archiveFileName = jarName
 
     dependencies {
-
+        include project(':api')
+        include project(':common')
+        include dependency(apache_collections)
+        include dependency(apache_commons_logging)
+        include dependency(apache_http_async)
+        include dependency(apache_http_client)
+        include dependency(apache_http_core)
+        include dependency(apache_http_mime)
+        include dependency(apache_http_nio)
+        include dependency(emoji_java)
+        include dependency(jackson_annotations)
+        include dependency(jackson_core)
+        include dependency(jackson_databind)
+        include dependency(jda)
+        include dependency(json)
+        include dependency(nv_websocket)
+        include dependency(okhttp3)
+        include dependency(okio)
+        include dependency(unirest)
+        include dependency(trove)
     }
 }
 

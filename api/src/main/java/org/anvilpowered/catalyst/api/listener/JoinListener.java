@@ -21,5 +21,5 @@ import java.util.UUID;
 
 public interface JoinListener<TPlayer> {
 
-    void onPlayerJoin(TPlayer player, UUID playerUUID);
+    void onPlayerJoin(TPlayer player, UUID playerUUID, String virtualHostString);
 }

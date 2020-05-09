@@ -53,7 +53,7 @@ public class CommonKickCommand<
     public void execute(TCommandSource source, TSubject subject, String[] args) {
         String reason = "You have been kicked!";
 
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.KICK))) {
+        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.KICK_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -71,7 +71,7 @@ public class CommonKickCommand<
         if (userService.get(args[0]).isPresent()) {
             if (permissionService.hasPermission(
                 (TSubject) userService.getPlayer(args[0]).get(),
-                registry.getOrDefault(CatalystKeys.KICK_EXEMPT))) {
+                registry.getOrDefault(CatalystKeys.KICK_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.getKickExempt(), source);
                 return;
             }

@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.util.CurrentServerService;
 import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.TabService;
 
 import java.util.HashMap;
@@ -29,13 +30,13 @@ import java.util.Map;
 @Singleton
 public class CommonTabService<TString, TCommandSource> implements TabService<TString> {
 
+    public Map<String, Double> playerBalances = new HashMap<>();
     @Inject
     private TextService<TString, TCommandSource> textService;
-
     @Inject
     private CurrentServerService currentServerService;
-
-    public Map<String, Double> playerBalances = new HashMap<>();
+    @Inject
+    private AdvancedServerInfoService advancedServerInfoService;
 
     @Override
     public TString formatTab(String format, String userName, String prefix, String suffix) {
@@ -49,11 +50,14 @@ public class CommonTabService<TString, TCommandSource> implements TabService<TSt
     }
 
     @Override
-    public TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, long ping, int playerCount) {
+    public TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, long ping, int playerCount, boolean useAdvancedServerInfo) {
         format = format.replace("%player%", userName)
             .replace("%prefix%", prefix)
             .replace("%suffix%", suffix)
-            .replace("%server%", currentServerService.getName(userName).orElse("null"))
+            .replace("%server%",
+                useAdvancedServerInfo
+                    ? currentServerService.getName(userName).orElse("null").replace(advancedServerInfoService.getPrefixForPlayer(userName), "")
+                    : currentServerService.getName(userName).orElse("null"))
             .replace("%ping%", String.valueOf(ping))
             .replace("%playercount%", String.valueOf(playerCount))
             .replace("%balance%", getBalance(userName));
