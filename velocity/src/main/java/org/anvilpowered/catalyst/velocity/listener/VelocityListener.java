@@ -250,6 +250,8 @@ public class VelocityListener {
 
         if (serverPing.getFavicon().isPresent()) {
             builder.favicon(serverPing.getFavicon().get());
+        } else if (proxyServer.getConfiguration().getFavicon().isPresent()) {
+            builder.favicon(proxyServer.getConfiguration().getFavicon().get());
         }
 
         builder.onlinePlayers(proxyServer.getPlayerCount());

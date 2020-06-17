@@ -29,6 +29,5 @@ public class SpongeConfigurationService extends BackendConfigurationService {
     @Inject
     public SpongeConfigurationService(@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> configLoader) {
         super(configLoader);
-        withRedis();
     }
 }

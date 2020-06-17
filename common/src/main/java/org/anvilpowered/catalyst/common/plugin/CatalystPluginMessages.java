@@ -187,6 +187,38 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     }
 
     @Override
+    public TString getTeleportRequestPending(String targetUserName) {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .yellow().append("You have a pending request to " + targetUserName)
+            .build();
+    }
+
+    @Override
+    public TString getTeleportRequestAccepted(String sourceUserNamae) {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .green().append(sourceUserNamae + " has accepted your teleportation request.")
+            .build();
+    }
+
+    @Override
+    public TString getSourceAcceptedTeleport(String targetUserName) {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .green().append("Accepted " + targetUserName + "'s teleport request.")
+            .build();
+    }
+
+    @Override
+    public TString getNoPendingRequests() {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .yellow().append("You don't have any pending teleportation requests!")
+            .build();
+    }
+
+    @Override
     public TString getIncompatibleServerVersion() {
         return textService.builder()
             .append(pluginInfo.getPrefix())

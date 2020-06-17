@@ -20,7 +20,6 @@ package org.anvilpowered.catalyst.common.module;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.anvil.api.data.config.ConfigurationService;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.misc.BindingExtensions;
 import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
@@ -39,6 +38,7 @@ import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.anvilpowered.catalyst.api.service.CrossServerTeleportationHelper;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.JDAService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
@@ -46,7 +46,6 @@ import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.TabService;
-import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.discord.CommonJDAService;
 import org.anvilpowered.catalyst.common.discord.CommonWebhookSender;
@@ -65,6 +64,7 @@ import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 import org.anvilpowered.catalyst.common.plugin.CommonStaffListService;
 import org.anvilpowered.catalyst.common.service.CommonChatFilter;
 import org.anvilpowered.catalyst.common.service.CommonChatService;
+import org.anvilpowered.catalyst.common.service.CommonCrossServerTeleportationHelper;
 import org.anvilpowered.catalyst.common.service.CommonEmojiService;
 import org.anvilpowered.catalyst.common.service.CommonLuckpermsService;
 import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService;
@@ -204,6 +204,12 @@ public class CommonModule<
             new TypeToken<StaffChatListener<TPlayer>>(getClass()) {
             },
             new TypeToken<CommonStaffChatListener<TUser, TString, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
+            }
+        );
+        be.bind(
+            new TypeToken<CrossServerTeleportationHelper>(getClass()) {
+            },
+            new TypeToken<CommonCrossServerTeleportationHelper<TCommandSource>>(getClass()) {
             }
         );
 

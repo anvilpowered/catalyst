@@ -57,6 +57,14 @@ public interface PluginMessages<TString> {
 
     TString getTeleportToSelf();
 
+    TString getTeleportRequestPending(String targetUserName);
+
+    TString getTeleportRequestAccepted(String targetUserName);
+
+    TString getSourceAcceptedTeleport(String targetUserName);
+
+    TString getNoPendingRequests();
+
     TString getIncompatibleServerVersion();
 
     TString getExistingSwear(String swear);

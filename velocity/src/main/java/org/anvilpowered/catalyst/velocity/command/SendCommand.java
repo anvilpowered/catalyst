@@ -75,7 +75,10 @@ public class SendCommand implements Command {
                             TextComponent.of(player.get().getUsername()
                                 + " is already connected to that server.")));
                 } else {
-                    Player sender = (Player) source;
+                    String sender = "Console";
+                    if(source instanceof Player) {
+                         sender =  ((Player) source).getUsername();
+                    }
                     source.sendMessage(
                         pluginInfo.getPrefix().append(
                             TextComponent.of("sending " + player.get().getUsername()
@@ -84,7 +87,7 @@ public class SendCommand implements Command {
                         pluginInfo.getPrefix().append(
                             TextComponent.of("you have been sent to "
                                 + server.get().getServerInfo().getName()
-                                + " by " + sender.getUsername())));
+                                + " by " + sender)));
                     player.get().createConnectionRequest(server.get()).fireAndForget();
                 }
             } else {

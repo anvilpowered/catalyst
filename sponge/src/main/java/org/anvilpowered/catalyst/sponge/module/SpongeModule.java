@@ -30,6 +30,7 @@ import org.anvilpowered.catalyst.sponge.service.SpongeBroadcastService;
 import org.anvilpowered.catalyst.sponge.service.SpongeEventService;
 import org.anvilpowered.catalyst.sponge.service.SpongeExecuteCommandService;
 import org.anvilpowered.catalyst.sponge.service.SpongeLoggerService;
+import org.anvilpowered.catalyst.sponge.service.SpongeTeleportationService;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;

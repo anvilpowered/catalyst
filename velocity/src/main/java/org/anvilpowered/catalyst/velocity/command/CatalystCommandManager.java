@@ -77,6 +77,11 @@ public class CatalystCommandManager {
     private ExceptionCommand exceptionCommand;
     @Inject
     private IgnoreCommand ignoreCommand;
+    @Inject
+    private TeleportAskCommand teleportRequestCommand;
+
+    @Inject
+    private TeleportAcceptCommand teleportAcceptCommand;
 
     private boolean alreadyLoaded = false;
 
@@ -135,6 +140,12 @@ public class CatalystCommandManager {
             "exception", exceptionCommand);
         proxyServer.getCommandManager().register(
             "ignore", ignoreCommand
+        );
+        proxyServer.getCommandManager().register(
+            "teleport", teleportRequestCommand
+        );
+        proxyServer.getCommandManager().register(
+            "teleportaccept", teleportAcceptCommand
         );
     }
 }

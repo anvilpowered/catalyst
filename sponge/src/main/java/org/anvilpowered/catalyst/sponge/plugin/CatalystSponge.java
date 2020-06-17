@@ -23,7 +23,9 @@ import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.catalyst.common.plugin.Catalyst;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.sponge.command.CatalystSpongeCommandNode;
+import org.anvilpowered.catalyst.sponge.listener.SpongeListener;
 import org.anvilpowered.catalyst.sponge.module.SpongeModule;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -46,5 +48,11 @@ public class CatalystSponge extends Catalyst<PluginContainer> {
     @Override
     protected void whenReady(Environment environment) {
         super.whenReady(environment);
+    }
+
+    @Override
+    protected void applyToBuilder(Environment.Builder builder) {
+        builder.addEarlyServices(SpongeListener.class, t ->
+            Sponge.getEventManager().registerListeners(this, t));
     }
 }

@@ -267,7 +267,22 @@ public final class CatalystKeys {
         advancedServerInfo) {
     };
     public static final Key<Boolean> VIA_VERSION_ENABLED = new Key<Boolean>("VIA_VERSION_ENABLED",
-        false){
+        false) {
+    };
+    public static final Key<String> TELEPORT_REQUEST_PERMISSION = new Key<String>("TELEPORT_REQUEST_PERMISSION",
+        "catalyst.command.tpa.base") {
+    };
+    public static final Key<String> TELEPORT_REQUEST_HERE_PERMISSION = new Key<String> ("TELEPORT_REQUEST_HERE_PERMISSION",
+        "catalyst.command.tpa.here"){
+    };
+    public static final Key<String> TELEPORT_PERMISSION = new Key<String>("TELEPORT_PERMISSION",
+        "catalyst.command.teleport.base"){
+    };
+    public static final Key<String> TELEPORT_HERE_PERMISSION = new Key<String>("TELEPORT_HERE_PERMISSION",
+        "catalyst.command.teleport.here"){
+    };
+    public static final Key<String> TELEPORT_ALL_HERE_PERMISSION = new Key<String>("TELEPORT_ALL_HERE_PERMISSION",
+        "catalyst.command.teleport.all"){
     };
     static char emojiChar = '\uac00';
 
@@ -378,6 +393,7 @@ public final class CatalystKeys {
         Keys.registerKey(EMOJI_MAP);
         Keys.registerKey(EMOJI_PERMISSION);
         Keys.registerKey(VIA_VERSION_ENABLED);
+        Keys.registerKey(TELEPORT_REQUEST_PERMISSION);
     }
 
     static {
