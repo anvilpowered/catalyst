@@ -257,12 +257,12 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString banCommandUsage() {
-        return textService.deserialize("&4Usage:  &e/ban <user> [reason]");
+        return textService.deserialize("&4Usage: &e/ban <user> [reason]");
     }
 
     @Override
     public TString tempBanCommandUsage() {
-        return textService.deserialize("&4Usage:  &e/tempban <user> <duration> [reason]");
+        return textService.deserialize("&4Usage: &e/tempban <user> <duration> [reason]");
     }
 
     @Override
