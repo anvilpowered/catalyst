@@ -33,9 +33,11 @@ public final class CatalystKeys {
     public static final Key<Boolean> CHAT_FILTER_ENABLED = new Key<Boolean>("CHAT_FILTER_ENABLED",
         false) {
     };
-    public static final Key<List<String>> CHAT_FILTER_SWEARS = new Key<List<String>>("CHAT_FILTER_SWEARS", Arrays.asList("fuck", "shit", "ass")) {
+    public static final Key<List<String>> CHAT_FILTER_SWEARS = new Key<List<String>>(
+        "CHAT_FILTER_SWEARS", Arrays.asList("fuck", "shit", "ass")) {
     };
-    public static final Key<List<String>> CHAT_FILTER_EXCEPTIONS = new Key<List<String>>("CHAT_FILTER_EXCEPTIONS",
+    public static final Key<List<String>> CHAT_FILTER_EXCEPTIONS = new Key<List<String>>(
+        "CHAT_FILTER_EXCEPTIONS",
         Arrays.asList("assassin", "jkass")) {
     };
     public static final Key<String> FIRST_JOIN = new Key<String>("FIRST_JOIN",
@@ -47,14 +49,14 @@ public final class CatalystKeys {
     public static final Key<String> LEAVE_MESSAGE = new Key<String>("LEAVE_MESSAGE",
         "%player% has left the proxy") {
     };
-    public static final Key<Boolean> PROXY_CHAT_ENABLED = new Key<Boolean>("PROXY_CHAT_ENABLED",
-        true) {
+    public static final Key<Boolean> PROXY_CHAT_ENABLED = new Key<Boolean>(
+        "PROXY_CHAT_ENABLED", true) {
     };
-    public static final Key<String> PROXY_CHAT_FORMAT_MESSAGE = new Key<String>("PROXY_CHAT_FORMAT_MESSAGE",
-        "%prefix% %player% %suffix%: %message% ") {
+    public static final Key<String> PROXY_CHAT_FORMAT_MESSAGE = new Key<String>(
+        "PROXY_CHAT_FORMAT_MESSAGE", "%prefix% %player% %suffix%: %message% ") {
     };
-    public static final Key<String> PROXY_CHAT_FORMAT_HOVER = new Key<String>("PROXY_CHAT_FORMAT_HOVER",
-        "%player% %server%") {
+    public static final Key<String> PROXY_CHAT_FORMAT_HOVER = new Key<String>(
+        "PROXY_CHAT_FORMAT_HOVER", "%player% %server%") {
     };
     public static final Key<String> PROXY_CHAT_FORMAT_CLICK_COMMAND = new Key<String>(
         "PROXY_CHAT_FORMAT_CLICK_COMMAND", "/msg %player%") {
@@ -73,7 +75,9 @@ public final class CatalystKeys {
     };
     public static final Key<List<String>> TAB_FORMAT_CUSTOM = new Key<List<String>>("TAB_FORMAT_CUSTOM",
         Arrays.asList(
-            "&3Your Ping : &e%ping%", "&3Current Server : &e%server%", "&3Player Count : &e%playercount%")) {
+            "&3Your Ping : &e%ping%",
+            "&3Current Server : &e%server%",
+            "&3Player Count : &e%playercount%")) {
     };
     public static final Key<Integer> TAB_UPDATE = new Key<Integer>("TAB_UPDATE", 1) {
     };
@@ -86,14 +90,14 @@ public final class CatalystKeys {
     public static final Key<String> TEMP_BAN_PERMISSION = new Key<String>("TEMP_BAN_PERMISSION",
         "catalyst.command.tempban") {
     };
-    public static final Key<String> BAN_EXEMPT_PERMISSION = new Key<String>("BAN_EXEMPT_PERMISSION",
-        "catalyst.command.ban.exempt") {
+    public static final Key<String> BAN_EXEMPT_PERMISSION = new Key<String>(
+        "BAN_EXEMPT_PERMISSION", "catalyst.command.ban.exempt") {
     };
     public static final Key<String> BROADCAST_PERMISSION = new Key<String>("BROADCAST_PERMISSION",
         "catalyst.command.broadcast") {
     };
-    public static final Key<String> CHAT_COLOR_PERMISSION = new Key<String>("CHAT_COLOR_PERMISSION",
-        "catalyst.chat.color") {
+    public static final Key<String> CHAT_COLOR_PERMISSION = new Key<String>(
+        "CHAT_COLOR_PERMISSION", "catalyst.chat.color") {
     };
     public static final Key<String> FIND_PERMISSION = new Key<String>("FIND_PERMISSION",
         "catalyst.command.find") {
@@ -104,17 +108,17 @@ public final class CatalystKeys {
     public static final Key<String> INFO_PERMISSION = new Key<String>("INFO_PERMISSION",
         "catalyst.command.info") {
     };
-    public static final Key<String> KICK_PERMISSION = new Key<String>("KICK_PERMISSION",
-        "catalyst.command.kick") {
+    public static final Key<String> KICK_PERMISSION = new Key<String>(
+        "KICK_PERMISSION", "catalyst.command.kick") {
     };
-    public static final Key<String> KICK_EXEMPT_PERMISSION = new Key<String>("KICK_EXEMPT_PERMISSION",
-        "catalyst.command.kick.exempt") {
+    public static final Key<String> KICK_EXEMPT_PERMISSION = new Key<String>(
+        "KICK_EXEMPT_PERMISSION", "catalyst.command.kick.exempt") {
     };
-    public static final Key<String> LANGUAGE_ADMIN_PERMISSION = new Key<String>("LANGUAGE_ADMIN_PERMISSION",
-        "catalyst.command.language.admin") {
+    public static final Key<String> LANGUAGE_ADMIN_PERMISSION = new Key<String>(
+        "LANGUAGE_ADMIN_PERMISSION", "catalyst.command.language.admin") {
     };
-    public static final Key<String> LANGUAGE_LIST_PERMISSION = new Key<String>("LANGUAGE_LIST_PERMISSION",
-        "catalyst.command.language.list") {
+    public static final Key<String> LANGUAGE_LIST_PERMISSION = new Key<String>(
+        "LANGUAGE_LIST_PERMISSION", "catalyst.command.language.list") {
     };
     public static final Key<String> LIST_PERMISSION = new Key<String>("LIST_PERMISSION",
         "catalyst.command.list") {
@@ -125,20 +129,20 @@ public final class CatalystKeys {
     public static final Key<String> MUTE_PERMISSION = new Key<String>("MUTE_PERMISSION",
         "catalyst.command.mute") {
     };
-    public static final Key<String> MUTE_EXEMPT_PERMISSION = new Key<String>("MUTE_EXEMPT_PERMISSION",
-        "catalyst.command.mute.exempt") {
+    public static final Key<String> MUTE_EXEMPT_PERMISSION = new Key<String>(
+        "MUTE_EXEMPT_PERMISSION", "catalyst.command.mute.exempt") {
     };
-    public static final Key<String> NICKNAME_PERMISSION = new Key<String>("NICKNAME_PERMISSION",
-        "catalyst.command.nickname") {
+    public static final Key<String> NICKNAME_PERMISSION = new Key<String>(
+        "NICKNAME_PERMISSION", "catalyst.command.nickname") {
     };
-    public static final Key<String> NICKNAME_COLOR_PERMISSION = new Key<String>("NICKNAME_COLOR_PERMISSION",
-        "catalyst.command.nickname.color") {
+    public static final Key<String> NICKNAME_COLOR_PERMISSION = new Key<String>(
+        "NICKNAME_COLOR_PERMISSION", "catalyst.command.nickname.color") {
     };
-    public static final Key<String> NICKNAME_MAGIC_PERMISSION = new Key<String>("NICKNAME_COLOR_PERMISSION",
-        "catalyst.command.nickname.magic") {
+    public static final Key<String> NICKNAME_MAGIC_PERMISSION = new Key<String>(
+        "NICKNAME_COLOR_PERMISSION", "catalyst.command.nickname.magic") {
     };
-    public static final Key<String> NICKNAME_OTHER_PERMISSION = new Key<String>("NICKNAME_OTHER_PERMISSION",
-        "catalyst.command.nickname.other") {
+    public static final Key<String> NICKNAME_OTHER_PERMISSION = new Key<String>(
+        "NICKNAME_OTHER_PERMISSION", "catalyst.command.nickname.other") {
     };
     public static final Key<String> NICKNAME_PREFIX = new Key<String>("NICKNAME_PREFIX",
         "~") {
@@ -152,29 +156,30 @@ public final class CatalystKeys {
     public static final Key<String> SOCIALSPY_PERMISSION = new Key<String>("SOCIALSPY_PERMISSION",
         "catalyst.admin.command.socialspy") {
     };
-    public static final Key<String> SOCIALSPY_ONJOIN_PERMISSION = new Key<String>("SOCIALSPY_ONJOIN_PERMISSION",
+    public static final Key<String> SOCIALSPY_ONJOIN_PERMISSION = new Key<String>(
+        "SOCIALSPY_ONJOIN_PERMISSION",
         "catalyst.admin.command.socialspy.onjoin") {
     };
-    public static final Key<String> STAFFCHAT_PERMISSION = new Key<String>("STAFFCHAT_PERMISSION",
-        "catalyst.admin.command.staffchat") {
+    public static final Key<String> STAFFCHAT_PERMISSION = new Key<String>(
+        "STAFFCHAT_PERMISSION", "catalyst.admin.command.staffchat") {
     };
-    public static final Key<String> STAFFLIST_ADMIN_PERMISSION = new Key<String>("STAFFLIST_ADMIN_PERMISSION",
-        "catalyst.stafflist.admin") {
+    public static final Key<String> STAFFLIST_ADMIN_PERMISSION = new Key<String>(
+        "STAFFLIST_ADMIN_PERMISSION", "catalyst.stafflist.admin") {
     };
-    public static final Key<String> STAFFLIST_BASE_PERMISSION = new Key<String>("STAFFLIST_BASE_PERMISSION",
-        "catalyst.stafflist.base") {
+    public static final Key<String> STAFFLIST_BASE_PERMISSION = new Key<String>(
+        "STAFFLIST_BASE_PERMISSION", "catalyst.stafflist.base") {
     };
-    public static final Key<String> STAFFLIST_OWNER_PERMISSION = new Key<String>("STAFFLIST_OWNER_PERMISSION",
-        "catalyst.stafflist.owner") {
+    public static final Key<String> STAFFLIST_OWNER_PERMISSION = new Key<String>(
+        "STAFFLIST_OWNER_PERMISSION", "catalyst.stafflist.owner") {
     };
-    public static final Key<String> STAFFLIST_STAFF_PERMISSION = new Key<String>("STAFFLIST_STAFF_PERMISSION",
-        "catalyst.stafflist.staff") {
+    public static final Key<String> STAFFLIST_STAFF_PERMISSION = new Key<String>(
+        "STAFFLIST_STAFF_PERMISSION", "catalyst.stafflist.staff") {
     };
-    public static final Key<String> ALL_CHAT_CHANNELS_PERMISSION = new Key<String>("ALL_CHAT_CHANNELS_PERMISSION",
-        "catalyst.channel.all") {
+    public static final Key<String> ALL_CHAT_CHANNELS_PERMISSION = new Key<String>(
+        "ALL_CHAT_CHANNELS_PERMISSION", "catalyst.channel.all") {
     };
-    public static final Key<String> CHANNEL_BASE_PERMISSION = new Key<String>("CHANNEL_BASE_PERMISSION",
-        "catalyst.channel.") {
+    public static final Key<String> CHANNEL_BASE_PERMISSION = new Key<String>(
+        "CHANNEL_BASE_PERMISSION", "catalyst.channel.") {
     };
     public static final Key<String> BOT_NAME = new Key<String>("BOT_NAME",
         "System") {
@@ -183,10 +188,10 @@ public final class CatalystKeys {
         "bot token") {
     };
     public static final Key<String> MAIN_CHANNEL = new Key<String>("MAIN_CHANNEL",
-        "mainchannelid") {
+        "123456789") {
     };
     public static final Key<String> STAFF_CHANNEL = new Key<String>("STAFF_CHANNEL",
-        "staffchannelid") {
+        "123456789") {
     };
     public static final Key<String> PLAYER_CHAT_FORMAT = new Key<String>("PLAYER_CHAT_FORMAT",
         "[%server%] %prefix% %player% %suffix%") {
@@ -221,8 +226,8 @@ public final class CatalystKeys {
     public static final Key<Boolean> DISCORD_ENABLE = new Key<Boolean>("DISCORD_ENABLE",
         false) {
     };
-    public static final Key<String> DISCORD_HOVER_MESSAGE = new Key<String>("DISCORD_HOVER_MESSAGE",
-        "Click here to join our discord!") {
+    public static final Key<String> DISCORD_HOVER_MESSAGE = new Key<String>(
+        "DISCORD_HOVER_MESSAGE", "Click here to join our discord!") {
     };
     public static final Key<String> WEBSITE_URL = new Key<String>("WEBSITE_URL",
         "http://ci.anvilpowered.org") {
@@ -230,8 +235,8 @@ public final class CatalystKeys {
     public static final Key<String> IGNORE_PERMISSION = new Key<String>("IGNORE_PERMISSION",
         "catalyst.command.ignore") {
     };
-    public static final Key<String> IGNORE_EXEMPT_PERMISSION = new Key<String>("IGNORE_EXEMPT_PERMISSION",
-        "catalyst.command.ignore.exempt") {
+    public static final Key<String> IGNORE_EXEMPT_PERMISSION = new Key<String>(
+        "IGNORE_EXEMPT_PERMISSION", "catalyst.command.ignore.exempt") {
     };
     public static final Key<String> SERVER_PING = new Key<String>("SERVER_PING",
         "PLAYERS") {
@@ -245,8 +250,8 @@ public final class CatalystKeys {
     public static final Key<String> MOTD = new Key<String>("MOTD",
         "A Velocity Proxy!") {
     };
-    public static final Key<Boolean> ADVANCED_SERVER_INFO_ENABLED = new Key<Boolean>("ADVANCED_SERVER_INFO_ENABLED",
-        false) {
+    public static final Key<Boolean> ADVANCED_SERVER_INFO_ENABLED = new Key<Boolean>(
+        "ADVANCED_SERVER_INFO_ENABLED", false) {
     };
     private static final Map<String, Character> emojiMap = new HashMap<>();
     public static final Key<Boolean> EMOJI_ENABLE = new Key<Boolean>("EMOJI_ENABLE",
@@ -263,13 +268,84 @@ public final class CatalystKeys {
         chatChannels) {
     };
     static List<AdvancedServerInfo> advancedServerInfo = new LinkedList<>();
-    public static final Key<List<AdvancedServerInfo>> ADVANCED_SERVER_INFO = new Key<List<AdvancedServerInfo>>("ADVANCED_SERVER_INFO",
-        advancedServerInfo) {
+    public static final Key<List<AdvancedServerInfo>> ADVANCED_SERVER_INFO = new Key<List<AdvancedServerInfo>>(
+        "ADVANCED_SERVER_INFO", advancedServerInfo) {
     };
-    public static final Key<Boolean> VIA_VERSION_ENABLED = new Key<Boolean>("VIA_VERSION_ENABLED",
-        false){
+    public static final Key<Boolean> VIA_VERSION_ENABLED = new Key<Boolean>(
+        "VIA_VERSION_ENABLED", false) {
     };
     static char emojiChar = '\uac00';
+    //Keys for command toggling
+    public static final Key<Boolean> BAN_COMMAND_ENABLED = new Key<Boolean>(
+        "BAN_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> BROADCAST_COMMAND_ENABLED = new Key<Boolean>(
+        "BROADCAST_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> NICKNAME_COMMAND_ENABLED = new Key<Boolean>(
+        "NICKNAME_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> FIND_COMMAND_ENABLED = new Key<Boolean>(
+        "FIND_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> INFO_COMMAND_ENABLED = new Key<Boolean>(
+        "INFO_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> KICK_COMMAND_ENABLED = new Key<Boolean>(
+        "KICK_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> LIST_COMMAND_ENABLED = new Key<Boolean>(
+        "LIST_COMMAND_ENABLED", false) {
+    };
+    public static final Key<Boolean> MESSAGE_COMMAND_ENABLED = new Key<Boolean>(
+        "MESSAGE_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> SEND_COMMAND_ENABLED = new Key<Boolean>(
+        "SEND_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> SERVER_COMMAND_ENABLED = new Key<Boolean>(
+        "SERVER_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> SOCIALSPY_COMMAND_ENABLED = new Key<Boolean>(
+        "SOCIALSPY_COMMAND_ENABLED", true) {
+    };
+    public static final Key<Boolean> STAFFCHAT_COMMAND_ENABLED = new Key<Boolean>(
+        "STAFF_CHAT_COMMAND", true) {
+    };
+    public static final Key<Boolean> MUTE_COMMAND_ENABLED = new Key<Boolean>(
+        "MUTE_COMMAND_ENABLED", true) {
+    };
+    //Keys for root node comments
+    public static final Key<String> ADVANCED_ROOT = new Key<String>(
+        "ADVANCED_ROOT", null) {
+    };
+    public static final Key<String> COMMANDS_ROOT = new Key<String>(
+        "COMMANDS_ROOT", null) {
+    };
+    public static final Key<String> CHAT_ROOT = new Key<String>(
+        "CHAT_ROOT", null) {
+    };
+    public static final Key<String> DISCORD_ROOT = new Key<String>(
+        "DISCORD_ROOT", null) {
+    };
+    public static final Key<String> JOIN_ROOT = new Key<String>(
+        "JOIN_ROOT", null) {
+    };
+    public static final Key<String> LEAVE_ROOT = new Key<String>(
+        "LEAVE_ROOT", null) {
+    };
+    public static final Key<String> MODULES_ROOT = new Key<String>(
+        "MODULES_ROOT", null) {
+    };
+    public static final Key<String> MOTD_ROOT = new Key<String>(
+        "MOTD_ROOT", null) {
+    };
+    public static final Key<String> PING_ROOT = new Key<String>(
+        "PING_ROOT", null) {
+    };
+    public static final Key<String> TAB_ROOT = new Key<String>(
+        "TAB_ROOT", null) {
+    };
 
     static {
         ChatChannel global = new ChatChannel();
@@ -378,6 +454,28 @@ public final class CatalystKeys {
         Keys.registerKey(EMOJI_MAP);
         Keys.registerKey(EMOJI_PERMISSION);
         Keys.registerKey(VIA_VERSION_ENABLED);
+        Keys.registerKey(BAN_COMMAND_ENABLED);
+        Keys.registerKey(BROADCAST_COMMAND_ENABLED);
+        Keys.registerKey(NICKNAME_COMMAND_ENABLED);
+        Keys.registerKey(FIND_COMMAND_ENABLED);
+        Keys.registerKey(INFO_COMMAND_ENABLED);
+        Keys.registerKey(KICK_COMMAND_ENABLED);
+        Keys.registerKey(LIST_COMMAND_ENABLED);
+        Keys.registerKey(MESSAGE_COMMAND_ENABLED);
+        Keys.registerKey(SEND_COMMAND_ENABLED);
+        Keys.registerKey(SERVER_COMMAND_ENABLED);
+        Keys.registerKey(SOCIALSPY_COMMAND_ENABLED);
+        Keys.registerKey(STAFFCHAT_COMMAND_ENABLED);
+        Keys.registerKey(MUTE_COMMAND_ENABLED);
+        Keys.registerKey(ADVANCED_ROOT);
+        Keys.registerKey(CHAT_ROOT);
+        Keys.registerKey(DISCORD_ROOT);
+        Keys.registerKey(JOIN_ROOT);
+        Keys.registerKey(LEAVE_ROOT);
+        Keys.registerKey(MODULES_ROOT);
+        Keys.registerKey(MOTD_ROOT);
+        Keys.registerKey(PING_ROOT);
+        Keys.registerKey(TAB_ROOT);
     }
 
     static {

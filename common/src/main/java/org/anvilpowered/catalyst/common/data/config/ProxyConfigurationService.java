@@ -33,14 +33,14 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.CHAT_FILTER_SWEARS, "chat.filter.swears");
         setName(CatalystKeys.CHAT_FILTER_EXCEPTIONS, "chat.filter.exceptions");
         setName(CatalystKeys.CHAT_FILTER_ENABLED, "chat.filter.enabled");
-        setName(CatalystKeys.FIRST_JOIN, "message.firstJoin");
-        setName(CatalystKeys.JOIN_MESSAGE, "message.join");
-        setName(CatalystKeys.LEAVE_MESSAGE, "message.leave");
+        setName(CatalystKeys.FIRST_JOIN, "join.firstJoin");
+        setName(CatalystKeys.JOIN_MESSAGE, "join.message");
+        setName(CatalystKeys.LEAVE_MESSAGE, "leave.message");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE, "chat.format.message");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_HOVER, "chat.format.hover");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND, "chat.format.click");
-        setName(CatalystKeys.PROXY_CHAT_ENABLED, "chat.proxy.enabled");
-        setName(CatalystKeys.TAB_ENABLED, "tab.enabled");
+        setName(CatalystKeys.PROXY_CHAT_ENABLED, "modules.chat");
+        setName(CatalystKeys.TAB_ENABLED, "modules.tab");
         setName(CatalystKeys.TAB_HEADER, "tab.format.header");
         setName(CatalystKeys.TAB_FOOTER, "tab.format.footer");
         setName(CatalystKeys.TAB_FORMAT_CUSTOM, "tab.format.custom");
@@ -61,14 +61,37 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.DISCORD_HOVER_MESSAGE, "discord.format.hover");
         setName(CatalystKeys.WEBHOOK_URL, "discord.url.webhook");
         setName(CatalystKeys.DISCORD_URL, "discord.url.invite");
-        setName(CatalystKeys.DISCORD_ENABLE, "discord.enabled");
+        setName(CatalystKeys.DISCORD_ENABLE, "modules.discord");
         setName(CatalystKeys.SERVER_PING, "ping.mode");
         setName(CatalystKeys.SERVER_PING_MESSAGE, "ping.message");
         setName(CatalystKeys.MOTD, "motd.message");
-        setName(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "advanced.server.enabled");
+        setName(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "modules.advancedServerInfo");
         setName(CatalystKeys.ADVANCED_SERVER_INFO, "advanced.server.info");
         setName(CatalystKeys.EMOJI_ENABLE, "chat.emoji.enabled");
         setName(CatalystKeys.VIA_VERSION_ENABLED, "advanced.viaversion");
+        setName(CatalystKeys.BAN_COMMAND_ENABLED, "commands.ban");
+        setName(CatalystKeys.BROADCAST_COMMAND_ENABLED, "commands.broadcast");
+        setName(CatalystKeys.NICKNAME_COMMAND_ENABLED, "commands.nickname");
+        setName(CatalystKeys.FIND_COMMAND_ENABLED, "commands.find");
+        setName(CatalystKeys.INFO_COMMAND_ENABLED, "commands.info");
+        setName(CatalystKeys.KICK_COMMAND_ENABLED, "commands.kick");
+        setName(CatalystKeys.LIST_COMMAND_ENABLED, "commands.list");
+        setName(CatalystKeys.MESSAGE_COMMAND_ENABLED, "commands.message");
+        setName(CatalystKeys.SEND_COMMAND_ENABLED, "commands.send");
+        setName(CatalystKeys.SERVER_COMMAND_ENABLED, "commands.server");
+        setName(CatalystKeys.SOCIALSPY_COMMAND_ENABLED, "commands.socialspy");
+        setName(CatalystKeys.STAFFCHAT_COMMAND_ENABLED, "commands.staffchat");
+        setName(CatalystKeys.MUTE_COMMAND_ENABLED, "commands.mute");
+        setName(CatalystKeys.ADVANCED_ROOT, "advanced");
+        setName(CatalystKeys.COMMANDS_ROOT, "commands");
+        setName(CatalystKeys.CHAT_ROOT, "chat");
+        setName(CatalystKeys.DISCORD_ROOT, "discord");
+        setName(CatalystKeys.JOIN_ROOT, "join");
+        setName(CatalystKeys.LEAVE_ROOT, "leave");
+        setName(CatalystKeys.MODULES_ROOT, "modules");
+        setName(CatalystKeys.MOTD_ROOT, "motd");
+        setName(CatalystKeys.PING_ROOT, "ping");
+        setName(CatalystKeys.TAB_ROOT, "tab");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS,
             "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS,
@@ -110,9 +133,9 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nToken for the discord bot that you would like to use when sending messages to discord " +
                 "\n For help creating a bot token, please see the wiki");
         setDescription(CatalystKeys.MAIN_CHANNEL,
-            "\nChatChannel id of the main channel that you would like in-game chat sent to.");
+            "\nChannel id of the main channel that you would like in-game chat sent to.");
         setDescription(CatalystKeys.STAFF_CHANNEL,
-            "\nChatChannel id of the staff-chat channel that you would like staff chat messages sent to.");
+            "\nChannel id of the staff-chat channel that you would like staff chat messages sent to.");
         setDescription(CatalystKeys.PLAYER_CHAT_FORMAT,
             "\nFormat of the message to be sent to discord from in-game");
         setDescription(CatalystKeys.JOIN_FORMAT,
@@ -158,5 +181,109 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.VIA_VERSION_ENABLED,
             "\nIf you are running servers with ViaVersion, this will disable the version checking done in the /server command." +
                 "\n(true = enabled)");
+        setDescription(CatalystKeys.BAN_COMMAND_ENABLED,
+            "\nToggle ban command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.BAN_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.BROADCAST_COMMAND_ENABLED,
+            "\nToggle broadcast command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.BROADCAST_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.NICKNAME_COMMAND_ENABLED,
+            "\nToggle nickname command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nBase Permission : " + CatalystKeys.NICKNAME_PERMISSION.getFallbackValue() +
+                "\nColor Permission : " + CatalystKeys.NICKNAME_COLOR_PERMISSION.getFallbackValue() +
+                "\nMagic Permission : " + CatalystKeys.NICKNAME_MAGIC_PERMISSION.getFallbackValue() +
+                "\nOther permission : " + CatalystKeys.NICKNAME_OTHER_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.FIND_COMMAND_ENABLED,
+            "\nToggle find command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.FIND_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.INFO_COMMAND_ENABLED,
+            "\nToggle info command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.INFO_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.KICK_COMMAND_ENABLED,
+            "\nToggle kick command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.KICK_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.LIST_COMMAND_ENABLED,
+            "\nToggle ban command handling " +
+                "\n(true = enabled | false = disabled)");
+        setDescription(CatalystKeys.MESSAGE_COMMAND_ENABLED,
+            "\nToggle message command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.MESSAGE_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.SEND_COMMAND_ENABLED,
+            "\nToggle send command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.SEND_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.SERVER_COMMAND_ENABLED,
+            "\nToggle server command handling " +
+                "\n(true = enabled | false = disabled)");
+        setDescription(CatalystKeys.SOCIALSPY_COMMAND_ENABLED,
+            "\nToggle SocialSpy command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.SOCIALSPY_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.STAFFCHAT_COMMAND_ENABLED,
+            "\nToggle staffchat command handling" +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.STAFFCHAT_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.MUTE_COMMAND_ENABLED,
+            "\nToggle mute command handling " +
+                "\n(true = enabled | false = disabled)" +
+                "\nPermission : " + CatalystKeys.MUTE_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.ADVANCED_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Advanced                         |\n" +
+                " |------------------------------------------------------------| "
+        );
+        setDescription(CatalystKeys.COMMANDS_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Commands                         |\n" +
+                " |------------------------------------------------------------| "
+        );
+        setDescription(CatalystKeys.CHAT_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Chat                             |\n" +
+                " |------------------------------------------------------------| "
+        );
+        setDescription(CatalystKeys.DISCORD_ROOT,
+            " |------------------------------------------------------------|\n"
+                + " |                           Discord                          |\n"
+                + " |------------------------------------------------------------|"
+        );
+        setDescription(CatalystKeys.JOIN_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Join                             |\n" +
+                " |------------------------------------------------------------| "
+        );
+        setDescription(CatalystKeys.LEAVE_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Leave                            |\n" +
+                " |------------------------------------------------------------| "
+        );
+        setDescription(CatalystKeys.MODULES_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Modules                          |\n" +
+                " |------------------------------------------------------------| "
+        );
+        setDescription(CatalystKeys.MOTD_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Motd                             |\n" +
+                " |------------------------------------------------------------| "
+        );
+        setDescription(CatalystKeys.PING_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Ping                             |\n" +
+                " |------------------------------------------------------------| "
+        );
+        setDescription(CatalystKeys.TAB_ROOT,
+            " |------------------------------------------------------------|\n" +
+                " |                           Tab                              |\n" +
+                " |------------------------------------------------------------| "
+        );
+
     }
 }
