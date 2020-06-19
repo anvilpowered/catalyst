@@ -127,18 +127,24 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString getSocialSpy(boolean enabled) {
-        return textService.builder()
-            .append(pluginInfo.getPrefix())
-            .green().append("Socialspy ", enabled ? "enabled" : "disabled")
-            .build();
+        TextService.Builder<TString, TCommandSource> builder = textService.builder()
+                .append(pluginInfo.getPrefix())
+                .yellow().append("SocialSpy ");
+        if (enabled) {
+            return builder.green().append("enabled").build();
+        }
+        return builder.red().append("disabled").build();
     }
 
     @Override
     public TString getStaffChat(boolean enabled) {
-        return textService.builder()
-            .append(pluginInfo.getPrefix())
-            .green().append("Staff chat ", enabled ? "enabled" : "disabled")
-            .build();
+        TextService.Builder<TString, TCommandSource> builder = textService.builder()
+                .append(pluginInfo.getPrefix())
+                .yellow().append("Staff Chat ");
+        if (enabled) {
+            return builder.green().append("enabled").build();
+        }
+        return builder.red().append("disabled").build();
     }
 
     @Override
