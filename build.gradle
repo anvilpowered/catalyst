@@ -6,7 +6,7 @@ plugins {
 subprojects {
     apply plugin: 'java'
     group "org.anvilpowered"
-    version "0.1.3"
+    version "0.2.0-SNAPSHOT"
     sourceCompatibility = 1.8
     if (project.hasProperty("buildNumber") && version.contains("-SNAPSHOT")) {
         version = version.replace("-SNAPSHOT", "-RC${buildNumber}")
