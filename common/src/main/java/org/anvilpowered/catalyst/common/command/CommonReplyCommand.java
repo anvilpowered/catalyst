@@ -79,14 +79,14 @@ public class CommonReplyCommand<
                     message
                 );
                 privateMessageService.replyMap().put(
-                    userService.getUUID(userService.getPlayer(recipientUUID).get()),
+                    userService.getUUID(recipient.get()),
                     userService.getUUID((TPlayer) source)
                 );
             } else {
                 textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
             }
         } else {
-            textService.send(textService.builder().append("Nobody to reply to!").red().build(), source);
+            textService.send(textService.builder().red().append("Nobody to reply to!").build(), source);
         }
     }
 }
