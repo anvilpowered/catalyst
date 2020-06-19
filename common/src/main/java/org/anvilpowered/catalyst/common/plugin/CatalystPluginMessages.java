@@ -352,6 +352,14 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     }
 
     @Override
+    public TString messageSelf() {
+        return textService.builder()
+                .append(pluginInfo.getPrefix())
+                .red().append("You cannot send private messages to yourself!")
+                .build();
+    }
+
+    @Override
     public TString getBanMessage(String reason, Instant endUtc) {
         return textService.builder()
             .red().append("You have been banned for: ", textService.deserialize(reason))

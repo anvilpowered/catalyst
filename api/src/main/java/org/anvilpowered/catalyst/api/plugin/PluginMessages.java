@@ -113,6 +113,8 @@ public interface PluginMessages<TString> {
 
     TString offlineOrInvalidPlayer();
 
+    TString messageSelf();
+
     TString getBanMessage(String reason, Instant endUtc);
 
     TString getMuteMessage(String reason, Instant endUtc);
