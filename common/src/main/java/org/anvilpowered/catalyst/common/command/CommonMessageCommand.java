@@ -73,6 +73,10 @@ public class CommonMessageCommand<
 
             if (permissionService.hasPermission(source,
                 registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION)) && targetPlayer.isPresent()) {
+                if (targetPlayer.get() == source) {
+                    textService.send(pluginMessages.messageSelf(), source);
+                    return;
+                }
                 privateMessageService.sendMessage(
                     userService.getUserName((TPlayer) source),
                     name,
