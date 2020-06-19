@@ -24,11 +24,13 @@ public class BungeeLoggerService implements LoggerService {
 
     @Override
     public void info(String message) {
+        if (message.isEmpty()) return;
         ProxyServer.getInstance().getLogger().info(message);
     }
 
     @Override
     public void warn(String message) {
+        if (message.isEmpty()) return;
         ProxyServer.getInstance().getLogger().warning(message);
     }
 }
