@@ -29,6 +29,7 @@ public class VelocityBroadcastService implements BroadcastService<TextComponent>
 
     @Override
     public void broadcast(TextComponent message) {
+        if (message.isEmpty()) return;
         proxyServer.broadcast(message);
     }
 }

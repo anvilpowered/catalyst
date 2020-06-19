@@ -25,6 +25,7 @@ public class SpongeBroadcastService implements BroadcastService<Text> {
 
     @Override
     public void broadcast(Text message) {
+        if (message.isEmpty()) return;
         Sponge.getServer().getBroadcastChannel().send(message);
     }
 }

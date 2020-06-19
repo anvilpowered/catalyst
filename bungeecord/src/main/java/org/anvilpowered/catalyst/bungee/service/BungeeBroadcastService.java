@@ -22,8 +22,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 
 public class BungeeBroadcastService implements BroadcastService<TextComponent> {
+
     @Override
     public void broadcast(TextComponent message) {
+        if (message.getText().isEmpty()) return;
         ProxyServer.getInstance().broadcast(message);
     }
 }

@@ -28,11 +28,13 @@ public class VelocityLoggerService implements LoggerService {
 
     @Override
     public void info(String message) {
+        if (message.isEmpty()) return;
         logger.info(message);
     }
 
     @Override
     public void warn(String message) {
+        if (message.isEmpty()) return;
         logger.warn(message);
     }
 }
