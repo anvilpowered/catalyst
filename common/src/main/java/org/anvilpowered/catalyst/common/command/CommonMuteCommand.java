@@ -26,11 +26,12 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
+import java.util.Optional;
+
 public class CommonMuteCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private MemberManager<TString> memberManager;
@@ -45,13 +46,14 @@ public class CommonMuteCommand<
     private Registry registry;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -64,9 +66,10 @@ public class CommonMuteCommand<
 
         String userName = args[0];
 
-        if (userService.getPlayer(userName).isPresent()) {
+        Optional<TPlayer> player = userService.get(userName);
+        if (player.isPresent()) {
             if (permissionService.hasPermission(
-                (TSubject) userService.get(userName).get(),
+                player.get(),
                 registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.getMuteExempt(), source);
                 return;

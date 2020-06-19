@@ -29,8 +29,7 @@ import org.anvilpowered.catalyst.api.service.ChatService;
 public class CommonIgnoreCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private Registry registry;
@@ -42,7 +41,7 @@ public class CommonIgnoreCommand<
     private ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -50,8 +49,9 @@ public class CommonIgnoreCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.IGNORE_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.IGNORE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -64,14 +64,15 @@ public class CommonIgnoreCommand<
         String userName = args[0];
         if (userService.get(userName).isPresent()) {
             if (permissionService.hasPermission(
-                (TSubject) userService.getPlayer(userName).get(),
+                userService.getPlayer(userName).get(),
                 registry.getOrDefault(CatalystKeys.IGNORE_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.ignoreExempt(), source);
                 return;
             }
 
             if (args.length == 1) {
-                textService.send(chatService.ignore(userService.getUUID((TPlayer) source), userService.getUUID(userService.get(userName).get())), source);
+                textService.send(chatService.ignore(userService.getUUID((TPlayer) source),
+                    userService.getUUID(userService.get(userName).get())), source);
             }
         } else {
             textService.send(pluginMessages.offlineOrInvalidPlayer(), source);

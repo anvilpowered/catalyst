@@ -26,11 +26,12 @@ import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
+import java.util.Optional;
+
 public class CommonKickCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -45,15 +46,16 @@ public class CommonKickCommand<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
+    public void execute(TCommandSource source, String[] args) {
         String reason = "You have been kicked!";
 
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.KICK_PERMISSION))) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.KICK_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -68,9 +70,10 @@ public class CommonKickCommand<
             reason = args[1];
         }
 
-        if (userService.get(args[0]).isPresent()) {
+        Optional<TPlayer> player = userService.getPlayer(args[0]);
+        if (player.isPresent()) {
             if (permissionService.hasPermission(
-                (TSubject) userService.getPlayer(args[0]).get(),
+                player.get(),
                 registry.getOrDefault(CatalystKeys.KICK_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.getKickExempt(), source);
                 return;

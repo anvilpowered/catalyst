@@ -26,9 +26,8 @@ import org.spongepowered.api.scheduler.Task;
 
 import java.util.concurrent.TimeUnit;
 
-public class SpongeEventService implements EventService<Event> {
-
-    @Inject
+public class SpongeEventService/* implements EventService*/ {
+   /* @Inject
     PluginContainer plugin;
 
     @Override
@@ -49,5 +48,5 @@ public class SpongeEventService implements EventService<Event> {
         Task.builder()
             .execute(runnable)
             .submit(plugin);
-    }
+    }*/
 }

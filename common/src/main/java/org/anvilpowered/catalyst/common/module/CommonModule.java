@@ -20,7 +20,6 @@ package org.anvilpowered.catalyst.common.module;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.anvil.api.data.config.ConfigurationService;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.misc.BindingExtensions;
 import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
@@ -40,13 +39,13 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
+import org.anvilpowered.catalyst.api.service.EventRegistrationService;
 import org.anvilpowered.catalyst.api.service.JDAService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.anvilpowered.catalyst.api.service.TabService;
-import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.discord.CommonJDAService;
 import org.anvilpowered.catalyst.common.discord.CommonWebhookSender;
@@ -66,6 +65,7 @@ import org.anvilpowered.catalyst.common.plugin.CommonStaffListService;
 import org.anvilpowered.catalyst.common.service.CommonChatFilter;
 import org.anvilpowered.catalyst.common.service.CommonChatService;
 import org.anvilpowered.catalyst.common.service.CommonEmojiService;
+import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService;
 import org.anvilpowered.catalyst.common.service.CommonLuckpermsService;
 import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService;
 import org.anvilpowered.catalyst.common.service.CommonStaffChatService;
@@ -76,9 +76,7 @@ public class CommonModule<
     TUser,
     TPlayer,
     TString,
-    TCommandSource,
-    TSubject,
-    TEvent>
+    TCommandSource>
     extends AbstractModule {
 
     @Override
@@ -111,7 +109,7 @@ public class CommonModule<
         be.bind(
             new TypeToken<ChatService<TString, TPlayer, TCommandSource>>(getClass()) {
             },
-            new TypeToken<CommonChatService<TUser, TPlayer, TString, TCommandSource, TSubject>>(getClass()) {
+            new TypeToken<CommonChatService<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
 
@@ -135,19 +133,19 @@ public class CommonModule<
             }
         );
         be.bind(
-            new TypeToken<LuckpermsService<TPlayer>>(getClass()) {
+            new TypeToken<LuckpermsService>(getClass()) {
             },
-            new TypeToken<CommonLuckpermsService<TUser, TString, TPlayer>>(getClass()) {
+            new TypeToken<CommonLuckpermsService<TUser, TPlayer>>(getClass()) {
             }
         );
         be.bind(
             new TypeToken<JDAService>(getClass()) {
             },
-            new TypeToken<CommonJDAService<TString, TUser, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
+            new TypeToken<CommonJDAService<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
         be.bind(
-            new TypeToken<WebhookSender<TPlayer>>(getClass()) {
+            new TypeToken<WebhookSender>(getClass()) {
             },
             new TypeToken<CommonWebhookSender<TUser, TPlayer>>(getClass()) {
             }
@@ -159,9 +157,9 @@ public class CommonModule<
             }
         );
         be.bind(
-            new TypeToken<ChatListener<TPlayer>>(getClass()) {
+            new TypeToken<ChatListener<TString, TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonChatListener<TUser, TString, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
+            new TypeToken<CommonChatListener<TString, TPlayer, TCommandSource>>(getClass()) {
             }
         );
         be.bind(
@@ -173,13 +171,13 @@ public class CommonModule<
         be.bind(
             new TypeToken<JoinListener<TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonJoinListener<TUser, TString, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
+            new TypeToken<CommonJoinListener<TUser, TString, TPlayer, TCommandSource>>(getClass()) {
             }
         );
         be.bind(
             new TypeToken<LeaveListener<TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonLeaveListener<TUser, TString, TPlayer, TCommandSource, TEvent>>(getClass()) {
+            new TypeToken<CommonLeaveListener<TUser, TString, TPlayer, TCommandSource>>(getClass()) {
             }
         );
         be.bind(
@@ -201,9 +199,15 @@ public class CommonModule<
             }
         );
         be.bind(
-            new TypeToken<StaffChatListener<TPlayer>>(getClass()) {
+            new TypeToken<StaffChatListener<TString, TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonStaffChatListener<TUser, TString, TPlayer, TCommandSource, TSubject, TEvent>>(getClass()) {
+            new TypeToken<CommonStaffChatListener<TUser, TString, TPlayer, TCommandSource>>(getClass()) {
+            }
+        );
+        be.bind(
+            new TypeToken<EventRegistrationService>(getClass()) {
+            },
+            new TypeToken<CommonEventRegistrationService<TUser,TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
 

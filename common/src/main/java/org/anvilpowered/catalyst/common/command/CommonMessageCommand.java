@@ -26,11 +26,12 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
+import java.util.Optional;
+
 public class CommonMessageCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -48,9 +49,10 @@ public class CommonMessageCommand<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args, boolean isConsole) {
+    public void execute(TCommandSource source, String[] args,
+                        Class<?> consoleClass) {
         String name;
         if (args.length < 1) {
             textService.send(pluginMessages.getNotEnoughArgs(), source);
@@ -62,27 +64,27 @@ public class CommonMessageCommand<
             name = args[0];
             args[0] = "";
             String message = String.join(" ", args);
+            Optional<TPlayer> targetPlayer = userService.get(name);
 
-            //memberManger.asQueryForUser() == null
-            //MemberManger.asQueryForNick(name)
-
-            if (isConsole) {
-                privateMessageService.sendMessage("Me", name, message);
-                privateMessageService.sendMessage("Console", "Me", message);
+            if (consoleClass.equals(source.getClass()) && targetPlayer.isPresent()) {
+                privateMessageService.sendMessageFromConsole(userService.getUserName(targetPlayer.get()), message, consoleClass);
+                return;
             }
-            if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION))) {
+
+            if (permissionService.hasPermission(source,
+                registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION)) && targetPlayer.isPresent()) {
                 privateMessageService.sendMessage(
                     userService.getUserName((TPlayer) source),
                     name,
                     message
                 );
                 privateMessageService.replyMap().put(
-                    userService.getUUID(userService.getPlayer(name).get()),
+                    userService.getUUID(targetPlayer.get()),
                     userService.getUUID((TPlayer) source)
                 );
                 privateMessageService.replyMap().put(
                     userService.getUUID((TPlayer) source),
-                    userService.getUUID(userService.getPlayer(name).get())
+                    userService.getUUID(targetPlayer.get())
                 );
             }
         }

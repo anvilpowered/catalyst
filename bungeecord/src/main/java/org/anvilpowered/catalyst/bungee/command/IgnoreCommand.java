@@ -30,7 +30,6 @@ public class IgnoreCommand extends Command {
     private CommonIgnoreCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> ignoreCommand;
 
     public IgnoreCommand() {
@@ -39,6 +38,6 @@ public class IgnoreCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        ignoreCommand.execute(sender, sender, args);
+        ignoreCommand.execute(sender, args);
     }
 }

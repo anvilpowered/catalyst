@@ -19,25 +19,21 @@ package org.anvilpowered.catalyst.sponge.module;
 
 import com.google.inject.TypeLiteral;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
-import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.common.data.config.BackendConfigurationService;
-import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.sponge.data.config.SpongeConfigurationService;
 import org.anvilpowered.catalyst.sponge.service.SpongeBroadcastService;
-import org.anvilpowered.catalyst.sponge.service.SpongeEventService;
 import org.anvilpowered.catalyst.sponge.service.SpongeExecuteCommandService;
 import org.anvilpowered.catalyst.sponge.service.SpongeLoggerService;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Event;
-import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.text.Text;
 
-public class SpongeModule extends CommonModule<User, Player, Text, CommandSource, Subject, Event> {
+public class SpongeModule extends CommonModule<User, Player, Text, CommandSource> {
 
     @Override
     protected void configure() {
@@ -46,11 +42,9 @@ public class SpongeModule extends CommonModule<User, Player, Text, CommandSource
         bind(BackendConfigurationService.class).to(SpongeConfigurationService.class);
         bind(new TypeLiteral<BroadcastService<Text>>() {
         }).to(SpongeBroadcastService.class);
-        bind(new TypeLiteral<EventService<Event>>() {
-        }).to(SpongeEventService.class);
         bind(new TypeLiteral<ExecuteCommandService<CommandSource>>() {
         }).to(SpongeExecuteCommandService.class);
-        bind(new TypeLiteral<LoggerService<Text>>() {
+        bind(new TypeLiteral<LoggerService>() {
         }).to(SpongeLoggerService.class);
     }
 }

@@ -20,12 +20,10 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.catalyst.common.command.CommonDeleteNicknameCommand;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,17 +32,15 @@ import java.util.stream.Collectors;
 public class DeleteNicknameCommand extends CommonDeleteNicknameCommand<
     TextComponent,
     Player,
-    CommandSource,
-    PermissionSubject>
+    CommandSource>
     implements Command {
 
     @Inject
     private ProxyServer proxyServer;
 
-
     @Override
-    public void execute(CommandSource source, @NonNull String[] args) {
-        execute(source, source, args);
+    public void execute(CommandSource source, String[] args) {
+        execute(source, args, Player.class);
     }
 
     @Override

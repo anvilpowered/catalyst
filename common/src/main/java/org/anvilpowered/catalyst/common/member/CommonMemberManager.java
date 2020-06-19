@@ -85,7 +85,8 @@ public class CommonMemberManager<
     }
 
     @Override
-    public CompletableFuture<TString> info(String userName, boolean isOnline) {
+    public CompletableFuture<TString> info(String userName, boolean isOnline,
+                                           boolean[] permissions) {
         return getPrimaryComponent().getOneForUser(userName).thenApplyAsync(optionalMember -> {
                 if (!optionalMember.isPresent()) {
                     return textService.fail("Could not get user data");
@@ -102,7 +103,7 @@ public class CommonMemberManager<
                 if (isOnline) {
                     lastSeen = "Currently Online.";
                 } else {
-                    lastSeen = timeFormatService.format(member.getLastJoinedUtc()).get();
+                    lastSeen = timeFormatService.format(member.getLastJoinedUtc()).toString();
                 }
                 if (member.isBanned()) {
                     banReason = member.getBanReason();
@@ -110,17 +111,16 @@ public class CommonMemberManager<
                     banReason = "This user is not banned.";
                 }
 
-                return textService.builder()
+                TextService.Builder<TString, TCommandSource> message = textService.builder();
+                message.append(
+                    textService.builder()
+                        .blue().append("----------------Player Info----------------"));
+                message.append(
+                    textService.builder()
+                        .blue().append("\nUsername : "))
                     .append(
                         textService.builder()
-                            .blue().append("----------------Player Info----------------"))
-                    .append(
-                        textService.builder()
-                            .blue().append("\nUsername : ")
-                    )
-                    .append(
-                        textService.builder()
-                            .green().append(userName))
+                            .green().append(member.getUserName()))
                     .append(
                         textService.builder()
                             .blue().append("\nNickname : ")
@@ -128,54 +128,48 @@ public class CommonMemberManager<
                     .append(
                         textService
                             .deserialize(nick)
-                    )
-                    .append(
+                    );
+
+                if (permissions[0]) {
+                    message.append(
                         textService.builder()
                             .blue().append("\nIP : ")
                     )
-                    .append(
-                        textService.builder()
-                            .green().append(member.getIpAddress())
-                    )
-                    .append(
-                        textService.builder()
-                            .blue().append("\nJoined Date : ")
-                    )
-                    .append(
-                        textService.builder()
-                            .green().append(member.getCreatedUtc().toString())
-                    )
-                    .append(
-                        textService.builder()
-                            .blue().append("\nLast Seen : ")
-                    )
-                    .append(
-                        textService.builder()
-                            .green().append(lastSeen))
-                    .append(
-                        textService.builder()
-                            .blue().append("\nBanned : ")
-                    )
-                    .append(
-                        textService.builder()
-                            .green().append(banReason))
-                    .append(
-                        textService.builder()
-                            .blue().append("\nChannel : ")
-                    )
-                    .append(
-                        textService.builder()
-                            .green().append(chatService.getChannelIdForUser(member.getUserUUID()))
-                    )
-                    .append(
-                        textService.builder()
-                            .blue().append("\nCurrent Server : ")
-                    )
-                    .append(
-                        textService.builder()
-                            .gold().append(currentServerService.getName(member.getUserUUID()).orElse("Offline User."))
-                    )
-                    .build();
+                        .append(
+                            textService.builder()
+                                .green().append(member.getIpAddress())
+                        );
+                }
+                message.append(
+                    textService.builder().blue().append("\nJoined Date : "))
+                    .append(textService.builder().green().append(member.getCreatedUtc().toString()))
+                    .append(textService.builder().blue().append("\nLast Seen : "))
+                    .append(textService.builder().green().append(lastSeen));
+
+                if (permissions[1]) {
+                    message.append(
+                        textService.builder().blue().append("\nBanned : ")
+                            .append(textService.builder().green().append(banReason))
+                    );
+                }
+
+                if (permissions[2]) {
+                    message.append(
+                        textService.builder().blue().append("\nChannel : ")
+                            .append(textService.builder().green()
+                                .append(chatService.getChannelIdForUser(member.getUserUUID())))
+                    );
+                }
+                message.append(
+                    textService.builder()
+                        .blue().append("\nCurrent Server : ")
+                        .append(
+                            textService.builder()
+                                .gold().append(
+                                currentServerService.getName(
+                                    member.getUserUUID()).orElse("Offline User.")))
+                );
+                return message.build();
             }
         ).exceptionally(e -> {
             e.printStackTrace();
@@ -257,7 +251,7 @@ public class CommonMemberManager<
         return getPrimaryComponent().banUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
                 kickService.kick(userName, pluginMessages.getBanMessage(reason, endUtc));
-                return textService.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur).get());
+                return textService.success("Banned " + userName + " for " + reason + " for " + timeFormatService.format(dur).toString());
             }
             return textService.fail("Invalid user.");
         });
@@ -306,7 +300,7 @@ public class CommonMemberManager<
         return getPrimaryComponent().muteUser(userName, endUtc, reason).thenApplyAsync(b -> {
             if (b) {
                 userService.getPlayer(userName).ifPresent(p -> textService.send(pluginMessages.getMuteMessage(reason, endUtc), (TCommandSource) p));
-                return textService.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur).get());
+                return textService.success("Muted " + userName + " for " + reason + " for " + timeFormatService.format(dur).toString());
             }
             return textService.fail("Invalid user.");
         });

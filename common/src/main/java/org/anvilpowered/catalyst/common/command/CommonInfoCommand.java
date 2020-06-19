@@ -29,8 +29,7 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 public class CommonInfoCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private MemberManager<TString> memberManager;
@@ -42,7 +41,7 @@ public class CommonInfoCommand<
     private Registry registry;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -50,8 +49,9 @@ public class CommonInfoCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.INFO_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.INFO_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -62,6 +62,14 @@ public class CommonInfoCommand<
             return;
         }
         boolean isActive = userService.get(args[0]).isPresent();
-        memberManager.info(args[0], isActive).thenAcceptAsync(m -> textService.send(m, source));
+        boolean[] permissions = new boolean[3];
+        permissions[0] = permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.INFO_IP_PERMISSION));
+        permissions[1] = permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.INFO_BANNED_PERMISSION));
+        permissions[2] = permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.INFO_CHANNEL_PERMISSION));
+        memberManager.info(args[0], isActive, permissions).thenAcceptAsync(m -> textService.send(m,
+            source));
     }
 }

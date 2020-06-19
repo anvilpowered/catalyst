@@ -20,11 +20,9 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.common.command.CommonNickNameCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -35,22 +33,15 @@ import java.util.stream.Collectors;
 public class NickNameCommand extends CommonNickNameCommand<
     TextComponent,
     Player,
-    CommandSource,
-    PermissionSubject>
+    CommandSource>
     implements Command {
-
-    @Inject
-    private PluginInfo<TextComponent> pluginInfo;
 
     @Inject
     private ProxyServer proxyServer;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (source instanceof Player) {
-            execute(source, source, args);
-        } else
-            source.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Player only command!")));
+        execute(source, args, Player.class);
     }
 
     @Override

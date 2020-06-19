@@ -17,36 +17,5 @@
 
 package org.anvilpowered.catalyst.velocity.service;
 
-import com.google.inject.Inject;
-import com.velocitypowered.api.proxy.Player;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.service.EventService;
-import org.anvilpowered.catalyst.api.service.LuckpermsService;
-
-import java.util.concurrent.TimeUnit;
-
 public class VelocityLuckpermsService {
-
-
-    @Inject
-    private LuckpermsService<Player> luckpermsService;
-
-    @Inject
-    private EventService<Object> eventService;
-
-    private Registry registry;
-
-    @Inject
-    public VelocityLuckpermsService(Registry registry) {
-        this.registry = registry;
-        this.registry.whenLoaded(this::startLuckpermsScheduler);
-    }
-
-    private void startLuckpermsScheduler() {
-        eventService.schedule(
-            luckpermsService.syncPlayerCache(),
-            TimeUnit.SECONDS,
-            10
-        );
-    }
 }

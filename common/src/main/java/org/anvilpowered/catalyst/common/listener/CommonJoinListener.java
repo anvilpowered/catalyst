@@ -25,12 +25,10 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
-import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.listener.JoinListener;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
-import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
@@ -42,16 +40,14 @@ public class CommonJoinListener<
     TUser,
     TString,
     TPlayer,
-    TCommandSource,
-    TSubject,
-    TEvent>
+    TCommandSource>
     implements JoinListener<TPlayer> {
 
     @Inject
     private UserService<TUser, TPlayer> userService;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -63,7 +59,7 @@ public class CommonJoinListener<
     private PrivateMessageService<TString> privateMessageService;
 
     @Inject
-    private LuckpermsService<TPlayer> luckpermsService;
+    private LuckpermsService luckpermsService;
 
     @Inject
     private StaffListService<TString> staffListService;
@@ -72,16 +68,7 @@ public class CommonJoinListener<
     private BroadcastService<TString> broadcastService;
 
     @Inject
-    private LoggerService<TString> loggerService;
-
-    @Inject
-    private JoinEvent<TPlayer> joinEvent;
-
-    @Inject
-    private EventService<TEvent> eventService;
-
-    @Inject
-    private DiscordChatListener<TString, TPlayer> discordChatListener;
+    private LoggerService loggerService;
 
     @Inject
     private AdvancedServerInfoService serverService;
@@ -92,9 +79,14 @@ public class CommonJoinListener<
     @Inject
     private EmojiService emojiService;
 
+
     @Override
-    public void onPlayerJoin(TPlayer player, UUID playerUUID, String virtualHost) {
-        if (permissionService.hasPermission((TSubject) player,
+    public void onPlayerJoin(JoinEvent<TPlayer> event) {
+        TPlayer player = event.getPlayer();
+        UUID playerUUID = event.getPlayerUUID();
+        String virtualHost = event.getHostString();
+
+        if (permissionService.hasPermission(player,
             registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN_PERMISSION))) {
             privateMessageService.socialSpySet().add(playerUUID);
         }
@@ -112,15 +104,15 @@ public class CommonJoinListener<
         staffListService.getStaffNames(
             userName,
             permissionService.hasPermission(
-                (TSubject) player,
+                player,
                 registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN_PERMISSION)
             ),
             permissionService.hasPermission(
-                (TSubject) player,
+                player,
                 registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF_PERMISSION)
             ),
             permissionService.hasPermission(
-                (TSubject) player,
+                player,
                 registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER_PERMISSION)
             )
         );
@@ -137,14 +129,13 @@ public class CommonJoinListener<
             )
         );
         loggerService.info(
-            textService.deserialize(
-                registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
-                    .replace("%player%", userName)
-                    .replace("%server%", server)
+            textService.serializePlain(
+                textService.of(
+                    registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
+                        .replace("%player%", userName)
+                        .replace("%server%", server)
+                )
             )
         );
-        joinEvent.setPlayer(player);
-        eventService.fire((TEvent) joinEvent);
-        discordChatListener.onPlayerJoinEvent(joinEvent);
     }
 }

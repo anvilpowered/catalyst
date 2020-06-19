@@ -31,7 +31,6 @@ public class KickCommand extends Command {
     private CommonKickCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> kickCommand;
 
     public KickCommand() {
@@ -40,6 +39,6 @@ public class KickCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        kickCommand.execute(sender, sender, args);
+        kickCommand.execute(sender, args);
     }
 }

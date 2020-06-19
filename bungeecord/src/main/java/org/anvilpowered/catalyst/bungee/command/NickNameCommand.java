@@ -30,7 +30,6 @@ public class NickNameCommand extends Command {
     private CommonNickNameCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> nickNameCommand;
 
     public NickNameCommand() {
@@ -39,6 +38,6 @@ public class NickNameCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        nickNameCommand.execute(sender, sender, args);
+        nickNameCommand.execute(sender, args, ProxiedPlayer.class);
     }
 }

@@ -7,8 +7,6 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.event.connection.PreLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.Player;
@@ -27,11 +25,12 @@ import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.listener.ChatListener;
-import org.anvilpowered.catalyst.api.listener.JoinListener;
-import org.anvilpowered.catalyst.api.listener.LeaveListener;
+import org.anvilpowered.catalyst.api.event.ChatEvent;
+import org.anvilpowered.catalyst.api.event.JoinEvent;
+import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
+import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.TabService;
 
 import java.util.ArrayList;
@@ -53,13 +52,16 @@ public class VelocityListener {
     private TabService<TextComponent> tabService;
 
     @Inject
-    private ChatListener<Player> chatListener;
+    private ChatEvent<TextComponent, Player> chatEvent;
 
     @Inject
-    private JoinListener<Player> joinListener;
+    private EventService eventService;
 
     @Inject
-    private LeaveListener<Player> leaveListener;
+    private JoinEvent<Player> joinEvent;
+
+    @Inject
+    private LeaveEvent<Player> leaveEvent;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -72,7 +74,8 @@ public class VelocityListener {
 
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
-        leaveListener.onPlayerLeave(event.getPlayer(), event.getPlayer().getUniqueId());
+        leaveEvent.setPlayer(event.getPlayer());
+        eventService.getEventBus().post(leaveEvent);
     }
 
     @Subscribe
@@ -116,7 +119,10 @@ public class VelocityListener {
                     event.getPlayer().disconnect(LegacyComponentSerializer.legacy().deserialize("&4Please re-connect using the correct IP!", '&'));
                 }
             }
-            joinListener.onPlayerJoin(event.getPlayer(), event.getPlayer().getUniqueId(), event.getPlayer().getVirtualHost().get().getHostString());
+            joinEvent.setPlayer(player);
+            joinEvent.setPlayerUUID(player.getUniqueId());
+            joinEvent.setHostString(player.getVirtualHost().get().getHostString());
+            eventService.getEventBus().post(joinEvent);
         }
     }
 
@@ -138,7 +144,10 @@ public class VelocityListener {
                         pluginMessages.getMuteMessage(coreMember.getMuteReason(), coreMember.getMuteEndUtc())
                     );
                 } else {
-                    chatListener.onPlayerChat(e.getPlayer(), e.getPlayer().getUniqueId(), e.getMessage());
+                    chatEvent.setPlayer(player);
+                    chatEvent.setRawMessage(e.getMessage());
+                    chatEvent.setMessage(TextComponent.of(e.getMessage()));
+                    eventService.getEventBus().post(chatEvent);
                 }
             });
         }

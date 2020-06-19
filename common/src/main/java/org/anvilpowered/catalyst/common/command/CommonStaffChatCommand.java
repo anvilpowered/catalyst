@@ -24,7 +24,6 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
-import org.anvilpowered.catalyst.api.listener.StaffChatListener;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
@@ -34,9 +33,7 @@ import java.util.UUID;
 public class CommonStaffChatCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject,
-    TEvent> {
+    TCommandSource> {
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -45,7 +42,7 @@ public class CommonStaffChatCommand<
     private Registry registry;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -57,39 +54,49 @@ public class CommonStaffChatCommand<
     private StaffChatService staffChatService;
 
     @Inject
-    private EventService<TEvent> eventService;
+    private EventService eventService;
 
     @Inject
     private StaffChatEvent<TString, TPlayer> staffChatEvent;
 
-    @Inject
-    private StaffChatListener<TPlayer> staffChatListener;
+    public void execute(TCommandSource source, String[] args, Class<?> playerClass) {
+        String message = String.join(" ", args);
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
 
+        if (!playerClass.isAssignableFrom(source.getClass())) {
+            if (args.length == 0) {
+                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), source);
+                return;
+            }
+            staffChatEvent.setRawMessage(message);
+            staffChatEvent.setMessage(textService.of(message));
+            staffChatEvent.setIsConsole(true);
+            eventService.getEventBus().post(staffChatEvent);
+            return;
+        }
+        //Don't get the UUID until after checking if the source is console.
         UUID playerUUID = userService.getUUID((TPlayer) source);
 
         if (args.length == 0) {
             if (staffChatService.contains(playerUUID)) {
                 staffChatService.remove(playerUUID);
                 textService.send(pluginMessages.getStaffChat(false), source);
-                return;
             } else {
                 staffChatService.add(playerUUID);
                 textService.send(pluginMessages.getStaffChat(true), source);
-                return;
             }
         } else {
-            String message = String.join(" ", args);
             staffChatEvent.setRawMessage(message);
             staffChatEvent.setMessage(textService.of(message));
-            staffChatEvent.setSender((TPlayer) source);
-            eventService.fire((TEvent) staffChatEvent);
-            staffChatListener.onStaffChatEvent((TPlayer) source, playerUUID, message);
+            staffChatEvent.setIsConsole(false);
+            staffChatEvent.setPlayerUUID(userService.getUUID((TPlayer) source));
+            staffChatEvent.setPlayer((TPlayer) source);
+            eventService.getEventBus().post(staffChatEvent);
         }
     }
 }

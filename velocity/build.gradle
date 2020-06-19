@@ -39,6 +39,7 @@ shadowJar {
         include dependency(jackson_databind)
         include dependency(jda)
         include dependency(json)
+        include dependency(kyori_event)
         include dependency(nv_websocket)
         include dependency(okhttp3)
         include dependency(okio)

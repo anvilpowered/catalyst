@@ -31,8 +31,7 @@ import java.util.UUID;
 public class CommonSocialSpyCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -41,7 +40,7 @@ public class CommonSocialSpyCommand<
     private Registry registry;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -52,8 +51,12 @@ public class CommonSocialSpyCommand<
     @Inject
     private PrivateMessageService<TString> privateMessageService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.SOCIALSPY_PERMISSION))) {
+    public void execute(TCommandSource source, Class<?> playerClass) {
+        if (!playerClass.isAssignableFrom(source.getClass())) {
+            textService.send(textService.of("Player only command!"), source);
+        }
+        if (permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.SOCIALSPY_PERMISSION))) {
             UUID playerUUID = userService.getUUID((TPlayer) source);
             if (privateMessageService.socialSpySet().contains(playerUUID)) {
                 privateMessageService.socialSpySet().remove(playerUUID);

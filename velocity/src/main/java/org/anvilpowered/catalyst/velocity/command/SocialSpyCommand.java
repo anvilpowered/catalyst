@@ -19,7 +19,6 @@ package org.anvilpowered.catalyst.velocity.command;
 
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.TextComponent;
 import org.anvilpowered.catalyst.common.command.CommonSocialSpyCommand;
@@ -28,17 +27,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public class SocialSpyCommand extends CommonSocialSpyCommand<
     TextComponent,
     Player,
-    CommandSource,
-    PermissionSubject>
+    CommandSource>
     implements Command {
 
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        if (source instanceof Player) {
-            execute(source, source, args);
-        } else {
-            source.sendMessage(TextComponent.of("Player only command!"));
-        }
+        execute(source, Player.class);
     }
 }

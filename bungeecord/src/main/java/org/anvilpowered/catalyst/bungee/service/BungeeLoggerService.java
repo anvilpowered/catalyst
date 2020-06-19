@@ -18,24 +18,13 @@
 package org.anvilpowered.catalyst.bungee.service;
 
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 
-public class BungeeLoggerService implements LoggerService<TextComponent> {
-
-    @Override
-    public void info(TextComponent message) {
-        ProxyServer.getInstance().getLogger().info(message.toPlainText());
-    }
+public class BungeeLoggerService implements LoggerService {
 
     @Override
     public void info(String message) {
         ProxyServer.getInstance().getLogger().info(message);
-    }
-
-    @Override
-    public void warn(TextComponent message) {
-        ProxyServer.getInstance().getLogger().warning(message.toLegacyText());
     }
 
     @Override

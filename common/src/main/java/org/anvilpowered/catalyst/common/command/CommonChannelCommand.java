@@ -29,11 +29,10 @@ import org.anvilpowered.catalyst.api.service.ChatService;
 public class CommonChannelCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private ChatService<TString, TPlayer, TCommandSource> chatService;
@@ -56,8 +55,13 @@ public class CommonChannelCommand<
         this.channelId = channelId;
     }
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + channelId)) {
+    public void execute(TCommandSource source, String[] args, Class<?> playerClass) {
+        if (!playerClass.isAssignableFrom(source.getClass())) {
+            textService.send(textService.of("You can only run this as a player!"), source);
+            return;
+        }
+        if (permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + channelId)) {
             if (args.length == 0) {
                 chatService.switchChannel(userService.getUUID((TPlayer) source), channelId);
                 textService.send(textService.of("Switched channel to " + channelId), source);

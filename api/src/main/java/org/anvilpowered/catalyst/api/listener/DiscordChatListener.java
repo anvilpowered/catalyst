@@ -17,6 +17,7 @@
 
 package org.anvilpowered.catalyst.api.listener;
 
+import com.google.common.eventbus.Subscribe;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
@@ -24,11 +25,15 @@ import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 
 public interface DiscordChatListener<TString, TPlayer> {
 
+    @Subscribe
     void onChatEvent(ChatEvent<TString, TPlayer> event);
 
+    @Subscribe
     void onStaffChatEvent(StaffChatEvent<TString, TPlayer> event);
 
+    @Subscribe
     void onPlayerJoinEvent(JoinEvent<TPlayer> event);
 
+    @Subscribe
     void onPlayerLeaveEvent(LeaveEvent<TPlayer> event);
 }

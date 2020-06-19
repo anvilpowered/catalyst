@@ -19,13 +19,12 @@ package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.Environment;
-import org.anvilpowered.anvil.api.data.key.Keys;
-import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.base.plugin.BasePlugin;
+import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
+import org.anvilpowered.catalyst.api.service.EventRegistrationService;
+import org.anvilpowered.catalyst.api.service.JDAService;
+import org.anvilpowered.catalyst.api.service.LuckpermsService;
 
 public class Catalyst<TPlugin> extends BasePlugin<TPlugin> {
 
@@ -41,5 +40,16 @@ public class Catalyst<TPlugin> extends BasePlugin<TPlugin> {
     @Override
     protected void whenReady(Environment environment) {
         super.whenReady(environment);
+    }
+
+    @Override
+    protected void applyToBuilder(Environment.Builder builder) {
+        super.applyToBuilder(builder);
+        builder.addEarlyServices(
+            LuckpermsService.class,
+            AdvancedServerInfo.class,
+            JDAService.class,
+            EventRegistrationService.class
+        );
     }
 }

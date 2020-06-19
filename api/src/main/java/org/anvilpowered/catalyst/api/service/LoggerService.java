@@ -17,13 +17,9 @@
 
 package org.anvilpowered.catalyst.api.service;
 
-public interface LoggerService<TString> {
-
-    void info(TString message);
+public interface LoggerService {
 
     void info(String message);
-
-    void warn(TString message);
 
     void warn(String message);
 }

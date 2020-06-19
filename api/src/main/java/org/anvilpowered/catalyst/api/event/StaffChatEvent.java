@@ -17,11 +17,17 @@
 
 package org.anvilpowered.catalyst.api.event;
 
+import java.util.UUID;
+
 public interface StaffChatEvent<TString, TPlayer> {
 
-    TPlayer getSender();
+    TPlayer getPlayer();
 
-    void setSender(TPlayer sender);
+    void setPlayer(TPlayer sender);
+
+    UUID getPlayerUUID();
+
+    void setPlayerUUID(UUID playerUUID);
 
     String getRawMessage();
 
@@ -30,4 +36,8 @@ public interface StaffChatEvent<TString, TPlayer> {
     TString getMessage();
 
     void setMessage(TString message);
+
+    boolean getIsConsole();
+
+    void setIsConsole(boolean fromConsole);
 }

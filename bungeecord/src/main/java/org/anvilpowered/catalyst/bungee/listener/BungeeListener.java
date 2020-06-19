@@ -18,42 +18,59 @@
 package org.anvilpowered.catalyst.bungee.listener;
 
 import com.google.inject.Inject;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import org.anvilpowered.catalyst.api.listener.ChatListener;
-import org.anvilpowered.catalyst.api.listener.JoinListener;
-import org.anvilpowered.catalyst.api.listener.LeaveListener;
+import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.event.JoinEvent;
+import org.anvilpowered.catalyst.api.event.LeaveEvent;
+import org.anvilpowered.catalyst.api.service.EventService;
 
 public class BungeeListener implements Listener {
 
     @Inject
-    private LeaveListener<ProxiedPlayer> leaveListener;
+    private JoinEvent<ProxiedPlayer> joinEvent;
 
     @Inject
-    private JoinListener<ProxiedPlayer> joinListener;
+    private LeaveEvent<ProxiedPlayer> leaveEvent;
 
     @Inject
-    private ChatListener<ProxiedPlayer> chatListener;
+    private EventService eventService;
+
+    @Inject
+    private Registry registry;
+
+    @Inject
+    private org.anvilpowered.catalyst.api.event.ChatEvent<TextComponent, ProxiedPlayer> chatEvent;
 
     @EventHandler
     public void onPlayerJoin(PostLoginEvent event) {
-        joinListener.onPlayerJoin(event.getPlayer(), event.getPlayer().getUniqueId(), event.getPlayer().getServer().getAddress().getHostString());
+        joinEvent.setPlayer(event.getPlayer());
+        joinEvent.setPlayerUUID(event.getPlayer().getUniqueId());
+        joinEvent.setHostString(event.getPlayer().getServer().getAddress().getHostString());
+        eventService.getEventBus().post(joinEvent);
     }
 
     @EventHandler
     public void onPlayerLeave(PlayerDisconnectEvent event) {
-        leaveListener.onPlayerLeave(event.getPlayer(), event.getPlayer().getUniqueId());
+        leaveEvent.setPlayer(event.getPlayer());
+        eventService.getEventBus().post(leaveEvent);
     }
 
     @EventHandler
     public void onChat(ChatEvent event) {
         if (event.isCommand()) return;
+        if (!registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) return;
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        chatListener.onPlayerChat(player, player.getUniqueId(), event.getMessage());
+        chatEvent.setPlayer(player);
+        chatEvent.setRawMessage(event.getMessage());
+        chatEvent.setMessage(new TextComponent(event.getMessage()));
+        eventService.getEventBus().post(chatEvent);
         event.setCancelled(true);
     }
 }

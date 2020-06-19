@@ -29,14 +29,13 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 public class CommonFindCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -50,8 +49,9 @@ public class CommonFindCommand<
     @Inject
     private Registry registry;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.FIND_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.FIND_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

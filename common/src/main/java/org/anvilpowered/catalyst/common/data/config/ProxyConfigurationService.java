@@ -55,8 +55,10 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.DISCORD_LEAVE_FORMAT, "discord.format.leave");
         setName(CatalystKeys.DISCORD_CHAT_FORMAT, "discord.format.discord");
         setName(CatalystKeys.DISCORD_STAFF_FORMAT, "discord.format.staff");
-        setName(CatalystKeys.TOPIC_FORMAT, "discord.format.topic");
-        setName(CatalystKeys.TOPIC_UPDATE_DELAY, "discord.time.topicUpdateFrequency");
+        setName(CatalystKeys.TOPIC_FORMAT, "discord.topic.format");
+        setName(CatalystKeys.TOPIC_UPDATE_ENABLED, "discord.topic.enabled");
+        setName(CatalystKeys.TOPIC_UPDATE_DELAY, "discord.topic.updateInterval");
+        setName(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS, "discord.topic.noPlayers");
         setName(CatalystKeys.NOW_PLAYING_MESSAGE, "discord.format.playing");
         setName(CatalystKeys.DISCORD_HOVER_MESSAGE, "discord.format.hover");
         setName(CatalystKeys.WEBHOOK_URL, "discord.url.webhook");
@@ -149,7 +151,11 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.TOPIC_FORMAT,
             "\nFormat of the main channel topic updater");
         setDescription(CatalystKeys.TOPIC_UPDATE_DELAY,
-            "\nHow often you would like the topic to be updated in seconds");
+            "\nHow often you would like the topic to be updated in minutes. Setting this below " +
+                "the default will result in constant RateLimit issues. If you experience issues " +
+                "with 5 minutes, set this to 10 or higher.");
+        setDescription(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS,
+            "\nThis message will be shown when there are no players online.");
         setDescription(CatalystKeys.NOW_PLAYING_MESSAGE,
             "\nThe message being shown as the \"now playing\" for the discord bot.");
         setDescription(CatalystKeys.DISCORD_HOVER_MESSAGE,

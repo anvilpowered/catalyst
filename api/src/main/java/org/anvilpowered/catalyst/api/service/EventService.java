@@ -17,13 +17,18 @@
 
 package org.anvilpowered.catalyst.api.service;
 
-import java.util.concurrent.TimeUnit;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
-public interface EventService<TEvent> {
+@Singleton
+public class EventService {
 
-    void fire(TEvent event);
+    @Inject
+    private EventBus eventBus;
 
-    void schedule(Runnable runnable, TimeUnit timeUnit, int time);
+    public EventBus getEventBus() {
+        return this.eventBus;
+    }
 
-    void run(Runnable runnable);
 }

@@ -20,13 +20,12 @@ package org.anvilpowered.catalyst.common.listener;
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
-import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
+import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
-import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
-import org.anvilpowered.catalyst.api.listener.StaffChatListener;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EventService;
@@ -36,31 +35,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class CommonChatListener<
-    TUser,
     TString,
     TPlayer,
-    TCommandSource,
-    TSubject,
-    TEvent>
-    implements ChatListener<TPlayer> {
+    TCommandSource>
+    implements ChatListener<TString, TPlayer> {
 
     @Inject
     private ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private StaffChatService staffChatService;
 
     @Inject
-    private ChatEvent<TString, TPlayer> chatEvent;
-
-    @Inject
-    private TextService<TString, TCommandSource> textService;
-
-    @Inject
-    private EventService<TEvent> eventService;
+    private EventService eventService;
 
     @Inject
     private ChatFilter chatFilter;
@@ -69,15 +59,22 @@ public class CommonChatListener<
     private Registry registry;
 
     @Inject
-    private StaffChatListener<TPlayer> staffChatListener;
+    private StaffChatEvent<TString, TPlayer> staffChatEvent;
 
     @Inject
-    private DiscordChatListener<TString, TPlayer> discordChatListener;
+    private UserService<TPlayer, TPlayer> userService;
 
     @Override
-    public void onPlayerChat(TPlayer player, UUID playerUUID, String message) {
+    public void onPlayerChat(ChatEvent<TString, TPlayer> event) {
+        UUID playerUUID = userService.getUUID(event.getPlayer());
+        TPlayer player = userService.getPlayer(playerUUID).get();
+        String message = event.getRawMessage();
         if (staffChatService.contains(playerUUID)) {
-            staffChatListener.onStaffChatEvent(player, playerUUID, message);
+            staffChatEvent.setPlayer(player);
+            staffChatEvent.setMessage(event.getMessage());
+            staffChatEvent.setIsConsole(false);
+            staffChatEvent.setRawMessage(event.getRawMessage());
+            eventService.getEventBus().post(staffChatEvent);
             return;
         }
 
@@ -85,17 +82,10 @@ public class CommonChatListener<
         message = chatService.checkPlayerName(player, message);
 
         if (channel.isPresent()) {
-
-            if (!permissionService.hasPermission((TSubject) player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
+            if (!permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
                 message = chatFilter.replaceSwears(message);
             }
-
-            chatEvent.setSender(player);
-            chatEvent.setMessage(textService.of(message));
-            chatEvent.setRawMessage(message);
-            eventService.fire((TEvent) chatEvent);
-            discordChatListener.onChatEvent(chatEvent);
-            chatService.sendChatMessage(player, playerUUID, message);
+            chatService.sendChatMessage(event);
         } else {
             throw new AssertionError(
                 "If this is your first time running anvil, run /av reload Catalyst, if not report this" +

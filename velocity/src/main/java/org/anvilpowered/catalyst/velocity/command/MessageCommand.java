@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.permission.PermissionSubject;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
@@ -34,8 +34,7 @@ import java.util.stream.Collectors;
 public class MessageCommand extends CommonMessageCommand<
     TextComponent,
     Player,
-    CommandSource,
-    PermissionSubject>
+    CommandSource>
     implements Command {
 
     @Inject
@@ -43,13 +42,7 @@ public class MessageCommand extends CommonMessageCommand<
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-        boolean isConsole = true;
-
-        if (source instanceof Player) {
-            isConsole = false;
-        }
-
-        execute(source, source, args, isConsole);
+        execute(source, args, ConsoleCommandSource.class);
     }
 
     @Override

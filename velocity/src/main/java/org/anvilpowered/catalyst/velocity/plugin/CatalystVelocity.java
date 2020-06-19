@@ -30,14 +30,11 @@ import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.anvil.api.data.key.Keys;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.common.plugin.Catalyst;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.velocity.command.CatalystCommandManager;
 import org.anvilpowered.catalyst.velocity.listener.VelocityListener;
 import org.anvilpowered.catalyst.velocity.module.VelocityModule;
-import org.anvilpowered.catalyst.velocity.service.VelocityJDAService;
-import org.anvilpowered.catalyst.velocity.service.VelocityLuckpermsService;
 import org.anvilpowered.catalyst.velocity.tab.GlobalTab;
 import org.slf4j.Logger;
 
@@ -64,14 +61,7 @@ public class CatalystVelocity extends Catalyst<PluginContainer> {
 
     @Inject
     public CatalystVelocity(Injector injector) {
-        super(injector,
-            new VelocityModule(),
-            GlobalTab.class,
-            CatalystCommandManager.class,
-            VelocityJDAService.class,
-            VelocityLuckpermsService.class,
-            AdvancedServerInfoService.class
-        );
+        super(injector, new VelocityModule());
     }
 
     @Override
@@ -85,6 +75,15 @@ public class CatalystVelocity extends Catalyst<PluginContainer> {
                 environment.getInjector().getInstance(VelocityListener.class)
             );
         }
+    }
+
+    @Override
+    protected void applyToBuilder(Environment.Builder builder) {
+        super.applyToBuilder(builder);
+        builder.addEarlyServices(
+            GlobalTab.class,
+            CatalystCommandManager.class
+        );
     }
 
     @Subscribe(order = PostOrder.LAST)

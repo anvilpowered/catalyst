@@ -30,7 +30,6 @@ public class MuteCommand extends Command {
     private CommonMuteCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> muteCommand;
 
     public MuteCommand() {
@@ -39,6 +38,6 @@ public class MuteCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        muteCommand.execute(sender, sender, args);
+        muteCommand.execute(sender, args);
     }
 }

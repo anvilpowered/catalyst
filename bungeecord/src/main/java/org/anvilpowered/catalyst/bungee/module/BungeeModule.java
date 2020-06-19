@@ -21,17 +21,14 @@ import com.google.inject.TypeLiteral;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Event;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.anvilpowered.anvil.api.data.config.ConfigurationService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
-import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.bungee.service.BungeeBroadcastService;
-import org.anvilpowered.catalyst.bungee.service.BungeeEventService;
 import org.anvilpowered.catalyst.bungee.service.BungeeExecuteCommandService;
 import org.anvilpowered.catalyst.bungee.service.BungeeLoggerService;
 import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
@@ -46,9 +43,7 @@ public class BungeeModule extends CommonModule<
     ProxiedPlayer,
     ProxiedPlayer,
     TextComponent,
-    CommandSender,
-    CommandSender,
-    Event> {
+    CommandSender> {
 
     @Override
     protected void configure() {
@@ -69,9 +64,8 @@ public class BungeeModule extends CommonModule<
         bind(ConfigurationService.class).to(ProxyConfigurationService.class);
         bind(new TypeLiteral<BroadcastService<TextComponent>>() {
         }).to(BungeeBroadcastService.class);
-        bind(new TypeLiteral<LoggerService<TextComponent>>() {
+        bind(new TypeLiteral<LoggerService>() {
         }).to(BungeeLoggerService.class);
-        bind(EventService.class).to(BungeeEventService.class);
         bind(new TypeLiteral<ExecuteCommandService<CommandSender>>() {
         }).to(BungeeExecuteCommandService.class);
     }

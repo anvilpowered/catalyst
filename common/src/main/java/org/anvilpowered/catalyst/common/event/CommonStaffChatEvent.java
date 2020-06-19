@@ -19,20 +19,34 @@ package org.anvilpowered.catalyst.common.event;
 
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 
+import java.util.UUID;
+
 public class CommonStaffChatEvent<TString, TPlayer> implements StaffChatEvent<TString, TPlayer> {
 
     private TPlayer sender;
     private String rawMessage;
     private TString message;
+    private boolean fromConsole;
+    private UUID playerUUID;
 
     @Override
-    public TPlayer getSender() {
+    public TPlayer getPlayer() {
         return this.sender;
     }
 
     @Override
-    public void setSender(TPlayer sender) {
+    public void setPlayer(TPlayer sender) {
         this.sender = sender;
+    }
+
+    @Override
+    public UUID getPlayerUUID() {
+        return playerUUID;
+    }
+
+    @Override
+    public void setPlayerUUID(UUID playerUUID) {
+        this.playerUUID = playerUUID;
     }
 
     @Override
@@ -53,5 +67,15 @@ public class CommonStaffChatEvent<TString, TPlayer> implements StaffChatEvent<TS
     @Override
     public void setMessage(TString message) {
         this.message = message;
+    }
+
+    @Override
+    public boolean getIsConsole() {
+        return fromConsole;
+    }
+
+    @Override
+    public void setIsConsole(boolean fromConsole) {
+        this.fromConsole = fromConsole;
     }
 }

@@ -32,8 +32,7 @@ import java.util.UUID;
 public class CommonReplyCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -42,7 +41,7 @@ public class CommonReplyCommand<
     private Registry registry;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -53,8 +52,9 @@ public class CommonReplyCommand<
     @Inject
     private PrivateMessageService<TString> privateMessageService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

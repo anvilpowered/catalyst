@@ -23,8 +23,6 @@ public interface JDAService {
 
     void enableDiscordBot();
 
-    void setupListeners(Class<?>... listeners);
-
     Runnable updateTopic();
 
     JDA getJDA();

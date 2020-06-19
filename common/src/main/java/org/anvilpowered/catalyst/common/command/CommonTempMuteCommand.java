@@ -31,11 +31,10 @@ import java.util.Arrays;
 public class CommonTempMuteCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -52,8 +51,9 @@ public class CommonTempMuteCommand<
     @Inject
     private Registry registry;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -68,7 +68,7 @@ public class CommonTempMuteCommand<
 
         if (userService.get(userName).isPresent()) {
             if (permissionService.hasPermission(
-                (TSubject) userService.get(userName).get(),
+                userService.get(userName).get(),
                 registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.getMuteExempt(), source);
                 return;

@@ -28,6 +28,7 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
@@ -52,30 +53,39 @@ public class CommonChatService<
     TUser,
     TPlayer,
     TString,
-    TCommandSource,
-    TSubject>
+    TCommandSource>
     implements ChatService<TString, TPlayer, TCommandSource> {
 
     Map<UUID, String> channelMap = new HashMap<>();
     Map<UUID, List<UUID>> ignoreMap = new HashMap<>();
+
     @Inject
     private Registry registry;
+
     @Inject
     private MemberManager<TString> memberManager;
+
     @Inject
     private TextService<TString, TCommandSource> textService;
+
     @Inject
     private UserService<TUser, TPlayer> userService;
+
     @Inject
-    private LuckpermsService<TPlayer> luckpermsService;
+    private LuckpermsService luckpermsService;
+
     @Inject
     private CurrentServerService currentServerService;
+
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
+
     @Inject
     private PluginMessages<TString> pluginMessages;
+
     @Inject
-    private LoggerService<TString> loggerService;
+    private LoggerService loggerService;
+
     @Inject
     private AdvancedServerInfoService serverService;
 
@@ -135,9 +145,15 @@ public class CommonChatService<
     }
 
     @Override
-    public CompletableFuture<Void> sendMessageToChannel(String channelId, TString message, String server, String userName, UUID senderUUID, Predicate<? super TPlayer> checkOverridePerm) {
+    public CompletableFuture<Void> sendMessageToChannel(String channelId,
+                                                        TString message,
+                                                        String server,
+                                                        String userName,
+                                                        UUID senderUUID,
+                                                        Predicate<? super TPlayer> overridePerm) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
-            if (checkOverridePerm.test(p) || getChannelIdForUser(userService.getUUID((TUser) p)).equals(channelId)) {
+            if (overridePerm.test(p)
+                || getChannelIdForUser(userService.getUUID((TUser) p)).equals(channelId)) {
                 if (!senderUUID.equals(userService.getUUID((TUser) p))) {
                     if (!isIgnored(userService.getUUID((TUser) p), senderUUID)) {
                         textService.send(message, (TCommandSource) p);
@@ -170,29 +186,61 @@ public class CommonChatService<
         String channelId,
         String channelPrefix
     ) {
-        return memberManager.getPrimaryComponent().getOneForUser(userName).thenApplyAsync(optionalMember -> {
-            if (!optionalMember.isPresent()) {
-                return Optional.of(textService.fail("Couldn't find a user matching that name!"));
-            }
+        return memberManager.getPrimaryComponent().getOneForUser(userName)
+            .thenApplyAsync(optionalMember -> {
+                if (!optionalMember.isPresent()) {
+                    return Optional.of(textService.fail(
+                        "Couldn't find a user matching that name!"));
+                }
 
-            CoreMember<?> optionalCoreMember = optionalMember.get();
-            if (optionalMember.get().isMuted()) {
-                return Optional.empty();
-            }
+                CoreMember<?> optionalCoreMember = optionalMember.get();
+                if (optionalMember.get().isMuted()) {
+                    return Optional.empty();
+                }
 
-            String finalName = optionalMember.get().getUserName();
-            if (optionalCoreMember.getNickName() != null) {
-                finalName = optionalMember.get().getNickName() + "&r";
-            } else {
-                finalName = nameColor + finalName + "&r";
-            }
-            return Optional.of(textService
-                .builder()
-                .append(textService.deserialize(replacePlaceholders(message, userUUID, prefix, optionalMember.get().getUserName(), finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE)))
-                .onHoverShowText(textService.deserialize(replacePlaceholders(message, userUUID, prefix, optionalMember.get().getUserName(), finalName, hasChatColorPermission, suffix, serverName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_HOVER)))
-                .onClickSuggestCommand(replacePlaceholders(message, userUUID, prefix, optionalMember.get().getUserName(), userName, hasChatColorPermission, suffix, finalName, channelPrefix, CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND))
-                .build());
-        });
+                String finalName = optionalMember.get().getUserName();
+                if (optionalCoreMember.getNickName() != null) {
+                    finalName = optionalMember.get().getNickName() + "&r";
+                } else {
+                    finalName = nameColor + finalName + "&r";
+                }
+                return Optional.of(textService
+                    .builder()
+                    .append(textService.deserialize(replacePlaceholders(
+                        message,
+                        userUUID,
+                        prefix,
+                        optionalMember.get().getUserName(),
+                        finalName,
+                        hasChatColorPermission,
+                        suffix,
+                        serverName,
+                        channelPrefix,
+                        CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE)))
+                    .onHoverShowText(textService.deserialize(replacePlaceholders(
+                        message,
+                        userUUID,
+                        prefix,
+                        optionalMember.get().getUserName(),
+                        finalName,
+                        hasChatColorPermission,
+                        suffix,
+                        serverName,
+                        channelPrefix,
+                        CatalystKeys.PROXY_CHAT_FORMAT_HOVER)))
+                    .onClickSuggestCommand(replacePlaceholders(
+                        message,
+                        userUUID,
+                        prefix,
+                        optionalMember.get().getUserName(),
+                        userName,
+                        hasChatColorPermission,
+                        suffix,
+                        finalName,
+                        channelPrefix,
+                        CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND))
+                    .build());
+            });
     }
 
     private String replacePlaceholders(
@@ -219,14 +267,16 @@ public class CommonChatService<
             .replace("%player%", userName)
             .replace("%suffix%", suffix)
             .replace("%channel%", channelPrefix)
-            .replace("%message%", hasChatColorPermission ? rawMessage : textService.toPlain(rawMessage));
+            .replace("%message%", hasChatColorPermission ? rawMessage
+                : textService.toPlain(rawMessage));
     }
 
     @Override
     public List<TString> getPlayerList() {
         List<String> playerList = new ArrayList<>();
 
-        userService.getOnlinePlayers().forEach(p -> playerList.add(userService.getUserName((TUser) p)));
+        userService.getOnlinePlayers().forEach(p ->
+            playerList.add(userService.getUserName((TUser) p)));
 
         List<TString> tempList = new ArrayList<>();
         StringBuilder builder = null;
@@ -274,7 +324,8 @@ public class CommonChatService<
             }
         }
         ignoreMap.put(playerUUID, uuidList);
-        return textService.success("You are now ignoring " + userService.getUserName(targetPlayerUUID));
+        return textService.success("You are now ignoring " +
+            userService.getUserName(targetPlayerUUID));
     }
 
     @Override
@@ -284,7 +335,8 @@ public class CommonChatService<
             uuidList.remove(targetPlayerUUID);
             ignoreMap.replace(playerUUID, uuidList);
         }
-        return textService.success("You are no longer ignoring " + userService.getUserName(targetPlayerUUID));
+        return textService.success("You are no longer ignoring " +
+            userService.getUserName(targetPlayerUUID));
     }
 
     @Override
@@ -305,7 +357,10 @@ public class CommonChatService<
                 int startIndex = message.toLowerCase().indexOf(username.toLowerCase());
                 while (startIndex != -1) {
                     occurrences.add(startIndex);
-                    startIndex = message.toLowerCase().indexOf(username.toLowerCase(), startIndex + 1);
+                    startIndex = message.toLowerCase().indexOf
+                        (username.toLowerCase(),
+                            startIndex + 1
+                        );
                 }
                 String chatColor = luckpermsService.getChatColor(sender);
                 for (int occurrence : occurrences) {
@@ -318,26 +373,28 @@ public class CommonChatService<
     }
 
     @Override
-    public void sendChatMessage(TPlayer player, UUID playerUUID, String message) {
-        String prefix = luckpermsService.getPrefix(player);
-        String chatColor = luckpermsService.getChatColor(player);
-        String nameColor = luckpermsService.getNameColor(player);
-        String suffix = luckpermsService.getSuffix(player);
-        String userName = pluginMessages.removeColor(userService.getUserName((TUser) player));
+    public void sendChatMessage(ChatEvent<TString, TPlayer> event) {
+        String prefix = luckpermsService.getPrefix(event.getPlayer());
+        String chatColor = luckpermsService.getChatColor(event.getPlayer());
+        String nameColor = luckpermsService.getNameColor(event.getPlayer());
+        String suffix = luckpermsService.getSuffix(event.getPlayer());
+        String userName = pluginMessages.removeColor(userService.getUserName((TUser) event.getPlayer()));
         String server = currentServerService.getName(userName).orElseThrow(() ->
             new IllegalStateException(userName + " is not in a valid server!"));
+        UUID playerUUID = userService.getUUID((TUser) event.getPlayer());
         String channelId = getChannelIdForUser(playerUUID);
+        String message = event.getRawMessage();
         Optional<ChatChannel> channel = getChannelFromId(channelId);
         String channelPrefix = getChannelPrefix(channelId).orElseThrow(() ->
             new IllegalStateException("Please specify a prefix for " + channelId));
 
         boolean hasColorPermission = permissionService.hasPermission(
-            (TSubject) player,
+            event.getPlayer(),
             registry.getOrDefault(CatalystKeys.CHAT_COLOR_PERMISSION)
         );
         message = chatColor + message;
         if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
-            && permissionService.hasPermission((TSubject) player,
+            && permissionService.hasPermission(event.getPlayer(),
             registry.getOrDefault(CatalystKeys.EMOJI_PERMISSION))) {
             message = emojiService.toEmoji(message, chatColor);
         }
@@ -354,12 +411,21 @@ public class CommonChatService<
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
             if (optionalMessage.isPresent()) {
-                loggerService.info(channelId + " : " + textService.serializePlain(optionalMessage.get()));
-                sendMessageToChannel(channelId, optionalMessage.get(), server, userName, playerUUID, p ->
-                    permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
+                loggerService.info(channelId + " : " +
+                    textService.serializePlain(optionalMessage.get()));
+                sendMessageToChannel(
+                    channelId,
+                    optionalMessage.get(),
+                    server,
+                    userName,
+                    playerUUID,
+                    p ->
+                        permissionService.hasPermission(
+                            p, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION)
+                        )
                 );
             } else {
-                textService.send(pluginMessages.getMuted(), (TCommandSource) player);
+                textService.send(pluginMessages.getMuted(), (TCommandSource) event.getPlayer());
             }
         });
     }

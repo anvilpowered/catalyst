@@ -30,7 +30,6 @@ public class ListCommand extends Command {
     private CommonListCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> listCommand;
 
     public ListCommand() {
@@ -39,6 +38,6 @@ public class ListCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        listCommand.execute(sender, sender, args);
+        listCommand.execute(sender, args);
     }
 }

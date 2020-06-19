@@ -25,7 +25,7 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-public class CommonExceptionCommand<TString, TCommandSource, TSubject> {
+public class CommonExceptionCommand<TString, TCommandSource> {
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -34,7 +34,7 @@ public class CommonExceptionCommand<TString, TCommandSource, TSubject> {
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private Registry registry;
@@ -42,7 +42,7 @@ public class CommonExceptionCommand<TString, TCommandSource, TSubject> {
     @Inject
     private ConfigurationService configurationService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
+    public void execute(TCommandSource source, String[] args) {
 
         if (args.length == 0) {
             textService.send(pluginMessages.getNotEnoughArgs(), source);
@@ -51,7 +51,8 @@ public class CommonExceptionCommand<TString, TCommandSource, TSubject> {
         }
         switch (args[0]) {
             case "list": {
-                if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.LANGUAGE_LIST_PERMISSION))) {
+                if (permissionService.hasPermission(source,
+                    registry.getOrDefault(CatalystKeys.LANGUAGE_LIST_PERMISSION))) {
                     textService.send(textService.of(String.join(
                         ", ",
                         registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS))),
@@ -63,7 +64,8 @@ public class CommonExceptionCommand<TString, TCommandSource, TSubject> {
                 return;
             }
             case "add": {
-                if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
+                if (permissionService.hasPermission(source,
+                    registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
                     if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS).isEmpty()) {
                         configurationService
                             .addToCollection(CatalystKeys.CHAT_FILTER_EXCEPTIONS, args[1]);
@@ -84,7 +86,8 @@ public class CommonExceptionCommand<TString, TCommandSource, TSubject> {
                 return;
             }
             case "remove": {
-                if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
+                if (permissionService.hasPermission(source,
+                    registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
                     if (!registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS).contains(args[1])) {
                         textService.send(pluginMessages.getMissingException(args[1]), source);
                     } else {

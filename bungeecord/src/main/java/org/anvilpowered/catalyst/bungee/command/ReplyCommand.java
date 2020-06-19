@@ -30,7 +30,6 @@ public class ReplyCommand extends Command {
     private CommonReplyCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> replyCommand;
 
     public ReplyCommand() {
@@ -39,6 +38,6 @@ public class ReplyCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        replyCommand.execute(sender, sender, args);
+        replyCommand.execute(sender, args);
     }
 }

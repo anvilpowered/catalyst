@@ -28,14 +28,13 @@ import org.anvilpowered.catalyst.api.service.BroadcastService;
 
 public class CommonBroadcastCommand<
     TString,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private BroadcastService<TString> broadcastService;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -46,8 +45,9 @@ public class CommonBroadcastCommand<
     @Inject
     private TextService<TString, TCommandSource> textService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.BROADCAST_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.BROADCAST_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

@@ -41,18 +41,18 @@ public class VelocityExecuteCommandService implements ExecuteCommandService<Comm
 
     @Override
     public void executeCommand(CommandSource source, String command) {
-        proxyServer.getCommandManager().execute(source, command);
+        proxyServer.getCommandManager().executeAsync(source, command);
     }
 
     @Override
     public void executeAsConsole(String command) {
-        proxyServer.getCommandManager().execute(proxyServer.getConsoleCommandSource(), command);
+        proxyServer.getCommandManager().executeAsync(proxyServer.getConsoleCommandSource(), command);
     }
 
     @Override
     public void executeDiscordCommand(String command) {
         proxyServer.getScheduler().buildTask(plugin, () -> {
-            proxyServer.getCommandManager().execute(discordCommandSource, command);
+            proxyServer.getCommandManager().executeAsync(discordCommandSource, command);
             logger.info("Discord: " + command);
         }).schedule();
     }

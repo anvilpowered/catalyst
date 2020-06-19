@@ -26,12 +26,12 @@ public class CommonChatEvent<TString, TPlayer> implements ChatEvent<TString, TPl
     private TString message;
 
     @Override
-    public TPlayer getSender() {
+    public TPlayer getPlayer() {
         return this.sender;
     }
 
     @Override
-    public void setSender(TPlayer sender) {
+    public void setPlayer(TPlayer sender) {
         this.sender = sender;
     }
 

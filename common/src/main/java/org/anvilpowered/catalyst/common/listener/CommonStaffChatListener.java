@@ -24,29 +24,25 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
-import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.listener.StaffChatListener;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.EmojiService;
-import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 
-import java.util.UUID;
+import java.util.Optional;
 
 public class CommonStaffChatListener<
     TUser,
     TString,
     TPlayer,
-    TCommandSource,
-    TSubject,
-    TEvent>
-    implements StaffChatListener<TPlayer> {
+    TCommandSource>
+    implements StaffChatListener<TString, TPlayer> {
 
     @Inject
     private UserService<TUser, TPlayer> userService;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -58,39 +54,42 @@ public class CommonStaffChatListener<
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private StaffChatEvent<TString, TPlayer> staffChatEvent;
-
-    @Inject
-    private EventService<TEvent> eventService;
-
-    @Inject
-    private DiscordChatListener<TString, TPlayer> discordChatListener;
-
-    @Inject
-    private LoggerService<TString> loggerService;
+    private LoggerService loggerService;
 
     @Inject
     private EmojiService emojiService;
 
     @Override
-    public void onStaffChatEvent(TPlayer player, UUID playerUUID, String message) {
+    public void onStaffChatEvent(StaffChatEvent<TString, TPlayer> event) {
+        String message = event.getRawMessage();
+        TPlayer player = event.getPlayer();
+
+        if (event.getIsConsole()) {
+            String finalMessage = message;
+            userService.getOnlinePlayers().forEach(p -> {
+                if (permissionService.hasPermission(p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
+                    textService.send(pluginMessages.getStaffChatMessageFormatted("Console",
+                        textService.deserialize(finalMessage)), (TCommandSource) p);
+                }
+            });
+            loggerService.info("[STAFF] Console: " + message);
+            return;
+        }
+
         if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
-            && permissionService.hasPermission((TSubject) player,
+            && permissionService.hasPermission(player,
             registry.getOrDefault(CatalystKeys.EMOJI_PERMISSION))) {
             message = emojiService.toEmoji(message, "&d");
         }
+
         String finalMessage = message;
         userService.getOnlinePlayers().forEach(p -> {
-            if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
+            if (permissionService.hasPermission(p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
                 textService.send(pluginMessages.getStaffChatMessageFormatted(userService.getUserName((TUser) player), textService.deserialize(finalMessage)), (TCommandSource) p);
             }
         });
-
-        loggerService.info("[STAFF] " + userService.getUserName(playerUUID).join() + " : " + finalMessage);
-        staffChatEvent.setSender(player);
-        staffChatEvent.setRawMessage(finalMessage);
-        staffChatEvent.setMessage(textService.of(finalMessage));
-        eventService.fire((TEvent) staffChatEvent);
-        discordChatListener.onStaffChatEvent(staffChatEvent);
+        Optional<String> userName = userService.getUserName(event.getPlayerUUID()).join();
+        userName.ifPresent(s -> loggerService.info("[STAFF] " + s
+            + " : " + finalMessage));
     }
 }

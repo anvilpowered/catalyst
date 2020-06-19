@@ -30,7 +30,6 @@ public class SocialSpyCommand extends Command {
     private CommonSocialSpyCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> socialSpyCommand;
 
     public SocialSpyCommand() {
@@ -39,6 +38,6 @@ public class SocialSpyCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        socialSpyCommand.execute(sender, sender, args);
+        socialSpyCommand.execute(sender, ProxiedPlayer.class);
     }
 }

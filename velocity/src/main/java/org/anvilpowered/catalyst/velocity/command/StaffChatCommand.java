@@ -17,53 +17,21 @@
 
 package org.anvilpowered.catalyst.velocity.command;
 
-import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.permission.PermissionSubject;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.common.command.CommonStaffChatCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class StaffChatCommand extends CommonStaffChatCommand<
     TextComponent,
     Player,
-    CommandSource,
-    PermissionSubject,
-    Object>
+    CommandSource>
     implements Command {
-
-    @Inject
-    private PluginMessages<TextComponent> pluginMessages;
-
-    @Inject
-    private ProxyServer proxyServer;
-
-    @Inject
-    private Registry registry;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
-
-        if (source instanceof Player) {
-            execute(source, source, args);
-        } else {
-            if (args.length == 0) {
-                source.sendMessage(pluginMessages.getNotEnoughArgs());
-            } else {
-                String message = String.join(" ", args);
-                proxyServer.getAllPlayers().stream().filter(target ->
-                    target.hasPermission(registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION)))
-                    .forEach(target ->
-                        target.sendMessage(pluginMessages
-                            .getStaffChatMessageFormattedConsole(TextComponent.of(message)))
-                    );
-            }
-        }
+        execute(source, args, Player.class);
     }
 }

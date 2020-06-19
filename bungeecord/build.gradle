@@ -13,6 +13,7 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url 'https://repo.spongepowered.org/maven' }
     maven { url 'https://jetbrains.bintray.com/xodus' }
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots" }
 }
 
 dependencies {
@@ -32,6 +33,7 @@ dependencies {
     implementation jda
     implementation json
     implementation okio
+    implementation spigot
     implementation sponge
     implementation unirest
 }

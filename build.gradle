@@ -31,6 +31,7 @@ subprojects {
         implementation jackson_databind
         implementation jda
         implementation json
+        implementation kyori_event
         implementation luckperms
         implementation okio
         implementation unirest

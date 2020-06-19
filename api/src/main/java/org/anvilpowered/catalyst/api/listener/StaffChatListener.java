@@ -18,9 +18,11 @@
 package org.anvilpowered.catalyst.api.listener;
 
 
-import java.util.UUID;
+import com.google.common.eventbus.Subscribe;
+import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 
-public interface StaffChatListener<TPlayer> {
+public interface StaffChatListener<TString, TPlayer> {
 
-    void onStaffChatEvent(TPlayer player, UUID playerUUID, String message);
+    @Subscribe
+    void onStaffChatEvent(StaffChatEvent<TString, TPlayer> staffChatEvent);
 }

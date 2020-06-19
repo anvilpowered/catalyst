@@ -30,11 +30,10 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 public class CommonBanCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -52,8 +51,9 @@ public class CommonBanCommand<
     private Registry registry;
 
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.BAN_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.BAN_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -64,9 +64,9 @@ public class CommonBanCommand<
             return;
         }
         String userName = args[0];
-        if(userService.get(userName).isPresent()) {
+        if (userService.get(userName).isPresent()) {
             if (permissionService.hasPermission(
-                (TSubject) userService.get(userName).get(),
+                userService.get(userName).get(),
                 registry.getOrDefault(CatalystKeys.BAN_EXEMPT_PERMISSION))) {
                 textService.send(pluginMessages.getBanExempt(), source);
                 return;

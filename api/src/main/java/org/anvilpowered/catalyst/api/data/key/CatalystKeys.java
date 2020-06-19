@@ -108,6 +108,15 @@ public final class CatalystKeys {
     public static final Key<String> INFO_PERMISSION = new Key<String>("INFO_PERMISSION",
         "catalyst.command.info") {
     };
+    public static final Key<String> INFO_IP_PERMISSION = new Key<String>("INFO_IP_PERMISSION",
+        "catalyst.command.info.ip") {
+    };
+    public static final Key<String> INFO_BANNED_PERMISSION = new Key<String>(
+        "INFO_BANNED_PERMISSION", "catalyst.command.info.banned") {
+    };
+    public static final Key<String> INFO_CHANNEL_PERMISSION = new Key<String>("INFO_CHANNEL_PERMISSION",
+        "catalyst.command.info.channel") {
+    };
     public static final Key<String> KICK_PERMISSION = new Key<String>(
         "KICK_PERMISSION", "catalyst.command.kick") {
     };
@@ -211,8 +220,14 @@ public final class CatalystKeys {
     public static final Key<String> TOPIC_FORMAT = new Key<String>("TOPIC_FORMAT",
         "Player Count : %players%") {
     };
+    public static final Key<Boolean> TOPIC_UPDATE_ENABLED = new Key<Boolean>(
+        "TOPIC_UPDATE_ENABLED", false) {
+    };
     public static final Key<Integer> TOPIC_UPDATE_DELAY = new Key<Integer>("TOPIC_UPDATE_DELAY",
-        10) {
+        5) {
+    };
+    public static final Key<String> TOPIC_NO_ONLINE_PLAYERS = new Key<String>(
+        "TOPIC_NO_ONLINE_PLAYERS", "There are no players online!") {
     };
     public static final Key<String> NOW_PLAYING_MESSAGE = new Key<String>("NOW_PLAYING_MESSAGE",
         "A Minecraft Server!") {
@@ -400,6 +415,9 @@ public final class CatalystKeys {
         Keys.registerKey(FIND_PERMISSION);
         Keys.registerKey(GOOGLE_PERMISSION);
         Keys.registerKey(INFO_PERMISSION);
+        Keys.registerKey(INFO_IP_PERMISSION);
+        Keys.registerKey(INFO_BANNED_PERMISSION);
+        Keys.registerKey(INFO_CHANNEL_PERMISSION);
         Keys.registerKey(KICK_PERMISSION);
         Keys.registerKey(KICK_EXEMPT_PERMISSION);
         Keys.registerKey(LANGUAGE_ADMIN_PERMISSION);
@@ -434,7 +452,7 @@ public final class CatalystKeys {
         Keys.registerKey(DISCORD_CHAT_FORMAT);
         Keys.registerKey(DISCORD_STAFF_FORMAT);
         Keys.registerKey(TOPIC_FORMAT);
-        Keys.registerKey(TOPIC_FORMAT);
+        Keys.registerKey(TOPIC_UPDATE_ENABLED);
         Keys.registerKey(TOPIC_UPDATE_DELAY);
         Keys.registerKey(NOW_PLAYING_MESSAGE);
         Keys.registerKey(WEBHOOK_URL);

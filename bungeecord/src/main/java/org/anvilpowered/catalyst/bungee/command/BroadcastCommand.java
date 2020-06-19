@@ -28,9 +28,7 @@ public class BroadcastCommand extends Command {
     @Inject
     private CommonBroadcastCommand<
         TextComponent,
-        CommandSender,
         CommandSender> broadcastCommand;
-
 
     public BroadcastCommand() {
         super("broadcast");
@@ -38,6 +36,6 @@ public class BroadcastCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        broadcastCommand.execute(sender, sender, args);
+        broadcastCommand.execute(sender, args);
     }
 }

@@ -28,7 +28,6 @@ public class UnBanCommand extends Command {
     @Inject
     private CommonUnBanCommand<
         TextComponent,
-        CommandSender,
         CommandSender> unBanCommand;
 
     public UnBanCommand() {
@@ -37,6 +36,6 @@ public class UnBanCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        unBanCommand.execute(sender, sender, args);
+        unBanCommand.execute(sender, args);
     }
 }

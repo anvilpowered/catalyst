@@ -30,11 +30,10 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 public class CommonDeleteNicknameCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -51,8 +50,13 @@ public class CommonDeleteNicknameCommand<
     @Inject
     private Registry registry;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject,
+    public void execute(TCommandSource source, String[] args, Class<?> playerClass) {
+        if (!playerClass.isAssignableFrom(source.getClass())) {
+            textService.send(textService.of("Player only command!"), source);
+            return;
+        }
+
+        if (!permissionService.hasPermission(source,
             registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
@@ -64,7 +68,7 @@ public class CommonDeleteNicknameCommand<
         }
         if (args[0].equalsIgnoreCase("other")
             && permissionService.hasPermission(
-            subject, registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION))) {
+            source, registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION))) {
             memberManager.deleteNickNameForUser(args[1])
                 .thenAcceptAsync(m -> textService.send(m, source));
         } else {

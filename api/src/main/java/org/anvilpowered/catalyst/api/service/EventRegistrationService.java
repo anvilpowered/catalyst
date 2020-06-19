@@ -15,29 +15,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.bungee.command;
+package org.anvilpowered.catalyst.api.service;
 
-import com.google.inject.Inject;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
-import org.anvilpowered.catalyst.common.command.CommonInfoCommand;
+public interface EventRegistrationService {
 
-public class InfoCommand extends Command {
-
-    @Inject
-    private CommonInfoCommand<
-        TextComponent,
-        ProxiedPlayer,
-        CommandSender> infoCommand;
-
-    public InfoCommand() {
-        super("info");
-    }
-
-    @Override
-    public void execute(CommandSender sender, String[] args) {
-        infoCommand.execute(sender, args);
-    }
+    void registerEvents();
 }

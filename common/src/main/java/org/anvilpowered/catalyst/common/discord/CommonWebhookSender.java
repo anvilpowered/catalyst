@@ -29,7 +29,7 @@ import org.anvilpowered.catalyst.api.discord.WebhookSender;
 import org.anvilpowered.catalyst.api.service.JDAService;
 import org.json.JSONObject;
 
-public class CommonWebhookSender<TUser, TPlayer> implements WebhookSender<TPlayer> {
+public class CommonWebhookSender<TUser, TPlayer> implements WebhookSender {
 
     @Inject
     private Registry registry;
@@ -41,13 +41,23 @@ public class CommonWebhookSender<TUser, TPlayer> implements WebhookSender<TPlaye
     private UserService<TUser, TPlayer> userService;
 
     @Override
-    public void sendWebhookMessage(String webHook, String player, String message, String channelId, TPlayer source) {
+    public void sendWebhookMessage(String webHook, String player, String message,
+                                   String channelId, Object source) {
         String content = message.replaceAll("&(0-9a-fA-FlkKrR)", "");
         String format = registry.getOrDefault(CatalystKeys.WEBHOOK_URL)
             .replace("%uuid%", userService.getUUID((TUser) source).toString());
         Webhook webhook = getWebhook(channelId);
         if (webHook == null) return;
         sendWebhook(webhook, org.anvilpowered.catalyst.api.discord.Webhook.of(format, removeCodes(player), removeCodes(content)));
+    }
+
+    @Override
+    public void sendConsoleWebhookMessage(String webHook, String message, String channelId) {
+        String content = message.replaceAll("&(0-9a-fA-FlkKrR)", "");
+        Webhook webhook = getWebhook(channelId);
+        if (webHook == null) return;
+        sendWebhook(webhook, org.anvilpowered.catalyst.api.discord.Webhook.of("", "Console",
+            content));
     }
 
     @Override

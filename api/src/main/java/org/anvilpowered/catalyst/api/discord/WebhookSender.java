@@ -19,9 +19,12 @@ package org.anvilpowered.catalyst.api.discord;
 
 import net.dv8tion.jda.api.entities.Webhook;
 
-public interface WebhookSender<TPlayer> {
+public interface WebhookSender {
 
-    void sendWebhookMessage(String webHook, String player, String message, String channelId, TPlayer source);
+    void sendWebhookMessage(String webHook, String player, String message, String channelId,
+                            Object source);
+
+    void sendConsoleWebhookMessage(String webHook, String message, String channelId);
 
     void sendWebhook(Webhook webhook, org.anvilpowered.catalyst.api.discord.Webhook webhookUtils);
 

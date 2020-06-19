@@ -19,11 +19,13 @@ package org.anvilpowered.catalyst.common.event;
 
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 
-import java.net.InetSocketAddress;
+import java.util.UUID;
 
 public class CommonJoinEvent<TPlayer> implements JoinEvent<TPlayer> {
 
     private TPlayer player;
+    private String hostString;
+    private UUID playerUUID;
 
     @Override
     public TPlayer getPlayer() {
@@ -35,4 +37,23 @@ public class CommonJoinEvent<TPlayer> implements JoinEvent<TPlayer> {
         this.player = player;
     }
 
+    @Override
+    public String getHostString() {
+        return hostString;
+    }
+
+    @Override
+    public void setHostString(String hostString) {
+        this.hostString = hostString;
+    }
+
+    @Override
+    public UUID getPlayerUUID() {
+        return playerUUID;
+    }
+
+    @Override
+    public void setPlayerUUID(UUID playerUUID) {
+        this.playerUUID = playerUUID;
+    }
 }

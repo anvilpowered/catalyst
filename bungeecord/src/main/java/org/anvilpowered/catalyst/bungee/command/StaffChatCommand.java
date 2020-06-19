@@ -31,9 +31,7 @@ public class StaffChatCommand extends Command {
     private CommonStaffChatCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
-        CommandSender,
-        Event> staffChatCommand;
+        CommandSender> staffChatCommand;
 
     public StaffChatCommand() {
         super("staffchat", "", "sc");
@@ -41,6 +39,6 @@ public class StaffChatCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        staffChatCommand.execute(sender, sender, args);
+        staffChatCommand.execute(sender, args, ProxiedPlayer.class);
     }
 }

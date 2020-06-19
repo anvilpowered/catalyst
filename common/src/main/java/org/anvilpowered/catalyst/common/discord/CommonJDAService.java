@@ -26,23 +26,21 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.JDAService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 
 import javax.security.auth.login.LoginException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class CommonJDAService<
-    TString,
     TUser,
     TPlayer,
-    TCommandSource,
-    TSubject,
-    TEvent> implements JDAService {
+    TString,
+    TCommandSource> implements JDAService {
 
-    @Inject
     private Registry registry;
 
     private JDA jda;
@@ -53,13 +51,16 @@ public class CommonJDAService<
     private UserService<TUser, TPlayer> userService;
 
     @Inject
-    private LoggerService<TString> loggerService;
+    private LoggerService loggerService;
 
     @Inject
-    private EventService<TEvent> eventService;
+    private CommonDiscordListener<TUser, TString, TPlayer, TCommandSource> discordListener;
 
     @Inject
-    private CommonDiscordListener<TUser, TString, TPlayer, TCommandSource, TSubject> discordListener;
+    public CommonJDAService(Registry registry) {
+        this.registry = registry;
+        registry.whenLoaded(this::enableDiscordBot);
+    }
 
     @Override
     public void enableDiscordBot() {
@@ -75,7 +76,11 @@ public class CommonJDAService<
                     );
                 jda.addEventListener(discordListener);
                 isLoaded = true;
-                eventService.schedule(this.updateTopic(), TimeUnit.SECONDS, 15);
+                if (registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_ENABLED)) {
+                    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+                    executor.scheduleAtFixedRate(this.updateTopic(), 1,
+                        registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_DELAY), TimeUnit.MINUTES);
+                }
             } catch (LoginException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -85,17 +90,10 @@ public class CommonJDAService<
     }
 
     @Override
-    public void setupListeners(Class<?>... listeners) {
-        for (Class<?> listener : listeners) {
-            jda.addEventListener(listener);
-        }
-    }
-
-    @Override
     public Runnable updateTopic() {
         return () -> {
             TextChannel channel = jda.getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL));
-            String playerCount = "There are currently no players online!";
+            String playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS);
             if (userService.getOnlinePlayers().size() != 0) {
                 playerCount = Integer.toString(userService.getOnlinePlayers().size());
             }

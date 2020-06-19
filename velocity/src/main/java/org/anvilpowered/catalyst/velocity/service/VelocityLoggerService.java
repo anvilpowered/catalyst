@@ -18,29 +18,17 @@
 package org.anvilpowered.catalyst.velocity.service;
 
 import com.google.inject.Inject;
-import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.plain.PlainComponentSerializer;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.slf4j.Logger;
 
-public class VelocityLoggerService implements LoggerService<TextComponent> {
+public class VelocityLoggerService implements LoggerService {
 
     @Inject
     private Logger logger;
 
     @Override
-    public void info(TextComponent message) {
-        logger.info(PlainComponentSerializer.INSTANCE.serialize(message));
-    }
-
-    @Override
     public void info(String message) {
         logger.info(message);
-    }
-
-    @Override
-    public void warn(TextComponent message) {
-        logger.warn(PlainComponentSerializer.INSTANCE.serialize(message));
     }
 
     @Override

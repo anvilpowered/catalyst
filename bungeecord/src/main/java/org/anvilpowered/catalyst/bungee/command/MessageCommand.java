@@ -23,6 +23,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import org.anvilpowered.catalyst.common.command.CommonMessageCommand;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class MessageCommand extends Command {
 
@@ -30,19 +31,15 @@ public class MessageCommand extends Command {
     private CommonMessageCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> messageCommand;
 
     public MessageCommand() {
-        super("message", "", "msg", "tell", "whisper", "w", "m", "t");
+        super("message", "",
+            "msg", "tell", "whisper", "w", "m", "t");
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        boolean isConsole = true;
-        if (sender instanceof ProxiedPlayer) {
-            isConsole = false;
-        }
-        messageCommand.execute(sender, sender, args, isConsole);
+        messageCommand.execute(sender, args, ConsoleCommandSender.class);
     }
 }

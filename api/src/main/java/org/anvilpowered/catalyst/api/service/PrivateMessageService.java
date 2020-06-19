@@ -44,6 +44,9 @@ public interface PrivateMessageService<TString> {
 
     CompletableFuture<Void> sendMessage(String sender, String recipient, String rawMessage);
 
+    CompletableFuture<Void> sendMessageFromConsole(String recipient, String rawMessage,
+                                                   Class<?> console);
+
     CompletableFuture<Void> socialSpy(String sender, String recipient, String rawMessage);
 
     TString formatSocialSpyMessage(String sender, String recipient, String rawMessage);

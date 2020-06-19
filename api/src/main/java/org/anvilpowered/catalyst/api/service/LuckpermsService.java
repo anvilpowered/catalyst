@@ -20,26 +20,28 @@ package org.anvilpowered.catalyst.api.service;
 import net.luckperms.api.cacheddata.CachedMetaData;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface LuckpermsService<TPlayer> {
+public interface LuckpermsService {
 
     Runnable syncPlayerCache();
 
-    void addPlayerToCache(TPlayer player);
+    void addPlayerToCache(Object player);
 
-    void removePlayerFromCache(TPlayer player);
+    void removePlayerFromCache(Object player);
 
-    Optional<CachedMetaData> getCachedPlayerData(TPlayer player);
+    Optional<CachedMetaData> getCachedPlayerData(Object player);
 
     QueryOptions getQueryOptions(User user);
 
-    String getPrefix(TPlayer player);
+    @NonNull String getPrefix(Object player);
 
-    String getSuffix(TPlayer player);
+    @NonNull String getSuffix(Object player);
 
-    String getChatColor(TPlayer player);
+    @NonNull String getChatColor(Object player);
 
-    String getNameColor(TPlayer player);
+    @NonNull String getNameColor(Object player);
 }

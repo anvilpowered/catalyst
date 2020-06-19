@@ -29,8 +29,7 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 public class CommonNickNameCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private MemberManager<TString> memberManager;
@@ -42,7 +41,7 @@ public class CommonNickNameCommand<
     private Registry registry;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -50,9 +49,14 @@ public class CommonNickNameCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
+    public void execute(TCommandSource source, String[] args, Class<?> playerClass) {
+        if (!playerClass.isAssignableFrom(source.getClass())) {
+            textService.send(textService.of("Player only command!"), source);
+            return;
+        }
         String nick;
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION))) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
@@ -63,7 +67,8 @@ public class CommonNickNameCommand<
             return;
         }
 
-        if (args[0].equals("other") && permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION))) {
+        if (args[0].equals("other") && permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION))) {
             nick = args[2];
             memberManager.setNickNameForUser(args[1], nick).thenAcceptAsync(m -> textService.send(m, source));
             return;
@@ -72,8 +77,10 @@ public class CommonNickNameCommand<
         }
 
         if (nick.contains("&")) {
-            if (permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_COLOR_PERMISSION))) {
-                if ((!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC_PERMISSION)) && nick.contains("&k"))) {
+            if (permissionService.hasPermission(source,
+                registry.getOrDefault(CatalystKeys.NICKNAME_COLOR_PERMISSION))) {
+                if ((!permissionService.hasPermission(source,
+                    registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC_PERMISSION)) && nick.contains("&k"))) {
                     textService.send(pluginMessages.getNoNickMagicPermission(), source);
                     nick = nick.replaceAll("&k", "");
                 }

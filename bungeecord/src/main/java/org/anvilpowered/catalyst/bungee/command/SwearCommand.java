@@ -28,7 +28,6 @@ public class SwearCommand extends Command {
     @Inject
     private CommonSwearCommand<
         TextComponent,
-        CommandSender,
         CommandSender> swearCommand;
 
     public SwearCommand() {
@@ -37,6 +36,6 @@ public class SwearCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        swearCommand.execute(sender, sender, args);
+        swearCommand.execute(sender, args);
     }
 }

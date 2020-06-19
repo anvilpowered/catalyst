@@ -30,16 +30,14 @@ public class BanCommand extends Command {
     private CommonBanCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> banCommand;
 
     public BanCommand() {
         super("ban");
     }
 
-
     @Override
     public void execute(CommandSender sender, String[] args) {
-        banCommand.execute(sender, sender, args);
+        banCommand.execute(sender, args);
     }
 }

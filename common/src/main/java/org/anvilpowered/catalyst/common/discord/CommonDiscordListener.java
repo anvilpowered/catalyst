@@ -20,7 +20,6 @@ package org.anvilpowered.catalyst.common.discord;
 import com.google.inject.Inject;
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.anvilpowered.anvil.api.data.registry.Registry;
@@ -36,8 +35,7 @@ public class CommonDiscordListener<
     TUser,
     TString,
     TPlayer,
-    TCommandSource,
-    TSubject>
+    TCommandSource>
     extends ListenerAdapter {
 
     @Inject
@@ -53,10 +51,10 @@ public class CommonDiscordListener<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
-    private LoggerService<TString> loggerService;
+    private LoggerService loggerService;
 
     @Inject
     private EmojiService emojiService;
@@ -106,7 +104,7 @@ public class CommonDiscordListener<
                 .replace("%name%", event.getMember().getEffectiveName())
                 .replace("%message%", message);
             userService.getOnlinePlayers().forEach(p -> {
-                if (permissionService.hasPermission((TSubject) p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
+                if (permissionService.hasPermission(p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
                     textService.builder()
                         .append(textService.deserialize(finalMessage))
                         .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))

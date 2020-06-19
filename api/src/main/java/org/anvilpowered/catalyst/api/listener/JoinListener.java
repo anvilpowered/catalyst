@@ -17,9 +17,11 @@
 
 package org.anvilpowered.catalyst.api.listener;
 
-import java.util.UUID;
+import com.google.common.eventbus.Subscribe;
+import org.anvilpowered.catalyst.api.event.JoinEvent;
 
 public interface JoinListener<TPlayer> {
 
-    void onPlayerJoin(TPlayer player, UUID playerUUID, String virtualHostString);
+    @Subscribe
+    void onPlayerJoin(JoinEvent<TPlayer> joinEvent);
 }

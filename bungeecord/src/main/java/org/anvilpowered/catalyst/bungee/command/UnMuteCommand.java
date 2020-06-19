@@ -28,7 +28,6 @@ public class UnMuteCommand extends Command {
     @Inject
     private CommonUnMuteCommand<
         TextComponent,
-        CommandSender,
         CommandSender> unMuteCommand;
 
     public UnMuteCommand() {
@@ -37,6 +36,6 @@ public class UnMuteCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        unMuteCommand.execute(sender, sender, args);
+        unMuteCommand.execute(sender, args);
     }
 }

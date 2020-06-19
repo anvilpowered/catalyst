@@ -29,8 +29,7 @@ import org.anvilpowered.catalyst.api.service.ChatService;
 public class CommonListCommand<
     TString,
     TPlayer extends TCommandSource,
-    TCommandSource,
-    TSubject> {
+    TCommandSource> {
 
     @Inject
     private ChatService<TString, TPlayer, TCommandSource> chatService;
@@ -42,7 +41,7 @@ public class CommonListCommand<
     private Registry registry;
 
     @Inject
-    private PermissionService<TSubject> permissionService;
+    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -50,8 +49,9 @@ public class CommonListCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, TSubject subject, String[] args) {
-        if (!permissionService.hasPermission(subject, registry.getOrDefault(CatalystKeys.LIST_PERMISSION))) {
+    public void execute(TCommandSource source, String[] args) {
+        if (!permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.LIST_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }

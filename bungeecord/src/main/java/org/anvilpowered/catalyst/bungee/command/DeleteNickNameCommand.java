@@ -30,7 +30,6 @@ public class DeleteNickNameCommand extends Command {
     private CommonDeleteNicknameCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> deleteNickNameCommand;
 
     public DeleteNickNameCommand() {
@@ -39,6 +38,6 @@ public class DeleteNickNameCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        deleteNickNameCommand.execute(sender, sender, args);
+        deleteNickNameCommand.execute(sender, args, ProxiedPlayer.class);
     }
 }

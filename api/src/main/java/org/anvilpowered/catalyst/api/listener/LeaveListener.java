@@ -17,9 +17,11 @@
 
 package org.anvilpowered.catalyst.api.listener;
 
-import java.util.UUID;
+import com.google.common.eventbus.Subscribe;
+import org.anvilpowered.catalyst.api.event.LeaveEvent;
 
 public interface LeaveListener<TPlayer> {
 
-    void onPlayerLeave(TPlayer player, UUID playerUUID);
+    @Subscribe
+    void onPlayerLeave(LeaveEvent<TPlayer> leaveEvent);
 }

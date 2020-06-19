@@ -30,7 +30,6 @@ public class FindCommand extends Command {
     private CommonFindCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> findCommand;
 
     public FindCommand() {
@@ -39,6 +38,6 @@ public class FindCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        findCommand.execute(sender, sender, args);
+        findCommand.execute(sender, args);
     }
 }

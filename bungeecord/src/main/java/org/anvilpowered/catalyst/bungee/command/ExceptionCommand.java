@@ -28,7 +28,6 @@ public class ExceptionCommand extends Command {
     @Inject
     private CommonExceptionCommand<
         TextComponent,
-        CommandSender,
         CommandSender> exceptionCommand;
 
     public ExceptionCommand() {
@@ -37,6 +36,6 @@ public class ExceptionCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        exceptionCommand.execute(sender, sender, args);
+        exceptionCommand.execute(sender, args);
     }
 }

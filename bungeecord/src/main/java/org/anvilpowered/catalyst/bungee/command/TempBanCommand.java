@@ -30,7 +30,6 @@ public class TempBanCommand extends Command {
     private CommonTempBanCommand<
         TextComponent,
         ProxiedPlayer,
-        CommandSender,
         CommandSender> tempBanCommand;
 
     public TempBanCommand() {
@@ -39,6 +38,6 @@ public class TempBanCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        tempBanCommand.execute(sender, sender, args);
+        tempBanCommand.execute(sender, args);
     }
 }

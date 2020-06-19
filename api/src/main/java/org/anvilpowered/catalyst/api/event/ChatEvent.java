@@ -19,9 +19,9 @@ package org.anvilpowered.catalyst.api.event;
 
 public interface ChatEvent<TString, TPlayer> {
 
-    TPlayer getSender();
+    TPlayer getPlayer();
 
-    void setSender(TPlayer sender);
+    void setPlayer(TPlayer sender);
 
     String getRawMessage();
 
