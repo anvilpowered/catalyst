@@ -141,7 +141,7 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
             .gold().append(" -> ")
             .blue().append(recipient)
             .dark_gray().append("] ")
-            .gray().append(rawMessage)
+            .gray().append(rawMessage.trim())
             .build();
     }
 }
