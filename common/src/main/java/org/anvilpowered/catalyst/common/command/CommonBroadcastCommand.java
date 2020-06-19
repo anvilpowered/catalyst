@@ -52,7 +52,7 @@ public class CommonBroadcastCommand<
             return;
         }
 
-        if (args[0].isEmpty()) {
+        if (args.length == 0) {
             textService.send(pluginMessages.getNotEnoughArgs(), source);
             textService.send(pluginMessages.broadcastCommandUsage(), source);
             return;
