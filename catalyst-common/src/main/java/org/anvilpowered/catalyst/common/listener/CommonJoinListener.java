@@ -59,9 +59,6 @@ public class CommonJoinListener<
     private PrivateMessageService<TString> privateMessageService;
 
     @Inject
-    private LuckpermsService luckpermsService;
-
-    @Inject
     private StaffListService<TString> staffListService;
 
     @Inject
@@ -90,7 +87,6 @@ public class CommonJoinListener<
             registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN_PERMISSION))) {
             privateMessageService.socialSpySet().add(playerUUID);
         }
-        luckpermsService.addPlayerToCache(player);
         String userName = userService.getUserName((TUser) player);
         String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
             ? currentServerService.getName(userName).orElse("null")
