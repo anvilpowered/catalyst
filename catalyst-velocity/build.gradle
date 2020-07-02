@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+jar.enabled = false // we only want shadowJar
+
+repositories {
+    maven { url 'https://repo.velocitypowered.com/snapshots/' }
+    maven { url 'https://libraries.minecraft.net/' }
+}
+
+dependencies {
+    implementation project(':catalyst-api')
+    implementation project(':catalyst-common')
+
+    implementation velocity
+    annotationProcessor velocity
+}
+
+shadowJar {
+    String jarName = "Catalyst-Velocity-${project.version}.jar"
+    println "Building: " + jarName
+    archiveFileName = jarName
+
+    dependencies {
+        include project(':catalyst-api')
+        include project(':catalyst-common')
+        include dependency(apache_collections)
+        include dependency(apache_commons_logging)
+        include dependency(apache_http_async)
+        include dependency(apache_http_client)
+        include dependency(apache_http_core)
+        include dependency(apache_http_mime)
+        include dependency(apache_http_nio)
+        include dependency(emoji_java)
+        include dependency(jackson_annotations)
+        include dependency(jackson_core)
+        include dependency(jackson_databind)
+        include dependency(jda)
+        include dependency(json)
+        include dependency(kyori_event)
+        include dependency(nv_websocket)
+        include dependency(okhttp3)
+        include dependency(okio)
+        include dependency(unirest)
+        include dependency(trove)
+    }
+}
+
+artifacts {
+    archives shadowJar
+}
