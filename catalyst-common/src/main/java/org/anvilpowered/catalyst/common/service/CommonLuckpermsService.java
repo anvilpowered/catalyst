@@ -63,9 +63,10 @@ public class CommonLuckpermsService<TUser, TPlayer> implements LuckpermsService 
 
     @Override
     public @NotNull String getPrefix(Object player) {
-        if (getCachedPlayerData(player).isPresent()) {
-            if (getCachedPlayerData(player).get().getPrefix() != null) {
-                return Objects.requireNonNull(getCachedPlayerData(player).get().getPrefix());
+        Optional<CachedMetaData> playerData = getCachedPlayerData(player);
+        if (playerData.isPresent()) {
+            if (playerData.get().getPrefix() != null) {
+                return Objects.requireNonNull(playerData.get().getPrefix());
             }
         }
         return "";
@@ -73,9 +74,10 @@ public class CommonLuckpermsService<TUser, TPlayer> implements LuckpermsService 
 
     @Override
     public @NotNull String getSuffix(Object player) {
-        if (getCachedPlayerData(player).isPresent()) {
-            if (getCachedPlayerData(player).get().getSuffix() != null) {
-                return Objects.requireNonNull(getCachedPlayerData(player).get().getSuffix());
+        Optional<CachedMetaData> playerData = getCachedPlayerData(player);
+        if (playerData.isPresent()) {
+            if (playerData.get().getSuffix() != null) {
+                return Objects.requireNonNull(playerData.get().getSuffix());
             }
         }
         return "";
@@ -83,10 +85,10 @@ public class CommonLuckpermsService<TUser, TPlayer> implements LuckpermsService 
 
     @Override
     public @NotNull String getChatColor(Object player) {
-        if (getCachedPlayerData(player).isPresent()) {
-            if (getCachedPlayerData(player).get().getMetaValue("chat-color") != null) {
-                return Objects.requireNonNull(getCachedPlayerData(player)
-                    .get().getMetaValue("chat-color"));
+        Optional<CachedMetaData> playerData = getCachedPlayerData(player);
+        if (playerData.isPresent()) {
+            if (playerData.get().getMetaValue("chat-color") != null) {
+                return Objects.requireNonNull(playerData.get().getMetaValue("chat-color"));
             }
         }
         return "";
@@ -94,10 +96,10 @@ public class CommonLuckpermsService<TUser, TPlayer> implements LuckpermsService 
 
     @Override
     public @NotNull String getNameColor(Object player) {
-        if (getCachedPlayerData(player).isPresent()) {
-            if (getCachedPlayerData(player).get().getMetaValue("name-color") != null) {
-                return Objects.requireNonNull(getCachedPlayerData(player)
-                    .get().getMetaValue("name-color"));
+        Optional<CachedMetaData> playerData = getCachedPlayerData(player);
+        if (playerData.isPresent()) {
+            if (playerData.get().getMetaValue("name-color") != null) {
+                return Objects.requireNonNull(playerData.get().getMetaValue("name-color"));
             }
         }
         return "";
