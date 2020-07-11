@@ -47,9 +47,6 @@ public class CommonLeaveListener<
     private Registry registry;
 
     @Inject
-    private LuckpermsService luckpermsService;
-
-    @Inject
     private StaffListService<TString> staffListService;
 
     @Inject
@@ -66,7 +63,6 @@ public class CommonLeaveListener<
     public void onPlayerLeave(LeaveEvent<TPlayer> event) {
         TPlayer player = event.getPlayer();
         staffListService.removeStaffNames(userService.getUserName((TUser) player));
-        luckpermsService.removePlayerFromCache(player);
 
         String message = registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
             ? emojiService.toEmoji(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE), "&f")

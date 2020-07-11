@@ -26,12 +26,6 @@ import java.util.Optional;
 
 public interface LuckpermsService {
 
-    Runnable syncPlayerCache();
-
-    void addPlayerToCache(Object player);
-
-    void removePlayerFromCache(Object player);
-
     Optional<CachedMetaData> getCachedPlayerData(Object player);
 
     QueryOptions getQueryOptions(User user);
