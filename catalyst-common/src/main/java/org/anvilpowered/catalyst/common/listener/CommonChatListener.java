@@ -83,7 +83,7 @@ public class CommonChatListener<
 
         if (channel.isPresent()) {
             if (!permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
-                message = chatFilter.replaceSwears(message);
+                event.setRawMessage(chatFilter.replaceSwears(message));
             }
             chatService.sendChatMessage(event);
         } else {
