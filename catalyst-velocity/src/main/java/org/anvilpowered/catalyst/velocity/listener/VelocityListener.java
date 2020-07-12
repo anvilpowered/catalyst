@@ -262,7 +262,9 @@ public class VelocityListener {
         }
 
         builder.onlinePlayers(proxyServer.getPlayerCount());
-        builder.version(serverPing.getVersion());
+        if (serverPing.getVersion() != null){
+            builder.version(serverPing.getVersion());
+        }
         builder.maximumPlayers(proxyServer.getConfiguration().getShowMaxPlayers());
         proxyPingEvent.setPing(builder.build());
     }
