@@ -23,9 +23,18 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.anvilpowered.anvil.base.data.config.BaseConfigurationService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.slf4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Singleton
 public class ProxyConfigurationService extends BaseConfigurationService {
+
+    @Inject
+    private Logger logger;
 
     @Inject
     public ProxyConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
@@ -290,6 +299,12 @@ public class ProxyConfigurationService extends BaseConfigurationService {
                 " |                           Tab                              |\n" +
                 " |------------------------------------------------------------| "
         );
-
+        Map<Predicate<String>, Function<String, String>> pingMessageMap = new HashMap<>();
+        pingMessageMap.put(message -> message.contains("&"),
+            message -> {
+                logger.warn("Replacing all '&' with '\u00a7' in the config for the hover message.");
+                return message.replaceAll("&", "\u00a7");
+            });
+        setVerification(CatalystKeys.SERVER_PING_MESSAGE, pingMessageMap);
     }
 }
