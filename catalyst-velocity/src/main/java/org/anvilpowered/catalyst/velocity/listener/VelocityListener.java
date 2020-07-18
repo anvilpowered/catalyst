@@ -4,11 +4,13 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
@@ -26,12 +28,14 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
+import org.anvilpowered.catalyst.api.event.CommandEvent;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.TabService;
+import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +66,9 @@ public class VelocityListener {
 
     @Inject
     private LeaveEvent<Player> leaveEvent;
+
+    @Inject
+    private CommandEvent commandEvent;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -151,6 +158,21 @@ public class VelocityListener {
                 }
             });
         }
+    }
+
+    @Subscribe
+    public void onCommand(CommandExecuteEvent executeEvent) {
+        if (executeEvent.getCommandSource() instanceof ConsoleCommandSource) {
+            commandEvent.setSourceName("Console");
+        } else if (executeEvent.getCommandSource() instanceof DiscordCommandSource) {
+            commandEvent.setSourceName("Discord");
+        } else {
+            commandEvent.setSourceName(((Player) executeEvent.getCommandSource()).getUsername());
+        }
+        commandEvent.setSourceType(executeEvent.getCommandSource());
+        commandEvent.setCommand(executeEvent.getCommand());
+        commandEvent.setResult(executeEvent.getResult().isAllowed());
+        eventService.getEventBus().post(commandEvent);
     }
 
     @Subscribe
@@ -262,7 +284,7 @@ public class VelocityListener {
         }
 
         builder.onlinePlayers(proxyServer.getPlayerCount());
-        if (serverPing.getVersion() != null){
+        if (serverPing.getVersion() != null) {
             builder.version(serverPing.getVersion());
         }
         builder.maximumPlayers(proxyServer.getConfiguration().getShowMaxPlayers());

@@ -20,6 +20,7 @@ package org.anvilpowered.catalyst.common.service;
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
+import org.anvilpowered.catalyst.api.listener.CommandListener;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.listener.LeaveListener;
 import org.anvilpowered.catalyst.api.listener.StaffChatListener;
@@ -48,6 +49,9 @@ public class CommonEventRegistrationService<TUser, TPlayer, TString, TCommandSou
     @Inject
     private DiscordChatListener<TString, TPlayer> discordChatListener;
 
+    @Inject
+    private CommandListener commandListener;
+
 
     @Inject
     public CommonEventRegistrationService(Registry registry) {
@@ -60,5 +64,6 @@ public class CommonEventRegistrationService<TUser, TPlayer, TString, TCommandSou
         eventService.getEventBus().register(joinListener);
         eventService.getEventBus().register(leaveListener);
         eventService.getEventBus().register(discordChatListener);
+        eventService.getEventBus().register(commandListener);
     }
 }

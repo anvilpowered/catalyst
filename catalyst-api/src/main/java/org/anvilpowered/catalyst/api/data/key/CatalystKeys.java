@@ -17,6 +17,7 @@
 
 package org.anvilpowered.catalyst.api.data.key;
 
+import com.google.common.collect.ImmutableList;
 import org.anvilpowered.anvil.api.data.key.Key;
 import org.anvilpowered.anvil.api.data.key.Keys;
 import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
@@ -148,7 +149,7 @@ public final class CatalystKeys {
         "NICKNAME_COLOR_PERMISSION", "catalyst.command.nickname.color") {
     };
     public static final Key<String> NICKNAME_MAGIC_PERMISSION = new Key<String>(
-        "NICKNAME_COLOR_PERMISSION", "catalyst.command.nickname.magic") {
+        "NICKNAME_MAGIC_PERMISSION", "catalyst.command.nickname.magic") {
     };
     public static final Key<String> NICKNAME_OTHER_PERMISSION = new Key<String>(
         "NICKNAME_OTHER_PERMISSION", "catalyst.command.nickname.other") {
@@ -290,6 +291,12 @@ public final class CatalystKeys {
         "VIA_VERSION_ENABLED", false) {
     };
     static char emojiChar = '\uac00';
+    public static final Key<Boolean> COMMAND_LOGGING_ENABLED = new Key<Boolean>(
+        "COMMAND_LOGGING_ENABLED", true) {
+    };
+    public static final Key<List<String>> COMMAND_LOGGING_FILTER = new Key<List<String>>(
+        "COMMAND_LOGGING_FILTER", ImmutableList.of("*")) {
+    };
     //Keys for command toggling
     public static final Key<Boolean> BAN_COMMAND_ENABLED = new Key<Boolean>(
         "BAN_COMMAND_ENABLED", true) {
@@ -494,7 +501,9 @@ public final class CatalystKeys {
             .register(MODULES_ROOT)
             .register(MOTD_ROOT)
             .register(PING_ROOT)
-            .register(TAB_ROOT);
+            .register(TAB_ROOT)
+            .register(COMMAND_LOGGING_ENABLED)
+            .register(COMMAND_LOGGING_FILTER);
     }
 
     static {

@@ -26,10 +26,12 @@ import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.api.discord.WebhookSender;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
+import org.anvilpowered.catalyst.api.event.CommandEvent;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
+import org.anvilpowered.catalyst.api.listener.CommandListener;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.listener.JoinListener;
 import org.anvilpowered.catalyst.api.listener.LeaveListener;
@@ -50,10 +52,12 @@ import org.anvilpowered.catalyst.common.data.registry.CatalystRegistry;
 import org.anvilpowered.catalyst.common.discord.CommonJDAService;
 import org.anvilpowered.catalyst.common.discord.CommonWebhookSender;
 import org.anvilpowered.catalyst.common.event.CommonChatEvent;
+import org.anvilpowered.catalyst.common.event.CommonCommandEvent;
 import org.anvilpowered.catalyst.common.event.CommonJoinEvent;
 import org.anvilpowered.catalyst.common.event.CommonLeaveEvent;
 import org.anvilpowered.catalyst.common.event.CommonStaffChatEvent;
 import org.anvilpowered.catalyst.common.listener.CommonChatListener;
+import org.anvilpowered.catalyst.common.listener.CommonCommandListener;
 import org.anvilpowered.catalyst.common.listener.CommonDiscordChatListener;
 import org.anvilpowered.catalyst.common.listener.CommonJoinListener;
 import org.anvilpowered.catalyst.common.listener.CommonLeaveListener;
@@ -215,5 +219,7 @@ public class CommonModule<
         bind(Registry.class).to(CatalystRegistry.class);
         bind(StaffChatService.class).to(CommonStaffChatService.class);
         bind(EmojiService.class).to(CommonEmojiService.class);
+        bind(CommandEvent.class).to(CommonCommandEvent.class);
+        bind(CommandListener.class).to(CommonCommandListener.class);
     }
 }

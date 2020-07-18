@@ -103,6 +103,8 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.MOTD_ROOT, "motd");
         setName(CatalystKeys.PING_ROOT, "ping");
         setName(CatalystKeys.TAB_ROOT, "tab");
+        setName(CatalystKeys.COMMAND_LOGGING_ENABLED, "modules.logging.command.enabled");
+        setName(CatalystKeys.COMMAND_LOGGING_FILTER, "modules.logging.command.filter");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS,
             "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS,
@@ -249,6 +251,12 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nToggle mute command handling " +
                 "\n(true = enabled | false = disabled)" +
                 "\nPermission : " + CatalystKeys.MUTE_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.COMMAND_LOGGING_ENABLED,
+            "Toggle command logging " +
+                "\n(true = enabled | false = disabled)");
+        setDescription(CatalystKeys.COMMAND_LOGGING_FILTER,
+            "Filter commands that you want logged to the console." +
+                "\nBy default, catalyst will log all commands.");
         setDescription(CatalystKeys.ADVANCED_ROOT,
             " |------------------------------------------------------------|\n" +
                 " |                           Advanced                         |\n" +
