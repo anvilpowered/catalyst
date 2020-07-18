@@ -31,6 +31,9 @@ import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 public class CommonDiscordListener<
     TUser,
     TString,
@@ -68,10 +71,26 @@ public class CommonDiscordListener<
 
         if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL))) {
             String message = EmojiParser.parseToAliases(event.getMessage().getContentDisplay());
+            String messageRaw = event.getMessage().toString();
             if (event.getMember().hasPermission(Permission.ADMINISTRATOR)
-                && event.getMessage().toString().contains("!cmd")) {
+                && messageRaw.contains("!cmd")) {
                 String command = event.getMessage().getContentRaw().replace("!cmd ", "");
                 executeCommandService.executeDiscordCommand(command);
+                return;
+            } else if (messageRaw.contains("!players")
+                || messageRaw.contains("!online")
+                || messageRaw.contains("!list")) {
+                final Collection<TPlayer> onlinePlayers = userService.getOnlinePlayers();
+                final String playerNames;
+                if (onlinePlayers.size() == 0) {
+                    playerNames = "```There are currently no players online!```";
+                } else {
+                    playerNames = "**Online Players:**```"
+                        + userService.getOnlinePlayers().stream()
+                        .map(p -> userService.getUserName((TUser) p))
+                        .collect(Collectors.joining(", ")) + "```";
+                }
+                event.getChannel().sendMessage(playerNames).queue();
                 return;
             } else {
                 if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
