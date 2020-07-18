@@ -70,10 +70,14 @@ public class CommonJDAService<
             }
             try {
                 jda = new JDABuilder(registry.getOrDefault(CatalystKeys.BOT_TOKEN)).build().awaitReady();
-                jda.getPresence()
-                    .setActivity(
-                        Activity.playing(registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE))
-                    );
+                String playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS);
+                String nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE);
+                if (userService.getOnlinePlayers().size() != 0) {
+                    playerCount = Integer.toString(userService.getOnlinePlayers().size());
+                }
+                jda.getPresence().setActivity(
+                    Activity.playing(nowPlaying.replaceAll("%players%", playerCount))
+                );
                 jda.addEventListener(discordListener);
                 isLoaded = true;
                 if (registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_ENABLED)) {
@@ -94,8 +98,14 @@ public class CommonJDAService<
         return () -> {
             TextChannel channel = jda.getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL));
             String playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS);
+            String nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE);
             if (userService.getOnlinePlayers().size() != 0) {
                 playerCount = Integer.toString(userService.getOnlinePlayers().size());
+            }
+            if (nowPlaying.contains("%players%")) {
+                jda.getPresence().setActivity(
+                    Activity.playing(nowPlaying.replaceAll("%players%", playerCount))
+                );
             }
             channel.getManager().setTopic(
                 registry.getOrDefault(CatalystKeys.TOPIC_FORMAT)
