@@ -68,6 +68,14 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     }
 
     @Override
+    public TString getNoServerPermission() {
+        return textService.builder()
+            .append(pluginInfo.getPrefix())
+            .red().append("You do not have permission to join this server!")
+            .build();
+    }
+
+    @Override
     public TString getNoNickColorPermission() {
         return textService.builder()
             .append(pluginInfo.getPrefix())

@@ -29,6 +29,8 @@ public interface PluginMessages<TString> {
 
     TString getNoPermission();
 
+    TString getNoServerPermission();
+
     TString getNoNickColorPermission();
 
     TString getNoNickMagicPermission();

@@ -139,6 +139,11 @@ public class VelocityServerCommand implements Command {
 
     private void commenceConnection(RegisteredServer s, Player player) {
         String serverName = s.getServerInfo().getName();
+        if(registry.getOrDefault(CatalystKeys.ENABLE_PER_SERVER_PERMS)
+            && !player.hasPermission("catalyst.server." + serverName)) {
+            player.sendMessage(pluginMessages.getNoServerPermission());
+            return;
+        }
         registeredServer = s;
         registeredServer.ping().thenAcceptAsync(ping -> {
             if (ping.getVersion().getName().equals(player.getProtocolVersion().getName()) || registry.getOrDefault(CatalystKeys.VIA_VERSION_ENABLED)) {

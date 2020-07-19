@@ -89,7 +89,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.LIST_COMMAND_ENABLED, "commands.list");
         setName(CatalystKeys.MESSAGE_COMMAND_ENABLED, "commands.message");
         setName(CatalystKeys.SEND_COMMAND_ENABLED, "commands.send");
-        setName(CatalystKeys.SERVER_COMMAND_ENABLED, "commands.server");
+        setName(CatalystKeys.SERVER_COMMAND_ENABLED, "commands.server.enabled");
         setName(CatalystKeys.SOCIALSPY_COMMAND_ENABLED, "commands.socialspy");
         setName(CatalystKeys.STAFFCHAT_COMMAND_ENABLED, "commands.staffchat");
         setName(CatalystKeys.MUTE_COMMAND_ENABLED, "commands.mute");
@@ -105,6 +105,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.TAB_ROOT, "tab");
         setName(CatalystKeys.COMMAND_LOGGING_ENABLED, "modules.logging.command.enabled");
         setName(CatalystKeys.COMMAND_LOGGING_FILTER, "modules.logging.command.filter");
+        setName(CatalystKeys.ENABLE_PER_SERVER_PERMS, "commands.server.permissions");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS,
             "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS,
@@ -257,6 +258,11 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.COMMAND_LOGGING_FILTER,
             "Filter commands that you want logged to the console." +
                 "\nBy default, catalyst will log all commands.");
+        setDescription(CatalystKeys.ENABLE_PER_SERVER_PERMS,
+            "Enforces the following permission check" +
+                "\ncatalyst.server.<name> when a player uses the /server command." +
+                "\nFor example, if the target server is called lobby, catalyst will test" +
+                "\nthe permission catalyst.server.lobby");
         setDescription(CatalystKeys.ADVANCED_ROOT,
             " |------------------------------------------------------------|\n" +
                 " |                           Advanced                         |\n" +

@@ -297,6 +297,9 @@ public final class CatalystKeys {
     public static final Key<List<String>> COMMAND_LOGGING_FILTER = new Key<List<String>>(
         "COMMAND_LOGGING_FILTER", ImmutableList.of("*")) {
     };
+    public static final Key<Boolean> ENABLE_PER_SERVER_PERMS = new Key<Boolean>(
+        "ENABLE_PER_SERVER_PERMS", false) {
+    };
     //Keys for command toggling
     public static final Key<Boolean> BAN_COMMAND_ENABLED = new Key<Boolean>(
         "BAN_COMMAND_ENABLED", true) {
@@ -503,7 +506,8 @@ public final class CatalystKeys {
             .register(PING_ROOT)
             .register(TAB_ROOT)
             .register(COMMAND_LOGGING_ENABLED)
-            .register(COMMAND_LOGGING_FILTER);
+            .register(COMMAND_LOGGING_FILTER)
+            .register(ENABLE_PER_SERVER_PERMS);
     }
 
     static {
