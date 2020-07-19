@@ -1,5 +1,5 @@
 name: Catalyst
-version: "0.2.0-SNAPSHOT"
+version: "0.2.0"
 main: org.anvilpowered.catalyst.bungee.CatalystBungee
 api-version: 1.13
 authors: ["STG_Allen"]
