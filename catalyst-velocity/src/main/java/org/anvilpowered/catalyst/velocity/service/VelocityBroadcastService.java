@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.velocity.service;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.text.TextComponent;
+import net.kyori.adventure.text.TextComponent;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 
 public class VelocityBroadcastService implements BroadcastService<TextComponent> {
@@ -29,7 +29,7 @@ public class VelocityBroadcastService implements BroadcastService<TextComponent>
 
     @Override
     public void broadcast(TextComponent message) {
-        if (message.isEmpty()) return;
-        proxyServer.broadcast(message);
+        if (message.toString().length() == 0) return;
+        proxyServer.getAllPlayers().forEach(p -> p.sendMessage(message));
     }
 }

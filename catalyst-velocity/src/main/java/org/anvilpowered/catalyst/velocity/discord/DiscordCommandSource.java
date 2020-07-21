@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.permission.Tristate;
 import net.kyori.text.Component;
-import net.kyori.text.TextComponent;
+import net.kyori.adventure.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;

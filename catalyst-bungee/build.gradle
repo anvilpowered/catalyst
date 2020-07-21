@@ -6,7 +6,6 @@ plugins {
 jar.enabled = false // we only want shadowJar
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter()
     maven { url "https://jitpack.io" }

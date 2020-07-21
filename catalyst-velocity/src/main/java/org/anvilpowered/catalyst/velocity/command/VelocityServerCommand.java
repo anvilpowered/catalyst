@@ -23,10 +23,10 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import net.kyori.text.TextComponent;
-import net.kyori.text.event.ClickEvent;
-import net.kyori.text.event.HoverEvent;
-import net.kyori.text.format.TextColor;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -79,20 +79,20 @@ public class VelocityServerCommand implements Command {
                                 count.set(0);
                             }
                             if (player.getCurrentServer().get().getServer().equals(s)) {
-                                availableServers.add(textService.of(s.getServerInfo().getName().replace(playerPrefix, "") + " ").color(TextColor.GREEN)
+                                availableServers.add(textService.of(s.getServerInfo().getName().replace(playerPrefix, "") + " ").color(NamedTextColor.GREEN)
                                     .hoverEvent(HoverEvent.showText(textService.of("Online Players: " + s.getPlayersConnected().size()))));
                             } else {
-                                availableServers.add(textService.of(s.getServerInfo().getName().replace(playerPrefix, "") + " ").color(TextColor.GRAY)
+                                availableServers.add(textService.of(s.getServerInfo().getName().replace(playerPrefix, "") + " ").color(NamedTextColor.GRAY)
                                     .clickEvent(ClickEvent.runCommand("/server " + s.getServerInfo().getName()))
                                     .hoverEvent(HoverEvent.showText(textService.of("Online Players : " + s.getPlayersConnected().size()))));
                             }
                         }
                     } else {
                         if (player.getCurrentServer().get().getServer().equals(s)) {
-                            availableServers.add(textService.of(s.getServerInfo().getName() + " ").color(TextColor.GREEN)
+                            availableServers.add(textService.of(s.getServerInfo().getName() + " ").color(NamedTextColor.GREEN)
                                 .hoverEvent(HoverEvent.showText(textService.of("Online Players: " + s.getPlayersConnected().size()))));
                         } else {
-                            availableServers.add(textService.of(s.getServerInfo().getName() + " ").color(TextColor.GRAY)
+                            availableServers.add(textService.of(s.getServerInfo().getName() + " ").color(NamedTextColor.GRAY)
                                 .clickEvent(ClickEvent.runCommand("/server " + s.getServerInfo().getName()))
                                 .hoverEvent(HoverEvent.showText(textService.of("Online Players : " + s.getPlayersConnected().size()))));
                         }
@@ -101,15 +101,15 @@ public class VelocityServerCommand implements Command {
                 });
                 TextComponent servers = TextComponent.builder()
                     .append(pluginInfo.getPrefix())
-                    .append(textService.of("Green = Current").color(TextColor.GREEN))
-                    .append(textService.of(", ").color(TextColor.YELLOW))
-                    .append(textService.of("Gray = Available").color(TextColor.GRAY))
-                    .append(textService.of(", ").color(TextColor.YELLOW))
-                    .append(textService.of("Red = Offline\n").color(TextColor.RED))
-                    .append(textService.of("-----------------------------------------------------\n").color(TextColor.DARK_AQUA))
+                    .append(textService.of("Green = Current").color(NamedTextColor.GREEN))
+                    .append(textService.of(", ").color(NamedTextColor.YELLOW))
+                    .append(textService.of("Gray = Available").color(NamedTextColor.GRAY))
+                    .append(textService.of(", ").color(NamedTextColor.YELLOW))
+                    .append(textService.of("Red = Offline\n").color(NamedTextColor.RED))
+                    .append(textService.of("-----------------------------------------------------\n").color(NamedTextColor.DARK_AQUA))
                     .append(availableServers)
-                    .append(textService.of("\n-----------------------------------------------------\n").color(TextColor.DARK_AQUA))
-                    .append(textService.of("Click an available server to join!").color(TextColor.GOLD))
+                    .append(textService.of("\n-----------------------------------------------------\n").color(NamedTextColor.DARK_AQUA))
+                    .append(textService.of("Click an available server to join!").color(NamedTextColor.GOLD))
                     .build();
                 player.sendMessage(servers);
                 return;
@@ -139,7 +139,7 @@ public class VelocityServerCommand implements Command {
 
     private void commenceConnection(RegisteredServer s, Player player) {
         String serverName = s.getServerInfo().getName();
-        if(registry.getOrDefault(CatalystKeys.ENABLE_PER_SERVER_PERMS)
+        if (registry.getOrDefault(CatalystKeys.ENABLE_PER_SERVER_PERMS)
             && !player.hasPermission("catalyst.server." + serverName)) {
             player.sendMessage(pluginMessages.getNoServerPermission());
             return;

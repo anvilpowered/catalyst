@@ -18,8 +18,8 @@ import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.util.ModInfo;
-import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
@@ -123,7 +123,7 @@ public class VelocityListener {
                     }
                 }
                 if (!hostNameExists.get()) {
-                    event.getPlayer().disconnect(LegacyComponentSerializer.legacy().deserialize("&4Please re-connect using the correct IP!", '&'));
+                    event.getPlayer().disconnect(LegacyComponentSerializer.legacy('&').deserialize("&4Please re-connect using the correct IP!"));
                 }
             }
             joinEvent.setPlayer(player);
@@ -222,14 +222,14 @@ public class VelocityListener {
             advancedServerInfoList.forEach(advancedServerInfo -> {
                 if (playerProvidedHost.equals(advancedServerInfo.hostName)) {
                     hostNameExists.set(true);
-                    builder.description(LegacyComponentSerializer.legacy().deserialize(advancedServerInfo.motd, '&'));
+                    builder.description(LegacyComponentSerializer.legacy('&').deserialize(advancedServerInfo.motd));
                 }
             });
             if (!hostNameExists.get()) {
-                builder.description(LegacyComponentSerializer.legacy().deserialize("&4Using the direct IP to connect has been disabled!", '&'));
+                builder.description(LegacyComponentSerializer.legacy('&').deserialize("&4Using the direct IP to connect has been disabled!"));
             }
         } else {
-            builder.description(LegacyComponentSerializer.legacy().deserialize(registry.getOrDefault(CatalystKeys.MOTD), '&'));
+            builder.description(LegacyComponentSerializer.legacy('&').deserialize(registry.getOrDefault(CatalystKeys.MOTD)));
         }
 
         if (proxyServer.getConfiguration().isAnnounceForge()) {
