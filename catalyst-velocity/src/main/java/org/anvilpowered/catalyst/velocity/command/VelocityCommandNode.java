@@ -171,7 +171,7 @@ public class VelocityCommandNode
             proxyServer.getCommandManager().register(
                 "staffchat", staffChatCommand, "sc");
         }
-        if (registry.getOrDefault(CatalystKeys.SEND_COMMAND_ENABLED)) {
+        if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
             proxyServer.getCommandManager().register(
                 "server", serverCommand);
         }

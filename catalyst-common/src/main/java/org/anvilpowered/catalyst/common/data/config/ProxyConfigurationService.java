@@ -227,7 +227,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
                 "\n(true = enabled | false = disabled)" +
                 "\nPermission : " + CatalystKeys.KICK_PERMISSION.getFallbackValue());
         setDescription(CatalystKeys.LIST_COMMAND_ENABLED,
-            "\nToggle ban command handling " +
+            "\nToggle list command handling " +
                 "\n(true = enabled | false = disabled)");
         setDescription(CatalystKeys.MESSAGE_COMMAND_ENABLED,
             "\nToggle message command handling " +
