@@ -32,6 +32,7 @@ import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
+import org.anvilpowered.catalyst.api.service.StaffChatService;
 
 public class CommonDiscordChatListener<TUser, TString, TPlayer> implements DiscordChatListener<TString, TPlayer> {
 
@@ -59,9 +60,13 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
     @Inject
     private PermissionService permissionService;
 
+    @Inject
+    private StaffChatService staffChatService;
+
     @Override
     public void onChatEvent(ChatEvent<TString, TPlayer> event) {
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return;
+        if (staffChatService.contains(userService.getUUID((TUser) event.getPlayer()))) return;
 
         String message = event.getRawMessage();
         if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
