@@ -9,6 +9,7 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
+import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
@@ -81,8 +82,39 @@ public class VelocityListener {
 
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
+        if (event.getLoginStatus().toString().equals("PRE_SERVER_JOIN")) return;
         leaveEvent.setPlayer(event.getPlayer());
         eventService.getEventBus().post(leaveEvent);
+    }
+
+    @Subscribe
+    public void onServerSelect(PlayerChooseInitialServerEvent event) {
+        Player player = event.getPlayer();
+        event.getInitialServer().map(rs -> rs.ping().exceptionally(e -> null).thenAcceptAsync(s -> {
+            if (s == null || s.getVersion() == null) {
+                event.getPlayer().disconnect(textService.of("Failed to connect."));
+            } else {
+                if (event.getPlayer().getVirtualHost().isPresent()) {
+                    if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
+                        AtomicBoolean hostNameExists = new AtomicBoolean(false);
+                        for (AdvancedServerInfo serverInfo : registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO)) {
+                            if (serverInfo.hostName.equalsIgnoreCase(
+                                event.getPlayer().getVirtualHost().get().getHostString())) {
+                                hostNameExists.set(true);
+                            }
+                        }
+                        if (!hostNameExists.get()) {
+                            event.getPlayer().disconnect(LegacyComponentSerializer.legacy('&')
+                                .deserialize("&4Please re-connect using the correct IP!"));
+                        }
+                    }
+                    joinEvent.setPlayer(player);
+                    joinEvent.setPlayerUUID(player.getUniqueId());
+                    joinEvent.setHostString(player.getVirtualHost().get().getHostString());
+                    eventService.getEventBus().post(joinEvent);
+                }
+            }
+        }).join());
     }
 
     @Subscribe
@@ -113,24 +145,6 @@ public class VelocityListener {
                 );
             }
         }).join();
-
-        if (event.getPlayer().getVirtualHost().isPresent()) {
-            if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-                AtomicBoolean hostNameExists = new AtomicBoolean(false);
-                for (AdvancedServerInfo serverInfo : registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO)) {
-                    if (serverInfo.hostName.equalsIgnoreCase(event.getPlayer().getVirtualHost().get().getHostString())) {
-                        hostNameExists.set(true);
-                    }
-                }
-                if (!hostNameExists.get()) {
-                    event.getPlayer().disconnect(LegacyComponentSerializer.legacy('&').deserialize("&4Please re-connect using the correct IP!"));
-                }
-            }
-            joinEvent.setPlayer(player);
-            joinEvent.setPlayerUUID(player.getUniqueId());
-            joinEvent.setHostString(player.getVirtualHost().get().getHostString());
-            eventService.getEventBus().post(joinEvent);
-        }
     }
 
     @Subscribe
