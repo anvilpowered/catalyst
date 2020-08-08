@@ -117,6 +117,13 @@ public class CommonMemberManager<
                         .blue().append("----------------Player Info----------------"));
                 message.append(
                     textService.builder()
+                    .blue().append("\nUUID : "))
+                    .append(
+                        textService.builder()
+                        .green().append(member.getUserUUID())
+                    );
+                message.append(
+                    textService.builder()
                         .blue().append("\nUsername : "))
                     .append(
                         textService.builder()

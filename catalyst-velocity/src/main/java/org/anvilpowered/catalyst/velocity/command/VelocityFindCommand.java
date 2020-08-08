@@ -22,7 +22,7 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.text.TextComponent;
 import org.anvilpowered.catalyst.common.command.CommonFindCommand;
 
 import java.util.Collections;

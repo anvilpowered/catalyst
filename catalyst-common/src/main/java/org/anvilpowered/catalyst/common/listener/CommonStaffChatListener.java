@@ -29,8 +29,6 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.LoggerService;
 
-import java.util.Optional;
-
 public class CommonStaffChatListener<
     TUser,
     TString,
@@ -62,7 +60,8 @@ public class CommonStaffChatListener<
     @Override
     public void onStaffChatEvent(StaffChatEvent<TString, TPlayer> event) {
         String message = event.getRawMessage();
-        TPlayer player = event.getPlayer();
+        TUser player = (TUser) event.getPlayer();
+        String userName = userService.getUserName(player);
 
         if (event.getIsConsole()) {
             String finalMessage = message;
@@ -85,11 +84,12 @@ public class CommonStaffChatListener<
         String finalMessage = message;
         userService.getOnlinePlayers().forEach(p -> {
             if (permissionService.hasPermission(p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
-                textService.send(pluginMessages.getStaffChatMessageFormatted(userService.getUserName((TUser) player), textService.deserialize(finalMessage)), (TCommandSource) p);
+                textService.send(
+                    pluginMessages.getStaffChatMessageFormatted(userName, textService.deserialize(finalMessage)),
+                    (TCommandSource) p
+                );
             }
         });
-        Optional<String> userName = userService.getUserName(event.getPlayerUUID()).join();
-        userName.ifPresent(s -> loggerService.info("[STAFF] " + s
-            + " : " + finalMessage));
+        loggerService.info("[STAFF] " + userName + " : " + finalMessage);
     }
 }

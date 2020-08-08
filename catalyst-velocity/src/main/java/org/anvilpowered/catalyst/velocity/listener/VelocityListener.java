@@ -19,7 +19,7 @@ import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.util.ModInfo;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
@@ -35,6 +35,7 @@ import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EventService;
+import org.anvilpowered.catalyst.api.service.StaffChatService;
 import org.anvilpowered.catalyst.api.service.TabService;
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource;
 
@@ -45,6 +46,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@SuppressWarnings("UnstableApiUsage")
 public class VelocityListener {
 
     @Inject
@@ -79,6 +81,9 @@ public class VelocityListener {
 
     @Inject
     private TextService<TextComponent, CommandSource> textService;
+
+    @Inject
+    private StaffChatService staffChatService;
 
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
@@ -149,7 +154,8 @@ public class VelocityListener {
 
     @Subscribe
     public void onChat(PlayerChatEvent e) {
-        if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
+        if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)
+            || staffChatService.contains(e.getPlayer().getUniqueId())) {
             Player player = e.getPlayer();
             e.setResult(PlayerChatEvent.ChatResult.denied());
             Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()

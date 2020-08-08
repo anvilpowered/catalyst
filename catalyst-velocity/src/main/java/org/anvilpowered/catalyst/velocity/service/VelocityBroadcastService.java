@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.velocity.service;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.text.TextComponent;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 
 public class VelocityBroadcastService implements BroadcastService<TextComponent> {
