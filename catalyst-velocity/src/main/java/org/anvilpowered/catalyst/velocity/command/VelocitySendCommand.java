@@ -75,7 +75,6 @@ public class VelocitySendCommand implements Command {
                             TextComponent.of(player.get().getUsername()
                                 + " is already connected to that server.")));
                 } else {
-                    Player sender = (Player) source;
                     source.sendMessage(
                         pluginInfo.getPrefix().append(
                             TextComponent.of("sending " + player.get().getUsername()
@@ -84,7 +83,7 @@ public class VelocitySendCommand implements Command {
                         pluginInfo.getPrefix().append(
                             TextComponent.of("you have been sent to "
                                 + server.get().getServerInfo().getName()
-                                + " by " + sender.getUsername())));
+                                + " by " + (source instanceof Player ? ((Player) source).getUsername() : "Console"))));
                     player.get().createConnectionRequest(server.get()).fireAndForget();
                 }
             } else {
