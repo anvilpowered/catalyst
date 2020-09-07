@@ -50,6 +50,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND, "chat.format.click");
         setName(CatalystKeys.PROXY_CHAT_ENABLED, "modules.chat");
         setName(CatalystKeys.TAB_ENABLED, "modules.tab");
+        setName(CatalystKeys.TAB_FORMAT, "tab.format.player");
         setName(CatalystKeys.TAB_HEADER, "tab.format.header");
         setName(CatalystKeys.TAB_FOOTER, "tab.format.footer");
         setName(CatalystKeys.TAB_FORMAT_CUSTOM, "tab.format.custom");
