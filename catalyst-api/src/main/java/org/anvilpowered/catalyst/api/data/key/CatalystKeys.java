@@ -266,6 +266,9 @@ public final class CatalystKeys {
     public static final Key<String> MOTD = new Key<String>("MOTD",
         "A Velocity Proxy!") {
     };
+    public static final Key<Boolean> MOTD_ENABLED = new Key<Boolean>("MOTD_ENABLED",
+        false){
+    };
     public static final Key<Boolean> ADVANCED_SERVER_INFO_ENABLED = new Key<Boolean>(
         "ADVANCED_SERVER_INFO_ENABLED", false) {
     };
@@ -477,6 +480,7 @@ public final class CatalystKeys {
             .register(SERVER_PING_MESSAGE)
             .register(SYNC_COMMAND)
             .register(MOTD)
+            .register(MOTD_ENABLED)
             .register(ADVANCED_SERVER_INFO_ENABLED)
             .register(ADVANCED_SERVER_INFO)
             .register(EMOJI_ENABLE)

@@ -106,6 +106,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.COMMAND_LOGGING_ENABLED, "modules.logging.command.enabled");
         setName(CatalystKeys.COMMAND_LOGGING_FILTER, "modules.logging.command.filter");
         setName(CatalystKeys.ENABLE_PER_SERVER_PERMS, "commands.server.permissions");
+        setName(CatalystKeys.MOTD_ENABLED, "modules.motd");
         setDescription(CatalystKeys.CHAT_FILTER_SWEARS,
             "\nList of words you would like filtered out of chat.");
         setDescription(CatalystKeys.CHAT_FILTER_EXCEPTIONS,
@@ -263,6 +264,9 @@ public class ProxyConfigurationService extends BaseConfigurationService {
                 "\ncatalyst.server.<name> when a player uses the /server command." +
                 "\nFor example, if the target server is called lobby, catalyst will test" +
                 "\nthe permission catalyst.server.lobby");
+        setDescription(CatalystKeys.MOTD_ENABLED,
+            "Toggle MOTD handling" +
+                "\nBy default, Catalyst will not control the MOTD");
         setDescription(CatalystKeys.ADVANCED_ROOT,
             " |------------------------------------------------------------|\n" +
                 " |                           Advanced                         |\n" +

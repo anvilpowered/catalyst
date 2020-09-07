@@ -248,8 +248,10 @@ public class VelocityListener {
             if (!hostNameExists.get()) {
                 builder.description(LegacyComponentSerializer.legacy('&').deserialize("&4Using the direct IP to connect has been disabled!"));
             }
-        } else {
+        } else if (registry.getOrDefault(CatalystKeys.MOTD_ENABLED)){
             builder.description(LegacyComponentSerializer.legacy('&').deserialize(registry.getOrDefault(CatalystKeys.MOTD)));
+        } else {
+            return;
         }
 
         if (proxyServer.getConfiguration().isAnnounceForge()) {
