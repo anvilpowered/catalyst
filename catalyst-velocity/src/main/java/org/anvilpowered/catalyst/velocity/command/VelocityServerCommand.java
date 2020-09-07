@@ -73,28 +73,42 @@ public class VelocityServerCommand implements Command {
                 AtomicInteger count = new AtomicInteger();
                 proxyServer.getAllServers().forEach(s -> {
                     if (useAdvancedInformation) {
-                        if (s.getServerInfo().getName().contains(playerPrefix) && player.getCurrentServer().isPresent()) {
+                        if (s.getServerInfo().getName().contains(playerPrefix)
+                            && player.getCurrentServer().isPresent()) {
                             if (count.get() >= 8) {
                                 availableServers.add(textService.of("\n"));
                                 count.set(0);
                             }
                             if (player.getCurrentServer().get().getServer().equals(s)) {
-                                availableServers.add(textService.of(s.getServerInfo().getName().replace(playerPrefix, "") + " ").color(TextColor.GREEN)
-                                    .hoverEvent(HoverEvent.showText(textService.of("Online Players: " + s.getPlayersConnected().size()))));
+                                availableServers.add(textService.of(
+                                    s.getServerInfo().getName().replace(playerPrefix, "") + " ")
+                                    .color(TextColor.GREEN)
+                                    .hoverEvent(HoverEvent.showText(textService.of(
+                                        "Online Players: " + s.getPlayersConnected().size()))));
                             } else {
-                                availableServers.add(textService.of(s.getServerInfo().getName().replace(playerPrefix, "") + " ").color(TextColor.GRAY)
+                                availableServers.add(textService.of(
+                                    s.getServerInfo().getName().replace(playerPrefix, "") + " ")
+                                    .color(TextColor.GRAY)
                                     .clickEvent(ClickEvent.runCommand("/server " + s.getServerInfo().getName()))
-                                    .hoverEvent(HoverEvent.showText(textService.of("Online Players : " + s.getPlayersConnected().size()))));
+                                    .hoverEvent(HoverEvent.showText(textService.of(
+                                        "Online Players : " + s.getPlayersConnected().size())
+                                    )));
                             }
                         }
                     } else {
                         if (player.getCurrentServer().get().getServer().equals(s)) {
-                            availableServers.add(textService.of(s.getServerInfo().getName() + " ").color(TextColor.GREEN)
-                                .hoverEvent(HoverEvent.showText(textService.of("Online Players: " + s.getPlayersConnected().size()))));
+                            availableServers.add(textService.of(
+                                s.getServerInfo().getName() + " ")
+                                .color(TextColor.GREEN)
+                                .hoverEvent(HoverEvent.showText(textService.of(
+                                    "Online Players: " + s.getPlayersConnected().size()))));
                         } else {
-                            availableServers.add(textService.of(s.getServerInfo().getName() + " ").color(TextColor.GRAY)
+                            availableServers.add(textService.of(s.getServerInfo().getName() + " ")
+                                .color(TextColor.GRAY)
                                 .clickEvent(ClickEvent.runCommand("/server " + s.getServerInfo().getName()))
-                                .hoverEvent(HoverEvent.showText(textService.of("Online Players : " + s.getPlayersConnected().size()))));
+                                .hoverEvent(HoverEvent.showText(textService.of(
+                                    "Online Players : " + s.getPlayersConnected().size())
+                                )));
                         }
                     }
                     count.getAndIncrement();
@@ -106,17 +120,21 @@ public class VelocityServerCommand implements Command {
                     .append(textService.of("Gray = Available").color(TextColor.GRAY))
                     .append(textService.of(", ").color(TextColor.YELLOW))
                     .append(textService.of("Red = Offline\n").color(TextColor.RED))
-                    .append(textService.of("-----------------------------------------------------\n").color(TextColor.DARK_AQUA))
+                    .append(textService.of("-----------------------------------------------------\n")
+                        .color(TextColor.DARK_AQUA))
                     .append(availableServers)
-                    .append(textService.of("\n-----------------------------------------------------\n").color(TextColor.DARK_AQUA))
-                    .append(textService.of("Click an available server to join!").color(TextColor.GOLD))
+                    .append(textService.of("\n-----------------------------------------------------\n")
+                        .color(TextColor.DARK_AQUA))
+                    .append(textService.of("Click an available server to join!")
+                        .color(TextColor.GOLD))
                     .build();
                 player.sendMessage(servers);
                 return;
             }
 
             if (useAdvancedInformation) {
-                if (!args[0].contains(playerPrefix) && !proxyServer.getServer(playerPrefix + args[0]).isPresent()) {
+                if (!args[0].contains(playerPrefix)
+                    && !proxyServer.getServer(playerPrefix + args[0]).isPresent()) {
                     source.sendMessage(pluginMessages.getInvalidServer());
                     return;
                 } else {
@@ -146,15 +164,23 @@ public class VelocityServerCommand implements Command {
         }
         registeredServer = s;
         registeredServer.ping().thenAcceptAsync(ping -> {
-            if (ping.getVersion().getName().equals(player.getProtocolVersion().getName()) || registry.getOrDefault(CatalystKeys.VIA_VERSION_ENABLED)) {
+            if (ping.getVersion().getName().equals(player.getProtocolVersion().getName())
+                || registry.getOrDefault(CatalystKeys.VIA_VERSION_ENABLED)) {
                 player.createConnectionRequest(registeredServer).connect().thenAcceptAsync(connection -> {
                     if (connection.isSuccessful()) {
-                        player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Connected to server " + registeredServer.getServerInfo().getName())));
+                        player.sendMessage(pluginInfo.getPrefix().append(textService.of(
+                            "Connected to server " + registeredServer.getServerInfo().getName())
+                        ));
                     } else {
-                        if (player.getCurrentServer().map(se -> se.getServerInfo().getName().equals(serverName)).orElse(false)) {
-                            player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("You are already connected to " + registeredServer.getServerInfo().getName())));
+                        if (player.getCurrentServer().map(server ->
+                            server.getServerInfo().getName().equals(serverName)).orElse(false)) {
+                            player.sendMessage(pluginInfo.getPrefix().append(textService.of(
+                                "You are already " + "connected to "
+                                    + registeredServer.getServerInfo().getName())
+                            ));
                         } else {
-                            player.sendMessage(pluginInfo.getPrefix().append(TextComponent.of("Failed to connect to " + registeredServer.getServerInfo().getName())));
+                            player.sendMessage(pluginInfo.getPrefix().append(textService.of(
+                                "Failed to connect to " + registeredServer.getServerInfo().getName())));
                         }
                     }
                 });
