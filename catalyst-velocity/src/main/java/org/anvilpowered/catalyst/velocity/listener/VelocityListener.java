@@ -20,7 +20,6 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.util.ModInfo;
 import net.kyori.text.TextComponent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
@@ -109,8 +108,9 @@ public class VelocityListener {
                             }
                         }
                         if (!hostNameExists.get()) {
-                            event.getPlayer().disconnect(LegacyComponentSerializer.legacy('&')
-                                .deserialize("&4Please re-connect using the correct IP!"));
+                            event.getPlayer().disconnect(textService.deserialize(
+                                "&4Please re-connect using the correct IP!"
+                            ));
                         }
                     }
                     joinEvent.setPlayer(player);
@@ -238,18 +238,21 @@ public class VelocityListener {
 
 
         if (useCatalyst) {
-            advancedServerInfoList = registry.get(CatalystKeys.ADVANCED_SERVER_INFO).orElseThrow(() -> new IllegalArgumentException("Invalid server configuration!"));
+            advancedServerInfoList = registry.get(CatalystKeys.ADVANCED_SERVER_INFO).orElseThrow(()
+                -> new IllegalArgumentException("Invalid server configuration!"));
             advancedServerInfoList.forEach(advancedServerInfo -> {
                 if (playerProvidedHost.equals(advancedServerInfo.hostName)) {
                     hostNameExists.set(true);
-                    builder.description(LegacyComponentSerializer.legacy('&').deserialize(advancedServerInfo.motd));
+                    builder.description(textService.deserialize(advancedServerInfo.motd));
                 }
             });
             if (!hostNameExists.get()) {
-                builder.description(LegacyComponentSerializer.legacy('&').deserialize("&4Using the direct IP to connect has been disabled!"));
+                builder.description(textService.deserialize(
+                    "&4Using the direct IP to connect has been disabled!"
+                ));
             }
-        } else if (registry.getOrDefault(CatalystKeys.MOTD_ENABLED)){
-            builder.description(LegacyComponentSerializer.legacy('&').deserialize(registry.getOrDefault(CatalystKeys.MOTD)));
+        } else if (registry.getOrDefault(CatalystKeys.MOTD_ENABLED)) {
+            builder.description(textService.deserialize(registry.getOrDefault(CatalystKeys.MOTD)));
         } else {
             return;
         }
@@ -293,12 +296,18 @@ public class VelocityListener {
                 ServerPing.SamplePlayer[] samplePlayers = new ServerPing.SamplePlayer[proxyServer.getPlayerCount()];
                 List<Player> proxiedPlayers = new ArrayList<>(proxyServer.getAllPlayers());
                 for (int i = 0; i < proxyServer.getPlayerCount(); i++) {
-                    samplePlayers[i] = new ServerPing.SamplePlayer(proxiedPlayers.get(i).getUsername(), UUID.randomUUID());
+                    samplePlayers[i] = new ServerPing.SamplePlayer(
+                        proxiedPlayers.get(i).getUsername(),
+                        UUID.randomUUID()
+                    );
                 }
                 builder.samplePlayers(samplePlayers);
             }
         } else if (registry.getOrDefault(CatalystKeys.SERVER_PING).equalsIgnoreCase("MESSAGE")) {
-            builder.samplePlayers(new ServerPing.SamplePlayer(registry.getOrDefault(CatalystKeys.SERVER_PING_MESSAGE), UUID.randomUUID()));
+            builder.samplePlayers(new ServerPing.SamplePlayer(
+                registry.getOrDefault(CatalystKeys.SERVER_PING_MESSAGE),
+                UUID.randomUUID()
+            ));
         }
 
         if (serverPing.getFavicon().isPresent()) {
