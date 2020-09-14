@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.KickService;
 import org.anvilpowered.anvil.api.util.PermissionService;
@@ -51,36 +52,39 @@ public class CommonKickCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, String[] args) {
-        String reason = "You have been kicked!";
-
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.KICK_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.kickCommandUsage(), source);
-            return;
-        }
-
-        if (args.length > 1) {
-            reason = args[1];
-        }
-
-        Optional<TPlayer> player = userService.getPlayer(args[0]);
+    public int execute(CommandContext<TCommandSource> context) {
+        Optional<TPlayer> player = userService.getPlayer(context.getArgument("target", String.class));
         if (player.isPresent()) {
             if (permissionService.hasPermission(
                 player.get(),
                 registry.getOrDefault(CatalystKeys.KICK_EXEMPT_PERMISSION))) {
-                textService.send(pluginMessages.getKickExempt(), source);
-                return;
+                textService.send(pluginMessages.getKickExempt(), context.getSource());
+                return 0;
             }
-            kickService.kick(args[0], reason);
+            kickService.kick(
+                context.getArgument("target", String.class),
+                context.getArgument("reason", String.class)
+            );
         } else {
-            textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
+            textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
         }
+        return 1;
+    }
+
+    public int withoutReason(CommandContext<TCommandSource> context) {
+        String reason = "You have been kicked!";
+        Optional<TPlayer> player = userService.getPlayer(context.getArgument("target", String.class));
+        if (player.isPresent()) {
+            if (permissionService.hasPermission(
+                player.get(),
+                registry.getOrDefault(CatalystKeys.KICK_EXEMPT_PERMISSION))) {
+                textService.send(pluginMessages.getKickExempt(), context.getSource());
+                return 0;
+            }
+            kickService.kick(context.getArgument("target", String.class), reason);
+        } else {
+            textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
+        }
+        return 1;
     }
 }

@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -49,27 +50,26 @@ public class CommonInfoCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
+    public int execute(CommandContext<TCommandSource> context) {
+        if (!permissionService.hasPermission(context.getSource(),
             registry.getOrDefault(CatalystKeys.INFO_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
+            textService.send(pluginMessages.getNoPermission(), context.getSource());
+            return 0;
         }
 
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.infoCommandUsage(), source);
-            return;
-        }
-        boolean isActive = userService.get(args[0]).isPresent();
+        boolean isActive = userService.get(context.getArgument("target", String.class)).isPresent();
         boolean[] permissions = new boolean[3];
-        permissions[0] = permissionService.hasPermission(source,
+        permissions[0] = permissionService.hasPermission(context.getSource(),
             registry.getOrDefault(CatalystKeys.INFO_IP_PERMISSION));
-        permissions[1] = permissionService.hasPermission(source,
+        permissions[1] = permissionService.hasPermission(context.getSource(),
             registry.getOrDefault(CatalystKeys.INFO_BANNED_PERMISSION));
-        permissions[2] = permissionService.hasPermission(source,
+        permissions[2] = permissionService.hasPermission(context.getSource(),
             registry.getOrDefault(CatalystKeys.INFO_CHANNEL_PERMISSION));
-        memberManager.info(args[0], isActive, permissions).thenAcceptAsync(m -> textService.send(m,
-            source));
+        memberManager.info(
+            context.getArgument("target", String.class),
+            isActive,
+            permissions)
+            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        return 1;
     }
 }

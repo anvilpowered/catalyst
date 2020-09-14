@@ -18,11 +18,9 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.util.PermissionService;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.EventService;
@@ -39,12 +37,6 @@ public class CommonStaffChatCommand<
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private Registry registry;
-
-    @Inject
-    private PermissionService permissionService;
-
-    @Inject
     private TextService<TString, TCommandSource> textService;
 
     @Inject
@@ -59,44 +51,40 @@ public class CommonStaffChatCommand<
     @Inject
     private StaffChatEvent<TString, TPlayer> staffChatEvent;
 
-    public void execute(TCommandSource source, String[] args, Class<?> playerClass) {
-        String message = String.join(" ", args);
-
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-
-        if (!playerClass.isAssignableFrom(source.getClass())) {
-            if (args.length == 0) {
-                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), source);
-                return;
-            }
+    public int execute(CommandContext<TCommandSource> context, Class<?> playerClass) {
+        String message = context.getArgument("message", String.class);
+        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
             staffChatEvent.setRawMessage(message);
             staffChatEvent.setMessage(textService.of(message));
             staffChatEvent.setIsConsole(true);
             eventService.getEventBus().post(staffChatEvent);
-            return;
+            return 1;
         }
-        //Don't get the UUID until after checking if the source is console.
-        UUID playerUUID = userService.getUUID((TPlayer) source);
 
-        if (args.length == 0) {
-            if (staffChatService.contains(playerUUID)) {
-                staffChatService.remove(playerUUID);
-                textService.send(pluginMessages.getStaffChat(false), source);
-            } else {
-                staffChatService.add(playerUUID);
-                textService.send(pluginMessages.getStaffChat(true), source);
-            }
-        } else {
-            staffChatEvent.setRawMessage(message);
-            staffChatEvent.setMessage(textService.of(message));
-            staffChatEvent.setIsConsole(false);
-            staffChatEvent.setPlayerUUID(userService.getUUID((TPlayer) source));
-            staffChatEvent.setPlayer((TPlayer) source);
-            eventService.getEventBus().post(staffChatEvent);
+        staffChatEvent.setRawMessage(message);
+        staffChatEvent.setMessage(textService.of(message));
+        staffChatEvent.setIsConsole(false);
+        staffChatEvent.setPlayerUUID(userService.getUUID((TPlayer) context.getSource()));
+        staffChatEvent.setPlayer((TPlayer) context.getSource());
+        eventService.getEventBus().post(staffChatEvent);
+        return 1;
+    }
+
+    public int toggle(CommandContext<TCommandSource> context, Class<?> playerClass) {
+        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
+            textService.send(pluginMessages.getNotEnoughArgs(), context.getSource());
+            return 1;
         }
+
+        UUID playerUUID = userService.getUUID((TPlayer) context.getSource());
+        if (staffChatService.contains(playerUUID)) {
+            staffChatService.remove(playerUUID);
+            textService.send(pluginMessages.getStaffChat(false), context.getSource());
+        } else {
+            staffChatService.add(playerUUID);
+            staffChatService.add(userService.getUUID((TPlayer) context.getSource()));
+            textService.send(pluginMessages.getStaffChat(true), context.getSource());
+        }
+        return 1;
     }
 }

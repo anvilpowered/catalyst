@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -57,5 +58,17 @@ public class CommonUnBanCommand<
             return;
         }
         memberManager.unBan(args[0]).thenAcceptAsync(m -> textService.send(m, source));
+    }
+
+    public int usage(CommandContext<TCommandSource> context) {
+        textService.send(pluginMessages.unbanCommandUsage(), context.getSource());
+        return 1;
+    }
+
+    public int unban(CommandContext<TCommandSource> context) {
+        execute(context.getSource(), new String[]{
+            context.getArgument("target", String.class)
+        });
+        return 1;
     }
 }

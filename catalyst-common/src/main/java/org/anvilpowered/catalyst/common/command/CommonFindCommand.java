@@ -18,12 +18,10 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.util.CurrentServerService;
-import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
 public class CommonFindCommand<
@@ -34,8 +32,6 @@ public class CommonFindCommand<
     @Inject
     private PluginMessages<TString> pluginMessages;
 
-    @Inject
-    private PermissionService permissionService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -46,28 +42,16 @@ public class CommonFindCommand<
     @Inject
     private CurrentServerService currentServerService;
 
-    @Inject
-    private Registry registry;
-
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.FIND_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
+    public int execute(CommandContext<TCommandSource> context) {
+        String userName = context.getArgument("target", String.class);
+        if (userService.getPlayer(userName).isPresent()) {
+            textService.send(pluginMessages.getCurrentServer(
+                userName,
+                currentServerService.getName(userName).orElse("null")
+            ), context.getSource());
+            return 1;
         }
-
-        if (!(args.length >= 1)) {
-            textService.send(pluginMessages.findCommandUsage(), source);
-        } else {
-            String userName = args[0];
-            if (userService.getPlayer(userName).isPresent()) {
-                textService.send(pluginMessages.getCurrentServer(
-                    userName,
-                    currentServerService.getName(userName).orElse("null")
-                ), source);
-                return;
-            }
-            textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
-        }
+        textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
+        return 1;
     }
 }

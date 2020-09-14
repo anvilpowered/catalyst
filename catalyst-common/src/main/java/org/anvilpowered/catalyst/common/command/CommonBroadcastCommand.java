@@ -18,10 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.util.PermissionService;
-import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 
@@ -34,30 +31,11 @@ public class CommonBroadcastCommand<
     private BroadcastService<TString> broadcastService;
 
     @Inject
-    private PermissionService permissionService;
-
-    @Inject
     private PluginMessages<TString> pluginMessages;
 
-    @Inject
-    private Registry registry;
-
-    @Inject
-    private TextService<TString, TCommandSource> textService;
-
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.BROADCAST_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.broadcastCommandUsage(), source);
-            return;
-        }
-
-        broadcastService.broadcast(pluginMessages.getBroadcast(String.join(" ", args)));
+    public int execute(CommandContext<TCommandSource> context) {
+        broadcastService.broadcast(pluginMessages.getBroadcast(context.getArgument(
+            "message", String.class)));
+        return 1;
     }
 }

@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -25,8 +26,6 @@ import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-
-import java.util.Arrays;
 
 public class CommonTempMuteCommand<
     TString,
@@ -51,34 +50,28 @@ public class CommonTempMuteCommand<
     @Inject
     private Registry registry;
 
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-
-        if (args.length < 2) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.tempMuteCommandUsage(), source);
-            return;
-        }
-        String userName = args[0];
-        String duration = args[1];
+    public int execute(CommandContext<TCommandSource> context, String reason) {
+        String userName = context.getArgument("target", String.class);
+        String duration = context.getArgument("duration", String.class);
 
         if (userService.get(userName).isPresent()) {
             if (permissionService.hasPermission(
                 userService.get(userName).get(),
                 registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
-                textService.send(pluginMessages.getMuteExempt(), source);
-                return;
+                textService.send(pluginMessages.getMuteExempt(), context.getSource());
+                return 0;
             }
         }
-        if (args.length == 2) {
-            memberManager.tempMute(userName, duration).thenAcceptAsync(m -> textService.send(m, source));
-        } else {
-            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
-            memberManager.tempMute(userName, duration, reason).thenAcceptAsync(m -> textService.send(m, source));
-        }
+        memberManager.tempMute(userName, duration, reason).thenAcceptAsync(m ->
+            textService.send(m, context.getSource()));
+        return 1;
+    }
+
+    public int withReason(CommandContext<TCommandSource> context) {
+        return execute(context, context.getArgument("reason", String.class));
+    }
+
+    public int withoutReason(CommandContext<TCommandSource> context) {
+        return execute(context, "You have been muted temporarily.");
     }
 }

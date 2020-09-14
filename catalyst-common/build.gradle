@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation project(':catalyst-api')
+    implementation brigadier
 }
 
 blossom {

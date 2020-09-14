@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -51,37 +52,33 @@ public class CommonMuteCommand<
     @Inject
     private TextService<TString, TCommandSource> textService;
 
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
+    public int execute(CommandContext<TCommandSource> context) {
+        return mute(
+            context,
+            context.getArgument("target", String.class),
+            context.getArgument("reason", String.class));
+    }
 
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.muteCommandUsage(), source);
-            return;
-        }
+    public int withoutReason(CommandContext<TCommandSource> context) {
+        return mute(
+            context,
+            context.getArgument("target", String.class),
+            "You have been muted!");
+    }
 
-        String userName = args[0];
-
+    private int mute(CommandContext<TCommandSource> context, String userName, String reason) {
         Optional<TPlayer> player = userService.get(userName);
         if (player.isPresent()) {
             if (permissionService.hasPermission(
                 player.get(),
                 registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
-                textService.send(pluginMessages.getMuteExempt(), source);
-                return;
+                textService.send(pluginMessages.getMuteExempt(), context.getSource());
+                return 0;
             }
-            if (args.length == 1) {
-                memberManager.mute(userName).thenAcceptAsync(m -> textService.send(m, source));
-            } else {
-                String reason = String.join(" ", args).replace(userName, "");
-                memberManager.mute(userName, reason).thenAcceptAsync(m -> textService.send(m, source));
-            }
+            memberManager.mute(userName, reason).thenAcceptAsync(m -> textService.send(m, context.getSource()));
         } else {
-            textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
+            textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
         }
+        return 1;
     }
 }

@@ -19,16 +19,18 @@ package org.anvilpowered.catalyst.velocity.command;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.velocitypowered.api.command.Command;
+import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.text.TextComponent;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 
 @Singleton
 public class VelocityCommandNode
-    extends CommonCommandNode<Command, CommandSource> {
+    extends CommonCommandNode<TextComponent, Player, CommandSource> {
 
     @Inject
     private ProxyServer proxyServer;
@@ -37,148 +39,41 @@ public class VelocityCommandNode
     private VelocityServerCommand serverCommand;
 
     @Inject
-    private VelocityBroadcastCommand broadcastCommand;
-
-    @Inject
-    private VelocityInfoCommand infoCommand;
-
-    @Inject
-    private VelocityNickNameCommand nicknameCommand;
-
-    @Inject
-    private VelocityBanCommand banCommand;
-
-    @Inject
-    private VelocityTempBanCommand tempBanCommand;
-
-    @Inject
-    private VelocityUnBanCommand unBanCommand;
-
-    @Inject
-    private VelocityKickCommand kickCommand;
-
-    @Inject
-    private VelocityFindCommand findCommand;
-
-    @Inject
     private VelocitySendCommand sendCommand;
-
-    @Inject
-    private VelocityMessageCommand messageCommand;
-
-    @Inject
-    private VelocityReplyCommand replyCommand;
-
-    @Inject
-    private VelocityMuteCommand muteCommand;
-
-    @Inject
-    private VelocityTempMuteCommand tempMuteCommand;
-
-    @Inject
-    private VelocityUnMuteCommand unMuteCommand;
-
-    @Inject
-    private VelocitySocialSpyCommand socialSpyCommand;
 
     @Inject
     private VelocityStaffListCommand staffListCommand;
 
     @Inject
-    private VelocityStaffChatCommand staffChatCommand;
-
-    @Inject
     private VelocityListCommand listCommand;
-
-    @Inject
-    private VelocityDeleteNicknameCommand deleteNicknameCommand;
-
-    @Inject
-    private VelocitySwearCommand swearCommand;
-
-    @Inject
-    private VelocityExceptionCommand exceptionCommand;
 
     @Inject
     private VelocityIgnoreCommand ignoreCommand;
 
     @Inject
     public VelocityCommandNode(Registry registry) {
-        super(registry);
+        super(registry, Player.class);
     }
 
     @Override
     public void loadCommands() {
-        if (registry.getOrDefault(CatalystKeys.BAN_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "ban", banCommand, "cban");
-            proxyServer.getCommandManager().register(
-                "tempban", tempBanCommand, "ctempban");
-            proxyServer.getCommandManager().register(
-                "unban", unBanCommand, "cunban", "pardon", "cpardon");
-        }
-        if (registry.getOrDefault(CatalystKeys.BROADCAST_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "broadcast", broadcastCommand);
-        }
-        if (registry.getOrDefault(CatalystKeys.NICKNAME_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "delnick", deleteNicknameCommand, "cdelnick", "deletenick");
-            proxyServer.getCommandManager().register(
-                "nick", nicknameCommand, "cnick");
-        }
-        if (registry.getOrDefault(CatalystKeys.FIND_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "find", findCommand, "cfind");
-        }
+        //register commands from CommonCommandNode
+        commands.forEach(command -> proxyServer.getCommandManager().register(new BrigadierCommand(command)));
+
         if (registry.getOrDefault(CatalystKeys.LIST_COMMAND_ENABLED)) {
             proxyServer.getCommandManager().register(
                 "list", listCommand, "clist");
-        }
-        if (registry.getOrDefault(CatalystKeys.INFO_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "info", infoCommand, "cinfo");
-        }
-        if (registry.getOrDefault(CatalystKeys.KICK_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "kick", kickCommand, "ckick");
-        }
-        if (registry.getOrDefault(CatalystKeys.MESSAGE_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "msg", messageCommand, "w", "tell", "whisper", "m", "t", "pm");
-            proxyServer.getCommandManager().register(
-                "reply", replyCommand, "r");
-        }
-        if (registry.getOrDefault(CatalystKeys.MUTE_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "mute", muteCommand, "cmute");
-            proxyServer.getCommandManager().register(
-                "tempmute", tempMuteCommand, "ctempmmute");
-            proxyServer.getCommandManager().register(
-                "unmute", unMuteCommand, "cunmute");
         }
         if (registry.getOrDefault(CatalystKeys.SEND_COMMAND_ENABLED)) {
             proxyServer.getCommandManager().register(
                 "send", sendCommand, "csend");
         }
-        if (registry.getOrDefault(CatalystKeys.SOCIALSPY_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "socialspy", socialSpyCommand, "ss");
-        }
         proxyServer.getCommandManager().register(
             "stafflist", staffListCommand);
-        if (registry.getOrDefault(CatalystKeys.STAFFCHAT_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "staffchat", staffChatCommand, "sc");
-        }
         if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
             proxyServer.getCommandManager().register(
                 "server", serverCommand);
         }
-        proxyServer.getCommandManager().register(
-            "swear", swearCommand);
-        proxyServer.getCommandManager().register(
-            "exception", exceptionCommand);
         proxyServer.getCommandManager().register(
             "ignore", ignoreCommand
         );

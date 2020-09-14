@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -79,5 +80,22 @@ public class CommonTempBanCommand<
                 .replace(userName + " ", "").replace(duration, "");
             memberManager.tempBan(userName, duration, reason).thenAcceptAsync(m -> textService.send(m, source));
         }
+    }
+
+    public int withoutReason(CommandContext<TCommandSource> context) {
+        execute(context.getSource(), new String[]{
+            context.getArgument("target", String.class),
+            context.getArgument("duration", String.class)
+        });
+        return 1;
+    }
+
+    public int withReason(CommandContext<TCommandSource> context) {
+        execute(context.getSource(), new String[]{
+            context.getArgument("target", String.class),
+            context.getArgument("duration", String.class),
+            context.getArgument("reason", String.class)
+        });
+        return 1;
     }
 }

@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -49,47 +50,36 @@ public class CommonNickNameCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, String[] args, Class<?> playerClass) {
-        if (!playerClass.isAssignableFrom(source.getClass())) {
-            textService.send(textService.of("Player only command!"), source);
-            return;
-        }
-        String nick;
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.nickNameCommandUsage(), source);
-            return;
-        }
-
-        if (args[0].equals("other") && permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION))) {
-            nick = args[2];
-            memberManager.setNickNameForUser(args[1], nick).thenAcceptAsync(m -> textService.send(m, source));
-            return;
-        } else {
-            nick = args[0];
+    public int execute(CommandContext<TCommandSource> context, Class<?> playerClass) {
+        String nick = context.getArgument("nickname", String.class);
+        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
+            textService.send(textService.of("Player only command!"), context.getSource());
+            return 1;
         }
 
         if (nick.contains("&")) {
-            if (permissionService.hasPermission(source,
+            if (permissionService.hasPermission(context.getSource(),
                 registry.getOrDefault(CatalystKeys.NICKNAME_COLOR_PERMISSION))) {
-                if ((!permissionService.hasPermission(source,
+                if ((!permissionService.hasPermission(context.getSource(),
                     registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC_PERMISSION)) && nick.contains("&k"))) {
-                    textService.send(pluginMessages.getNoNickMagicPermission(), source);
+                    textService.send(pluginMessages.getNoNickMagicPermission(), context.getSource());
                     nick = nick.replaceAll("&k", "");
                 }
             } else {
                 nick = pluginMessages.removeColor(nick);
-                textService.send(pluginMessages.getNoNickColorPermission(), source);
+                textService.send(pluginMessages.getNoNickColorPermission(), context.getSource());
             }
         }
-        memberManager.setNickName(userService.getUserName((TPlayer) source), nick).thenAcceptAsync(m -> textService.send(m, source));
+        memberManager.setNickName(userService.getUserName((TPlayer) context.getSource()), nick)
+            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        return 1;
+    }
+
+    public int executeOther(CommandContext<TCommandSource> context) {
+        memberManager.setNickNameForUser(context.getArgument("target", String.class),
+            context.getArgument("targetnick", String.class)).thenAcceptAsync(m ->
+            textService.send(m, context.getSource()));
+        return 1;
     }
 }
 

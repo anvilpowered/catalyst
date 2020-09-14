@@ -18,12 +18,10 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.data.config.ConfigurationService;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
 public class CommonSwearCommand<TString, TCommandSource> {
 
@@ -31,75 +29,12 @@ public class CommonSwearCommand<TString, TCommandSource> {
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private PluginMessages<TString> pluginMessages;
-
-    @Inject
-    private PermissionService permissionService;
-
-    @Inject
     private Registry registry;
 
-    @Inject
-    private ConfigurationService configurationService;
-
-    public void execute(TCommandSource source, String[] args) {
-
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.swearAddCommandUsage(), source);
-            return;
-        }
-        switch (args[0]) {
-            case "list": {
-                if (permissionService.hasPermission(source,
-                    registry.getOrDefault(CatalystKeys.LANGUAGE_LIST_PERMISSION))) {
-                    textService.send(textService.of(String.join(
-                        ", ",
-                        registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS))),
-                        source);
-                    return;
-                } else {
-                    textService.send(pluginMessages.getNoPermission(), source);
-                }
-                return;
-            }
-            case "add": {
-                if (permissionService.hasPermission(source,
-                    registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
-                    if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS).isEmpty()) {
-                        configurationService
-                            .addToCollection(CatalystKeys.CHAT_FILTER_SWEARS, args[1]);
-                        configurationService.save();
-                        textService.send(pluginMessages.getNewException(args[1]), source);
-                    } else if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
-                        textService.send(pluginMessages.getExistingException(args[1]), source);
-                    } else {
-                        configurationService
-                            .addToCollection(CatalystKeys.CHAT_FILTER_SWEARS, args[1]);
-                        configurationService.save();
-                        textService.send(pluginMessages.getNewException(args[1]), source);
-                    }
-                } else {
-                    textService.send(pluginMessages.getNoPermission(), source);
-                    return;
-                }
-                return;
-            }
-            case "remove": {
-                if (permissionService.hasPermission(source,
-                    registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
-                    if (!registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS).contains(args[1])) {
-                        textService.send(pluginMessages.getMissingException(args[1]), source);
-                    } else {
-                        configurationService
-                            .removeFromCollection(CatalystKeys.CHAT_FILTER_SWEARS, args[1]);
-                        configurationService.save();
-                        textService.send(pluginMessages.getRemoveException(args[1]), source);
-                    }
-                } else {
-                    textService.send(pluginMessages.getNoPermission(), source);
-                }
-            }
-        }
+    public int execute(CommandContext<TCommandSource> context) {
+        textService.send(textService.of(String.join(
+            ", ",
+            registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS))), context.getSource());
+        return 1;
     }
 }

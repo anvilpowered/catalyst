@@ -18,11 +18,9 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.util.PermissionService;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
@@ -37,12 +35,6 @@ public class CommonSocialSpyCommand<
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private Registry registry;
-
-    @Inject
-    private PermissionService permissionService;
-
-    @Inject
     private TextService<TString, TCommandSource> textService;
 
     @Inject
@@ -51,22 +43,19 @@ public class CommonSocialSpyCommand<
     @Inject
     private PrivateMessageService<TString> privateMessageService;
 
-    public void execute(TCommandSource source, Class<?> playerClass) {
-        if (!playerClass.isAssignableFrom(source.getClass())) {
-            textService.send(textService.of("Player only command!"), source);
+    public int execute(CommandContext<TCommandSource> context, Class<?> playerClass) {
+        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
+            textService.send(textService.of("Player only command!"), context.getSource());
+            return 0;
         }
-        if (permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.SOCIALSPY_PERMISSION))) {
-            UUID playerUUID = userService.getUUID((TPlayer) source);
-            if (privateMessageService.socialSpySet().contains(playerUUID)) {
-                privateMessageService.socialSpySet().remove(playerUUID);
-                textService.send(pluginMessages.getSocialSpy(false), source);
-            } else {
-                privateMessageService.socialSpySet().add(playerUUID);
-                textService.send(pluginMessages.getSocialSpy(true), source);
-            }
+        UUID playerUUID = userService.getUUID((TPlayer) context.getSource());
+        if (privateMessageService.socialSpySet().contains(playerUUID)) {
+            privateMessageService.socialSpySet().remove(playerUUID);
+            textService.send(pluginMessages.getSocialSpy(false), context.getSource());
         } else {
-            textService.send(pluginMessages.getNoPermission(), source);
+            privateMessageService.socialSpySet().add(playerUUID);
+            textService.send(pluginMessages.getSocialSpy(true), context.getSource());
         }
+        return 1;
     }
 }

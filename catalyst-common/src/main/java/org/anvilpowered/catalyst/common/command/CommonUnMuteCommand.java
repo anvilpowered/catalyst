@@ -18,45 +18,23 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.util.PermissionService;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
 public class CommonUnMuteCommand<
     TString,
     TCommandSource> {
 
     @Inject
-    private PermissionService permissionService;
-
-    @Inject
     private TextService<TString, TCommandSource> textService;
-
-    @Inject
-    private PluginMessages<TString> pluginMessages;
 
     @Inject
     private MemberManager<TString> memberManager;
 
-    @Inject
-    private Registry registry;
-
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.MUTE_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.unMuteCommandUsage(), source);
-            return;
-        }
-
-        memberManager.unMute(args[0]).thenAcceptAsync(m -> textService.send(m, source));
+    public int execute(CommandContext<TCommandSource> context) {
+        memberManager.unMute(context.getArgument("target", String.class))
+            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        return 1;
     }
 }

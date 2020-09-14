@@ -18,11 +18,11 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
@@ -37,9 +37,6 @@ public class CommonMessageCommand<
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private Registry registry;
-
-    @Inject
     private PrivateMessageService<TString> privateMessageService;
 
     @Inject
@@ -48,49 +45,41 @@ public class CommonMessageCommand<
     @Inject
     private TextService<TString, TCommandSource> textService;
 
-    @Inject
-    private PermissionService permissionService;
+    public int execute(CommandContext<TCommandSource> context, Class<?> consoleClass) {
+        String name = context.getArgument("target", String.class);
 
-    public void execute(TCommandSource source, String[] args,
-                        Class<?> consoleClass) {
-        String name;
-        if (args.length < 1) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.messageCommandUsage(), source);
-            return;
-        }
-
-        if (userService.getPlayer(args[0]).isPresent()) {
-            name = args[0];
-            args[0] = "";
-            String message = String.join(" ", args);
+        if (userService.getPlayer(name).isPresent()) {
+            String message = context.getArgument("message", String.class);
             Optional<TPlayer> targetPlayer = userService.get(name);
 
-            if (consoleClass.equals(source.getClass()) && targetPlayer.isPresent()) {
-                privateMessageService.sendMessageFromConsole(userService.getUserName(targetPlayer.get()), message, consoleClass);
-                return;
+            if (consoleClass.equals(context.getSource().getClass()) && targetPlayer.isPresent()) {
+                privateMessageService.sendMessageFromConsole(
+                    userService.getUserName(targetPlayer.get()),
+                    message,
+                    consoleClass);
+                return 1;
             }
 
-            if (permissionService.hasPermission(source,
-                registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION)) && targetPlayer.isPresent()) {
-                if (targetPlayer.get() == source) {
-                    textService.send(pluginMessages.messageSelf(), source);
-                    return;
+            if (targetPlayer.isPresent()) {
+                if (targetPlayer.get() == context.getSource()) {
+                    textService.send(pluginMessages.messageSelf(), context.getSource());
+                    return 0;
                 }
                 privateMessageService.sendMessage(
-                    userService.getUserName((TPlayer) source),
+                    userService.getUserName((TPlayer) context.getSource()),
                     name,
                     message
                 );
                 privateMessageService.replyMap().put(
                     userService.getUUID(targetPlayer.get()),
-                    userService.getUUID((TPlayer) source)
+                    userService.getUUID((TPlayer) context.getSource())
                 );
                 privateMessageService.replyMap().put(
-                    userService.getUUID((TPlayer) source),
+                    userService.getUUID((TPlayer) context.getSource()),
                     userService.getUUID(targetPlayer.get())
                 );
             }
         }
+        return 1;
     }
 }

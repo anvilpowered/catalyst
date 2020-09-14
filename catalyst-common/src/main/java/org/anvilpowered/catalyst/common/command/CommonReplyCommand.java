@@ -18,11 +18,9 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.data.registry.Registry;
-import org.anvilpowered.anvil.api.util.PermissionService;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
@@ -38,12 +36,6 @@ public class CommonReplyCommand<
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private Registry registry;
-
-    @Inject
-    private PermissionService permissionService;
-
-    @Inject
     private TextService<TString, TCommandSource> textService;
 
     @Inject
@@ -52,21 +44,9 @@ public class CommonReplyCommand<
     @Inject
     private PrivateMessageService<TString> privateMessageService;
 
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.messageCommandUsage(), source);
-            return;
-        }
-
-        String message = String.join(" ", args);
-        UUID senderUUID = userService.getUUID((TPlayer) source);
+    public int execute(CommandContext<TCommandSource> context) {
+        String message = context.getArgument("message", String.class);
+        UUID senderUUID = userService.getUUID((TPlayer) context.getSource());
 
         if (privateMessageService.replyMap().containsKey(senderUUID)) {
             UUID recipientUUID = privateMessageService.replyMap().get(senderUUID);
@@ -74,19 +54,20 @@ public class CommonReplyCommand<
 
             if (recipient.isPresent()) {
                 privateMessageService.sendMessage(
-                    userService.getUserName((TPlayer) source),
+                    userService.getUserName((TPlayer) context.getSource()),
                     userService.getUserName(recipient.get()),
                     message
                 );
                 privateMessageService.replyMap().put(
                     userService.getUUID(recipient.get()),
-                    userService.getUUID((TPlayer) source)
+                    userService.getUUID((TPlayer) context.getSource())
                 );
             } else {
-                textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
+                textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
             }
         } else {
-            textService.send(textService.builder().red().append("Nobody to reply to!").build(), source);
+            textService.send(textService.builder().red().append("Nobody to reply to!").build(), context.getSource());
         }
+        return 1;
     }
 }

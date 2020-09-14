@@ -20,105 +20,39 @@ package org.anvilpowered.catalyst.bungee.command;
 import com.google.inject.Inject;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.PluginManager;
 import org.anvilpowered.anvil.api.data.registry.Registry;
 import org.anvilpowered.catalyst.bungee.CatalystBungee;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 
 public class BungeeCommandNode
-    extends CommonCommandNode<Command, CommandSender> {
+    extends CommonCommandNode<TextComponent, ProxiedPlayer, CommandSender> {
 
-    @Inject
-    private BungeeBanCommand banCommand;
-
-    @Inject
-    private BungeeBroadcastCommand broadcastCommand;
-
-    @Inject
-    private BungeeDeleteNickNameCommand deleteNickNameCommand;
-
-    @Inject
-    private BungeeExceptionCommand exceptionCommand;
-
-    @Inject
-    private BungeeFindCommand findCommand;
 
     @Inject
     private BungeeIgnoreCommand ignoreCommand;
 
     @Inject
-    private BungeeInfoCommand infoCommand;
-
-    @Inject
-    private BungeeKickCommand kickCommand;
-
-    @Inject
     private BungeeListCommand listCommand;
-
-    @Inject
-    private BungeeMessageCommand messageCommand;
-
-    @Inject
-    private BungeeMuteCommand muteCommand;
-
-    @Inject
-    private BungeeNickNameCommand nickNameCommand;
-
-    @Inject
-    private BungeeReplyCommand replyCommand;
-
-    @Inject
-    private BungeeSocialSpyCommand socialSpyCommand;
-
-    @Inject
-    private BungeeStaffChatCommand staffChatCommand;
-
-    @Inject
-    private BungeeSwearCommand swearCommand;
-
-    @Inject
-    private BungeeTempBanCommand tempBanCommand;
-
-    @Inject
-    private BungeeTempMuteCommand tempMuteCommand;
-
-    @Inject
-    private BungeeUnBanCommand unBanCommand;
-
-    @Inject
-    private BungeeUnMuteCommand unMuteCommand;
 
     @Inject
     private CatalystBungee plugin;
 
     @Inject
     public BungeeCommandNode(Registry registry) {
-        super(registry);
+        super(registry, ProxiedPlayer.class);
     }
 
     @Override
     public void loadCommands() {
         PluginManager pluginManager = ProxyServer.getInstance().getPluginManager();
-        pluginManager.registerCommand(plugin, banCommand);
-        pluginManager.registerCommand(plugin, broadcastCommand);
-        pluginManager.registerCommand(plugin, deleteNickNameCommand);
-        pluginManager.registerCommand(plugin, exceptionCommand);
-        pluginManager.registerCommand(plugin, findCommand);
+        //There is little to 0 documentation on registering brigadier commands
+        //This may need to be changed
+        commands.forEach(command -> pluginManager.registerCommand(plugin,
+            (net.md_5.bungee.api.plugin.Command) command.getCommand()));
         pluginManager.registerCommand(plugin, ignoreCommand);
-        pluginManager.registerCommand(plugin, infoCommand);
-        pluginManager.registerCommand(plugin, kickCommand);
         pluginManager.registerCommand(plugin, listCommand);
-        pluginManager.registerCommand(plugin, messageCommand);
-        pluginManager.registerCommand(plugin, muteCommand);
-        pluginManager.registerCommand(plugin, nickNameCommand);
-        pluginManager.registerCommand(plugin, replyCommand);
-        pluginManager.registerCommand(plugin, socialSpyCommand);
-        pluginManager.registerCommand(plugin, staffChatCommand);
-        pluginManager.registerCommand(plugin, swearCommand);
-        pluginManager.registerCommand(plugin, tempBanCommand);
-        pluginManager.registerCommand(plugin, tempMuteCommand);
-        pluginManager.registerCommand(plugin, unBanCommand);
-        pluginManager.registerCommand(plugin, unMuteCommand);
     }
 }
