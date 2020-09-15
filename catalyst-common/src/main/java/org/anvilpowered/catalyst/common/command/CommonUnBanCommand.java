@@ -60,11 +60,6 @@ public class CommonUnBanCommand<
         memberManager.unBan(args[0]).thenAcceptAsync(m -> textService.send(m, source));
     }
 
-    public int usage(CommandContext<TCommandSource> context) {
-        textService.send(pluginMessages.unbanCommandUsage(), context.getSource());
-        return 1;
-    }
-
     public int unban(CommandContext<TCommandSource> context) {
         execute(context.getSource(), new String[]{
             context.getArgument("target", String.class)

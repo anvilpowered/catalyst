@@ -50,8 +50,8 @@ public class BungeeCommandNode
         PluginManager pluginManager = ProxyServer.getInstance().getPluginManager();
         //There is little to 0 documentation on registering brigadier commands
         //This may need to be changed
-        commands.forEach(command -> pluginManager.registerCommand(plugin,
-            (net.md_5.bungee.api.plugin.Command) command.getCommand()));
+        commands.forEach((k, v) -> pluginManager.registerCommand(plugin,
+            (net.md_5.bungee.api.plugin.Command) v.getCommand()));
         pluginManager.registerCommand(plugin, ignoreCommand);
         pluginManager.registerCommand(plugin, listCommand);
     }

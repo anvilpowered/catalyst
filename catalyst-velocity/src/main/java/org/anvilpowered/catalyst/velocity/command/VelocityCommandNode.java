@@ -20,6 +20,8 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.velocitypowered.api.command.BrigadierCommand;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -58,7 +60,15 @@ public class VelocityCommandNode
     @Override
     public void loadCommands() {
         //register commands from CommonCommandNode
-        commands.forEach(command -> proxyServer.getCommandManager().register(new BrigadierCommand(command)));
+        CommandManager manager = proxyServer.getCommandManager();
+        commands.forEach((aliases, command) -> {
+            CommandMeta.Builder metaBuilder = manager.metaBuilder(aliases.get(0));
+            //Skipping first entry as it is already defined
+            for (int i = 1; i < aliases.size(); i++) {
+                metaBuilder.aliases(aliases.get(i));
+            }
+            manager.register(metaBuilder.build(), new BrigadierCommand(command));
+        });
 
         if (registry.getOrDefault(CatalystKeys.LIST_COMMAND_ENABLED)) {
             proxyServer.getCommandManager().register(

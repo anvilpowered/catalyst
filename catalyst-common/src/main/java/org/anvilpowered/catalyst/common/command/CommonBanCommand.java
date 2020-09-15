@@ -95,9 +95,4 @@ public class CommonBanCommand<
         });
         return 1;
     }
-
-    public int usage(CommandContext<TCommandSource> context){
-        textService.send(pluginMessages.banCommandUsage(), context.getSource());
-        return 1;
-    }
 }

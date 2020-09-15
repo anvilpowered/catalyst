@@ -17,6 +17,7 @@
 
 package org.anvilpowered.catalyst.common.command;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -103,7 +104,7 @@ public abstract class CommonCommandNode<
     protected Map<List<String>, Function<TCommandSource, String>> descriptions;
     protected Map<List<String>, Predicate<TCommandSource>> permissions;
     protected Map<List<String>, Function<TCommandSource, String>> usages;
-    protected List<LiteralCommandNode<TCommandSource>> commands;
+    protected Map<List<String>, LiteralCommandNode<TCommandSource>> commands;
 
     @Inject
     protected PermissionService permissionService;
@@ -138,12 +139,16 @@ public abstract class CommonCommandNode<
     protected abstract void loadCommands();
 
     private void loadNodes() {
-        commands = new ArrayList<>();
+        commands = new HashMap<>();
         final LiteralCommandNode<TCommandSource> ban = LiteralArgumentBuilder
             .<TCommandSource>literal("ban")
             .requires(source -> permissionService.hasPermission(source,
                 registry.getOrDefault(CatalystKeys.BAN_PERMISSION)))
-            .executes(banCommand::usage)
+            .executes(e -> {
+                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
+                textService.send(pluginMessages.banCommandUsage(), e.getSource());
+                return 1;
+            })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.string())
                 .suggests(suggest())
@@ -159,12 +164,14 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.TEMP_BAN_PERMISSION)))
             .executes(e -> {
+                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
                 textService.send(textService.of(pluginMessages.tempBanCommandUsage()), e.getSource());
                 return 1;
             }).then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.string())
                 .executes(e -> {
                     textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
+                    textService.send(textService.of(pluginMessages.tempBanCommandUsage()), e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -179,7 +186,11 @@ public abstract class CommonCommandNode<
         final LiteralCommandNode<TCommandSource> unban = LiteralArgumentBuilder.<TCommandSource>literal("unban")
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.BAN_PERMISSION)))
-            .executes(unBanCommand::usage)
+            .executes(e -> {
+                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
+                textService.send(textService.of(pluginMessages.unbanCommandUsage()), e.getSource());
+                return 1;
+            })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.string())
                 .executes(unBanCommand::unban)
@@ -190,12 +201,13 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.BROADCAST_PERMISSION)))
             .executes(e -> {
+                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
                 textService.send(pluginMessages.broadcastCommandUsage(), e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "message", StringArgumentType.greedyString())
-                .executes(ctx -> broadcastCommand.execute(ctx))
+                .executes(broadcastCommand::execute)
                 .build())
             .build();
         final LiteralCommandNode<TCommandSource> delNick = LiteralArgumentBuilder
@@ -210,6 +222,7 @@ public abstract class CommonCommandNode<
                         registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION)))
                 .executes(e -> {
                     textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
+                    textService.send(pluginMessages.nickNameCommandUsage(), e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -218,7 +231,7 @@ public abstract class CommonCommandNode<
                         permissionService.hasPermission(source,
                             registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION)))
                     .suggests(suggest())
-                    .executes(ctx -> deleteNickCommand.executeOther(ctx))
+                    .executes(deleteNickCommand::executeOther)
                     .build())
                 .build())
             .build();
@@ -227,6 +240,7 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION)))
             .executes(e -> {
+                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
                 textService.send(pluginMessages.nickNameCommandUsage(), e.getSource());
                 return 1;
             })
@@ -240,6 +254,7 @@ public abstract class CommonCommandNode<
                         registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION)))
                 .executes(e -> {
                     textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
+                    textService.send(pluginMessages.nickNameCommandUsage(), e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -247,11 +262,12 @@ public abstract class CommonCommandNode<
                     .suggests(suggest())
                     .executes(e -> {
                         textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
+                        textService.send(pluginMessages.nickNameCommandUsage(), e.getSource());
                         return 1;
                     })
                     .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                         "targetnick", StringArgumentType.word())
-                        .executes(ctx -> nickCommand.executeOther(ctx)))
+                        .executes(nickCommand::executeOther))
                     .build())
                 .build())
             .build();
@@ -260,24 +276,26 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.FIND_PERMISSION)))
             .executes(e -> {
+                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
                 textService.send(pluginMessages.findCommandUsage(), e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.string())
                 .suggests(suggest())
-                .executes(ctx -> findCommand.execute(ctx))
+                .executes(findCommand::execute)
                 .build())
             .build();
         final LiteralCommandNode<TCommandSource> info = LiteralArgumentBuilder
             .<TCommandSource>literal("info")
             .executes(e -> {
+                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
                 textService.send(pluginMessages.infoCommandUsage(), e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.string())
                 .suggests(suggest())
-                .executes(ctx -> infoCommand.execute(ctx))
+                .executes(infoCommand::execute)
                 .build())
             .build();
         final LiteralCommandNode<TCommandSource> kick = LiteralArgumentBuilder
@@ -285,15 +303,16 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.KICK_PERMISSION)))
             .executes(e -> {
+                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
                 textService.send(pluginMessages.kickCommandUsage(), e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.word())
                 .suggests(suggest())
-                .executes(ctx -> kickCommand.withoutReason(ctx))
+                .executes(kickCommand::withoutReason)
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "reason", StringArgumentType.greedyString())
-                    .executes(ctx -> kickCommand.execute(ctx))
+                    .executes(kickCommand::execute)
                     .build())
                 .build())
             .build();
@@ -302,15 +321,15 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION)))
             .executes(e -> {
-                textService.send(pluginMessages.messageCommandUsage(), e.getSource());
                 textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
+                textService.send(pluginMessages.messageCommandUsage(), e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.word())
                 .suggests(suggest())
                 .executes(e -> {
-                    textService.send(pluginMessages.messageCommandUsage(), e.getSource());
                     textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
+                    textService.send(pluginMessages.messageCommandUsage(), e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -331,7 +350,7 @@ public abstract class CommonCommandNode<
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "message", StringArgumentType.greedyString())
-                .executes(ctx -> replyCommand.execute(ctx))
+                .executes(replyCommand::execute)
                 .build())
             .build();
         final LiteralCommandNode<TCommandSource> mute = LiteralArgumentBuilder
@@ -346,10 +365,10 @@ public abstract class CommonCommandNode<
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.word())
                 .suggests(suggest())
-                .executes(ctx -> muteCommand.withoutReason(ctx))
+                .executes(muteCommand::withoutReason)
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "reason", StringArgumentType.greedyString())
-                    .executes(ctx -> muteCommand.execute(ctx))
+                    .executes(muteCommand::execute)
                     .build())
                 .build())
             .build();
@@ -372,10 +391,10 @@ public abstract class CommonCommandNode<
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "duration", StringArgumentType.word())
-                    .executes(ctx -> tempMuteCommand.withoutReason(ctx))
+                    .executes(tempMuteCommand::withoutReason)
                     .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                         "reason", StringArgumentType.greedyString())
-                        .executes(ctx -> tempMuteCommand.withReason(ctx))
+                        .executes(tempMuteCommand::withReason)
                         .build())
                     .build())
                 .build())
@@ -392,7 +411,7 @@ public abstract class CommonCommandNode<
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.word())
                 .suggests(suggest())
-                .executes(ctx -> unMuteCommand.execute(ctx))
+                .executes(unMuteCommand::execute)
                 .build())
             .build();
         final LiteralCommandNode<TCommandSource> socialSpy = LiteralArgumentBuilder
@@ -415,54 +434,54 @@ public abstract class CommonCommandNode<
             .<TCommandSource>literal("exception")
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.LANGUAGE_LIST_PERMISSION)))
-            .executes(ctx -> exceptionCommand.execute(ctx))
+            .executes(exceptionCommand::execute)
             .build();
         final LiteralCommandNode<TCommandSource> swear = LiteralArgumentBuilder
             .<TCommandSource>literal("swear")
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.LANGUAGE_LIST_PERMISSION)))
-            .executes(ctx -> swearCommand.execute(ctx))
+            .executes(swearCommand::execute)
             .build();
 
         if (registry.getOrDefault(CatalystKeys.BAN_COMMAND_ENABLED)) {
-            commands.add(tempBan);
-            commands.add(ban);
-            commands.add(unban);
+            commands.put(ImmutableList.of("tempban","ctempban"), tempBan);
+            commands.put(ImmutableList.of("ban", "cban"), ban);
+            commands.put(ImmutableList.of("unban", "cunban"), unban);
         }
         if (registry.getOrDefault(CatalystKeys.BROADCAST_COMMAND_ENABLED)) {
-            commands.add(broadcast);
+            commands.put(ImmutableList.of("broadcast", "cbroadcast"), broadcast);
         }
         if (registry.getOrDefault(CatalystKeys.NICKNAME_COMMAND_ENABLED)) {
-            commands.add(delNick);
-            commands.add(nickName);
+            commands.put(ImmutableList.of("delnick", "deletenick"), delNick);
+            commands.put(ImmutableList.of("nick", "nickname"), nickName);
         }
         if (registry.getOrDefault(CatalystKeys.FIND_COMMAND_ENABLED)) {
-            commands.add(find);
+            commands.put(ImmutableList.of("find", "cfind"), find);
         }
         if (registry.getOrDefault(CatalystKeys.INFO_COMMAND_ENABLED)) {
-            commands.add(info);
+            commands.put(ImmutableList.of("info", "cinfo"), info);
         }
         if (registry.getOrDefault(CatalystKeys.KICK_COMMAND_ENABLED)) {
-            commands.add(kick);
+            commands.put(ImmutableList.of("kick", "ckick"), kick);
         }
         if (registry.getOrDefault(CatalystKeys.MESSAGE_COMMAND_ENABLED)) {
-            commands.add(message);
-            commands.add(reply);
+            commands.put(ImmutableList.of("msg", "m", "w", "t", "whisper", "tell"), message);
+            commands.put(ImmutableList.of("reply", "r"), reply);
         }
         if (registry.getOrDefault(CatalystKeys.MUTE_COMMAND_ENABLED)) {
-            commands.add(mute);
-            commands.add(tempMute);
-            commands.add(unmute);
+            commands.put(ImmutableList.of("mute", "cmute"), mute);
+            commands.put(ImmutableList.of("tempmute", "ctempmute"), tempMute);
+            commands.put(ImmutableList.of("unmute", "cunmute"), unmute);
         }
         if (registry.getOrDefault(CatalystKeys.SOCIALSPY_COMMAND_ENABLED)) {
-            commands.add(socialSpy);
+            commands.put(ImmutableList.of("socialspy", "ss"), socialSpy);
         }
         if (registry.getOrDefault(CatalystKeys.STAFFCHAT_COMMAND_ENABLED)) {
-            commands.add(staffChat);
+            commands.put(ImmutableList.of("staffchat", "sc"), staffChat);
         }
         if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_ENABLED)) {
-            commands.add(exception);
-            commands.add(swear);
+            commands.put(ImmutableList.of("exception"), exception);
+            commands.put(ImmutableList.of("swear"), swear);
         }
     }
 
