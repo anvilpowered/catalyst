@@ -28,7 +28,7 @@ public class CommonServerCommand<
                                      boolean currentServerOnline,
                                      String currentServer,
                                      TPlayer player) {
-        List<TString> availableServers = new ArrayList<>();
+        TextService.Builder<TString, TCommandSource> availableServers = textService.builder();
         boolean useAdvServerInfo = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED);
         int count = 0;
 
@@ -38,18 +38,18 @@ public class CommonServerCommand<
             if (useAdvServerInfo) {
                 if (serverName.contains(playerPrefix) && currentServerOnline) {
                     if (count >= 8) {
-                        availableServers.add(textService.of("\n"));
+                        availableServers.append(textService.of("\n"));
                         count = 0;
                     }
                     if (currentServer.equals(serverName)) {
-                        availableServers.add(textService.builder()
+                        availableServers.append(textService.builder()
                             .green().append(serverName.replace(playerPrefix, "") + " ")
                             .onHoverShowText(
                                 textService.of(
                                     "Online Player: " + playerCount))
                             .build());
                     } else {
-                        availableServers.add(textService.builder()
+                        availableServers.append(textService.builder()
                             .gray().append(serverName.replace(playerPrefix, "") + " ")
                             .onClickRunCommand("/server " + serverName)
                             .onHoverShowText(textService.of(
@@ -58,21 +58,23 @@ public class CommonServerCommand<
                     }
                 }
             } else {
-                if(currentServer.equals(serverName)) {
-                    availableServers.add(textService.builder()
+                if (currentServer.equals(serverName)) {
+                    availableServers.append(textService.builder()
                         .green().append(serverName + " ")
                         .onHoverShowText(textService.of(
                             "Online Players: " + playerCount))
                         .build());
                 } else {
-                    availableServers.add(textService.builder()
+                    availableServers.append(textService.builder()
                         .gray().append(serverName + " ")
                         .onClickRunCommand("/server " + serverName)
                         .onHoverShowText(textService.of(
                             "Online Players: " + playerCount))
                         .build());
                 }
+                count++;
             }
+        }
             textService.builder()
                 .append(pluginInfo.getPrefix())
                 .green().append("Green = Current").yellow().append(", ")
@@ -83,6 +85,5 @@ public class CommonServerCommand<
                 .dark_aqua().append("\n-----------------------------------------------------\n")
                 .gold().append("Click an available server to join!")
                 .sendTo(player);
-        }
     }
 }

@@ -81,7 +81,7 @@ public class GlobalTab {
             list.addEntry(entry);
         } else {
             TabListEntry tabListEntry = cache.get(inUUID);
-            if (!tabListEntry.getDisplayName().equals(entry.getDisplayName())) {
+            if (!tabListEntry.getDisplayNameComponent().equals(entry.getDisplayNameComponent())) {
                 list.removeEntry(inUUID);
                 list.addEntry(entry);
             }
