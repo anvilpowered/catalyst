@@ -22,24 +22,27 @@ import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import net.kyori.text.TextComponent;
-import net.kyori.text.event.ClickEvent;
-import net.kyori.text.event.HoverEvent;
-import net.kyori.text.format.TextColor;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import net.kyori.adventure.text.TextComponent;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
+import org.anvilpowered.catalyst.common.command.CommonServerCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-public class VelocityServerCommand implements Command {
+public class VelocityServerCommand extends CommonServerCommand<
+    TextComponent,
+    Player,
+    CommandSource> implements Command {
 
     @Inject
     private PluginInfo<TextComponent> pluginInfo;
@@ -59,6 +62,9 @@ public class VelocityServerCommand implements Command {
     @Inject
     private Registry registry;
 
+    @Inject
+    private Logger logger;
+
     private RegisteredServer registeredServer;
 
     @Override
@@ -67,68 +73,20 @@ public class VelocityServerCommand implements Command {
             Player player = (Player) source;
             String playerPrefix = advancedServerInfoService.getPrefixForPlayer(((Player) source).getUsername());
             final boolean useAdvancedInformation = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED);
-            List<TextComponent> availableServers = new ArrayList<>();
+            Optional<ServerConnection> currentServer = player.getCurrentServer();
 
             if (args.length == 0) {
-                AtomicInteger count = new AtomicInteger();
-                proxyServer.getAllServers().forEach(s -> {
-                    if (useAdvancedInformation) {
-                        if (s.getServerInfo().getName().contains(playerPrefix)
-                            && player.getCurrentServer().isPresent()) {
-                            if (count.get() >= 8) {
-                                availableServers.add(textService.of("\n"));
-                                count.set(0);
-                            }
-                            if (player.getCurrentServer().get().getServer().equals(s)) {
-                                availableServers.add(textService.of(
-                                    s.getServerInfo().getName().replace(playerPrefix, "") + " ")
-                                    .color(TextColor.GREEN)
-                                    .hoverEvent(HoverEvent.showText(textService.of(
-                                        "Online Players: " + s.getPlayersConnected().size()))));
-                            } else {
-                                availableServers.add(textService.of(
-                                    s.getServerInfo().getName().replace(playerPrefix, "") + " ")
-                                    .color(TextColor.GRAY)
-                                    .clickEvent(ClickEvent.runCommand("/server " + s.getServerInfo().getName()))
-                                    .hoverEvent(HoverEvent.showText(textService.of(
-                                        "Online Players : " + s.getPlayersConnected().size())
-                                    )));
-                            }
-                        }
-                    } else {
-                        if (player.getCurrentServer().get().getServer().equals(s)) {
-                            availableServers.add(textService.of(
-                                s.getServerInfo().getName() + " ")
-                                .color(TextColor.GREEN)
-                                .hoverEvent(HoverEvent.showText(textService.of(
-                                    "Online Players: " + s.getPlayersConnected().size()))));
-                        } else {
-                            availableServers.add(textService.of(s.getServerInfo().getName() + " ")
-                                .color(TextColor.GRAY)
-                                .clickEvent(ClickEvent.runCommand("/server " + s.getServerInfo().getName()))
-                                .hoverEvent(HoverEvent.showText(textService.of(
-                                    "Online Players : " + s.getPlayersConnected().size())
-                                )));
-                        }
-                    }
-                    count.getAndIncrement();
-                });
-                TextComponent servers = TextComponent.builder()
-                    .append(pluginInfo.getPrefix())
-                    .append(textService.of("Green = Current").color(TextColor.GREEN))
-                    .append(textService.of(", ").color(TextColor.YELLOW))
-                    .append(textService.of("Gray = Available").color(TextColor.GRAY))
-                    .append(textService.of(", ").color(TextColor.YELLOW))
-                    .append(textService.of("Red = Offline\n").color(TextColor.RED))
-                    .append(textService.of("-----------------------------------------------------\n")
-                        .color(TextColor.DARK_AQUA))
-                    .append(availableServers)
-                    .append(textService.of("\n-----------------------------------------------------\n")
-                        .color(TextColor.DARK_AQUA))
-                    .append(textService.of("Click an available server to join!")
-                        .color(TextColor.GOLD))
-                    .build();
-                player.sendMessage(servers);
+                Map<String, Integer> serverInfo = new HashMap<>();
+                proxyServer.getAllServers().forEach(s -> serverInfo.put(
+                    s.getServerInfo().getName(),
+                    s.getPlayersConnected().size()
+                ));
+                if (currentServer.isPresent()) {
+                    sendAvailableServers(serverInfo, playerPrefix, true,
+                        currentServer.get().getServerInfo().getName(), player);
+                } else {
+                    logger.error("Could not find the current server for {}", player.getUsername());
+                }
                 return;
             }
 

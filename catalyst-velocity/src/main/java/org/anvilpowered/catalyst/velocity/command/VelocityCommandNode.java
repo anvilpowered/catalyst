@@ -23,8 +23,8 @@ import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.text.TextComponent;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import net.kyori.adventure.text.TextComponent;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 

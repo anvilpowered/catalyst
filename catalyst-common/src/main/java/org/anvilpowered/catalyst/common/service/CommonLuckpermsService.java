@@ -25,7 +25,7 @@ import net.luckperms.api.context.ContextManager;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.query.QueryOptions;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.jetbrains.annotations.NotNull;

@@ -18,8 +18,8 @@
 package org.anvilpowered.catalyst.api.data.key;
 
 import com.google.common.collect.ImmutableList;
-import org.anvilpowered.anvil.api.data.key.Key;
-import org.anvilpowered.anvil.api.data.key.Keys;
+import org.anvilpowered.anvil.api.registry.Key;
+import org.anvilpowered.anvil.api.registry.Keys;
 import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 

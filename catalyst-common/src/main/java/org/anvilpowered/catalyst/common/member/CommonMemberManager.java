@@ -18,11 +18,11 @@
 package org.anvilpowered.catalyst.common.member;
 
 import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.anvil.api.core.coremember.CoreMemberManager;
-import org.anvilpowered.anvil.api.core.coremember.repository.CoreMemberRepository;
-import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.coremember.CoreMemberManager;
+import org.anvilpowered.anvil.api.coremember.CoreMemberRepository;
+import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.CurrentServerService;
 import org.anvilpowered.anvil.api.util.KickService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -117,10 +117,10 @@ public class CommonMemberManager<
                         .blue().append("----------------Player Info----------------"));
                 message.append(
                     textService.builder()
-                    .blue().append("\nUUID : "))
+                        .blue().append("\nUUID : "))
                     .append(
                         textService.builder()
-                        .green().append(member.getUserUUID())
+                            .green().append(member.getUserUUID())
                     );
                 message.append(
                     textService.builder()

@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.anvilpowered.anvil.base.data.config.BaseConfigurationService;
+import org.anvilpowered.anvil.base.registry.BaseConfigurationService;
 
 @Singleton
 public class BackendConfigurationService extends BaseConfigurationService {

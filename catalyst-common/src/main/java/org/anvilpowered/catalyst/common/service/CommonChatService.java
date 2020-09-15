@@ -19,9 +19,9 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.anvilpowered.anvil.api.core.model.coremember.CoreMember;
-import org.anvilpowered.anvil.api.data.key.Key;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.model.coremember.CoreMember;
+import org.anvilpowered.anvil.api.registry.Key;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.CurrentServerService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -186,7 +186,7 @@ public class CommonChatService<
         String channelId,
         String channelPrefix
     ) {
-        return memberManager.getPrimaryComponent().getOneForUser(userName)
+        return memberManager.getPrimaryComponent().getOneForUser(userUUID)
             .thenApplyAsync(optionalMember -> {
                 if (!optionalMember.isPresent()) {
                     return Optional.of(textService.fail(

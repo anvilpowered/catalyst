@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.sponge.command;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 import org.spongepowered.api.Sponge;

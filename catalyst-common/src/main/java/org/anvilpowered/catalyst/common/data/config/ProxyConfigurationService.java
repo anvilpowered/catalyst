@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.anvilpowered.anvil.base.data.config.BaseConfigurationService;
+import org.anvilpowered.anvil.base.registry.BaseConfigurationService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.slf4j.Logger;
 

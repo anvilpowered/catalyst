@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.common.module;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.misc.BindingExtensions;
 import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;

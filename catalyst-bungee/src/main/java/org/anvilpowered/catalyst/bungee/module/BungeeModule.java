@@ -25,7 +25,7 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.anvilpowered.anvil.api.command.CommandNode;
-import org.anvilpowered.anvil.api.data.config.ConfigurationService;
+import org.anvilpowered.anvil.api.registry.ConfigurationService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
 import org.anvilpowered.catalyst.api.service.LoggerService;

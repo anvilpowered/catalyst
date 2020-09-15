@@ -20,9 +20,9 @@ package org.anvilpowered.catalyst.velocity.command;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
-import net.kyori.text.TextComponent;
-import net.kyori.text.format.TextColor;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -90,28 +90,28 @@ public class VelocityStaffListCommand implements Command {
     public TextComponent getLine() {
         return TextComponent.builder()
             .content("-----------------------------------------------------")
-            .color(TextColor.DARK_AQUA)
+            .color(NamedTextColor.DARK_AQUA)
             .build();
     }
 
     public TextComponent getStaffTitle() {
         return TextComponent.builder()
             .content("Staff:")
-            .color(TextColor.GOLD)
+            .color(NamedTextColor.GOLD)
             .build();
     }
 
     public TextComponent getAdminTitle() {
         return TextComponent.builder()
             .content("Admin:")
-            .color(TextColor.GOLD)
+            .color(NamedTextColor.GOLD)
             .build();
     }
 
     public TextComponent getOwnerTitle() {
         return TextComponent.builder()
             .content("Owner:")
-            .color(TextColor.GOLD)
+            .color(NamedTextColor.GOLD)
             .build();
     }
 }

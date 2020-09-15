@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.api;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.anvilpowered.anvil.api.Environment;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.base.plugin.BasePlugin;
 
 public class Catalyst extends BasePlugin {

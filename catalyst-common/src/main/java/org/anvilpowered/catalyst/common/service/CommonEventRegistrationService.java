@@ -18,7 +18,7 @@
 package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.data.registry.Registry;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
 import org.anvilpowered.catalyst.api.listener.CommandListener;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
