@@ -55,6 +55,8 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.TAB_FOOTER, "tab.format.footer");
         setName(CatalystKeys.TAB_FORMAT_CUSTOM, "tab.format.custom");
         setName(CatalystKeys.TAB_UPDATE, "tab.updateDelay");
+        setName(CatalystKeys.TAB_ORDER, "tab.order.order");
+        setName(CatalystKeys.TAB_GROUP_ORDER, "tab.order.groups");
         setName(CatalystKeys.CHAT_CHANNELS, "chat.channels");
         setName(CatalystKeys.CHAT_DEFAULT_CHANNEL, "chat.channelDefault");
         setName(CatalystKeys.BOT_TOKEN, "discord.bot.token");
@@ -141,6 +143,11 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nFormat for extra information that can be displayed in the tab.");
         setDescription(CatalystKeys.TAB_UPDATE,
             "\nTime setting for how often the tab updates in seconds");
+        setDescription(CatalystKeys.TAB_ORDER,
+            "\nOrder in which players should be listed in the tab list." +
+                "\nOptions: group, a-z");
+        setDescription(CatalystKeys.TAB_GROUP_ORDER,
+            "\nOrder in which groups should be displayed in the tab.");
         setDescription(CatalystKeys.CHAT_CHANNELS,
             "\nChat Channels");
         setDescription(CatalystKeys.CHAT_DEFAULT_CHANNEL,

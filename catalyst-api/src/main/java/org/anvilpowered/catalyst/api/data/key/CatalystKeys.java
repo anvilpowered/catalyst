@@ -82,6 +82,11 @@ public final class CatalystKeys {
     };
     public static final Key<Integer> TAB_UPDATE = new Key<Integer>("TAB_UPDATE", 1) {
     };
+    public static final Key<String> TAB_ORDER = new Key<String>("TAB_ORDER", "a-z") {
+    };
+    public static final Key<List<String>> TAB_GROUP_ORDER = new Key<List<String>>(
+        "TAB_GROUP_ORDER", ImmutableList.of("admin", "mod", "player")) {
+    };
     public static final Key<String> CHAT_DEFAULT_CHANNEL = new Key<String>("CHAT_DEFAULT_CHANNEL",
         "global") {
     };
@@ -267,7 +272,7 @@ public final class CatalystKeys {
         "A Velocity Proxy!") {
     };
     public static final Key<Boolean> MOTD_ENABLED = new Key<Boolean>("MOTD_ENABLED",
-        false){
+        false) {
     };
     public static final Key<Boolean> ADVANCED_SERVER_INFO_ENABLED = new Key<Boolean>(
         "ADVANCED_SERVER_INFO_ENABLED", false) {
@@ -419,6 +424,7 @@ public final class CatalystKeys {
             .register(TAB_FORMAT)
             .register(TAB_FORMAT_CUSTOM)
             .register(TAB_UPDATE)
+            .register(TAB_GROUP_ORDER)
             .register(CHAT_CHANNELS)
             .register(CHAT_DEFAULT_CHANNEL)
             .register(BAN_PERMISSION)

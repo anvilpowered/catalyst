@@ -131,9 +131,9 @@ public class CommonModule<
             }
         );
         be.bind(
-            new TypeToken<TabService<TString>>(getClass()) {
+            new TypeToken<TabService<TString, TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonTabService<TString, TCommandSource>>(getClass()) {
+            new TypeToken<CommonTabService<TString, TPlayer, TCommandSource>>(getClass()) {
             }
         );
         be.bind(

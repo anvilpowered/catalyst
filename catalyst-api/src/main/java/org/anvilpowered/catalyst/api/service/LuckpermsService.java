@@ -37,4 +37,6 @@ public interface LuckpermsService {
     @NonNull String getChatColor(Object player);
 
     @NonNull String getNameColor(Object player);
+
+    String getGroupName(Object player);
 }

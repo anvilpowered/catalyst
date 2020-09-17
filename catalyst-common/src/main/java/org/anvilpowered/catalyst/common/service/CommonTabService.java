@@ -19,50 +19,80 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.CurrentServerService;
 import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.anvil.api.util.UserService;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
+import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.TabService;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
-public class CommonTabService<TString, TCommandSource> implements TabService<TString> {
+public class CommonTabService<
+    TString,
+    TPlayer,
+    TCommandSource> implements TabService<TString, TPlayer> {
 
     public Map<String, Double> playerBalances = new HashMap<>();
+
     @Inject
     private TextService<TString, TCommandSource> textService;
+
     @Inject
     private CurrentServerService currentServerService;
+
     @Inject
     private AdvancedServerInfoService advancedServerInfoService;
 
-    @Override
-    public TString formatTab(String format, String userName, String prefix, String suffix) {
-        format = format.replace("%player%", userName);
-        format = format.replace("%prefix%", prefix);
-        format = format.replace("%suffix%", suffix);
+    @Inject
+    private UserService<TPlayer, TPlayer> userService;
 
-        format = format.replace("%server%",
-            currentServerService.getName(userName).orElse("Null"));
-        return textService.deserialize(format);
+    @Inject
+    private LuckpermsService luckpermsService;
+
+    @Inject
+    private Registry registry;
+
+    @Override
+    public TString format(TPlayer player, int ping, int playerCount) {
+        return textService.deserialize(
+            replacePlaceholders(
+                registry.getOrDefault(CatalystKeys.TAB_FORMAT),
+                player,
+                ping,
+                playerCount
+            ));
     }
 
     @Override
-    public TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, long ping, int playerCount, boolean useAdvancedServerInfo) {
-        format = format.replace("%player%", userName)
-            .replace("%prefix%", prefix)
-            .replace("%suffix%", suffix)
-            .replace("%server%",
-                useAdvancedServerInfo
-                    ? currentServerService.getName(userName).orElse("null").replace(advancedServerInfoService.getPrefixForPlayer(userName), "")
-                    : currentServerService.getName(userName).orElse("null"))
-            .replace("%ping%", String.valueOf(ping))
-            .replace("%playercount%", String.valueOf(playerCount))
-            .replace("%balance%", getBalance(userName));
+    public TString formatCustom(String format, TPlayer player, int ping, int playerCount) {
+        return textService.deserialize(replacePlaceholders(format, player, ping, playerCount));
+    }
 
-        return textService.deserialize(format);
+    @Override
+    public TString formatHeader(TPlayer player, int ping, int playerCount) {
+        return textService.deserialize(
+            replacePlaceholders(
+                registry.getOrDefault(CatalystKeys.TAB_HEADER),
+                player,
+                ping,
+                playerCount
+            ));
+    }
+
+    @Override
+    public TString formatFooter(TPlayer player, int ping, int playerCount) {
+        return textService.deserialize(
+            replacePlaceholders(
+                registry.getOrDefault(CatalystKeys.TAB_HEADER),
+                player,
+                ping,
+                playerCount
+            ));
     }
 
     @Override
@@ -81,5 +111,20 @@ public class CommonTabService<TString, TCommandSource> implements TabService<TSt
 
     private boolean containsKey(String userName) {
         return playerBalances.containsKey(userName);
+    }
+
+    private String replacePlaceholders(String format, TPlayer player, int ping, int playerCount) {
+        String userName = userService.getUserName(player);
+        return format.replace("%player%", userName)
+            .replace("%prefix%", luckpermsService.getPrefix(player))
+            .replace("%suffix%", luckpermsService.getSuffix(player))
+            .replace("%server%",
+                registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
+                    ? currentServerService.getName(userName).orElse("null")
+                    .replace(advancedServerInfoService.getPrefixForPlayer(userName), "")
+                    : currentServerService.getName(userName).orElse("null"))
+            .replace("%ping%", String.valueOf(ping))
+            .replace("%playercount%", String.valueOf(playerCount))
+            .replace("%balance%", getBalance(userName));
     }
 }

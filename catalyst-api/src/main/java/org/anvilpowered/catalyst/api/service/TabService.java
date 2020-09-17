@@ -17,11 +17,15 @@
 
 package org.anvilpowered.catalyst.api.service;
 
-public interface TabService<TString> {
+public interface TabService<TString, TPlayer> {
 
-    TString formatTab(String format, String userName, String prefix, String suffix);
+    TString format(TPlayer player, int ping, int playerCount);
 
-    TString formatPlayerSpecificTab(String format, String userName, String prefix, String suffix, long ping, int playerCount, boolean useAdvancedServerInfo);
+    TString formatCustom(String format, TPlayer player, int ping, int playerCount);
+
+    TString formatHeader(TPlayer player, int ping, int playerCount);
+
+    TString formatFooter(TPlayer player, int ping, int playerCount);
 
     String getBalance(String userName);
 

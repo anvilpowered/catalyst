@@ -29,6 +29,7 @@ import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -103,5 +104,14 @@ public class CommonLuckpermsService<TUser, TPlayer> implements LuckpermsService 
             }
         }
         return "";
+    }
+
+    @Override
+    public @Nullable String getGroupName(Object player) {
+        User user = userManager.getUser(userService.getUUID((TUser) player));
+        if (user == null) {
+            return "";
+        }
+        return user.getPrimaryGroup();
     }
 }

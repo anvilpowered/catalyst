@@ -55,7 +55,7 @@ public class VelocityListener {
     private Registry registry;
 
     @Inject
-    private TabService<TextComponent> tabService;
+    private TabService<TextComponent, Player> tabService;
 
     @Inject
     private ChatEvent<TextComponent, Player> chatEvent;

@@ -46,13 +46,14 @@ public class GlobalTab {
 
     @Inject
     private ProxyServer proxyServer;
-    private Registry registry;
+
+    final private Registry registry;
 
     @Inject
-    private TabService<TextComponent> tabService;
+    private TabService<TextComponent, Player> tabService;
 
     @Inject
-    private LuckpermsService luckPermsUtils;
+    private LuckpermsService luckpermsService;
 
     @Inject
     public GlobalTab(Registry registry) {
@@ -66,8 +67,7 @@ public class GlobalTab {
         }
     }
 
-
-    public void insertIntoTab(TabList list, TabListEntry entry, List<UUID> toKeep) {
+    public void insertIntoTab(TabList list, TabListEntry entry) {
         UUID inUUID = entry.getProfile().getId();
         List<UUID> contained = new ArrayList<>();
         Map<UUID, TabListEntry> cache = new HashMap<>();
@@ -86,73 +86,59 @@ public class GlobalTab {
                 list.addEntry(entry);
             }
         }
-        toKeep.add(inUUID);
     }
 
     public void schedule() {
         proxyServer.getScheduler().buildTask(pluginContainer, () -> {
-            if (!(proxyServer.getPlayerCount() > 0)) {
+            final int playerCount = proxyServer.getPlayerCount();
+            if (playerCount == 0) {
                 return;
             }
+            List<String> groupOrder = registry.getOrDefault(CatalystKeys.TAB_GROUP_ORDER);
             for (Player currentPlayerToProcess : proxyServer.getAllPlayers()) {
-                List<UUID> toKeep = new ArrayList<>();
-                for (int i2 = 0; i2 < proxyServer.getPlayerCount(); i2++) {
-                    Player currentPlayer = (Player) proxyServer
-                        .getAllPlayers().toArray()[i2];
+                for (Player process : proxyServer.getAllPlayers()) {
+                    String tempName = process.getUsername();
+                    if (registry.getOrDefault(CatalystKeys.TAB_ORDER).equalsIgnoreCase("group")) {
+                        for (String group : groupOrder) {
+                            if (luckpermsService.getGroupName(process).equalsIgnoreCase(group)) {
+                                    tempName = String.valueOf(groupOrder.indexOf(group));
+                            }
+                        }
+                    }
                     TabListEntry currentEntry = TabListEntry.builder().
-                        profile(currentPlayer.getGameProfile())
-                        .displayName(tabService.formatTab(
-                            registry.getOrDefault(CatalystKeys.TAB_FORMAT),
-                            currentPlayer.getUsername(),
-                            luckPermsUtils.getPrefix(currentPlayer),
-                            luckPermsUtils.getSuffix(currentPlayer)
-                            )
-                        )
-                        .tabList(currentPlayerToProcess.getTabList()).build();
-                    insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry, toKeep);
-                }
-                List<String> customTabs = new ArrayList<>(
-                    registry.getOrDefault(CatalystKeys.TAB_FORMAT_CUSTOM));
-                for (int i3 = 0; i3 < customTabs.size(); i3++) {
-                    GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
-                    TabListEntry currentEntry = TabListEntry.builder().profile(tabProfile)
-                        .displayName(
-                            tabService.formatPlayerSpecificTab(customTabs.get(i3),
-                                currentPlayerToProcess.getUsername(),
-                                luckPermsUtils.getPrefix(currentPlayerToProcess),
-                                luckPermsUtils.getSuffix(currentPlayerToProcess),
-                                currentPlayerToProcess.getPing(),
-                                proxyServer.getPlayerCount(),
-                                registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)))
+                        profile(new GameProfile(process.getUniqueId(), tempName, process.getGameProfileProperties()))
+                        .displayName(tabService.format(process, (int) process.getPing(), playerCount))
                         .tabList(currentPlayerToProcess.getTabList())
                         .build();
-                    insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry, toKeep);
+                    insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry);
                 }
-                for (TabListEntry current : currentPlayerToProcess.getTabList().getEntries()) {
-                    if (!toKeep.contains(current.getProfile().getId()))
-                        currentPlayerToProcess.getTabList().
-                            removeEntry(current.getProfile().getId());
+                int x = 0;
+                for (String custom : registry.getOrDefault(CatalystKeys.TAB_FORMAT_CUSTOM)) {
+                    x++;
+                    GameProfile tabProfile = GameProfile.forOfflinePlayer("catalyst" + x);
+                    TabListEntry currentEntry = TabListEntry.builder()
+                        .profile(tabProfile)
+                        .displayName(
+                            tabService.formatCustom(
+                                custom,
+                                currentPlayerToProcess,
+                                (int) currentPlayerToProcess.getPing(),
+                                playerCount))
+                        .tabList(currentPlayerToProcess.getTabList())
+                        .build();
+                    insertIntoTab(currentPlayerToProcess.getTabList(), currentEntry);
                 }
                 currentPlayerToProcess.getTabList().setHeaderAndFooter(
-                    tabService.formatPlayerSpecificTab(
-                        registry.getOrDefault(CatalystKeys.TAB_HEADER),
-                        currentPlayerToProcess.getUsername(),
-                        luckPermsUtils.getPrefix(currentPlayerToProcess),
-                        luckPermsUtils.getSuffix(currentPlayerToProcess),
+                    tabService.formatHeader(
+                        currentPlayerToProcess,
                         (int) currentPlayerToProcess.getPing(),
-                        proxyServer.getPlayerCount(),
-                        registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
+                        playerCount
                     ),
-                    tabService.formatPlayerSpecificTab(
-                        registry.getOrDefault(CatalystKeys.TAB_FOOTER),
-                        currentPlayerToProcess.getUsername(),
-                        luckPermsUtils.getPrefix(currentPlayerToProcess),
-                        luckPermsUtils.getSuffix(currentPlayerToProcess),
+                    tabService.formatFooter(
+                        currentPlayerToProcess,
                         (int) currentPlayerToProcess.getPing(),
-                        proxyServer.getPlayerCount(),
-                        registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
-                    )
-                );
+                        playerCount
+                    ));
             }
         }).repeat(10, TimeUnit.SECONDS).schedule();
     }
