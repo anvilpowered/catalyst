@@ -88,7 +88,7 @@ public class CommonTabService<
     public TString formatFooter(TPlayer player, int ping, int playerCount) {
         return textService.deserialize(
             replacePlaceholders(
-                registry.getOrDefault(CatalystKeys.TAB_HEADER),
+                registry.getOrDefault(CatalystKeys.TAB_FOOTER),
                 player,
                 ping,
                 playerCount

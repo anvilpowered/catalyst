@@ -20,10 +20,10 @@ package org.anvilpowered.catalyst.common.module;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import org.anvilpowered.anvil.api.Anvil;
-import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.misc.BindingExtensions;
 import org.anvilpowered.anvil.api.plugin.BasicPluginInfo;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.api.discord.WebhookSender;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.event.CommandEvent;
@@ -127,7 +127,7 @@ public class CommonModule<
         be.bind(
             new TypeToken<StaffListService<TString>>(getClass()) {
             },
-            new TypeToken<CommonStaffListService<TString, TCommandSource>>(getClass()) {
+            new TypeToken<CommonStaffListService<TString, TPlayer, TCommandSource>>(getClass()) {
             }
         );
         be.bind(
@@ -211,7 +211,7 @@ public class CommonModule<
         be.bind(
             new TypeToken<EventRegistrationService>(getClass()) {
             },
-            new TypeToken<CommonEventRegistrationService<TUser,TPlayer, TString, TCommandSource>>(getClass()) {
+            new TypeToken<CommonEventRegistrationService<TUser, TPlayer, TString, TCommandSource>>(getClass()) {
             }
         );
 

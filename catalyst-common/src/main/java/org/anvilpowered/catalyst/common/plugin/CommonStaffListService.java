@@ -20,20 +20,36 @@ package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.anvilpowered.anvil.api.registry.Registry;
+import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.anvil.api.util.UserService;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class CommonStaffListService<TString, TCommandSource> implements StaffListService<TString> {
+public class CommonStaffListService<TString, TPlayer, TCommandSource> implements StaffListService<TString> {
 
     public List<TString> staffNames = new ArrayList<>();
     public List<TString> adminNames = new ArrayList<>();
     public List<TString> ownerNames = new ArrayList<>();
+    final private Registry registry;
+
     @Inject
     private TextService<TString, TCommandSource> textService;
+
+    @Inject
+    private UserService<TPlayer, TPlayer> userService;
+
+    @Inject
+    private PermissionService permissionService;
 
     @Override
     public List<TString> staffNames() {
@@ -50,6 +66,13 @@ public class CommonStaffListService<TString, TCommandSource> implements StaffLis
         return ownerNames;
     }
 
+    @Inject
+    public CommonStaffListService(Registry registry) {
+        this.registry = registry;
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(this::update, 10, TimeUnit.MINUTES);
+    }
+
 
     @Override
     public void getStaffNames(String player, boolean adminPermission, boolean staffPermission, boolean ownerPermission) {
@@ -62,6 +85,29 @@ public class CommonStaffListService<TString, TCommandSource> implements StaffLis
                 staffNames.add(textService.of(player));
             }
         }
+    }
+
+    private Runnable update() {
+        return () ->
+            CompletableFuture.runAsync(() -> {
+                for (TPlayer player : userService.getOnlinePlayers()) {
+                    String userName = userService.getUserName(player);
+                    getStaffNames(
+                        userName,
+                        permissionService.hasPermission(
+                            player,
+                            registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN_PERMISSION)
+                        ),
+                        permissionService.hasPermission(
+                            player,
+                            registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF_PERMISSION)
+                        ),
+                        permissionService.hasPermission(
+                            player,
+                            registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER_PERMISSION)
+                        ));
+                }
+            });
     }
 
     @Override
