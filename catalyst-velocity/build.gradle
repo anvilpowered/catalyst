@@ -16,6 +16,7 @@ dependencies {
 
     implementation velocity
     annotationProcessor velocity
+    implementation minimessage
 }
 
 shadowJar {
@@ -34,6 +35,7 @@ shadowJar {
         include dependency(apache_http_mime)
         include dependency(apache_http_nio)
         include dependency(emoji_java)
+        include dependency(minimessage)
         include dependency(jackson_annotations)
         include dependency(jackson_core)
         include dependency(jackson_databind)
