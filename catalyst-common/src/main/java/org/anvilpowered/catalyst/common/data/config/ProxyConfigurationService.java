@@ -60,9 +60,9 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.CHAT_CHANNELS, "chat.channels");
         setName(CatalystKeys.CHAT_DEFAULT_CHANNEL, "chat.channelDefault");
         setName(CatalystKeys.BOT_TOKEN, "discord.bot.token");
-        setName(CatalystKeys.MAIN_CHANNEL, "discord.channel.main");
-        setName(CatalystKeys.STAFF_CHANNEL, "discord.channel.staff");
-        setName(CatalystKeys.PLAYER_CHAT_FORMAT, "discord.format.proxy");
+        setName(CatalystKeys.DISCORD_MAIN_CHANNEL, "discord.channel.main");
+        setName(CatalystKeys.DISCORD_STAFF_CHANNEL, "discord.channel.staff");
+        setName(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT, "discord.format.proxy");
         setName(CatalystKeys.JOIN_FORMAT, "discord.format.join");
         setName(CatalystKeys.DISCORD_LEAVE_FORMAT, "discord.format.leave");
         setName(CatalystKeys.DISCORD_CHAT_FORMAT, "discord.format.discord");
@@ -116,7 +116,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nList of words that are caught by the swear detection, " +
                 "but shouldn't be. (ex. A player name that contains 'ass'");
         setDescription(CatalystKeys.CHAT_FILTER_ENABLED,
-            "\nEnable or disable the chat filter. (true = enabled)");
+            "\nToggle the chat filter. (true = enabled)");
         setDescription(CatalystKeys.FIRST_JOIN,
             "\nFormat for the message that is displayed when a player joins the proxy for the first time");
         setDescription(CatalystKeys.JOIN_MESSAGE,
@@ -130,9 +130,9 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND,
             "\nFormat for click event's");
         setDescription(CatalystKeys.PROXY_CHAT_ENABLED,
-            "\nEnable or Disable the proxy-wide chat. (true = enabled)");
+            "\nToggle proxy-wide chat handling. (true = enabled)");
         setDescription(CatalystKeys.TAB_ENABLED,
-            "\nEnable or Disable the global tab. (true = enabled)");
+            "\nToggle the proxy-wide tab handling. (true = enabled)");
         setDescription(CatalystKeys.TAB_HEADER,
             "\nFormat for the tab header");
         setDescription(CatalystKeys.TAB_FOOTER,
@@ -153,30 +153,29 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.CHAT_DEFAULT_CHANNEL,
             "\nDefault chat channel");
         setDescription(CatalystKeys.BOT_TOKEN,
-            "\nToken for the discord bot that you would like to use when sending messages to discord " +
-                "\n For help creating a bot token, please see the wiki");
-        setDescription(CatalystKeys.MAIN_CHANNEL,
-            "\nChannel id of the main channel that you would like in-game chat sent to.");
-        setDescription(CatalystKeys.STAFF_CHANNEL,
-            "\nChannel id of the staff-chat channel that you would like staff chat messages sent to.");
-        setDescription(CatalystKeys.PLAYER_CHAT_FORMAT,
+            "\nToken for the discord bot");
+        setDescription(CatalystKeys.DISCORD_MAIN_CHANNEL,
+            "\nDiscord channel that in-game chat is sent to");
+        setDescription(CatalystKeys.DISCORD_STAFF_CHANNEL,
+            "\nDiscord channel id that staff chat is sent to");
+        setDescription(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT,
             "\nFormat of the message to be sent to discord from in-game");
-        setDescription(CatalystKeys.JOIN_FORMAT,
+        setDescription(CatalystKeys.DISCORD_JOIN_FORMAT,
             "\nMessage to be sent to the discord each time a player joins.");
         setDescription(CatalystKeys.DISCORD_LEAVE_FORMAT,
             "\nMessage to be sent to the discord each time a player leaves.");
         setDescription(CatalystKeys.DISCORD_CHAT_FORMAT,
             "\nFormat of the message being sent from discord to in-game");
         setDescription(CatalystKeys.DISCORD_STAFF_FORMAT,
-            "\nFormat of the message being sent from staff chat to in-game");
+            "\nFormat of the message being sent from the staffchat channel to in-game");
         setDescription(CatalystKeys.TOPIC_FORMAT,
-            "\nFormat of the main channel topic updater");
+            "\nFormat of the main channel topic");
         setDescription(CatalystKeys.TOPIC_UPDATE_DELAY,
             "\nHow often you would like the topic to be updated in minutes. Setting this below " +
                 "the default will result in constant RateLimit issues. If you experience issues " +
                 "with 5 minutes, set this to 10 or higher.");
         setDescription(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS,
-            "\nThis message will be shown when there are no players online.");
+            "\nMessage to be shown when there are no players online");
         setDescription(CatalystKeys.NOW_PLAYING_MESSAGE,
             "\nThe message being shown as the \"now playing\" for the discord bot.");
         setDescription(CatalystKeys.DISCORD_HOVER_MESSAGE,
@@ -184,9 +183,9 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.WEBHOOK_URL,
             "\nURL that gets the player avatar when sending messages to discord");
         setDescription(CatalystKeys.DISCORD_URL,
-            "\nDiscord invite link that allows players to join the discord");
+            "\nDiscord invite link");
         setDescription(CatalystKeys.DISCORD_ENABLE,
-            "\nEnable or Disable the discord bot (false = disabled).");
+            "\nToggle the discord bot (false = disabled).");
         setDescription(CatalystKeys.SERVER_PING,
             "\nSpecify what you would like to be shown in the server list, either PLAYERS or MESSAGE");
         setDescription(CatalystKeys.SERVER_PING_MESSAGE,
@@ -195,14 +194,14 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.MOTD,
             "\nDefault MOTD that catalyst uses if the advanced server information is disabled.");
         setDescription(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED,
-            "\nEnable to disable advanced server information settings");
+            "\nToggle the Advanced Server Information handling");
         setDescription(CatalystKeys.ADVANCED_SERVER_INFO,
             "\nThis config option is for users that would like to have multiple servers," +
                 " \neach with differing MOTD and/or Mods \n" +
                 "Note: To do this, the IP specified MUST correlate to the IP defined in the forced host section\n" +
                 "of the velocity config. Also, your players must use the IP defined in this config to connect");
         setDescription(CatalystKeys.EMOJI_ENABLE,
-            "\nEnable or disable emojis in chat" +
+            "\nToggle emojis in chat" +
                 "\nEnabling emojis means that you will have to have your players download a select texture pack, found on the github page." +
                 "\n(true = enabled)");
         setDescription(CatalystKeys.VIA_VERSION_ENABLED,

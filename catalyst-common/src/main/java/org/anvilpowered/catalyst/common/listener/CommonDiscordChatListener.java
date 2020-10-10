@@ -84,7 +84,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
             server = serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()));
         }
 
-        String name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
+        String name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
             .replace("%server%", server)
             .replace("%player%", userService.getUserName((TUser) event.getPlayer()))
             .replace("%prefix%", luckPermsService.getPrefix(event.getPlayer()))
@@ -93,7 +93,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
             name,
             message,
-            registry.getOrDefault(CatalystKeys.MAIN_CHANNEL),
+            registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL),
             event.getPlayer()
         );
     }
@@ -113,7 +113,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
             webHookSender.sendConsoleWebhookMessage(
                 registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
                 message,
-                registry.getOrDefault(CatalystKeys.STAFF_CHANNEL)
+                registry.getOrDefault(CatalystKeys.DISCORD_STAFF_CHANNEL)
             );
             return;
         }
@@ -123,7 +123,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
             ? serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()))
             : currentServerService.getName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
 
-        String name = registry.getOrDefault(CatalystKeys.PLAYER_CHAT_FORMAT)
+        String name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
             .replace("%server%", server)
             .replace("%player%", userService.getUserName((TUser) event.getPlayer()))
             .replace("%prefix%", luckPermsService.getPrefix(event.getPlayer()))
@@ -132,7 +132,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
             name,
             message,
-            registry.getOrDefault(CatalystKeys.STAFF_CHANNEL),
+            registry.getOrDefault(CatalystKeys.DISCORD_STAFF_CHANNEL),
             event.getPlayer()
         );
     }
@@ -159,7 +159,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
             ).replace(
                 "%server%", server
             ),
-            registry.getOrDefault(CatalystKeys.MAIN_CHANNEL),
+            registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL),
             event.getPlayer()
         );
     }
@@ -186,7 +186,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
                 "%server%",
                 server
             ),
-            registry.getOrDefault(CatalystKeys.MAIN_CHANNEL),
+            registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL),
             event.getPlayer()
         );
     }

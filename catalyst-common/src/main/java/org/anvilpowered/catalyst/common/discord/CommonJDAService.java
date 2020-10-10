@@ -96,7 +96,7 @@ public class CommonJDAService<
     @Override
     public Runnable updateTopic() {
         return () -> {
-            TextChannel channel = jda.getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL));
+            TextChannel channel = jda.getTextChannelById(registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL));
             String playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS);
             String nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE);
             if (userService.getOnlinePlayers().size() != 0) {

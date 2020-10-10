@@ -202,16 +202,16 @@ public final class CatalystKeys {
     public static final Key<String> BOT_TOKEN = new Key<String>("BOT_TOKEN",
         "bot token") {
     };
-    public static final Key<String> MAIN_CHANNEL = new Key<String>("MAIN_CHANNEL",
+    public static final Key<String> DISCORD_MAIN_CHANNEL = new Key<String>("DISCORD_MAIN_CHANNEL",
         "123456789") {
     };
-    public static final Key<String> STAFF_CHANNEL = new Key<String>("STAFF_CHANNEL",
+    public static final Key<String> DISCORD_STAFF_CHANNEL = new Key<String>("DISCORD_STAFF_CHANNEL",
         "123456789") {
     };
-    public static final Key<String> PLAYER_CHAT_FORMAT = new Key<String>("PLAYER_CHAT_FORMAT",
+    public static final Key<String> DISCORD_PLAYER_CHAT_FORMAT = new Key<String>("PLAYER_CHAT_FORMAT",
         "[%server%] %prefix% %player% %suffix%") {
     };
-    public static final Key<String> JOIN_FORMAT = new Key<String>("JOIN_FORMAT",
+    public static final Key<String> DISCORD_JOIN_FORMAT = new Key<String>("DISCORD_JOIN_FORMAT",
         "%player% has joined the game.") {
     };
     public static final Key<String> DISCORD_LEAVE_FORMAT = new Key<String>("DISCORD_LEAVE_FORMAT",
@@ -464,10 +464,10 @@ public final class CatalystKeys {
             .register(CHANNEL_BASE_PERMISSION)
             .register(BOT_NAME)
             .register(BOT_TOKEN)
-            .register(MAIN_CHANNEL)
-            .register(STAFF_CHANNEL)
-            .register(PLAYER_CHAT_FORMAT)
-            .register(JOIN_FORMAT)
+            .register(DISCORD_MAIN_CHANNEL)
+            .register(DISCORD_STAFF_CHANNEL)
+            .register(DISCORD_PLAYER_CHAT_FORMAT)
+            .register(DISCORD_JOIN_FORMAT)
             .register(DISCORD_LEAVE_FORMAT)
             .register(DISCORD_CHAT_FORMAT)
             .register(DISCORD_STAFF_FORMAT)

@@ -49,7 +49,7 @@ public class DiscordCommandSource implements CommandSource {
     public void sendMessage(Component component) {
         Objects.requireNonNull(
             jdaHook.getJDA()
-                .getTextChannelById(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL)))
+                .getTextChannelById(registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL)))
             .sendMessage("```" + textService.serializePlain((TextComponent) component) + "```")
             .queue();
     }

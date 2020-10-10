@@ -69,7 +69,7 @@ public class CommonDiscordListener<
             return;
         }
 
-        if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.MAIN_CHANNEL))) {
+        if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL))) {
             String message = EmojiParser.parseToAliases(event.getMessage().getContentDisplay());
             String messageRaw = event.getMessage().toString();
             if (event.getMember().hasPermission(Permission.ADMINISTRATOR)
@@ -112,7 +112,7 @@ public class CommonDiscordListener<
             loggerService.info("[Discord] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
         }
 
-        if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.STAFF_CHANNEL))) {
+        if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.DISCORD_STAFF_CHANNEL))) {
             String message = EmojiParser.parseToAliases(event.getMessage().getContentDisplay());
             if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
                 for (String key : emojiService.getEmojis().keySet()) {
