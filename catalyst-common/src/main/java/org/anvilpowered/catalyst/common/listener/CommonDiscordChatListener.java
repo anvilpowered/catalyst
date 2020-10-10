@@ -141,7 +141,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
     public void onPlayerJoinEvent(JoinEvent<TPlayer> event) {
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return;
 
-        String joinMessage = registry.getOrDefault(CatalystKeys.JOIN_FORMAT);
+        String joinMessage = registry.getOrDefault(CatalystKeys.DISCORD_JOIN_FORMAT);
         if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
             for (String key : emojiService.getEmojis().keySet()) {
                 joinMessage = joinMessage.replace(emojiService.getEmojis().get(key).toString(), key);

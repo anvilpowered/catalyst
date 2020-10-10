@@ -18,8 +18,10 @@
 package org.anvilpowered.catalyst.api.data.key;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import org.anvilpowered.anvil.api.registry.Key;
 import org.anvilpowered.anvil.api.registry.Keys;
+import org.anvilpowered.anvil.api.registry.TypeTokens;
 import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.data.config.ChatChannel;
 
@@ -29,356 +31,578 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings({"UnstableApiUsage"})
 public final class CatalystKeys {
 
-    public static final Key<Boolean> CHAT_FILTER_ENABLED = new Key<Boolean>("CHAT_FILTER_ENABLED",
-        false) {
-    };
-    public static final Key<List<String>> CHAT_FILTER_SWEARS = new Key<List<String>>(
-        "CHAT_FILTER_SWEARS", Arrays.asList("fuck", "shit", "ass")) {
-    };
-    public static final Key<List<String>> CHAT_FILTER_EXCEPTIONS = new Key<List<String>>(
-        "CHAT_FILTER_EXCEPTIONS",
-        Arrays.asList("assassin", "jkass")) {
-    };
-    public static final Key<String> FIRST_JOIN = new Key<String>("FIRST_JOIN",
-        "Welcome to the server, %player%") {
-    };
-    public static final Key<String> JOIN_MESSAGE = new Key<String>("JOIN_MESSAGE",
-        "%player% has joined the proxy") {
-    };
-    public static final Key<String> LEAVE_MESSAGE = new Key<String>("LEAVE_MESSAGE",
-        "%player% has left the proxy") {
-    };
-    public static final Key<Boolean> PROXY_CHAT_ENABLED = new Key<Boolean>(
-        "PROXY_CHAT_ENABLED", true) {
-    };
-    public static final Key<String> PROXY_CHAT_FORMAT_MESSAGE = new Key<String>(
-        "PROXY_CHAT_FORMAT_MESSAGE", "%prefix% %player% %suffix%: %message% ") {
-    };
-    public static final Key<String> PROXY_CHAT_FORMAT_HOVER = new Key<String>(
-        "PROXY_CHAT_FORMAT_HOVER", "%player% %server%") {
-    };
-    public static final Key<String> PROXY_CHAT_FORMAT_CLICK_COMMAND = new Key<String>(
-        "PROXY_CHAT_FORMAT_CLICK_COMMAND", "/msg %player%") {
-    };
-    public static final Key<Boolean> TAB_ENABLED = new Key<Boolean>("TAB",
-        true) {
-    };
-    public static final Key<String> TAB_HEADER = new Key<String>("TAB_HEADER",
-        "Welcome to") {
-    };
-    public static final Key<String> TAB_FOOTER = new Key<String>("TAB_FOOTER",
-        "A Velocity Server") {
-    };
-    public static final Key<String> TAB_FORMAT = new Key<String>("TAB_FORMAT",
-        "%prefix% %player% %suffix%") {
-    };
-    public static final Key<List<String>> TAB_FORMAT_CUSTOM = new Key<List<String>>("TAB_FORMAT_CUSTOM",
-        Arrays.asList(
-            "&3Your Ping : &e%ping%",
-            "&3Current Server : &e%server%",
-            "&3Player Count : &e%playercount%")) {
-    };
-    public static final Key<Integer> TAB_UPDATE = new Key<Integer>("TAB_UPDATE", 1) {
-    };
-    public static final Key<String> TAB_ORDER = new Key<String>("TAB_ORDER", "a-z") {
-    };
-    public static final Key<List<String>> TAB_GROUP_ORDER = new Key<List<String>>(
-        "TAB_GROUP_ORDER", ImmutableList.of("admin", "mod", "player")) {
-    };
-    public static final Key<String> CHAT_DEFAULT_CHANNEL = new Key<String>("CHAT_DEFAULT_CHANNEL",
-        "global") {
-    };
-    public static final Key<String> BAN_PERMISSION = new Key<String>("BAN_PERMISSION",
-        "catalyst.command.ban") {
-    };
-    public static final Key<String> TEMP_BAN_PERMISSION = new Key<String>("TEMP_BAN_PERMISSION",
-        "catalyst.command.tempban") {
-    };
-    public static final Key<String> BAN_EXEMPT_PERMISSION = new Key<String>(
-        "BAN_EXEMPT_PERMISSION", "catalyst.command.ban.exempt") {
-    };
-    public static final Key<String> BROADCAST_PERMISSION = new Key<String>("BROADCAST_PERMISSION",
-        "catalyst.command.broadcast") {
-    };
-    public static final Key<String> CHAT_COLOR_PERMISSION = new Key<String>(
-        "CHAT_COLOR_PERMISSION", "catalyst.chat.color") {
-    };
-    public static final Key<String> FIND_PERMISSION = new Key<String>("FIND_PERMISSION",
-        "catalyst.command.find") {
-    };
-    public static final Key<String> GOOGLE_PERMISSION = new Key<String>("GOOGLE_PERMISSION",
-        "catalyst.command.google") {
-    };
-    public static final Key<String> INFO_PERMISSION = new Key<String>("INFO_PERMISSION",
-        "catalyst.command.info") {
-    };
-    public static final Key<String> INFO_IP_PERMISSION = new Key<String>("INFO_IP_PERMISSION",
-        "catalyst.command.info.ip") {
-    };
-    public static final Key<String> INFO_BANNED_PERMISSION = new Key<String>(
-        "INFO_BANNED_PERMISSION", "catalyst.command.info.banned") {
-    };
-    public static final Key<String> INFO_CHANNEL_PERMISSION = new Key<String>("INFO_CHANNEL_PERMISSION",
-        "catalyst.command.info.channel") {
-    };
-    public static final Key<String> KICK_PERMISSION = new Key<String>(
-        "KICK_PERMISSION", "catalyst.command.kick") {
-    };
-    public static final Key<String> KICK_EXEMPT_PERMISSION = new Key<String>(
-        "KICK_EXEMPT_PERMISSION", "catalyst.command.kick.exempt") {
-    };
-    public static final Key<String> LANGUAGE_ADMIN_PERMISSION = new Key<String>(
-        "LANGUAGE_ADMIN_PERMISSION", "catalyst.command.language.admin") {
-    };
-    public static final Key<String> LANGUAGE_LIST_PERMISSION = new Key<String>(
-        "LANGUAGE_LIST_PERMISSION", "catalyst.command.language.list") {
-    };
-    public static final Key<String> LIST_PERMISSION = new Key<String>("LIST_PERMISSION",
-        "catalyst.command.list") {
-    };
-    public static final Key<String> MESSAGE_PERMISSION = new Key<String>("MESSAGE_PERMISSION",
-        "catalyst.command.message") {
-    };
-    public static final Key<String> MUTE_PERMISSION = new Key<String>("MUTE_PERMISSION",
-        "catalyst.command.mute") {
-    };
-    public static final Key<String> MUTE_EXEMPT_PERMISSION = new Key<String>(
-        "MUTE_EXEMPT_PERMISSION", "catalyst.command.mute.exempt") {
-    };
-    public static final Key<String> NICKNAME_PERMISSION = new Key<String>(
-        "NICKNAME_PERMISSION", "catalyst.command.nickname") {
-    };
-    public static final Key<String> NICKNAME_COLOR_PERMISSION = new Key<String>(
-        "NICKNAME_COLOR_PERMISSION", "catalyst.command.nickname.color") {
-    };
-    public static final Key<String> NICKNAME_MAGIC_PERMISSION = new Key<String>(
-        "NICKNAME_MAGIC_PERMISSION", "catalyst.command.nickname.magic") {
-    };
-    public static final Key<String> NICKNAME_OTHER_PERMISSION = new Key<String>(
-        "NICKNAME_OTHER_PERMISSION", "catalyst.command.nickname.other") {
-    };
-    public static final Key<String> NICKNAME_PREFIX = new Key<String>("NICKNAME_PREFIX",
-        "~") {
-    };
-    public static final Key<String> SEND_PERMISSION = new Key<String>("SEND_PERMISSION",
-        "catalyst.admin.command.send") {
-    };
-    public static final Key<String> SENDGOOGLE_PERMISSION = new Key<String>("SENDGOOGLE_PERMISSION",
-        "catalyst.admin.command.sendgoogle") {
-    };
-    public static final Key<String> SOCIALSPY_PERMISSION = new Key<String>("SOCIALSPY_PERMISSION",
-        "catalyst.admin.command.socialspy") {
-    };
-    public static final Key<String> SOCIALSPY_ONJOIN_PERMISSION = new Key<String>(
-        "SOCIALSPY_ONJOIN_PERMISSION",
-        "catalyst.admin.command.socialspy.onjoin") {
-    };
-    public static final Key<String> STAFFCHAT_PERMISSION = new Key<String>(
-        "STAFFCHAT_PERMISSION", "catalyst.admin.command.staffchat") {
-    };
-    public static final Key<String> STAFFLIST_ADMIN_PERMISSION = new Key<String>(
-        "STAFFLIST_ADMIN_PERMISSION", "catalyst.stafflist.admin") {
-    };
-    public static final Key<String> STAFFLIST_BASE_PERMISSION = new Key<String>(
-        "STAFFLIST_BASE_PERMISSION", "catalyst.stafflist.base") {
-    };
-    public static final Key<String> STAFFLIST_OWNER_PERMISSION = new Key<String>(
-        "STAFFLIST_OWNER_PERMISSION", "catalyst.stafflist.owner") {
-    };
-    public static final Key<String> STAFFLIST_STAFF_PERMISSION = new Key<String>(
-        "STAFFLIST_STAFF_PERMISSION", "catalyst.stafflist.staff") {
-    };
-    public static final Key<String> ALL_CHAT_CHANNELS_PERMISSION = new Key<String>(
-        "ALL_CHAT_CHANNELS_PERMISSION", "catalyst.channel.all") {
-    };
-    public static final Key<String> CHANNEL_BASE_PERMISSION = new Key<String>(
-        "CHANNEL_BASE_PERMISSION", "catalyst.channel.") {
-    };
-    public static final Key<String> BOT_NAME = new Key<String>("BOT_NAME",
-        "System") {
-    };
-    public static final Key<String> BOT_TOKEN = new Key<String>("BOT_TOKEN",
-        "bot token") {
-    };
-    public static final Key<String> DISCORD_MAIN_CHANNEL = new Key<String>("DISCORD_MAIN_CHANNEL",
-        "123456789") {
-    };
-    public static final Key<String> DISCORD_STAFF_CHANNEL = new Key<String>("DISCORD_STAFF_CHANNEL",
-        "123456789") {
-    };
-    public static final Key<String> DISCORD_PLAYER_CHAT_FORMAT = new Key<String>("PLAYER_CHAT_FORMAT",
-        "[%server%] %prefix% %player% %suffix%") {
-    };
-    public static final Key<String> DISCORD_JOIN_FORMAT = new Key<String>("DISCORD_JOIN_FORMAT",
-        "%player% has joined the game.") {
-    };
-    public static final Key<String> DISCORD_LEAVE_FORMAT = new Key<String>("DISCORD_LEAVE_FORMAT",
-        "%player% has left the game.") {
-    };
-    public static final Key<String> DISCORD_CHAT_FORMAT = new Key<String>("DISCORD_CHAT_FORMAT",
-        "&6[Discord]&7 %name% : %message%") {
-    };
-    public static final Key<String> DISCORD_STAFF_FORMAT = new Key<String>("DISCORD_STAFF_FORMAT",
-        "&b[STAFF] &7Discord %name%:&b %message%") {
-    };
-    public static final Key<String> TOPIC_FORMAT = new Key<String>("TOPIC_FORMAT",
-        "Player Count : %players%") {
-    };
-    public static final Key<Boolean> TOPIC_UPDATE_ENABLED = new Key<Boolean>(
-        "TOPIC_UPDATE_ENABLED", false) {
-    };
-    public static final Key<Integer> TOPIC_UPDATE_DELAY = new Key<Integer>("TOPIC_UPDATE_DELAY",
-        5) {
-    };
-    public static final Key<String> TOPIC_NO_ONLINE_PLAYERS = new Key<String>(
-        "TOPIC_NO_ONLINE_PLAYERS", "There are no players online!") {
-    };
-    public static final Key<String> NOW_PLAYING_MESSAGE = new Key<String>("NOW_PLAYING_MESSAGE",
-        "A Minecraft Server!") {
-    };
-    public static final Key<String> WEBHOOK_URL = new Key<String>("WEBHOOK_URL",
-        "https://crafatar.com/avatars/%uuid%?default=MHF_Alex") {
-    };
-    public static final Key<String> DISCORD_URL = new Key<String>("DISCORD_URL",
-        "https://discord.gg/hZpQ5Sg") {
-    };
-    public static final Key<Boolean> DISCORD_ENABLE = new Key<Boolean>("DISCORD_ENABLE",
-        false) {
-    };
-    public static final Key<String> DISCORD_HOVER_MESSAGE = new Key<String>(
-        "DISCORD_HOVER_MESSAGE", "Click here to join our discord!") {
-    };
-    public static final Key<String> WEBSITE_URL = new Key<String>("WEBSITE_URL",
-        "http://ci.anvilpowered.org") {
-    };
-    public static final Key<String> IGNORE_PERMISSION = new Key<String>("IGNORE_PERMISSION",
-        "catalyst.command.ignore") {
-    };
-    public static final Key<String> IGNORE_EXEMPT_PERMISSION = new Key<String>(
-        "IGNORE_EXEMPT_PERMISSION", "catalyst.command.ignore.exempt") {
-    };
-    public static final Key<String> SERVER_PING = new Key<String>("SERVER_PING",
-        "PLAYERS") {
-    };
-    public static final Key<String> SERVER_PING_MESSAGE = new Key<String>("SERVER_PING_MESSAGE",
-        "Change this message in the config!") {
-    };
-    public static final Key<String> SYNC_COMMAND = new Key<String>("SYNC_COMMAND",
-        "catalyst.admin.command.sync") {
-    };
-    public static final Key<String> MOTD = new Key<String>("MOTD",
-        "A Velocity Proxy!") {
-    };
-    public static final Key<Boolean> MOTD_ENABLED = new Key<Boolean>("MOTD_ENABLED",
-        false) {
-    };
-    public static final Key<Boolean> ADVANCED_SERVER_INFO_ENABLED = new Key<Boolean>(
-        "ADVANCED_SERVER_INFO_ENABLED", false) {
-    };
+    private static final TypeToken<List<String>> LIST_STRING = new TypeToken<List<String>>() {
+    };
+
+    public static final Key<Boolean> CHAT_FILTER_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("CHAT_FILTER_ENABLED")
+            .fallback(false)
+            .build();
+    public static final Key<List<String>> CHAT_FILTER_SWEARS =
+        Key.builder(LIST_STRING)
+            .name("CHAT_FILTER_SWEARS")
+            .fallback(ImmutableList.of("fuck", "shit", "ass"))
+            .build();
+    public static final Key<List<String>> CHAT_FILTER_EXCEPTIONS =
+        Key.builder(LIST_STRING)
+            .name("CHAT_FILTER_EXCEPTIONS")
+            .fallback(ImmutableList.of("assassin", "jkass"))
+            .build();
+    public static final Key<String> FIRST_JOIN =
+        Key.builder(TypeTokens.STRING)
+            .name("FIRST_JOIN")
+            .fallback("Welcome to the server, %player%")
+            .build();
+    public static final Key<String> JOIN_MESSAGE =
+        Key.builder(TypeTokens.STRING)
+            .name("JOIN_MESSAGE")
+            .fallback("%player% has joined the proxy")
+            .build();
+    public static final Key<String> LEAVE_MESSAGE =
+        Key.builder(TypeTokens.STRING)
+            .name("LEAVE_MESSAGE")
+            .fallback("%player% has left the proxy")
+            .build();
+    public static final Key<Boolean> PROXY_CHAT_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("PROXY_CHAT_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<String> PROXY_CHAT_FORMAT_MESSAGE =
+        Key.builder(TypeTokens.STRING)
+            .name("PROXY_CHAT_FORMAT_MESSAGE")
+            .fallback("%prefix% %player% %suffix%: %message%")
+            .build();
+    public static final Key<String> PROXY_CHAT_FORMAT_HOVER =
+        Key.builder(TypeTokens.STRING)
+            .name("PROXY_CHAT_FORMAT_HOVER")
+            .fallback("%player% %server%")
+            .build();
+    public static final Key<String> PROXY_CHAT_FORMAT_CLICK_COMMAND =
+        Key.builder(TypeTokens.STRING)
+            .name("PROXY_CHAT_FORMAT_CLICK_COMMAND")
+            .fallback("/msg %player%")
+            .build();
+    public static final Key<Boolean> TAB_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("TAB_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<String> TAB_HEADER =
+        Key.builder(TypeTokens.STRING)
+            .name("TAB_HEADER")
+            .fallback("Welcome to")
+            .build();
+    public static final Key<String> TAB_FOOTER =
+        Key.builder(TypeTokens.STRING)
+            .name("TAB_FOOTER")
+            .fallback("A Velocity Server")
+            .build();
+    public static final Key<String> TAB_FORMAT =
+        Key.builder(TypeTokens.STRING)
+            .name("TAB_FORMAT")
+            .fallback("%prefix% %player% %suffix%")
+            .build();
+    public static final Key<List<String>> TAB_FORMAT_CUSTOM =
+        Key.builder(LIST_STRING)
+            .name("TAB_FORMAT_CUSTOM")
+            .fallback(ImmutableList.of("&3Your Ping : &e%ping%",
+                "&3Current Server : &e%server%",
+                "&3Player Count : &e%playercount%"))
+            .build();
+    public static final Key<Integer> TAB_UPDATE =
+        Key.builder(TypeTokens.INTEGER)
+            .name("TAB_UPDATE")
+            .fallback(1)
+            .build();
+    public static final Key<String> TAB_ORDER =
+        Key.builder(TypeTokens.STRING)
+            .name("TAB_ORDER")
+            .fallback("a-z")
+            .build();
+    public static final Key<List<String>> TAB_GROUP_ORDER =
+        Key.builder(LIST_STRING)
+            .name("TAB_GROUP_ORDER")
+            .fallback(ImmutableList.of("admin", "mod", "player"))
+            .build();
+    public static final Key<String> CHAT_DEFAULT_CHANNEL =
+        Key.builder(TypeTokens.STRING)
+            .name("CHAT_DEFAULT_CHANNEL")
+            .fallback("global")
+            .build();
+    public static final Key<String> BAN_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("BAN_PERMISSION")
+            .fallback("catalyst.command.ban")
+            .build();
+    public static final Key<String> TEMP_BAN_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("TEMP_BAN_PERMISSION")
+            .fallback("catalyst.command.tempban")
+            .build();
+    public static final Key<String> BAN_EXEMPT_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("BAN_EXEMPT_PERMISSION")
+            .fallback("catalyst.command.ban.exempt")
+            .build();
+    public static final Key<String> BROADCAST_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("BROADCAST_PERMISSION")
+            .fallback("catalyst.command.broadcast")
+            .build();
+    public static final Key<String> CHAT_COLOR_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("CHAT_COLOR_PERMISSION")
+            .fallback("catalyst.chat.color")
+            .build();
+    public static final Key<String> FIND_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("FIND_PERMISSION")
+            .fallback("catalyst.command.find")
+            .build();
+    public static final Key<String> INFO_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("INFO_PERMISSION")
+            .fallback("catalyst.command.info")
+            .build();
+    public static final Key<String> INFO_IP_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("INFO_IP_PERMISSION")
+            .fallback("catalyst.command.info.ip")
+            .build();
+    public static final Key<String> INFO_BANNED_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("INFO_BANNED_PERMISSION")
+            .fallback("catalyst.command.info.banned")
+            .build();
+    public static final Key<String> INFO_CHANNEL_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("INFO_CHANNEL_PERMISSION")
+            .fallback("catalyst.command.info.channel")
+            .build();
+    public static final Key<String> KICK_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("KICK_PERMISSION")
+            .fallback("catalyst.command.kick")
+            .build();
+    public static final Key<String> KICK_EXEMPT_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("KICK_EXEMPT_PERMISSION")
+            .fallback("catalyst.command.kick.exempt")
+            .build();
+    public static final Key<String> LANGUAGE_ADMIN_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("LANGUAGE_ADMIN_PERMISSION")
+            .fallback("catalyst.command.language.admin")
+            .build();
+    public static final Key<String> LANGUAGE_LIST_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("LANGUAGE_LIST_PERMISSION")
+            .fallback("catalyst.command.language.list")
+            .build();
+    public static final Key<String> LIST_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("LIST_PERMISSION")
+            .fallback("catalyst.command.list")
+            .build();
+    public static final Key<String> MESSAGE_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("MESSAGE_PERMISSION")
+            .fallback("catalyst.command.message")
+            .build();
+    public static final Key<String> MUTE_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("MUTE_PERMISSION")
+            .fallback("catalyst.command.mute")
+            .build();
+    public static final Key<String> MUTE_EXEMPT_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("MUTE_EXEMPT_PERMISSION")
+            .fallback("catalyst.command.mute.exempt")
+            .build();
+    public static final Key<String> NICKNAME_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("NICKNAME_PERMISSION")
+            .fallback("catalyst.command.nickname")
+            .build();
+    public static final Key<String> NICKNAME_COLOR_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("NICKNAME_COLOR_PERMISSION")
+            .fallback("catalyst.command.nickname.color")
+            .build();
+    public static final Key<String> NICKNAME_MAGIC_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("NICKNAME_MAGIC_PERMISSION")
+            .fallback("catalyst.command.nickname.magic")
+            .build();
+    public static final Key<String> NICKNAME_OTHER_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("NICKNAME_OTHER_PERMISSION")
+            .fallback("catalyst.command.nickname.other")
+            .build();
+    public static final Key<String> NICKNAME_PREFIX =
+        Key.builder(TypeTokens.STRING)
+            .name("NICKNAME_PREFIX")
+            .fallback("~")
+            .build();
+    public static final Key<String> SEND_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("SEND_PERMISSION")
+            .fallback("catalyst.admin.command.send")
+            .build();
+    public static final Key<String> SOCIALSPY_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("SOCIALSPY_PERMISSION")
+            .fallback("catalyst.admin.command.socialspy")
+            .build();
+    public static final Key<String> SOCIALSPY_ONJOIN_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("SOCIALSPY_ONJOIN_PERMISSION")
+            .fallback("catalyst.admin.command.socialspy.onjoin")
+            .build();
+    public static final Key<String> STAFFCHAT_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("STAFFCHAT_PERMISSION")
+            .fallback("catalyst.admin.command.staffchat")
+            .build();
+    public static final Key<String> STAFFLIST_ADMIN_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("STAFFLIST_ADMIN_PERMISSION")
+            .fallback("catalyst.stafflist.admin")
+            .build();
+    public static final Key<String> STAFFLIST_BASE_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("STAFFLIST_BASE_PERMISSION")
+            .fallback("catalyst.stafflist.base")
+            .build();
+    public static final Key<String> STAFFLIST_OWNER_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("STAFFLIST_OWNER_PERMISSION")
+            .fallback("catalyst.stafflist.owner")
+            .build();
+    public static final Key<String> STAFFLIST_STAFF_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("STAFFLIST_STAFF_PERMISSION")
+            .fallback("catalyst.stafflist.staff")
+            .build();
+    public static final Key<String> ALL_CHAT_CHANNELS_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("ALL_CHAT_CHANNELS_PERMISSION")
+            .fallback("catalyst.channel.all")
+            .build();
+    public static final Key<String> CHANNEL_BASE_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("CHANNEL_BASE_PERMISSION")
+            .fallback("catalyst.channel.")
+            .build();
+    public static final Key<String> BOT_NAME =
+        Key.builder(TypeTokens.STRING)
+            .name("BOT_NAME")
+            .fallback("System")
+            .build();
+    public static final Key<String> BOT_TOKEN =
+        Key.builder(TypeTokens.STRING)
+            .name("BOT_TOKEN")
+            .fallback("bot token")
+            .build();
+    public static final Key<String> DISCORD_MAIN_CHANNEL =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_MAIN_CHANNEL")
+            .fallback("123456789")
+            .build();
+    public static final Key<String> DISCORD_STAFF_CHANNEL =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_STAFF_CHANNEL")
+            .fallback("123456789")
+            .build();
+    public static final Key<String> DISCORD_PLAYER_CHAT_FORMAT =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_PLAYER_CHAT_FORMAT")
+            .fallback("[%server%] %prefix% %player% %suffix%")
+            .build();
+    public static final Key<String> DISCORD_JOIN_FORMAT =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_JOIN_FORMAT")
+            .fallback("%player% has joined the game.")
+            .build();
+    public static final Key<String> DISCORD_LEAVE_FORMAT =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_LEAVE_FORMAT")
+            .fallback("%player% has left the game.")
+            .build();
+    public static final Key<String> DISCORD_CHAT_FORMAT =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_CHAT_FORMAT")
+            .fallback("&6[Discord]&7 %name% : %message%")
+            .build();
+    public static final Key<String> DISCORD_STAFF_FORMAT =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_STAFF_FORMAT")
+            .fallback("&b[STAFF] &7Discord %name%:&b %message%")
+            .build();
+    public static final Key<String> TOPIC_FORMAT =
+        Key.builder(TypeTokens.STRING)
+            .name("TOPIC_FORMAT")
+            .fallback("Player Count: %players%")
+            .build();
+    public static final Key<Boolean> TOPIC_UPDATE_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("TOPIC_UPDATE_ENABLED")
+            .fallback(false)
+            .build();
+    public static final Key<Integer> TOPIC_UPDATE_DELAY =
+        Key.builder(TypeTokens.INTEGER)
+            .name("TOPIC_UPDATE_DELAY")
+            .fallback(5)
+            .build();
+    public static final Key<String> TOPIC_NO_ONLINE_PLAYERS =
+        Key.builder(TypeTokens.STRING)
+            .name("TOPIC_NO_ONLINE_PLAYERS")
+            .fallback("There are no players online!")
+            .build();
+    public static final Key<String> NOW_PLAYING_MESSAGE =
+        Key.builder(TypeTokens.STRING)
+            .name("NOW_PLAYING_MESSAGE")
+            .fallback("A Minecraft Server!")
+            .build();
+    public static final Key<String> WEBHOOK_URL =
+        Key.builder(TypeTokens.STRING)
+            .name("WEBHOOK_URL")
+            .fallback("https://crafatar.com/avatars/%uuid%?default=MHF_Alex")
+            .build();
+    public static final Key<String> DISCORD_URL =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_URL")
+            .fallback("https://discord.gg/hZpQ5Sg")
+            .build();
+    public static final Key<Boolean> DISCORD_ENABLE =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("DISCORD_ENABLE")
+            .fallback(false)
+            .build();
+    public static final Key<String> DISCORD_HOVER_MESSAGE =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_HOVER_MESSAGE")
+            .fallback("Click here to join our discord!")
+            .build();
+    public static final Key<String> WEBSITE_URL =
+        Key.builder(TypeTokens.STRING)
+            .name("WEBSITE_URL")
+            .fallback("https://www.anvilpowered.org")
+            .build();
+    public static final Key<String> IGNORE_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("IGNORE_PERMISSION")
+            .fallback("catalyst.command.ignore")
+            .build();
+    public static final Key<String> IGNORE_EXEMPT_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("IGNORE_EXEMPT_PERMISSION")
+            .fallback("catalyst.command.ignore.exempt")
+            .build();
+    public static final Key<String> SERVER_PING =
+        Key.builder(TypeTokens.STRING)
+            .name("SERVER_PING")
+            .fallback("PLAYERS")
+            .build();
+    public static final Key<String> SERVER_PING_MESSAGE =
+        Key.builder(TypeTokens.STRING)
+            .name("SERVER_PING_MESSAGE")
+            .fallback("Change this message in the config!")
+            .build();
+    public static final Key<String> SYNC_COMMAND_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("SYNC_COMMNAD_PERMISSION")
+            .fallback("catalyst.admin.command.sync")
+            .build();
+    public static final Key<String> MOTD =
+        Key.builder(TypeTokens.STRING)
+            .name("MOTD")
+            .fallback("A Velocity Proxy!")
+            .build();
+    public static final Key<Boolean> MOTD_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("MOTD_ENABLED")
+            .fallback(false)
+            .build();
+    public static final Key<Boolean> ADVANCED_SERVER_INFO_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("ADVANCED_SERVER_INFO_ENABLED")
+            .fallback(false)
+            .build();
     private static final Map<String, Character> emojiMap = new HashMap<>();
-    public static final Key<Boolean> EMOJI_ENABLE = new Key<Boolean>("EMOJI_ENABLE",
-        false) {
-    };
-    public static final Key<Map<String, Character>> EMOJI_MAP = new Key<Map<String, Character>>("EMOJI_MAP",
-        emojiMap) {
-    };
-    public static final Key<String> EMOJI_PERMISSION = new Key<String>("EMOJI_PERMISSION",
-        "catalyst.chat.emoji.base") {
-    };
-    static List<ChatChannel> chatChannels = new LinkedList<>();
-    public static final Key<List<ChatChannel>> CHAT_CHANNELS = new Key<List<ChatChannel>>("CHAT_CHANNELS",
-        chatChannels) {
-    };
-    static List<AdvancedServerInfo> advancedServerInfo = new LinkedList<>();
-    public static final Key<List<AdvancedServerInfo>> ADVANCED_SERVER_INFO = new Key<List<AdvancedServerInfo>>(
-        "ADVANCED_SERVER_INFO", advancedServerInfo) {
-    };
-    public static final Key<Boolean> VIA_VERSION_ENABLED = new Key<Boolean>(
-        "VIA_VERSION_ENABLED", false) {
-    };
     static char emojiChar = '\uac00';
-    public static final Key<Boolean> COMMAND_LOGGING_ENABLED = new Key<Boolean>(
-        "COMMAND_LOGGING_ENABLED", true) {
-    };
-    public static final Key<List<String>> COMMAND_LOGGING_FILTER = new Key<List<String>>(
-        "COMMAND_LOGGING_FILTER", ImmutableList.of("*")) {
-    };
-    public static final Key<Boolean> ENABLE_PER_SERVER_PERMS = new Key<Boolean>(
-        "ENABLE_PER_SERVER_PERMS", false) {
-    };
+    public static final Key<Boolean> EMOJI_ENABLE =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("EMOJI_ENABLE")
+            .fallback(false)
+            .build();
+    public static final Key<Map<String, Character>> EMOJI_MAP =
+        Key.builder(new TypeToken<Map<String, Character>>() {
+        })
+            .name("EMOJI_MAP")
+            .fallback(emojiMap)
+            .build();
+    public static final Key<String> EMOJI_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+            .name("EMOJI_PERMISSION")
+            .fallback("catalyst.chat.emoji.base")
+            .build();
+    static List<ChatChannel> chatChannels = new LinkedList<>();
+    public static final Key<List<ChatChannel>> CHAT_CHANNELS =
+        Key.builder(new TypeToken<List<ChatChannel>>() {
+        })
+            .name("CHAT_CHANNELS")
+            .fallback(chatChannels)
+            .build();
+    static List<AdvancedServerInfo> advancedServerInfo = new LinkedList<>();
+    public static final Key<List<AdvancedServerInfo>> ADVANCED_SERVER_INFO =
+        Key.builder(new TypeToken<List<AdvancedServerInfo>>() {
+        })
+            .name("ADVANCED_SERVER_INFO")
+            .fallback(advancedServerInfo)
+            .build();
+    public static final Key<Boolean> VIA_VERSION_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("VIA_VERSION_ENABLED")
+            .fallback(false)
+            .build();
+    public static final Key<Boolean> COMMAND_LOGGING_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("COMMAND_LOGGING_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<List<String>> COMMAND_LOGGING_FILTER =
+        Key.builder(LIST_STRING)
+            .name("COMMAND_LOGGING_FILTER")
+            .fallback(ImmutableList.of("*"))
+            .build();
+    public static final Key<Boolean> ENABLE_PER_SERVER_PERMS =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("ENABLE_PER_SERVER_PERMS")
+            .fallback(false)
+            .build();
     //Keys for command toggling
-    public static final Key<Boolean> BAN_COMMAND_ENABLED = new Key<Boolean>(
-        "BAN_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> BROADCAST_COMMAND_ENABLED = new Key<Boolean>(
-        "BROADCAST_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> NICKNAME_COMMAND_ENABLED = new Key<Boolean>(
-        "NICKNAME_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> FIND_COMMAND_ENABLED = new Key<Boolean>(
-        "FIND_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> INFO_COMMAND_ENABLED = new Key<Boolean>(
-        "INFO_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> KICK_COMMAND_ENABLED = new Key<Boolean>(
-        "KICK_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> LIST_COMMAND_ENABLED = new Key<Boolean>(
-        "LIST_COMMAND_ENABLED", false) {
-    };
-    public static final Key<Boolean> MESSAGE_COMMAND_ENABLED = new Key<Boolean>(
-        "MESSAGE_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> SEND_COMMAND_ENABLED = new Key<Boolean>(
-        "SEND_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> SERVER_COMMAND_ENABLED = new Key<Boolean>(
-        "SERVER_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> SOCIALSPY_COMMAND_ENABLED = new Key<Boolean>(
-        "SOCIALSPY_COMMAND_ENABLED", true) {
-    };
-    public static final Key<Boolean> STAFFCHAT_COMMAND_ENABLED = new Key<Boolean>(
-        "STAFF_CHAT_COMMAND", true) {
-    };
-    public static final Key<Boolean> MUTE_COMMAND_ENABLED = new Key<Boolean>(
-        "MUTE_COMMAND_ENABLED", true) {
-    };
+    public static final Key<Boolean> BAN_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("BAN_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> BROADCAST_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("BROADCAST_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> NICKNAME_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("NICKNAME_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> FIND_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("FIND_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> INFO_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("INFO_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> KICK_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("KICK_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> LIST_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("LIST_COMMAND_ENABLED")
+            .fallback(false)
+            .build();
+    public static final Key<Boolean> MESSAGE_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("MESSAGE_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> SEND_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("SEND_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> SERVER_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("SERVER_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> SOCIALSPY_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("SOCIALSPY_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> STAFFCHAT_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("STAFFCHAT_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
+    public static final Key<Boolean> MUTE_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("MUTE_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
     //Keys for root node comments
-    public static final Key<String> ADVANCED_ROOT = new Key<String>(
-        "ADVANCED_ROOT", null) {
-    };
-    public static final Key<String> COMMANDS_ROOT = new Key<String>(
-        "COMMANDS_ROOT", null) {
-    };
-    public static final Key<String> CHAT_ROOT = new Key<String>(
-        "CHAT_ROOT", null) {
-    };
-    public static final Key<String> DISCORD_ROOT = new Key<String>(
-        "DISCORD_ROOT", null) {
-    };
-    public static final Key<String> JOIN_ROOT = new Key<String>(
-        "JOIN_ROOT", null) {
-    };
-    public static final Key<String> LEAVE_ROOT = new Key<String>(
-        "LEAVE_ROOT", null) {
-    };
-    public static final Key<String> MODULES_ROOT = new Key<String>(
-        "MODULES_ROOT", null) {
-    };
-    public static final Key<String> MOTD_ROOT = new Key<String>(
-        "MOTD_ROOT", null) {
-    };
-    public static final Key<String> PING_ROOT = new Key<String>(
-        "PING_ROOT", null) {
-    };
-    public static final Key<String> TAB_ROOT = new Key<String>(
-        "TAB_ROOT", null) {
-    };
+    public static final Key<String> ADVANCED_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("ADVANCED_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> COMMANDS_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("COMMANDS_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> CHAT_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("CHAT_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> DISCORD_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("DISCORD_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> JOIN_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("JOIN_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> LEAVE_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("LEAVE_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> MODULES_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("MODULES_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> MOTD_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("MOTD_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> PING_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("PING_ROOT")
+            .fallback(null)
+            .build();
+    public static final Key<String> TAB_ROOT =
+        Key.builder(TypeTokens.STRING)
+            .name("TAB_ROOT")
+            .fallback(null)
+            .build();
 
     static {
         ChatChannel global = new ChatChannel();
@@ -433,7 +657,6 @@ public final class CatalystKeys {
             .register(BROADCAST_PERMISSION)
             .register(CHAT_COLOR_PERMISSION)
             .register(FIND_PERMISSION)
-            .register(GOOGLE_PERMISSION)
             .register(INFO_PERMISSION)
             .register(INFO_IP_PERMISSION)
             .register(INFO_BANNED_PERMISSION)
@@ -452,7 +675,6 @@ public final class CatalystKeys {
             .register(NICKNAME_OTHER_PERMISSION)
             .register(NICKNAME_PREFIX)
             .register(SEND_PERMISSION)
-            .register(SENDGOOGLE_PERMISSION)
             .register(SOCIALSPY_PERMISSION)
             .register(SOCIALSPY_ONJOIN_PERMISSION)
             .register(STAFFCHAT_PERMISSION)
@@ -484,7 +706,7 @@ public final class CatalystKeys {
             .register(IGNORE_EXEMPT_PERMISSION)
             .register(SERVER_PING)
             .register(SERVER_PING_MESSAGE)
-            .register(SYNC_COMMAND)
+            .register(SYNC_COMMAND_PERMISSION)
             .register(MOTD)
             .register(MOTD_ENABLED)
             .register(ADVANCED_SERVER_INFO_ENABLED)

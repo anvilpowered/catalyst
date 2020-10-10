@@ -63,7 +63,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.DISCORD_MAIN_CHANNEL, "discord.channel.main");
         setName(CatalystKeys.DISCORD_STAFF_CHANNEL, "discord.channel.staff");
         setName(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT, "discord.format.proxy");
-        setName(CatalystKeys.JOIN_FORMAT, "discord.format.join");
+        setName(CatalystKeys.DISCORD_JOIN_FORMAT, "discord.format.join");
         setName(CatalystKeys.DISCORD_LEAVE_FORMAT, "discord.format.leave");
         setName(CatalystKeys.DISCORD_CHAT_FORMAT, "discord.format.discord");
         setName(CatalystKeys.DISCORD_STAFF_FORMAT, "discord.format.staff");

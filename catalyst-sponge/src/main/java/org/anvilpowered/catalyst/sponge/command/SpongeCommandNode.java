@@ -25,7 +25,6 @@ import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -54,7 +53,7 @@ public class SpongeCommandNode
                 GenericArguments.string(Text.of("server")),
                 GenericArguments.remainingRawJoinedStrings(Text.of("command"))
             )
-            .permission(registry.getOrDefault(CatalystKeys.SYNC_COMMAND))
+            .permission(registry.getOrDefault(CatalystKeys.SYNC_COMMAND_PERMISSION))
             .executor(syncCommand)
             .build();
         Sponge.getCommandManager()
