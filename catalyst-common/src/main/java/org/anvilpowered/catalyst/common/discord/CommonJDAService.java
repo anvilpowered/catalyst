@@ -42,10 +42,8 @@ public class CommonJDAService<
     TCommandSource> implements JDAService {
 
     private Registry registry;
-
-    private JDA jda;
-
     private boolean isLoaded = false;
+    private JDA jda;
 
     @Inject
     private UserService<TUser, TPlayer> userService;
@@ -69,7 +67,7 @@ public class CommonJDAService<
                 jda.shutdownNow();
             }
             try {
-                jda = new JDABuilder(registry.getOrDefault(CatalystKeys.BOT_TOKEN)).build().awaitReady();
+                jda = JDABuilder.createDefault(registry.getOrDefault(CatalystKeys.BOT_TOKEN)).build().awaitReady();
                 String playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS);
                 String nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE);
                 if (userService.getOnlinePlayers().size() != 0) {
@@ -117,10 +115,5 @@ public class CommonJDAService<
     @Override
     public JDA getJDA() {
         return jda;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return registry.getOrDefault(CatalystKeys.DISCORD_ENABLE);
     }
 }

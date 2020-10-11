@@ -26,6 +26,4 @@ public interface JDAService {
     Runnable updateTopic();
 
     JDA getJDA();
-
-    boolean isEnabled();
 }
