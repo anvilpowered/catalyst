@@ -26,9 +26,8 @@ import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.listener.LeaveListener;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
-import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
+import org.slf4j.Logger;
 
 public class CommonLeaveListener<
     TUser,
@@ -53,7 +52,7 @@ public class CommonLeaveListener<
     private BroadcastService<TString> broadcastService;
 
     @Inject
-    private LoggerService loggerService;
+    private Logger logger;
 
     @Inject
     private EmojiService emojiService;
@@ -74,7 +73,7 @@ public class CommonLeaveListener<
                     .replace("%player%", userService.getUserName((TUser) player))
             ));
 
-        loggerService.info(
+        logger.info(
             textService.serializePlain(
                 textService.of(
                     registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)

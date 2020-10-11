@@ -34,8 +34,8 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,7 +84,7 @@ public class CommonChatService<
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private LoggerService loggerService;
+    private Logger logger;
 
     @Inject
     private AdvancedServerInfoService serverService;
@@ -411,7 +411,7 @@ public class CommonChatService<
             channelPrefix
         ).thenAcceptAsync(optionalMessage -> {
             if (optionalMessage.isPresent()) {
-                loggerService.info(channelId + " : " +
+                logger.info(channelId + " : " +
                     textService.serializePlain(optionalMessage.get()));
                 sendMessageToChannel(
                     channelId,

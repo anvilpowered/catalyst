@@ -27,7 +27,7 @@ import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.listener.StaffChatListener;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.EmojiService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
+import org.slf4j.Logger;
 
 public class CommonStaffChatListener<
     TUser,
@@ -52,7 +52,7 @@ public class CommonStaffChatListener<
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private LoggerService loggerService;
+    private Logger logger;
 
     @Inject
     private EmojiService emojiService;
@@ -71,7 +71,7 @@ public class CommonStaffChatListener<
                         textService.deserialize(finalMessage)), (TCommandSource) p);
                 }
             });
-            loggerService.info("[STAFF] Console: " + message);
+            logger.info("[STAFF] Console: " + message);
             return;
         }
 
@@ -90,6 +90,6 @@ public class CommonStaffChatListener<
                 );
             }
         });
-        loggerService.info("[STAFF] " + userName + " : " + finalMessage);
+        logger.info("[STAFF] " + userName + " : " + finalMessage);
     }
 }

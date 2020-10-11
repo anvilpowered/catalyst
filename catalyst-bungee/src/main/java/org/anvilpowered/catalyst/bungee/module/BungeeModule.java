@@ -28,11 +28,9 @@ import org.anvilpowered.anvil.api.command.CommandNode;
 import org.anvilpowered.anvil.api.registry.ConfigurationService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.bungee.command.BungeeCommandNode;
 import org.anvilpowered.catalyst.bungee.service.BungeeBroadcastService;
 import org.anvilpowered.catalyst.bungee.service.BungeeExecuteCommandService;
-import org.anvilpowered.catalyst.bungee.service.BungeeLoggerService;
 import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
@@ -68,8 +66,6 @@ public class BungeeModule extends CommonModule<
         bind(ConfigurationService.class).to(ProxyConfigurationService.class);
         bind(new TypeLiteral<BroadcastService<TextComponent>>() {
         }).to(BungeeBroadcastService.class);
-        bind(new TypeLiteral<LoggerService>() {
-        }).to(BungeeLoggerService.class);
         bind(new TypeLiteral<ExecuteCommandService<CommandSender>>() {
         }).to(BungeeExecuteCommandService.class);
     }

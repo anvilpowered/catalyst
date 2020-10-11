@@ -27,7 +27,7 @@ import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.JDAService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
+import org.slf4j.Logger;
 
 import javax.security.auth.login.LoginException;
 import java.util.concurrent.Executors;
@@ -51,7 +51,7 @@ public class CommonJDAService<
     private UserService<TUser, TPlayer> userService;
 
     @Inject
-    private LoggerService loggerService;
+    private Logger logger;
 
     @Inject
     private CommonDiscordListener<TUser, TString, TPlayer, TCommandSource> discordListener;
@@ -89,7 +89,7 @@ public class CommonJDAService<
                 e.printStackTrace();
             }
         } else {
-            loggerService.warn("The discord bot is disabled! Chat will not be transmitted from in-game to discord.");
+            logger.warn("The discord bot is disabled! Chat will not be transmitted from in-game to discord.");
         }
     }
 

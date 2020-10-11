@@ -21,14 +21,12 @@ import com.google.inject.TypeLiteral;
 import org.anvilpowered.anvil.api.command.CommandNode;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.common.data.config.BackendConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.sponge.command.SpongeCommandNode;
 import org.anvilpowered.catalyst.sponge.data.config.SpongeConfigurationService;
 import org.anvilpowered.catalyst.sponge.service.SpongeBroadcastService;
 import org.anvilpowered.catalyst.sponge.service.SpongeExecuteCommandService;
-import org.anvilpowered.catalyst.sponge.service.SpongeLoggerService;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -47,7 +45,5 @@ public class SpongeModule extends CommonModule<User, Player, Text, CommandSource
         }).to(SpongeCommandNode.class);
         bind(new TypeLiteral<ExecuteCommandService<CommandSource>>() {
         }).to(SpongeExecuteCommandService.class);
-        bind(new TypeLiteral<LoggerService>() {
-        }).to(SpongeLoggerService.class);
     }
 }

@@ -29,10 +29,9 @@ import org.anvilpowered.catalyst.api.listener.JoinListener;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
-import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
+import org.slf4j.Logger;
 
 import java.util.UUID;
 
@@ -65,7 +64,7 @@ public class CommonJoinListener<
     private BroadcastService<TString> broadcastService;
 
     @Inject
-    private LoggerService loggerService;
+    private Logger logger;
 
     @Inject
     private AdvancedServerInfoService serverService;
@@ -124,7 +123,7 @@ public class CommonJoinListener<
                     .replace("%server%", server)
             )
         );
-        loggerService.info(
+        logger.info(
             textService.serializePlain(
                 textService.of(
                     registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)

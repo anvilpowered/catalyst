@@ -29,7 +29,7 @@ import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
+import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -57,7 +57,7 @@ public class CommonDiscordListener<
     private PermissionService permissionService;
 
     @Inject
-    private LoggerService loggerService;
+    private Logger logger;
 
     @Inject
     private EmojiService emojiService;
@@ -109,7 +109,7 @@ public class CommonDiscordListener<
                         .sendTo((TCommandSource) p)
                 );
             }
-            loggerService.info("[Discord] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
+            logger.info("[Discord] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
         }
 
         if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.DISCORD_STAFF_CHANNEL))) {
@@ -131,7 +131,7 @@ public class CommonDiscordListener<
                         .sendTo((TCommandSource) p);
                 }
             });
-            loggerService.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
+            logger.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
         }
 
     }

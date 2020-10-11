@@ -29,14 +29,12 @@ import org.anvilpowered.anvil.api.command.CommandNode;
 import org.anvilpowered.anvil.api.registry.ConfigurationService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
-import org.anvilpowered.catalyst.api.service.LoggerService;
 import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.velocity.command.VelocityCommandNode;
 import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService;
 import org.anvilpowered.catalyst.velocity.service.VelocityExecuteCommandService;
-import org.anvilpowered.catalyst.velocity.service.VelocityLoggerService;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -70,8 +68,6 @@ public class VelocityModule extends CommonModule<
         bind(ConfigurationService.class).to(ProxyConfigurationService.class);
         bind(new TypeLiteral<BroadcastService<TextComponent>>() {
         }).to(VelocityBroadcastService.class);
-        bind(new TypeLiteral<LoggerService>() {
-        }).to(VelocityLoggerService.class);
         bind(new TypeLiteral<ExecuteCommandService<CommandSource>>() {
         }).to(VelocityExecuteCommandService.class);
     }
