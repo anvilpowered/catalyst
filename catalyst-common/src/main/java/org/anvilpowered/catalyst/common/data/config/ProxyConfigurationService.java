@@ -48,6 +48,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE, "chat.format.message");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_HOVER, "chat.format.hover");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND, "chat.format.click");
+        setName(CatalystKeys.NICKNAME_PREFIX, "chat.format.nicknamePrefix");
         setName(CatalystKeys.PROXY_CHAT_ENABLED, "modules.chat");
         setName(CatalystKeys.TAB_ENABLED, "modules.tab");
         setName(CatalystKeys.TAB_FORMAT, "tab.format.player");
@@ -129,6 +130,8 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nFormat for the hover message");
         setDescription(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND,
             "\nFormat for click event's");
+        setDescription(CatalystKeys.NICKNAME_PREFIX,
+            "\nPrefix applied to nicknames");
         setDescription(CatalystKeys.PROXY_CHAT_ENABLED,
             "\nToggle proxy-wide chat handling. (true = enabled)");
         setDescription(CatalystKeys.TAB_ENABLED,
