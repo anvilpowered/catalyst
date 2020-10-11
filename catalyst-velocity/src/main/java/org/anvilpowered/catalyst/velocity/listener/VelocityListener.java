@@ -21,6 +21,7 @@ import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.util.ModInfo;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.api.model.coremember.CoreMember;
@@ -253,7 +254,10 @@ public class VelocityListener {
                 ));
             }
         } else if (registry.getOrDefault(CatalystKeys.MOTD_ENABLED)) {
-            builder.description(MiniMessage.get().parse(registry.getOrDefault(CatalystKeys.MOTD)));
+            TextComponent withColorCodes =
+                LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.MOTD));
+            builder.description(MiniMessage.get().deserialize(
+                MiniMessage.markdown().serialize(withColorCodes.asComponent())));
         } else {
             return;
         }
