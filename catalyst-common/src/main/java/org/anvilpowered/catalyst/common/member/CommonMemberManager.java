@@ -17,6 +17,7 @@
 
 package org.anvilpowered.catalyst.common.member;
 
+import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.api.coremember.CoreMemberRepository;
@@ -34,7 +35,6 @@ import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;
 
-import javax.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
