@@ -15,33 +15,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.sponge.service;
+package org.anvilpowered.catalyst.bungee.service;
 
 import com.google.inject.Inject;
-import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Task;
+import net.md_5.bungee.api.ProxyServer;
+import org.anvilpowered.catalyst.api.service.DiscordCommandService;
+import org.anvilpowered.catalyst.bungee.discord.DiscordCommandSource;
 
-public class SpongeExecuteCommandService implements ExecuteCommandService<CommandSource> {
+public class BungeeDiscordCommandService implements DiscordCommandService {
 
     @Inject
-    private PluginContainer pluginContainer;
-
-    @Override
-    public void executeCommand(CommandSource commandSource, String command) {
-        Task.builder()
-            .execute(() -> Sponge.getCommandManager().process(commandSource, command))
-            .submit(pluginContainer);
-    }
-
-    @Override
-    public void executeAsConsole(String command) {
-        executeCommand(Sponge.getServer().getConsole(), command);
-    }
+    private DiscordCommandSource discordCommandSource;
 
     @Override
     public void executeDiscordCommand(String command) {
+        ProxyServer.getInstance().getPluginManager().dispatchCommand(discordCommandSource, command);
     }
 }

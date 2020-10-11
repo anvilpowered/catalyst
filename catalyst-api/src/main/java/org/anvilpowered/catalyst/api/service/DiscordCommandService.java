@@ -17,11 +17,7 @@
 
 package org.anvilpowered.catalyst.api.service;
 
-public interface ExecuteCommandService<TCommandSource> {
-
-    void executeCommand(TCommandSource source, String command);
-
-    void executeAsConsole(String command);
+public interface DiscordCommandService {
 
     void executeDiscordCommand(String command);
 }

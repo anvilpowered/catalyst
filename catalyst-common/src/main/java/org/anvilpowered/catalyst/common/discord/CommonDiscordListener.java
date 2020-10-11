@@ -28,7 +28,7 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.EmojiService;
-import org.anvilpowered.catalyst.api.service.ExecuteCommandService;
+import org.anvilpowered.catalyst.api.service.DiscordCommandService;
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -48,7 +48,7 @@ public class CommonDiscordListener<
     private UserService<TUser, TPlayer> userService;
 
     @Inject
-    private ExecuteCommandService<TCommandSource> executeCommandService;
+    private DiscordCommandService discordCommandService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -75,7 +75,7 @@ public class CommonDiscordListener<
             if (event.getMember().hasPermission(Permission.ADMINISTRATOR)
                 && messageRaw.contains("!cmd")) {
                 String command = event.getMessage().getContentRaw().replace("!cmd ", "");
-                executeCommandService.executeDiscordCommand(command);
+                discordCommandService.executeDiscordCommand(command);
                 return;
             } else if (messageRaw.contains("!players")
                 || messageRaw.contains("!online")
