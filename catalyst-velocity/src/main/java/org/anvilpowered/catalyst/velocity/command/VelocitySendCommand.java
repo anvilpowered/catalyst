@@ -25,9 +25,11 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
+import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -47,6 +49,9 @@ public class VelocitySendCommand implements Command {
 
     @Inject
     private Registry registry;
+
+    @Inject
+    private TextService<TextComponent, CommandSource> textService;
 
     @Override
     public void execute(CommandSource source, @NonNull String[] args) {
@@ -72,27 +77,27 @@ public class VelocitySendCommand implements Command {
                             server.get().getServerInfo().getName())).orElse(false)) {
                     source.sendMessage(
                         pluginInfo.getPrefix().append(
-                            TextComponent.of(player.get().getUsername()
+                            textService.of(player.get().getUsername()
                                 + " is already connected to that server.")));
                 } else {
                     source.sendMessage(
                         pluginInfo.getPrefix().append(
-                            TextComponent.of("sending " + player.get().getUsername()
+                            textService.of("sending " + player.get().getUsername()
                                 + " to " + server.get().getServerInfo().getName())));
                     player.get().sendMessage(
                         pluginInfo.getPrefix().append(
-                            TextComponent.of("you have been sent to "
+                            textService.of("you have been sent to "
                                 + server.get().getServerInfo().getName()
                                 + " by " + (source instanceof Player ? ((Player) source).getUsername() : "Console"))));
                     player.get().createConnectionRequest(server.get()).fireAndForget();
                 }
             } else {
                 source.sendMessage(
-                    pluginInfo.getPrefix().append(TextComponent.of("Invalid or offline server.")));
+                    pluginInfo.getPrefix().append(textService.of("Invalid or offline server.")));
             }
         } else {
             source.sendMessage(
-                pluginInfo.getPrefix().append(TextComponent.of("Offline or invalid player.")));
+                pluginInfo.getPrefix().append(textService.of("Offline or invalid player.")));
         }
     }
 }

@@ -175,7 +175,7 @@ public class VelocityListener {
                 } else {
                     chatEvent.setPlayer(player);
                     chatEvent.setRawMessage(e.getMessage());
-                    chatEvent.setMessage(TextComponent.of(e.getMessage()));
+                    chatEvent.setMessage(textService.of(e.getMessage()));
                     eventService.getEventBus().post(chatEvent);
                 }
             });
