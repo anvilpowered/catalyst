@@ -45,9 +45,6 @@ public class VelocityCommandNode
     private VelocitySendCommand sendCommand;
 
     @Inject
-    private VelocityStaffListCommand staffListCommand;
-
-    @Inject
     private VelocityListCommand listCommand;
 
     @Inject
@@ -79,8 +76,6 @@ public class VelocityCommandNode
             proxyServer.getCommandManager().register(
                 "send", sendCommand, "csend");
         }
-        proxyServer.getCommandManager().register(
-            "stafflist", staffListCommand);
         if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
             proxyServer.getCommandManager().register(
                 "server", serverCommand);

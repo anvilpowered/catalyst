@@ -33,7 +33,6 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +98,9 @@ public abstract class CommonCommandNode<
 
     @Inject
     private CommonSwearCommand<TString, TCommandSource> swearCommand;
+
+    @Inject
+    private CommonStaffListCommand<TString, TCommandSource> staffListCommand;
 
     private boolean alreadyLoaded;
     protected Map<List<String>, Function<TCommandSource, String>> descriptions;
@@ -444,9 +446,15 @@ public abstract class CommonCommandNode<
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.LANGUAGE_LIST_PERMISSION)))
             .executes(swearCommand::execute)
             .build();
+        final LiteralCommandNode<TCommandSource> staffList = LiteralArgumentBuilder
+            .<TCommandSource>literal("stafflist")
+            .requires(source ->
+                permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.STAFFLIST_BASE_PERMISSION)))
+            .executes(staffListCommand::execute)
+            .build();
 
         if (registry.getOrDefault(CatalystKeys.BAN_COMMAND_ENABLED)) {
-            commands.put(ImmutableList.of("tempban","ctempban"), tempBan);
+            commands.put(ImmutableList.of("tempban", "ctempban"), tempBan);
             commands.put(ImmutableList.of("ban", "cban"), ban);
             commands.put(ImmutableList.of("unban", "cunban"), unban);
         }
@@ -485,6 +493,7 @@ public abstract class CommonCommandNode<
             commands.put(ImmutableList.of("exception"), exception);
             commands.put(ImmutableList.of("swear"), swear);
         }
+        commands.put(ImmutableList.of("stafflist"), staffList);
     }
 
     private SuggestionProvider<TCommandSource> suggest() {
