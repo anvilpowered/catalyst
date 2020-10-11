@@ -114,10 +114,8 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
     @Override
     public CompletableFuture<Void> sendMessageFromConsole(String recipient, String rawMessage, Class<?> console) {
         return CompletableFuture.runAsync(() -> {
-            textService.send(formatMessage("Me", recipient, rawMessage), (TCommandSource) console);
-            userService.get(recipient).ifPresent(r -> {
-                textService.send(formatMessage("Console", "Me", rawMessage), (TCommandSource) r);
-            });
+            userService.get(recipient).ifPresent(r ->
+                textService.send(formatMessage("Console", "Me", rawMessage), (TCommandSource) r));
         });
     }
 

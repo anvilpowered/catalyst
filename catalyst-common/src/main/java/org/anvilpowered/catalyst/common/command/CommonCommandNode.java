@@ -120,10 +120,12 @@ public abstract class CommonCommandNode<
 
     protected Registry registry;
     protected Class<?> playerClass;
+    protected Class<?> consoleClass;
 
-    protected CommonCommandNode(Registry registry, Class<?> playerClass) {
+    protected CommonCommandNode(Registry registry, Class<?> playerClass, Class<?> consoleClass) {
         this.registry = registry;
         this.playerClass = playerClass;
+        this.consoleClass = consoleClass;
         registry.whenLoaded(() -> {
             if (alreadyLoaded) return;
             loadNodes();
@@ -335,7 +337,7 @@ public abstract class CommonCommandNode<
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "message",
                     StringArgumentType.greedyString())
-                    .executes(ctx -> messageCommand.execute(ctx, playerClass))
+                    .executes(ctx -> messageCommand.execute(ctx, consoleClass))
                     .build())
                 .build())
             .build();

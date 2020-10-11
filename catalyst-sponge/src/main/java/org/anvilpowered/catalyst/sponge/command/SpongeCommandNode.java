@@ -25,6 +25,7 @@ import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -42,7 +43,7 @@ public class SpongeCommandNode
 
     @Inject
     public SpongeCommandNode(Registry registry) {
-        super(registry, Player.class);
+        super(registry, Player.class, ConsoleSource.class);
     }
 
     @Override

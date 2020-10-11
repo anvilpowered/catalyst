@@ -19,8 +19,6 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
-import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -51,8 +49,7 @@ public class CommonMessageCommand<
         if (userService.getPlayer(name).isPresent()) {
             String message = context.getArgument("message", String.class);
             Optional<TPlayer> targetPlayer = userService.get(name);
-
-            if (consoleClass.equals(context.getSource().getClass()) && targetPlayer.isPresent()) {
+            if (consoleClass.isAssignableFrom(context.getSource().getClass()) && targetPlayer.isPresent()) {
                 privateMessageService.sendMessageFromConsole(
                     userService.getUserName(targetPlayer.get()),
                     message,
@@ -78,6 +75,8 @@ public class CommonMessageCommand<
                     userService.getUUID((TPlayer) context.getSource()),
                     userService.getUUID(targetPlayer.get())
                 );
+            } else {
+                textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
             }
         }
         return 1;

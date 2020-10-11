@@ -23,6 +23,7 @@ import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.TextComponent;
@@ -54,7 +55,7 @@ public class VelocityCommandNode
 
     @Inject
     public VelocityCommandNode(Registry registry) {
-        super(registry, Player.class);
+        super(registry, Player.class, ConsoleCommandSource.class);
     }
 
     @Override

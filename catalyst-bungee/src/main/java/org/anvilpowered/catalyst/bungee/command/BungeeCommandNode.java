@@ -26,6 +26,7 @@ import net.md_5.bungee.api.plugin.PluginManager;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.bungee.CatalystBungee;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class BungeeCommandNode
     extends CommonCommandNode<TextComponent, ProxiedPlayer, CommandSender> {
@@ -42,7 +43,7 @@ public class BungeeCommandNode
 
     @Inject
     public BungeeCommandNode(Registry registry) {
-        super(registry, ProxiedPlayer.class);
+        super(registry, ProxiedPlayer.class, ConsoleCommandSender.class);
     }
 
     @Override
