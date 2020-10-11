@@ -82,6 +82,11 @@ public final class CatalystKeys {
             .name("PROXY_CHAT_FORMAT_HOVER")
             .fallback("%player% %server%")
             .build();
+    public static final Key<String> PRIVATE_MESSAGE_FORMAT =
+        Key.builder(STRING)
+            .name("PRIVATE_MESSAGE_FORMAT")
+            .fallback("&8[&9%sender%&6 -> &9%recipient%&8] &7%message%")
+            .build();
     public static final Key<String> PROXY_CHAT_FORMAT_CLICK_COMMAND =
         Key.builder(TypeTokens.STRING)
             .name("PROXY_CHAT_FORMAT_CLICK_COMMAND")

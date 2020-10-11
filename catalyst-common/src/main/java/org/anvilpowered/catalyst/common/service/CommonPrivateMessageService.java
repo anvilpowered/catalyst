@@ -19,8 +19,10 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
 import java.util.HashMap;
@@ -45,6 +47,9 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
 
     @Inject
     private TextService<TString, TCommandSource> textService;
+
+    @Inject
+    private Registry registry;
 
     @Override
     public Set<UUID> socialSpySet() {
@@ -88,23 +93,20 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
 
     @Override
     public TString formatMessage(String sender, String recipient, String rawMessage) {
-        return textService.builder()
-            .dark_gray().append("[")
-            .blue().append(sender)
-            .gold().append(" -> ")
-            .blue().append(recipient)
-            .dark_gray().append("] ")
-            .gray().append(rawMessage.trim())
-            .build();
+        return textService.deserialize(
+            registry.getOrDefault(CatalystKeys.PRIVATE_MESSAGE_FORMAT)
+                .replace("%sender%", sender)
+                .replace("%recipient%", recipient)
+                .replace("%message%", rawMessage.trim())
+        );
     }
 
     @Override
     public CompletableFuture<Void> sendMessage(String sender, String recipient, String rawMessage) {
         return CompletableFuture.runAsync(() -> userService.get(sender).ifPresent(src -> {
             textService.send(formatMessage("Me", recipient, rawMessage), (TCommandSource) src);
-            userService.get(recipient).ifPresent(rec -> {
-                textService.send(formatMessage(sender, "Me", rawMessage), (TCommandSource) rec);
-            });
+            userService.get(recipient).ifPresent(rec ->
+                textService.send(formatMessage(sender, "Me", rawMessage), (TCommandSource) rec));
             socialSpy(sender, recipient, rawMessage);
         }));
     }
@@ -123,7 +125,8 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
     public CompletableFuture<Void> socialSpy(String sender, String recipient, String rawMessage) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
                 if (!(socialSpySet.isEmpty()) && socialSpySet.contains(userService.getUUID((TUser) p))) {
-                    if (userService.getUserName((TUser) p).equalsIgnoreCase(sender) || userService.getUserName((TUser) p).equalsIgnoreCase(recipient)) {
+                    if (userService.getUserName((TUser) p).equalsIgnoreCase(sender)
+                        || userService.getUserName((TUser) p).equalsIgnoreCase(recipient)) {
                         return;
                     }
                     textService.send(formatSocialSpyMessage(sender, recipient, rawMessage), (TCommandSource) p);
