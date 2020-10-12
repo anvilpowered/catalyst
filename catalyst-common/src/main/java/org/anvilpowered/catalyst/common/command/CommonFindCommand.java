@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
-import org.anvilpowered.anvil.api.util.CurrentServerService;
+import org.anvilpowered.anvil.api.util.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -40,14 +40,14 @@ public class CommonFindCommand<
     private UserService<TPlayer, TPlayer> userService;
 
     @Inject
-    private CurrentServerService currentServerService;
+    private LocationService locationService;
 
     public int execute(CommandContext<TCommandSource> context) {
         String userName = context.getArgument("target", String.class);
         if (userService.getPlayer(userName).isPresent()) {
             textService.send(pluginMessages.getCurrentServer(
                 userName,
-                currentServerService.getName(userName).orElse("null")
+                locationService.getServerName(userName).orElse("null")
             ), context.getSource());
             return 1;
         }

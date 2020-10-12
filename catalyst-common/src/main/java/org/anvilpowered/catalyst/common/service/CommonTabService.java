@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.common.service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.anvil.api.util.CurrentServerService;
+import org.anvilpowered.anvil.api.util.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
@@ -43,7 +43,7 @@ public class CommonTabService<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private CurrentServerService currentServerService;
+    private LocationService locationService;
 
     @Inject
     private AdvancedServerInfoService advancedServerInfoService;
@@ -120,9 +120,9 @@ public class CommonTabService<
             .replace("%suffix%", luckpermsService.getSuffix(player))
             .replace("%server%",
                 registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
-                    ? currentServerService.getName(userName).orElse("null")
+                    ? locationService.getServerName(userName).orElse("null")
                     .replace(advancedServerInfoService.getPrefixForPlayer(userName), "")
-                    : currentServerService.getName(userName).orElse("null"))
+                    : locationService.getServerName(userName).orElse("null"))
             .replace("%ping%", String.valueOf(ping))
             .replace("%playercount%", String.valueOf(playerCount))
             .replace("%balance%", getBalance(userName));

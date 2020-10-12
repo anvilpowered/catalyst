@@ -24,8 +24,8 @@ import org.anvilpowered.anvil.api.coremember.CoreMemberRepository;
 import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.anvil.api.util.CurrentServerService;
 import org.anvilpowered.anvil.api.util.KickService;
+import org.anvilpowered.anvil.api.util.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.TimeFormatService;
 import org.anvilpowered.anvil.api.util.UserService;
@@ -51,7 +51,7 @@ public class CommonMemberManager<
     implements MemberManager<TString> {
 
     @Inject
-    protected CurrentServerService currentServerService;
+    protected LocationService locationService;
 
     @Inject
     protected KickService kickService;
@@ -173,7 +173,7 @@ public class CommonMemberManager<
                         .append(
                             textService.builder()
                                 .gold().append(
-                                currentServerService.getName(
+                                locationService.getServerName(
                                     member.getUserUUID()).orElse("Offline User.")))
                 );
                 return message.build();
@@ -186,7 +186,8 @@ public class CommonMemberManager<
 
     @Override
     public CompletableFuture<TString> setNickName(String userName, String nickName) {
-        return getPrimaryComponent().setNickNameForUser(userName, "~" + nickName).thenApplyAsync(result -> {
+        return getPrimaryComponent().setNickNameForUser(userName,
+            registry.getOrDefault(CatalystKeys.NICKNAME_PREFIX) + nickName).thenApplyAsync(result -> {
             if (result) {
                 return textService.success("Set nickname to " + nickName);
             } else {

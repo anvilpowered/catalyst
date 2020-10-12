@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.common.listener;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.anvil.api.util.CurrentServerService;
+import org.anvilpowered.anvil.api.util.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
@@ -52,7 +52,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
     private AdvancedServerInfoService serverService;
 
     @Inject
-    private CurrentServerService currentServerService;
+    private LocationService locationService;
 
     @Inject
     private EmojiService emojiService;
@@ -79,7 +79,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
             message = message.replaceAll("@", "");
         }
 
-        String server = currentServerService.getName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
+        String server = locationService.getServerName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
         if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
             server = serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()));
         }
@@ -121,7 +121,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
 
         String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
             ? serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()))
-            : currentServerService.getName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
+            : locationService.getServerName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
 
         String name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
             .replace("%server%", server)
@@ -149,7 +149,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
         }
         String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
             ? serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()))
-            : currentServerService.getName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
+            : locationService.getServerName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
 
         webHookSender.sendWebhookMessage(
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
@@ -175,7 +175,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
         }
         String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
             ? serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()))
-            : currentServerService.getName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
+            : locationService.getServerName(userService.getUserName((TUser) event.getPlayer())).orElse("null");
         webHookSender.sendWebhookMessage(
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
             registry.getOrDefault(CatalystKeys.BOT_NAME),
