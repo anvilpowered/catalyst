@@ -83,7 +83,7 @@ public final class CatalystKeys {
             .fallback("%player% %server%")
             .build();
     public static final Key<String> PRIVATE_MESSAGE_FORMAT =
-        Key.builder(STRING)
+        Key.builder(TypeTokens.STRING)
             .name("PRIVATE_MESSAGE_FORMAT")
             .fallback("&8[&9%sender%&6 -> &9%recipient%&8] &7%message%")
             .build();
@@ -143,111 +143,133 @@ public final class CatalystKeys {
         Key.builder(TypeTokens.STRING)
             .name("BAN_PERMISSION")
             .fallback("catalyst.command.ban")
+            .sensitive()
             .build();
     public static final Key<String> TEMP_BAN_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("TEMP_BAN_PERMISSION")
             .fallback("catalyst.command.tempban")
+            .sensitive()
             .build();
     public static final Key<String> BAN_EXEMPT_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("BAN_EXEMPT_PERMISSION")
             .fallback("catalyst.command.ban.exempt")
+            .sensitive()
             .build();
     public static final Key<String> BROADCAST_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("BROADCAST_PERMISSION")
             .fallback("catalyst.command.broadcast")
+            .sensitive()
             .build();
     public static final Key<String> CHAT_COLOR_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("CHAT_COLOR_PERMISSION")
             .fallback("catalyst.chat.color")
+            .sensitive()
             .build();
     public static final Key<String> FIND_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("FIND_PERMISSION")
             .fallback("catalyst.command.find")
+            .sensitive()
             .build();
     public static final Key<String> INFO_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("INFO_PERMISSION")
             .fallback("catalyst.command.info")
+            .sensitive()
             .build();
     public static final Key<String> INFO_IP_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("INFO_IP_PERMISSION")
             .fallback("catalyst.command.info.ip")
+            .sensitive()
             .build();
     public static final Key<String> INFO_BANNED_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("INFO_BANNED_PERMISSION")
             .fallback("catalyst.command.info.banned")
+            .sensitive()
             .build();
     public static final Key<String> INFO_CHANNEL_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("INFO_CHANNEL_PERMISSION")
             .fallback("catalyst.command.info.channel")
+            .sensitive()
             .build();
     public static final Key<String> KICK_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("KICK_PERMISSION")
             .fallback("catalyst.command.kick")
+            .sensitive()
             .build();
     public static final Key<String> KICK_EXEMPT_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("KICK_EXEMPT_PERMISSION")
             .fallback("catalyst.command.kick.exempt")
+            .sensitive()
             .build();
     public static final Key<String> LANGUAGE_ADMIN_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("LANGUAGE_ADMIN_PERMISSION")
             .fallback("catalyst.command.language.admin")
+            .sensitive()
             .build();
     public static final Key<String> LANGUAGE_LIST_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("LANGUAGE_LIST_PERMISSION")
             .fallback("catalyst.command.language.list")
+            .sensitive()
             .build();
     public static final Key<String> LIST_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("LIST_PERMISSION")
             .fallback("catalyst.command.list")
+            .sensitive()
             .build();
     public static final Key<String> MESSAGE_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("MESSAGE_PERMISSION")
             .fallback("catalyst.command.message")
+            .sensitive()
             .build();
     public static final Key<String> MUTE_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("MUTE_PERMISSION")
             .fallback("catalyst.command.mute")
+            .sensitive()
             .build();
     public static final Key<String> MUTE_EXEMPT_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("MUTE_EXEMPT_PERMISSION")
             .fallback("catalyst.command.mute.exempt")
+            .sensitive()
             .build();
     public static final Key<String> NICKNAME_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("NICKNAME_PERMISSION")
             .fallback("catalyst.command.nickname")
+            .sensitive()
             .build();
     public static final Key<String> NICKNAME_COLOR_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("NICKNAME_COLOR_PERMISSION")
             .fallback("catalyst.command.nickname.color")
+            .sensitive()
             .build();
     public static final Key<String> NICKNAME_MAGIC_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("NICKNAME_MAGIC_PERMISSION")
             .fallback("catalyst.command.nickname.magic")
+            .sensitive()
             .build();
     public static final Key<String> NICKNAME_OTHER_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("NICKNAME_OTHER_PERMISSION")
             .fallback("catalyst.command.nickname.other")
+            .sensitive()
             .build();
     public static final Key<String> NICKNAME_PREFIX =
         Key.builder(TypeTokens.STRING)
@@ -258,51 +280,61 @@ public final class CatalystKeys {
         Key.builder(TypeTokens.STRING)
             .name("SEND_PERMISSION")
             .fallback("catalyst.admin.command.send")
+            .sensitive()
             .build();
     public static final Key<String> SOCIALSPY_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("SOCIALSPY_PERMISSION")
             .fallback("catalyst.admin.command.socialspy")
+            .sensitive()
             .build();
     public static final Key<String> SOCIALSPY_ONJOIN_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("SOCIALSPY_ONJOIN_PERMISSION")
             .fallback("catalyst.admin.command.socialspy.onjoin")
+            .sensitive()
             .build();
     public static final Key<String> STAFFCHAT_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("STAFFCHAT_PERMISSION")
             .fallback("catalyst.admin.command.staffchat")
+            .sensitive()
             .build();
     public static final Key<String> STAFFLIST_ADMIN_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("STAFFLIST_ADMIN_PERMISSION")
             .fallback("catalyst.stafflist.admin")
+            .sensitive()
             .build();
     public static final Key<String> STAFFLIST_BASE_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("STAFFLIST_BASE_PERMISSION")
             .fallback("catalyst.stafflist.base")
+            .sensitive()
             .build();
     public static final Key<String> STAFFLIST_OWNER_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("STAFFLIST_OWNER_PERMISSION")
             .fallback("catalyst.stafflist.owner")
+            .sensitive()
             .build();
     public static final Key<String> STAFFLIST_STAFF_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("STAFFLIST_STAFF_PERMISSION")
             .fallback("catalyst.stafflist.staff")
+            .sensitive()
             .build();
     public static final Key<String> ALL_CHAT_CHANNELS_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("ALL_CHAT_CHANNELS_PERMISSION")
             .fallback("catalyst.channel.all")
+            .sensitive()
             .build();
     public static final Key<String> CHANNEL_BASE_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("CHANNEL_BASE_PERMISSION")
             .fallback("catalyst.channel.")
+            .sensitive()
             .build();
     public static final Key<String> BOT_NAME =
         Key.builder(TypeTokens.STRING)
@@ -313,16 +345,19 @@ public final class CatalystKeys {
         Key.builder(TypeTokens.STRING)
             .name("BOT_TOKEN")
             .fallback("bot token")
+            .sensitive()
             .build();
     public static final Key<String> DISCORD_MAIN_CHANNEL =
         Key.builder(TypeTokens.STRING)
             .name("DISCORD_MAIN_CHANNEL")
             .fallback("123456789")
+            .sensitive()
             .build();
     public static final Key<String> DISCORD_STAFF_CHANNEL =
         Key.builder(TypeTokens.STRING)
             .name("DISCORD_STAFF_CHANNEL")
             .fallback("123456789")
+            .sensitive()
             .build();
     public static final Key<String> DISCORD_PLAYER_CHAT_FORMAT =
         Key.builder(TypeTokens.STRING)
@@ -403,11 +438,13 @@ public final class CatalystKeys {
         Key.builder(TypeTokens.STRING)
             .name("IGNORE_PERMISSION")
             .fallback("catalyst.command.ignore")
+            .sensitive()
             .build();
     public static final Key<String> IGNORE_EXEMPT_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("IGNORE_EXEMPT_PERMISSION")
             .fallback("catalyst.command.ignore.exempt")
+            .sensitive()
             .build();
     public static final Key<String> SERVER_PING =
         Key.builder(TypeTokens.STRING)
@@ -423,6 +460,7 @@ public final class CatalystKeys {
         Key.builder(TypeTokens.STRING)
             .name("SYNC_COMMNAD_PERMISSION")
             .fallback("catalyst.admin.command.sync")
+            .sensitive()
             .build();
     public static final Key<String> MOTD =
         Key.builder(TypeTokens.STRING)
@@ -451,11 +489,13 @@ public final class CatalystKeys {
         })
             .name("EMOJI_MAP")
             .fallback(emojiMap)
+            .sensitive()
             .build();
     public static final Key<String> EMOJI_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("EMOJI_PERMISSION")
             .fallback("catalyst.chat.emoji.base")
+            .sensitive()
             .build();
     static List<ChatChannel> chatChannels = new LinkedList<>();
     public static final Key<List<ChatChannel>> CHAT_CHANNELS =
@@ -562,51 +602,61 @@ public final class CatalystKeys {
         Key.builder(TypeTokens.STRING)
             .name("ADVANCED_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> COMMANDS_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("COMMANDS_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> CHAT_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("CHAT_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> DISCORD_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("DISCORD_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> JOIN_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("JOIN_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> LEAVE_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("LEAVE_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> MODULES_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("MODULES_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> MOTD_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("MOTD_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> PING_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("PING_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
     public static final Key<String> TAB_ROOT =
         Key.builder(TypeTokens.STRING)
             .name("TAB_ROOT")
             .fallback(null)
+            .sensitive()
             .build();
 
     static {
