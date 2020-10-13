@@ -99,7 +99,11 @@ public interface PluginMessages<TString> {
 
     TString messageCommandUsage();
 
+    TString replyCommandUsage();
+
     TString nickNameCommandUsage();
+
+    TString deleteNickOtherCommandUsage();
 
     TString broadcastCommandUsage();
 

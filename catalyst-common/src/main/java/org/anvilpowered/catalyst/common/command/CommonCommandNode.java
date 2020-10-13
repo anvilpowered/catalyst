@@ -25,6 +25,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import org.anvilpowered.anvil.api.command.CommandNode;
+import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -102,6 +103,12 @@ public abstract class CommonCommandNode<
     @Inject
     private CommonStaffListCommand<TString, TCommandSource> staffListCommand;
 
+    @Inject
+    private CommonSendCommand<TString, TPlayer, TCommandSource> sendCommand;
+
+    @Inject
+    private CommonServerCommand<TString, TPlayer, TCommandSource> serverCommand;
+
     private boolean alreadyLoaded;
     protected Map<List<String>, Function<TCommandSource, String>> descriptions;
     protected Map<List<String>, Predicate<TCommandSource>> permissions;
@@ -119,6 +126,9 @@ public abstract class CommonCommandNode<
 
     @Inject
     private UserService<TPlayer, TPlayer> userService;
+
+    @Inject
+    private PluginInfo<TString> pluginInfo;
 
     protected Registry registry;
     protected Class<?> playerClass;
@@ -149,8 +159,10 @@ public abstract class CommonCommandNode<
             .requires(source -> permissionService.hasPermission(source,
                 registry.getOrDefault(CatalystKeys.BAN_PERMISSION)))
             .executes(e -> {
-                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                textService.send(pluginMessages.banCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.banCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -168,14 +180,18 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.TEMP_BAN_PERMISSION)))
             .executes(e -> {
-                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                textService.send(textService.of(pluginMessages.tempBanCommandUsage()), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.tempBanCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             }).then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.string())
                 .executes(e -> {
-                    textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                    textService.send(textService.of(pluginMessages.tempBanCommandUsage()), e.getSource());
+                    textService.builder()
+                        .append(pluginMessages.getNotEnoughArgs())
+                        .append(pluginMessages.tempBanCommandUsage())
+                        .sendTo(e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -191,8 +207,10 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.BAN_PERMISSION)))
             .executes(e -> {
-                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
-                textService.send(textService.of(pluginMessages.unbanCommandUsage()), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.unbanCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -205,8 +223,10 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.BROADCAST_PERMISSION)))
             .executes(e -> {
-                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
-                textService.send(pluginMessages.broadcastCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.broadcastCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -225,8 +245,10 @@ public abstract class CommonCommandNode<
                     permissionService.hasPermission(source,
                         registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION)))
                 .executes(e -> {
-                    textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                    textService.send(pluginMessages.nickNameCommandUsage(), e.getSource());
+                    textService.builder()
+                        .append(pluginMessages.getNotEnoughArgs())
+                        .append(pluginMessages.deleteNickOtherCommandUsage())
+                        .sendTo(e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -244,8 +266,10 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION)))
             .executes(e -> {
-                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
-                textService.send(pluginMessages.nickNameCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.nickNameCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -257,16 +281,20 @@ public abstract class CommonCommandNode<
                     permissionService.hasPermission(source,
                         registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION)))
                 .executes(e -> {
-                    textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                    textService.send(pluginMessages.nickNameCommandUsage(), e.getSource());
+                    textService.builder()
+                        .append(pluginMessages.getNotEnoughArgs())
+                        .append(pluginMessages.nickNameCommandUsage())
+                        .sendTo(e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "target", StringArgumentType.word())
                     .suggests(suggest())
                     .executes(e -> {
-                        textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                        textService.send(pluginMessages.nickNameCommandUsage(), e.getSource());
+                        textService.builder()
+                            .append(pluginMessages.getNotEnoughArgs())
+                            .append(pluginMessages.nickNameCommandUsage())
+                            .sendTo(e.getSource());
                         return 1;
                     })
                     .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -280,8 +308,10 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.FIND_PERMISSION)))
             .executes(e -> {
-                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
-                textService.send(pluginMessages.findCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.findCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -293,8 +323,10 @@ public abstract class CommonCommandNode<
         final LiteralCommandNode<TCommandSource> info = LiteralArgumentBuilder
             .<TCommandSource>literal("info")
             .executes(e -> {
-                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
-                textService.send(pluginMessages.infoCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.infoCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.string())
@@ -307,8 +339,10 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.KICK_PERMISSION)))
             .executes(e -> {
-                textService.send(textService.of(pluginMessages.getNotEnoughArgs()), e.getSource());
-                textService.send(pluginMessages.kickCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.kickCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.word())
@@ -325,15 +359,19 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION)))
             .executes(e -> {
-                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                textService.send(pluginMessages.messageCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.messageCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.word())
                 .suggests(suggest())
                 .executes(e -> {
-                    textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                    textService.send(pluginMessages.messageCommandUsage(), e.getSource());
+                    textService.builder()
+                        .append(pluginMessages.getNotEnoughArgs())
+                        .append(pluginMessages.messageCommandUsage())
+                        .sendTo(e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -348,8 +386,10 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION)))
             .executes(e -> {
-                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                textService.send(pluginMessages.messageCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.replyCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -362,8 +402,10 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.MUTE_PERMISSION)))
             .executes(e -> {
-                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                textService.send(pluginMessages.muteCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.muteCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -381,16 +423,20 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.MUTE_PERMISSION)))
             .executes(e -> {
-                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                textService.send(pluginMessages.tempMuteCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.tempMuteCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.word())
                 .suggests(suggest())
                 .executes(e -> {
-                    textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                    textService.send(pluginMessages.tempMuteCommandUsage(), e.getSource());
+                    textService.builder()
+                        .append(pluginMessages.getNotEnoughArgs())
+                        .append(pluginMessages.tempMuteCommandUsage())
+                        .sendTo(e.getSource());
                     return 1;
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -408,8 +454,10 @@ public abstract class CommonCommandNode<
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.MUTE_PERMISSION)))
             .executes(e -> {
-                textService.send(pluginMessages.getNotEnoughArgs(), e.getSource());
-                textService.send(pluginMessages.unMuteCommandUsage(), e.getSource());
+                textService.builder()
+                    .append(pluginMessages.getNotEnoughArgs())
+                    .append(pluginMessages.unMuteCommandUsage())
+                    .sendTo(e.getSource());
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
@@ -452,6 +500,41 @@ public abstract class CommonCommandNode<
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.STAFFLIST_BASE_PERMISSION)))
             .executes(staffListCommand::execute)
             .build();
+        final LiteralCommandNode<TCommandSource> send = LiteralArgumentBuilder
+            .<TCommandSource>literal("send")
+            .requires(source ->
+                permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.SEND_PERMISSION)))
+            .executes(ctx -> {
+                textService.builder()
+                    .append(pluginInfo.getPrefix())
+                    .append(pluginMessages.sendCommandUsage())
+                    .sendTo(ctx.getSource());
+                return 1;
+            })
+            .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                "player", StringArgumentType.word())
+                .suggests(suggest())
+                .executes(ctx -> {
+                    textService.builder()
+                        .append(pluginInfo.getPrefix())
+                        .append(pluginMessages.sendCommandUsage())
+                        .sendTo(ctx.getSource());
+                    return 1;
+                })
+                .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                    "server", StringArgumentType.word())
+                    .executes(sendCommand::execute)
+                    .build())
+                .build())
+            .build();
+        final LiteralCommandNode<TCommandSource> server = LiteralArgumentBuilder
+            .<TCommandSource>literal("server")
+            .executes(serverCommand::sendServers)
+            .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                "server", StringArgumentType.word())
+                .executes(serverCommand::execute)
+                .build())
+            .build();
 
         if (registry.getOrDefault(CatalystKeys.BAN_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("tempban", "ctempban"), tempBan);
@@ -492,6 +575,12 @@ public abstract class CommonCommandNode<
         if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_ENABLED)) {
             commands.put(ImmutableList.of("exception"), exception);
             commands.put(ImmutableList.of("swear"), swear);
+        }
+        if (registry.getOrDefault(CatalystKeys.SEND_COMMAND_ENABLED)) {
+            commands.put(ImmutableList.of("send", "csend"), send);
+        }
+        if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
+            commands.put(ImmutableList.of("server", "cserver"), server);
         }
         commands.put(ImmutableList.of("stafflist"), staffList);
     }

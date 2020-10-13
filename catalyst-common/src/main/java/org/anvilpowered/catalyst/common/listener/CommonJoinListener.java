@@ -18,8 +18,9 @@
 package org.anvilpowered.catalyst.common.listener;
 
 import com.google.inject.Inject;
+import org.anvilpowered.anvil.api.misc.Named;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.anvil.api.util.LocationService;
+import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
@@ -88,8 +89,8 @@ public class CommonJoinListener<
         }
         String userName = userService.getUserName((TUser) player);
         String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
-            ? locationService.getServerName(userName).orElse("null")
-            : locationService.getServerName(playerUUID).orElse("null");
+            ? locationService.getServer(userName).map(Named::getName).orElse("null")
+            : locationService.getServer(playerUUID).map(Named::getName).orElse("null");
 
         if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
             serverService.insertPlayer(userName, serverService.getPrefix(virtualHost));

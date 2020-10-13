@@ -18,7 +18,7 @@
 package org.anvilpowered.catalyst.sponge.command;
 
 import com.google.inject.Inject;
-import org.anvilpowered.anvil.api.redis.RedisService;
+import org.anvilpowered.anvil.api.messaging.RedisService;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;

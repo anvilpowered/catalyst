@@ -55,7 +55,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     public TString getNotEnoughArgs() {
         return textService.builder()
             .append(pluginInfo.getPrefix())
-            .red().append("Not enough arguments!")
+            .red().append("Not enough arguments!\n")
             .build();
     }
 
@@ -350,11 +350,21 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     }
 
     @Override
+    public TString replyCommandUsage() {
+        return textService.deserialize("&4Usage: /reply <message>");
+    }
+
+    @Override
     public TString nickNameCommandUsage() {
         return textService.builder()
             .red().append("Usage: ")
             .yellow().append("/nick <nickname>")
             .build();
+    }
+
+    @Override
+    public TString deleteNickOtherCommandUsage() {
+        return textService.deserialize("&4Usage: /delnick other <player>");
     }
 
     @Override

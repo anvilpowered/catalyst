@@ -39,12 +39,6 @@ public class VelocityCommandNode
     private ProxyServer proxyServer;
 
     @Inject
-    private VelocityServerCommand serverCommand;
-
-    @Inject
-    private VelocitySendCommand sendCommand;
-
-    @Inject
     private VelocityListCommand listCommand;
 
     @Inject
@@ -57,6 +51,12 @@ public class VelocityCommandNode
 
     @Override
     public void loadCommands() {
+        // We unregister the command velocity has provided so that ours
+        // works properly
+        if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
+            proxyServer.getCommandManager().unregister("server");
+        }
+
         //register commands from CommonCommandNode
         CommandManager manager = proxyServer.getCommandManager();
         commands.forEach((aliases, command) -> {
@@ -71,14 +71,6 @@ public class VelocityCommandNode
         if (registry.getOrDefault(CatalystKeys.LIST_COMMAND_ENABLED)) {
             proxyServer.getCommandManager().register(
                 "list", listCommand, "clist");
-        }
-        if (registry.getOrDefault(CatalystKeys.SEND_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "send", sendCommand, "csend");
-        }
-        if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "server", serverCommand);
         }
         proxyServer.getCommandManager().register(
             "ignore", ignoreCommand

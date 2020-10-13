@@ -12,6 +12,7 @@ subprojects {
         version = version.replace("-SNAPSHOT", "-RC${buildNumber}")
     }
     repositories {
+        mavenLocal()
         mavenCentral()
         jcenter()
         maven { url 'https://jetbrains.bintray.com/xodus' }

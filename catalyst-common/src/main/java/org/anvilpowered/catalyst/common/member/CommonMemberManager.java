@@ -21,11 +21,12 @@ import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.coremember.CoreMemberManager;
 import org.anvilpowered.anvil.api.coremember.CoreMemberRepository;
+import org.anvilpowered.anvil.api.misc.Named;
 import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.registry.Registry;
+import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.KickService;
-import org.anvilpowered.anvil.api.util.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.TimeFormatService;
 import org.anvilpowered.anvil.api.util.UserService;
@@ -173,8 +174,8 @@ public class CommonMemberManager<
                         .append(
                             textService.builder()
                                 .gold().append(
-                                locationService.getServerName(
-                                    member.getUserUUID()).orElse("Offline User.")))
+                                locationService.getServer(
+                                    member.getUserUUID()).map(Named::getName).orElse("Offline User.")))
                 );
                 return message.build();
             }

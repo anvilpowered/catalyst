@@ -19,10 +19,11 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.anvilpowered.anvil.api.misc.Named;
 import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.registry.Key;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.anvil.api.util.LocationService;
+import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
@@ -255,7 +256,7 @@ public class CommonChatService<
         String channelPrefix,
         Key<String> key
     ) {
-        String server = locationService.getServerName(rawUserName).orElse("null");
+        String server = locationService.getServer(rawUserName).map(Named::getName).orElse("null");
         if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
             server = serverService.getPrefixForPlayer(rawUserName);
         }
@@ -379,7 +380,7 @@ public class CommonChatService<
         String nameColor = luckpermsService.getNameColor(event.getPlayer());
         String suffix = luckpermsService.getSuffix(event.getPlayer());
         String userName = pluginMessages.removeColor(userService.getUserName((TUser) event.getPlayer()));
-        String server = locationService.getServerName(userName).orElseThrow(() ->
+        String server = locationService.getServer(userName).map(Named::getName).orElseThrow(() ->
             new IllegalStateException(userName + " is not in a valid server!"));
         UUID playerUUID = userService.getUUID((TUser) event.getPlayer());
         String channelId = getChannelIdForUser(playerUUID);

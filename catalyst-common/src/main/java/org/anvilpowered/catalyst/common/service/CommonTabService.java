@@ -19,8 +19,9 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.anvilpowered.anvil.api.misc.Named;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.anvil.api.util.LocationService;
+import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
@@ -120,9 +121,9 @@ public class CommonTabService<
             .replace("%suffix%", luckpermsService.getSuffix(player))
             .replace("%server%",
                 registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
-                    ? locationService.getServerName(userName).orElse("null")
+                    ? locationService.getServer(userName).map(Named::getName).orElse("null")
                     .replace(advancedServerInfoService.getPrefixForPlayer(userName), "")
-                    : locationService.getServerName(userName).orElse("null"))
+                    : locationService.getServer(userName).map(Named::getName).orElse("null"))
             .replace("%ping%", String.valueOf(ping))
             .replace("%playercount%", String.valueOf(playerCount))
             .replace("%balance%", getBalance(userName));

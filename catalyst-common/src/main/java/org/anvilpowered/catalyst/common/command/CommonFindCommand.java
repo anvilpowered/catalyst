@@ -19,7 +19,8 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
-import org.anvilpowered.anvil.api.util.LocationService;
+import org.anvilpowered.anvil.api.misc.Named;
+import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -47,7 +48,7 @@ public class CommonFindCommand<
         if (userService.getPlayer(userName).isPresent()) {
             textService.send(pluginMessages.getCurrentServer(
                 userName,
-                locationService.getServerName(userName).orElse("null")
+                locationService.getServer(userName).map(Named::getName).orElse("null")
             ), context.getSource());
             return 1;
         }
