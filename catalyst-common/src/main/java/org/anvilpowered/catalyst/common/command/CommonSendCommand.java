@@ -4,15 +4,18 @@ import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.misc.Named;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
+import org.anvilpowered.anvil.api.server.BackendServer;
 import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class CommonSendCommand<
     TString,
@@ -36,63 +39,52 @@ public class CommonSendCommand<
 
     public int execute(CommandContext<TCommandSource> context) {
         final String target = context.getArgument("player", String.class);
-        String server = context.getArgument("server", String.class);
+        String serverName = context.getArgument("server", String.class);
         String userName = userService.getUserName((TPlayer) context.getSource());
+        BackendServer server = locationService.getServerForName(serverName).orElse(null);
+
+        if (server == null) {
+            textService.builder()
+                .append(pluginInfo.getPrefix())
+                .red().append("Could not find server ")
+                .gold().append(serverName)
+                .sendTo(context.getSource());
+            return 0;
+        }
 
         if (target.equals("_a")) {
-            int[] total = new int[1];
-            for (TPlayer p : userService.getOnlinePlayers()) {
-                locationService.getServer(server).map(s -> s.connect(userService.getUUID(p)).thenApply(result -> {
-                    if (result) {
-                        total[0] = total[0] + 1;
+            CompletableFuture.runAsync(() -> {
+                int total = 0;
+                for (TPlayer p : userService.getOnlinePlayers()) {
+                    if (locationService.getServerForName(serverName).map(s -> s.connect(p).join()).orElse(false)) {
+                        ++total;
                         textService.builder()
                             .append(pluginInfo.getPrefix())
                             .green().append("You have been sent to ")
-                            .gold().append(server)
+                            .gold().append(serverName)
                             .green().append(" by ")
                             .gold().append(userName)
                             .sendTo(p);
-                        return 1;
                     }
-                    return 0;
-                }).join());
-            }
-            textService.builder()
-                .append(pluginInfo.getPrefix())
-                .green().append("You have sent ")
-                .gold().append(String.valueOf(total[0]))
-                .green().append(" players to ")
-                .gold().append(server)
-                .sendTo(context.getSource());
+                }
+                textService.builder()
+                    .append(pluginInfo.getPrefix())
+                    .green().append("You have sent ")
+                    .gold().append(total)
+                    .green().append(" players to ")
+                    .gold().append(serverName)
+                    .sendTo(context.getSource());
+            });
             return 1;
         }
 
         if (target.equals("_r")) {
             Collection<TPlayer> onlinePlayers = userService.getOnlinePlayers();
-            int random = (int) ((onlinePlayers.size() - 1) * Math.random());
-            if (onlinePlayers instanceof List && random >= 0) {
+            int random = (int) (onlinePlayers.size() * Math.random()) - 1;
+            if (onlinePlayers instanceof List && random >= -1) {
                 TPlayer randomPlayer = ((List<TPlayer>) onlinePlayers).get(random + 1);
-                locationService.getServer(server).map(s -> s.connect(userService.getUUID(randomPlayer)).thenApply((result -> {
-                    if (result) {
-                        textService.builder()
-                            .append(pluginInfo.getPrefix())
-                            .green().append("You have been sent to ")
-                            .gold().append(server)
-                            .green().append(" by ")
-                            .gold().append(userName)
-                            .sendTo(randomPlayer);
-                        textService.builder()
-                            .append(pluginInfo.getPrefix())
-                            .green().append("You have sent ")
-                            .gold().append(userService.getUserName(randomPlayer))
-                            .green().append(" to ")
-                            .gold().append(server)
-                            .sendTo(context.getSource());
-                        return 1;
-                    }
-                    return 0;
-                })));
-                return 0;
+                connect(server, context.getSource(), randomPlayer);
+                return 1;
             }
             Iterator<TPlayer> iterator = onlinePlayers.iterator();
             TPlayer current = null;
@@ -105,29 +97,9 @@ public class CommonSendCommand<
                 }
             }
             if (current != null) {
-                TPlayer finalCurrent = current;
-                locationService.getServer(server).map(s -> s.connect(userService.getUUID(finalCurrent)).thenApply(result -> {
-                    if (result) {
-                        textService.builder()
-                            .append(pluginInfo.getPrefix())
-                            .green().append("You have been sent to ")
-                            .gold().append(server)
-                            .green().append(" by ")
-                            .gold().append(userName)
-                            .sendTo(finalCurrent);
-                        textService.builder()
-                            .append(pluginInfo.getPrefix())
-                            .green().append("You have sent ")
-                            .gold().append(userService.getUserName(finalCurrent))
-                            .green().append(" to ")
-                            .gold().append(server)
-                            .sendTo(context.getSource());
-                        return 1;
-                    }
-                    return 0;
-                }));
+                return connect(server, context.getSource(), current);
             }
-            return 0;
+            return 1;
         }
 
         if (target.startsWith("_")) {
@@ -135,18 +107,17 @@ public class CommonSendCommand<
             for (TPlayer p : userService.getOnlinePlayers()) {
                 String targetUserName = userService.getUserName(p);
                 if (targetServer.equals(locationService.getServer(targetUserName).map(Named::getName).orElse(null))) {
-                    locationService.getServer(server).map(s -> s.connect(targetUserName).thenApply((result -> {
+                    server.connect(p).thenAccept((result -> {
                         if (result) {
                             textService.builder()
                                 .append(pluginInfo.getPrefix())
                                 .green().append("You were sent to ")
-                                .gold().append(targetServer)
+                                .gold().append(serverName)
                                 .green().append(" by ")
                                 .gold().append(userName)
                                 .sendTo(p);
                         }
-                        return 1;
-                    })));
+                    }));
                 }
             }
             textService.builder()
@@ -154,41 +125,52 @@ public class CommonSendCommand<
                 .green().append("You have sent all players from ")
                 .gold().append(targetServer)
                 .green().append(" to ")
-                .gold().append(server)
+                .gold().append(serverName)
                 .sendTo(context.getSource());
             return 1;
         }
 
         Optional<TPlayer> targetPlayer = userService.getPlayer(target);
         if (targetPlayer.isPresent()) {
-            locationService.getServer(server).map(s -> s.connect(target).thenApply(result -> {
-                if (result) {
-                    textService.builder()
-                        .append(pluginInfo.getPrefix())
-                        .green().append("You have been sent to ")
-                        .gold().append(server)
-                        .sendTo(targetPlayer.get());
-                    textService.builder()
-                        .append(pluginInfo.getPrefix())
-                        .gold().append(target)
-                        .green().append(" has been sent to ")
-                        .gold().append(server)
-                        .sendTo(context.getSource());
-                    return 1;
-                }
-                textService.builder()
-                    .append(pluginInfo.getPrefix())
-                    .green().append("Could not send ")
-                    .gold().append(target)
-                    .green().append(" to ")
-                    .gold().append(server)
-                    .sendTo(context.getSource());
-                return 1;
-            }));
+            connect(locationService.getServerForName(serverName).orElse(null), context.getSource(), targetPlayer.get());
         } else {
             textService.send(textService.of(pluginMessages.offlineOrInvalidPlayer()), context.getSource());
             return 0;
         }
+        return 0;
+    }
+
+    private int connect(@Nullable BackendServer server, TCommandSource source, TPlayer target) {
+        if (server == null) {
+            return 0;
+        }
+        String targetName = userService.getUserName(target);
+        server.connect(target).thenApply(result -> {
+            if (result) {
+                textService.builder()
+                    .append(pluginInfo.getPrefix())
+                    .green().append("You have been sent to ")
+                    .gold().append(server.getName())
+                    .sendTo(target);
+                if (!source.equals(target)) {
+                    textService.builder()
+                        .append(pluginInfo.getPrefix())
+                        .gold().append(targetName)
+                        .green().append(" has been sent to ")
+                        .gold().append(server.getName())
+                        .sendTo(source);
+                }
+                return 1;
+            }
+            textService.builder()
+                .append(pluginInfo.getPrefix())
+                .red().append("Could not send ")
+                .gold().append(targetName)
+                .red().append(" to ")
+                .gold().append(server.getName())
+                .sendTo(source);
+            return 1;
+        });
         return 0;
     }
 }

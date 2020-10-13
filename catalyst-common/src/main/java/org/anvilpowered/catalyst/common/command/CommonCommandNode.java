@@ -27,11 +27,14 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import org.anvilpowered.anvil.api.command.CommandNode;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.registry.Registry;
+import org.anvilpowered.anvil.api.server.BackendServer;
+import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 
 import java.util.HashMap;
@@ -129,6 +132,12 @@ public abstract class CommonCommandNode<
 
     @Inject
     private PluginInfo<TString> pluginInfo;
+
+    @Inject
+    private LocationService locationService;
+
+    @Inject
+    private AdvancedServerInfoService advancedServerInfo;
 
     protected Registry registry;
     protected Class<?> playerClass;
@@ -523,6 +532,7 @@ public abstract class CommonCommandNode<
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "server", StringArgumentType.word())
+                    .suggests(suggestAllServers())
                     .executes(sendCommand::execute)
                     .build())
                 .build())
@@ -532,6 +542,7 @@ public abstract class CommonCommandNode<
             .executes(serverCommand::sendServers)
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "server", StringArgumentType.word())
+                .suggests(suggestServers())
                 .executes(serverCommand::execute)
                 .build())
             .build();
@@ -589,6 +600,39 @@ public abstract class CommonCommandNode<
         return (context, builder) -> {
             for (TPlayer player : userService.getOnlinePlayers()) {
                 builder.suggest(userService.getUserName(player), () -> "target");
+            }
+            return builder.buildFuture();
+        };
+    }
+
+    private SuggestionProvider<TCommandSource> suggestServers() {
+        return (context, builder) -> {
+            TCommandSource source = context.getSource();
+            if (!playerClass.isAssignableFrom(source.getClass())) {
+                return builder.buildFuture();
+            }
+            if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
+                if (source.getClass().isAssignableFrom(playerClass)) {
+                    String prefix = advancedServerInfo.getPrefixForPlayer(userService.getUserName((TPlayer) source));
+                    for (BackendServer server : locationService.getServers()) {
+                        if (server.getName().startsWith(prefix)) {
+                            builder.suggest(server.getName().replace(prefix, ""), () -> "server");
+                        }
+                    }
+                }
+                return builder.buildFuture();
+            }
+            for (BackendServer server : locationService.getServers()) {
+                builder.suggest(server.getName(), () -> "server");
+            }
+            return builder.buildFuture();
+        };
+    }
+
+    private SuggestionProvider<TCommandSource> suggestAllServers() {
+        return (context, builder) -> {
+            for (BackendServer server : locationService.getServers()) {
+                builder.suggest(server.getName(), () -> "server");
             }
             return builder.buildFuture();
         };

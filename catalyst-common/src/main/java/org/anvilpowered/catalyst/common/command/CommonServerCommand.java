@@ -78,7 +78,7 @@ public class CommonServerCommand<
         if (!server.equalsIgnoreCase(targetServer)) {
             return;
         }
-        locationService.getServer(server).map(s -> s.connect(userName).thenApply(result -> {
+        locationService.getServerForName(server).map(s -> s.connect(userName).thenApply(result -> {
             if (result) {
                 textService.builder()
                     .append(pluginInfo.getPrefix())
@@ -108,38 +108,40 @@ public class CommonServerCommand<
         if (!currentServer.isPresent()) {
             return 0;
         }
+
         for (BackendServer server : locationService.getServers()) {
+            int onlinePlayers = server.getPlayerUUIDs().size();
+            String serverName = server.getName();
             if (useAdvServerInfo) {
                 if (server.getName().contains(prefix)) {
                     if (count >= 8) {
                         availableServers.append(textService.of("\n"));
                         count = 0;
                     }
-                    if (currentServer.map(cs -> cs.getName().equalsIgnoreCase(server.getName())).orElse(false)) {
+                    if (currentServer.map(cs -> cs.getName().equalsIgnoreCase(serverName)).orElse(false)) {
                         availableServers.append(textService.builder()
                             .green().append(server.getName().replace(prefix, "") + " ")
-                            //TODO waiting for a way to get online player counts
-                            .onHoverShowText(textService.of("Online Players: " + 0))
+                            .onHoverShowText(textService.of("Online Players: " + onlinePlayers))
                             .build());
                     } else {
                         availableServers.append(textService.builder()
                             .gray().append(server.getName().replace(prefix, "") + " ")
-                            .onClickRunCommand("/server " + server.getName())
-                            .onHoverShowText(textService.of("Online Players: " + 0))
+                            .onClickRunCommand("/server " + serverName)
+                            .onHoverShowText(textService.of("Online Players: " + onlinePlayers))
                             .build());
                     }
                 }
             } else {
-                if (currentServer.map(cs -> cs.getName().equalsIgnoreCase(server.getName())).orElse(false)) {
+                if (currentServer.map(cs -> cs.getName().equalsIgnoreCase(serverName)).orElse(false)) {
                     availableServers.append(textService.builder()
                         .green().append(server.getName() + " ")
-                        .onHoverShowText(textService.of("Online Players: " + 0))
+                        .onHoverShowText(textService.of("Online Players: " + onlinePlayers))
                         .build());
                 } else {
                     availableServers.append(textService.builder()
-                        .gray().append(server.getName() + " ")
-                        .onClickRunCommand("/server " + server.getName())
-                        .onHoverShowText(textService.of("Online Players: " + 0))
+                        .gray().append(serverName + " ")
+                        .onClickRunCommand("/server " + serverName)
+                        .onHoverShowText(textService.of("Online Players: " + onlinePlayers))
                         .build());
                 }
             }
