@@ -96,8 +96,8 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
         return textService.builder()
             .append(pluginInfo.getPrefix())
             .gold().append(userName)
-            .gray().append(" is connected to ")
-            .green().append(serverName, ".")
+            .green().append(" is connected to ")
+            .gold().append(serverName, ".")
             .build();
     }
 
@@ -136,8 +136,8 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     @Override
     public TString getSocialSpy(boolean enabled) {
         TextService.Builder<TString, TCommandSource> builder = textService.builder()
-                .append(pluginInfo.getPrefix())
-                .yellow().append("SocialSpy ");
+            .append(pluginInfo.getPrefix())
+            .yellow().append("SocialSpy ");
         if (enabled) {
             return builder.green().append("enabled").build();
         }
@@ -147,8 +147,8 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     @Override
     public TString getStaffChat(boolean enabled) {
         TextService.Builder<TString, TCommandSource> builder = textService.builder()
-                .append(pluginInfo.getPrefix())
-                .yellow().append("Staff Chat ");
+            .append(pluginInfo.getPrefix())
+            .yellow().append("Staff Chat ");
         if (enabled) {
             return builder.green().append("enabled").build();
         }
@@ -271,82 +271,130 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
 
     @Override
     public TString banCommandUsage() {
-        return textService.deserialize("&4Usage: &e/ban <user> [reason]");
+        return textService.builder()
+            .red().append(textService.of("Usage:"))
+            .yellow().append("/ban <user> [reason]")
+            .build();
     }
 
     @Override
     public TString tempBanCommandUsage() {
-        return textService.deserialize("&4Usage: &e/tempban <user> <duration> [reason]");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/tempban <user> <duration> [reason]")
+            .build();
     }
 
     @Override
     public TString unbanCommandUsage() {
-        return textService.deserialize("&4Usage: &e/unban <user>");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/unban <user>")
+            .build();
     }
 
     @Override
     public TString muteCommandUsage() {
-        return textService.deserialize("&4Usage: &e/mute <user> [reason]");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/mute <user> [reason]")
+            .build();
     }
 
     @Override
     public TString tempMuteCommandUsage() {
-        return textService.deserialize("&4Usage: &e/tempmute <user> <duration> [reason]");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/tempmute <user> <duration> [reason]")
+            .build();
     }
 
     @Override
     public TString unMuteCommandUsage() {
-        return textService.deserialize("&4Usage: &e/unmute <player>");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/unmute <player>")
+            .build();
     }
 
     @Override
     public TString kickCommandUsage() {
-        return textService.deserialize("&4Usage: &e/kick <user> [reason]");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/kick <user> [reason]")
+            .build();
     }
 
     @Override
     public TString findCommandUsage() {
-        return textService.deserialize("&4Usage: /find <user>");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/find <user>")
+            .build();
     }
 
     @Override
     public TString sendCommandUsage() {
-        return textService.deserialize("&4Usage: /send <user> <server>");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/send <user> <server>")
+            .build();
     }
 
     @Override
     public TString messageCommandUsage() {
-        return textService.deserialize("&4Usage: /message <user> <message>");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/message <user> <message>")
+            .build();
     }
 
     @Override
     public TString nickNameCommandUsage() {
-        return textService.deserialize("&4Usage: /nick <nickname>");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/nick <nickname>")
+            .build();
     }
 
     @Override
     public TString broadcastCommandUsage() {
-        return textService.deserialize("&4Usage: /broadcast <message>");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/broadcast <message>")
+            .build();
     }
 
     @Override
     public TString infoCommandUsage() {
-        return textService.deserialize("&4Usage: /info <user>");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/info <user>")
+            .build();
     }
 
     @Override
     public TString swearAddCommandUsage() {
-        return textService.deserialize("&4Usage: /swear (add|remove <word>) |list");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/swear (add|remove <word>) | list")
+            .build();
     }
 
     @Override
     public TString exceptionAddCommandUsage() {
-        return textService.deserialize("&4Usage: /exception (add|remove <word>) |list");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/exception (add|remove <word) | list")
+            .build();
     }
 
     @Override
     public TString ignoreCommandUsage() {
-        return textService.deserialize("&4Usage: /ignore (playername)");
+        return textService.builder()
+            .red().append("Usage: ")
+            .yellow().append("/ignore <player>")
+            .build();
     }
 
     @Override
@@ -368,9 +416,9 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     @Override
     public TString messageSelf() {
         return textService.builder()
-                .append(pluginInfo.getPrefix())
-                .red().append("You cannot send private messages to yourself!")
-                .build();
+            .append(pluginInfo.getPrefix())
+            .red().append("You cannot send private messages to yourself!")
+            .build();
     }
 
     @Override
