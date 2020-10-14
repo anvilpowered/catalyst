@@ -18,6 +18,9 @@
 package org.anvilpowered.catalyst.bungee.listener;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -30,6 +33,7 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.service.EventService;
+import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 
 public class BungeeListener implements Listener {
 
@@ -46,13 +50,16 @@ public class BungeeListener implements Listener {
     private Registry registry;
 
     @Inject
+    private BungeeCommandDispatcher dispatcher;
+
+    @Inject
     private org.anvilpowered.catalyst.api.event.ChatEvent<TextComponent, ProxiedPlayer> chatEvent;
 
     @EventHandler
     public void onPlayerJoin(PostLoginEvent event) {
         joinEvent.setPlayer(event.getPlayer());
         joinEvent.setPlayerUUID(event.getPlayer().getUniqueId());
-        joinEvent.setHostString(event.getPlayer().getServer().getAddress().getHostString());
+        joinEvent.setHostString(event.getPlayer().getAddress().getHostString());
         eventService.getEventBus().post(joinEvent);
     }
 
@@ -64,7 +71,13 @@ public class BungeeListener implements Listener {
 
     @EventHandler
     public void onChat(ChatEvent event) {
-        if (event.isCommand()) return;
+        if (event.isCommand()) {
+            try {
+                dispatcher.execute(event.getMessage().replaceAll("/", ""), (CommandSender) event.getSender());
+            } catch (Exception ignored) {
+            }
+            return;
+        }
         if (!registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) return;
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         chatEvent.setPlayer(player);

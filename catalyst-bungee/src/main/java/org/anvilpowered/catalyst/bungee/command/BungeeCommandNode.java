@@ -18,42 +18,57 @@
 package org.anvilpowered.catalyst.bungee.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.PluginManager;
+import net.md_5.bungee.api.plugin.Command;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.bungee.CatalystBungee;
+import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
-import org.bukkit.command.ConsoleCommandSender;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class BungeeCommandNode
     extends CommonCommandNode<TextComponent, ProxiedPlayer, CommandSender> {
 
-
     @Inject
-    private BungeeIgnoreCommand ignoreCommand;
-
-    @Inject
-    private BungeeListCommand listCommand;
+    private BungeeCommandDispatcher commandDispatcher;
 
     @Inject
     private CatalystBungee plugin;
 
     @Inject
     public BungeeCommandNode(Registry registry) {
-        super(registry, ProxiedPlayer.class, ConsoleCommandSender.class);
+        super(registry, ProxiedPlayer.class, ProxyServer.getInstance().getConsole().getClass());
     }
 
     @Override
     public void loadCommands() {
-        PluginManager pluginManager = ProxyServer.getInstance().getPluginManager();
         //There is little to 0 documentation on registering brigadier commands
         //This may need to be changed
-        commands.forEach((k, v) -> pluginManager.registerCommand(plugin,
-            (net.md_5.bungee.api.plugin.Command) v.getCommand()));
-        pluginManager.registerCommand(plugin, ignoreCommand);
-        pluginManager.registerCommand(plugin, listCommand);
+        for (Map.Entry<List<String>, LiteralCommandNode<CommandSender>> entry : commands.entrySet()) {
+            List<String> k = entry.getKey();
+            LiteralCommandNode<CommandSender> v = entry.getValue();
+            List<String> withoutFirst = new ArrayList<>(k);
+            commandDispatcher.register(k.get(0), v, withoutFirst);
+            withoutFirst.remove(0);
+            ProxyServer.getInstance().getPluginManager()
+                .registerCommand(plugin, new Command(k.get(0), "", withoutFirst.toArray(new String[0])) {
+                    @Override
+                    public void execute(CommandSender sender, String[] args) {
+                        try {
+                            commandDispatcher.execute(Arrays.toString(args), sender);
+                        } catch (CommandSyntaxException ignored) {
+                        }
+                    }
+                });
+        }
     }
 }

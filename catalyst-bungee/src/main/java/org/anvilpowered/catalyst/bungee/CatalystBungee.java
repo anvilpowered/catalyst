@@ -25,6 +25,7 @@ import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.catalyst.api.CatalystImpl;
 import org.anvilpowered.catalyst.bungee.listener.BungeeListener;
 import org.anvilpowered.catalyst.bungee.module.BungeeModule;
+import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 
 public class CatalystBungee extends Plugin {
 
@@ -50,8 +51,10 @@ public class CatalystBungee extends Plugin {
         @Override
         protected void applyToBuilder(Environment.Builder builder) {
             super.applyToBuilder(builder);
+            builder.addEarlyServices(BungeeCommandDispatcher.class);
             builder.addEarlyServices(BungeeListener.class, t ->
-                getProxy().getPluginManager().registerListener(CatalystBungee.this, t));
+                getProxy().getPluginManager().registerListener(CatalystBungee.this, t)
+            );
         }
     }
 }

@@ -25,7 +25,6 @@ public class BungeeBroadcastService implements BroadcastService<TextComponent> {
 
     @Override
     public void broadcast(TextComponent message) {
-        if (message.getText().isEmpty()) return;
         ProxyServer.getInstance().broadcast(message);
     }
 }
