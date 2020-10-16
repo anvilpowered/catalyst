@@ -42,9 +42,6 @@ public class VelocityCommandNode
     private VelocityListCommand listCommand;
 
     @Inject
-    private VelocityIgnoreCommand ignoreCommand;
-
-    @Inject
     public VelocityCommandNode(Registry registry) {
         super(registry, Player.class, ConsoleCommandSource.class);
     }
@@ -72,8 +69,5 @@ public class VelocityCommandNode
             proxyServer.getCommandManager().register(
                 "list", listCommand, "clist");
         }
-        proxyServer.getCommandManager().register(
-            "ignore", ignoreCommand
-        );
     }
 }

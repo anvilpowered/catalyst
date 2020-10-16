@@ -17,27 +17,27 @@
 
 package org.anvilpowered.catalyst.bungee.command;
 
-import com.google.inject.Inject;
+import com.google.common.collect.ImmutableList;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import org.anvilpowered.catalyst.common.command.CommonIgnoreCommand;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class BungeeIgnoreCommand extends Command {
+public class BungeeCommand extends Command implements TabExecutor {
 
-    @Inject
-    private CommonIgnoreCommand<
-        TextComponent,
-        ProxiedPlayer,
-        CommandSender> ignoreCommand;
+    public BungeeCommand(String name,
+                         String[] aliases) {
+        super(name, "", aliases);
+    }
 
-    public BungeeIgnoreCommand() {
-        super("ignore");
+    /**
+     * This execute method is being handled by the {@link org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher}
+     */
+    @Override
+    public void execute(CommandSender sender, String[] args) {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        ignoreCommand.execute(sender, args);
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        return ImmutableList.of("Unsupported");
     }
 }

@@ -112,6 +112,9 @@ public abstract class CommonCommandNode<
     @Inject
     private CommonServerCommand<TString, TPlayer, TCommandSource> serverCommand;
 
+    @Inject
+    private CommonIgnoreCommand<TString, TPlayer, TCommandSource> ignoreCommand;
+
     private boolean alreadyLoaded;
     protected Map<List<String>, Function<TCommandSource, String>> descriptions;
     protected Map<List<String>, Predicate<TCommandSource>> permissions;
@@ -546,7 +549,21 @@ public abstract class CommonCommandNode<
                 .executes(serverCommand::execute)
                 .build())
             .build();
-
+        final LiteralCommandNode<TCommandSource> ignore = LiteralArgumentBuilder
+            .<TCommandSource>literal("ignore")
+            .executes(ctx -> {
+                textService.builder()
+                    .append(pluginInfo.getPrefix())
+                    .append(pluginMessages.ignoreCommandUsage())
+                    .sendTo(ctx.getSource());
+                return 1;
+            })
+            .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                "target", StringArgumentType.word())
+                .suggests(suggest())
+                .executes(ctx -> ignoreCommand.execute(ctx, playerClass))
+                .build())
+            .build();
         if (registry.getOrDefault(CatalystKeys.BAN_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("tempban", "ctempban"), tempBan);
             commands.put(ImmutableList.of("ban", "cban"), ban);
@@ -592,6 +609,9 @@ public abstract class CommonCommandNode<
         }
         if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("server", "cserver"), server);
+        }
+        if (registry.getOrDefault(CatalystKeys.IGNORE_COMMAND_ENABLED)) {
+            commands.put(ImmutableList.of("ignore", "cignore"), ignore);
         }
         commands.put(ImmutableList.of("stafflist"), staffList);
     }
