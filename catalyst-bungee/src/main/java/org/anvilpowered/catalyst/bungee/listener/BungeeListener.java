@@ -59,7 +59,7 @@ public class BungeeListener implements Listener {
     public void onPlayerJoin(PostLoginEvent event) {
         joinEvent.setPlayer(event.getPlayer());
         joinEvent.setPlayerUUID(event.getPlayer().getUniqueId());
-        joinEvent.setHostString(event.getPlayer().getAddress().getHostString());
+        joinEvent.setHostString(event.getPlayer().getAddress().toString());
         eventService.getEventBus().post(joinEvent);
     }
 

@@ -18,20 +18,18 @@
 package org.anvilpowered.catalyst.bungee.command;
 
 import com.google.inject.Inject;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.bungee.CatalystBungee;
 import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,18 +55,23 @@ public class BungeeCommandNode
             List<String> k = entry.getKey();
             LiteralCommandNode<CommandSender> v = entry.getValue();
             List<String> withoutFirst = new ArrayList<>(k);
-            commandDispatcher.register(k.get(0), v, withoutFirst);
             withoutFirst.remove(0);
-            ProxyServer.getInstance().getPluginManager()
-                .registerCommand(plugin, new Command(k.get(0), "", withoutFirst.toArray(new String[0])) {
-                    @Override
-                    public void execute(CommandSender sender, String[] args) {
-                        try {
-                            commandDispatcher.execute(Arrays.toString(args), sender);
-                        } catch (CommandSyntaxException ignored) {
-                        }
-                    }
-                });
+            commandDispatcher.register(k.get(0), v, withoutFirst);
+            if (bungeeSuggestions.containsKey(k.get(0))) {
+                ProxyServer.getInstance().getPluginManager()
+                    .registerCommand(plugin,
+                        new BungeeCommand(
+                            k.get(0),
+                            withoutFirst.toArray(new String[0]),
+                            bungeeSuggestions.get(k.get(0)),
+                            bungeeSuggestionPosition
+                        )
+                    );
+            } else {
+                ProxyServer.getInstance().getPluginManager()
+                    .registerCommand(plugin,
+                        new BungeeCommand(k.get(0), withoutFirst.toArray(new String[0]), "", new HashMap<>()));
+            }
         }
     }
 }

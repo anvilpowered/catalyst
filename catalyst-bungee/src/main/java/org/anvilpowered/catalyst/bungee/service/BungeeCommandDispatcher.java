@@ -18,6 +18,7 @@
 
 package org.anvilpowered.catalyst.bungee.service;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.mojang.brigadier.CommandDispatcher;
@@ -26,11 +27,9 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.md_5.bungee.api.CommandSender;
 import org.anvilpowered.anvil.api.registry.Registry;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Singleton
 public class BungeeCommandDispatcher {
@@ -50,10 +49,9 @@ public class BungeeCommandDispatcher {
     }
 
     public void execute(String input, CommandSender sender) throws CommandSyntaxException {
-        Objects.requireNonNull(input);
-        Objects.requireNonNull(sender);
-        // Prechecked by requireNonNull
-        String command = Arrays.stream(input.split(" ")).findFirst().get();
+        Preconditions.checkNotNull(input);
+        Preconditions.checkNotNull(sender);
+        String command = input.split("\\s+")[0];
 
         for (String internal : commands.keySet()) {
             if (internal.equalsIgnoreCase(command)) {
