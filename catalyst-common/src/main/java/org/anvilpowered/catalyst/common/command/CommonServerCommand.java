@@ -45,7 +45,7 @@ public class CommonServerCommand<
         String userName = userService.getUserName(player);
         String prefix = advancedServerInfo.getPrefixForPlayer(userName);
         final boolean useAdvServerInfo = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED);
-        Optional<BackendServer> currentServer = locationService.getServer(userName);
+        Optional<? extends BackendServer> currentServer = locationService.getServer(userName);
         String targetServer = context.getArgument("server", String.class);
 
         if (registry.getOrDefault(CatalystKeys.ENABLE_PER_SERVER_PERMS)
@@ -102,7 +102,7 @@ public class CommonServerCommand<
         boolean useAdvServerInfo = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED);
         String userName = userService.getUserName((TPlayer) context.getSource());
         String prefix = advancedServerInfo.getPrefixForPlayer(userName);
-        Optional<BackendServer> currentServer = locationService.getServer(userName);
+        Optional<? extends BackendServer> currentServer = locationService.getServer(userName);
         int count = 0;
 
         if (!currentServer.isPresent()) {
