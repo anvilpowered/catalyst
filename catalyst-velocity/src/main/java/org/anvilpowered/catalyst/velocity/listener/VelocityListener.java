@@ -19,6 +19,7 @@ import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.util.ModInfo;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -170,6 +171,7 @@ public class VelocityListener {
                 CoreMember<?> coreMember = optionalMember.get();
                 if (Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent().checkMuted(coreMember)) {
                     player.sendMessage(
+                        Identity.nil(),
                         pluginMessages.getMuteMessage(coreMember.getMuteReason(), coreMember.getMuteEndUtc())
                     );
                 } else {

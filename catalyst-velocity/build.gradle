@@ -36,12 +36,17 @@ shadowJar {
         include dependency(apache_http_nio)
         include dependency(emoji_java)
         include dependency(minimessage)
+        include dependency(jackson_annotations)
+        include dependency(jackson_core)
+        include dependency(jackson_databind)
         include dependency(jda)
+        include dependency(json)
         include dependency(kyori_event)
         include dependency(nv_websocket)
         include dependency(okhttp3)
         include dependency(okio)
         include dependency(unirest)
+        include dependency(trove)
     }
 }
 

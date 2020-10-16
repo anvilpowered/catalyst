@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.TextComponent;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -54,13 +55,19 @@ public class VelocityBaseChannelCommand implements Command {
                     if (source.hasPermission(
                         registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + args[1])) {
 
-                        source.sendMessage(textService.builder()
-                            .gold().append(args[1])
-                            .green().append("\n" + chatService.getChannelUserCount(args[1]))
-                            .onClickRunCommand("/channel list " + args[1])
-                            .build());
+                        source.sendMessage(
+                            Identity.nil(),
+                            textService.builder()
+                                .gold().append(args[1])
+                                .green().append("\n" + chatService.getChannelUserCount(args[1]))
+                                .onClickRunCommand("/channel list " + args[1])
+                                .build()
+                        );
                     } else {
-                        source.sendMessage(pluginMessages.getNoPermission());
+                        source.sendMessage(
+                            Identity.nil(),
+                            pluginMessages.getNoPermission()
+                        );
                     }
                     return;
                 }
@@ -69,7 +76,10 @@ public class VelocityBaseChannelCommand implements Command {
                         registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + args[1])) {
                         chatService.switchChannel(player.getUniqueId(), args[1]);
                     } else {
-                        source.sendMessage(pluginMessages.getNoPermission());
+                        source.sendMessage(
+                            Identity.nil(),
+                            pluginMessages.getNoPermission()
+                        );
                     }
                 }
                 case ("list"): {
