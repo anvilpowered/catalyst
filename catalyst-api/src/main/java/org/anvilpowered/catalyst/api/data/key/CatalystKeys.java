@@ -597,6 +597,11 @@ public final class CatalystKeys {
             .name("MUTE_COMMAND_ENABLED")
             .fallback(true)
             .build();
+    public static final Key<Boolean> IGNORE_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("IGNORE_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
     //Keys for root node comments
     public static final Key<String> ADVANCED_ROOT =
         Key.builder(TypeTokens.STRING)
@@ -783,6 +788,7 @@ public final class CatalystKeys {
             .register(SOCIALSPY_COMMAND_ENABLED)
             .register(STAFFCHAT_COMMAND_ENABLED)
             .register(MUTE_COMMAND_ENABLED)
+            .register(IGNORE_COMMAND_ENABLED)
             .register(ADVANCED_ROOT)
             .register(CHAT_ROOT)
             .register(DISCORD_ROOT)

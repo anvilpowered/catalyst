@@ -112,14 +112,14 @@ public abstract class CommonCommandNode<
     @Inject
     private CommonServerCommand<TString, TPlayer, TCommandSource> serverCommand;
 
+    @Inject
+    private CommonIgnoreCommand<TString, TPlayer, TCommandSource> ignoreCommand;
+
     private boolean alreadyLoaded;
     protected Map<List<String>, Function<TCommandSource, String>> descriptions;
     protected Map<List<String>, Predicate<TCommandSource>> permissions;
     protected Map<List<String>, Function<TCommandSource, String>> usages;
     protected Map<List<String>, LiteralCommandNode<TCommandSource>> commands;
-    public Map<String, String> bungeeSuggestions;
-    public Map<String, Integer> bungeeSuggestionPosition;
-    public Map<String, Map<Integer, String>> bungeeCommandSuggestionPosition;
 
     @Inject
     protected PermissionService permissionService;
@@ -166,9 +166,6 @@ public abstract class CommonCommandNode<
 
     private void loadNodes() {
         commands = new HashMap<>();
-        bungeeSuggestions = new HashMap<>();
-        bungeeSuggestionPosition = new HashMap<>();
-        bungeeCommandSuggestionPosition = new HashMap<>(new HashMap<>());
         final LiteralCommandNode<TCommandSource> ban = LiteralArgumentBuilder
             .<TCommandSource>literal("ban")
             .requires(source -> permissionService.hasPermission(source,
@@ -552,27 +549,21 @@ public abstract class CommonCommandNode<
                 .executes(serverCommand::execute)
                 .build())
             .build();
-        bungeeSuggestions.put("tempban", "player");
-        bungeeSuggestions.put("find", "player");
-        bungeeSuggestions.put("info", "player");
-        bungeeSuggestions.put("kick", "player");
-        bungeeSuggestions.put("msg", "player");
-        bungeeCommandSuggestionPosition.put("ban", new HashMap<Integer, String>() {{
-            put(0, "player");
-            put(1, "reason");
-        }});
-        bungeeCommandSuggestionPosition.put("tempban", new HashMap<Integer, String>(){{
-            put(0, "player");
-            put(1, "duration");
-            put(2, "reason");
-        }});
-        bungeeCommandSuggestionPosition.put("server", new HashMap<Integer, String>() {{
-            put(0, "server");
-        }});
-        bungeeCommandSuggestionPosition.put("send", new HashMap<Integer, String>() {{
-            put(0, "player");
-            put(1, "server");
-        }});
+        final LiteralCommandNode<TCommandSource> ignore = LiteralArgumentBuilder
+            .<TCommandSource>literal("ignore")
+            .executes(ctx -> {
+                textService.builder()
+                    .append(pluginInfo.getPrefix())
+                    .append(pluginMessages.ignoreCommandUsage())
+                    .sendTo(ctx.getSource());
+                return 1;
+            })
+            .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                "target", StringArgumentType.word())
+                .suggests(suggest())
+                .executes(ctx -> ignoreCommand.execute(ctx, playerClass))
+                .build())
+            .build();
         if (registry.getOrDefault(CatalystKeys.BAN_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("tempban", "ctempban"), tempBan);
             commands.put(ImmutableList.of("ban", "cban"), ban);
@@ -618,6 +609,9 @@ public abstract class CommonCommandNode<
         }
         if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("server", "cserver"), server);
+        }
+        if (registry.getOrDefault(CatalystKeys.IGNORE_COMMAND_ENABLED)) {
+            commands.put(ImmutableList.of("ignore", "cignore"), ignore);
         }
         commands.put(ImmutableList.of("stafflist"), staffList);
     }

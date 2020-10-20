@@ -29,7 +29,6 @@ import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,15 +61,13 @@ public class BungeeCommandNode
                     .registerCommand(plugin,
                         new BungeeCommand(
                             k.get(0),
-                            withoutFirst.toArray(new String[0]),
-                            bungeeSuggestions.get(k.get(0)),
-                            bungeeSuggestionPosition
+                            withoutFirst.toArray(new String[0])
                         )
                     );
             } else {
                 ProxyServer.getInstance().getPluginManager()
                     .registerCommand(plugin,
-                        new BungeeCommand(k.get(0), withoutFirst.toArray(new String[0]), "", new HashMap<>()));
+                        new BungeeCommand(k.get(0), withoutFirst.toArray(new String[0])));
             }
         }
     }

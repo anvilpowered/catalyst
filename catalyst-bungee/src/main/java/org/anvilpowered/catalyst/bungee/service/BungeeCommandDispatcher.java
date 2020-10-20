@@ -48,6 +48,9 @@ public class BungeeCommandDispatcher {
         commandDispatcher.getRoot().addChild(node);
     }
 
+    /*
+    Custom command handling to properly dispatch brigadier commands.
+     */
     public void execute(String input, CommandSender sender) throws CommandSyntaxException {
         Preconditions.checkNotNull(input);
         Preconditions.checkNotNull(sender);

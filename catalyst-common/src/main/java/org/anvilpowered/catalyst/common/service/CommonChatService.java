@@ -39,7 +39,7 @@ import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,10 +157,10 @@ public class CommonChatService<
                 || getChannelIdForUser(userService.getUUID((TUser) p)).equals(channelId)) {
                 if (!senderUUID.equals(userService.getUUID((TUser) p))) {
                     if (!isIgnored(userService.getUUID((TUser) p), senderUUID)) {
-                        textService.send(message, (TCommandSource) p);
+                        textService.send(message, (TCommandSource) p, senderUUID);
                     }
                 } else {
-                    textService.send(message, (TCommandSource) p);
+                    textService.send(message, (TCommandSource) p, senderUUID);
                 }
             }
         }));
@@ -169,7 +169,7 @@ public class CommonChatService<
     @Override
     public CompletableFuture<Void> sendGlobalMessage(TPlayer player, TString message) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p ->
-                textService.send(message, (TCommandSource) p)
+                textService.send(message, (TCommandSource) p, userService.getUUID((TUser) player))
             )
         );
     }
@@ -307,7 +307,7 @@ public class CommonChatService<
     @Override
     public TString createTempChannel(String name, UUID creator) {
         ChatChannel chatChannel = new ChatChannel();
-        chatChannel.aliases = Arrays.asList(name);
+        chatChannel.aliases = Collections.singletonList(name);
         chatChannel.id = name;
         chatChannel.prefix = name;
         return textService.success("Created the chatChannel " + name + " successfully");
@@ -315,6 +315,10 @@ public class CommonChatService<
 
     @Override
     public TString ignore(UUID playerUUID, UUID targetPlayerUUID) {
+        Optional<TPlayer> targetPlayer = userService.getPlayer(targetPlayerUUID);
+        if (!targetPlayer.isPresent()) {
+            return null;
+        }
         List<UUID> uuidList = new ArrayList<>();
         if (ignoreMap.get(playerUUID) == null) {
             uuidList.add(targetPlayerUUID);
@@ -325,8 +329,11 @@ public class CommonChatService<
             }
         }
         ignoreMap.put(playerUUID, uuidList);
-        return textService.success("You are now ignoring " +
-            userService.getUserName(targetPlayerUUID));
+
+        return textService.builder()
+            .green().append("You are now ignoring ")
+            .gold().append(userService.getUserName((TUser) targetPlayer.get()))
+            .build();
     }
 
     @Override
@@ -346,6 +353,7 @@ public class CommonChatService<
         if (uuidList == null) {
             return false;
         }
+        System.out.println(uuidList.contains(targetPlayerUUID));
         return uuidList.contains(targetPlayerUUID);
     }
 

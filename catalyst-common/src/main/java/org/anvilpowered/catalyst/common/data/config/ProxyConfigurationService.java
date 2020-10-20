@@ -98,6 +98,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.SOCIALSPY_COMMAND_ENABLED, "commands.socialspy");
         setName(CatalystKeys.STAFFCHAT_COMMAND_ENABLED, "commands.staffchat");
         setName(CatalystKeys.MUTE_COMMAND_ENABLED, "commands.mute");
+        setName(CatalystKeys.IGNORE_COMMAND_ENABLED, "commands.ignore");
         setName(CatalystKeys.ADVANCED_ROOT, "advanced");
         setName(CatalystKeys.COMMANDS_ROOT, "commands");
         setName(CatalystKeys.CHAT_ROOT, "chat");
@@ -266,6 +267,10 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nToggle mute command handling " +
                 "\n(true = enabled | false = disabled)" +
                 "\nPermission : " + CatalystKeys.MUTE_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.IGNORE_COMMAND_ENABLED,
+            "\nToggle ignore command handling" +
+                "\n(true = enabled | false = disabled)" +
+                "Permission: " + CatalystKeys.IGNORE_PERMISSION.getFallbackValue());
         setDescription(CatalystKeys.COMMAND_LOGGING_ENABLED,
             "Toggle command logging " +
                 "\n(true = enabled | false = disabled)");

@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -25,6 +26,9 @@ import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatService;
+import org.slf4j.Logger;
+
+import java.util.Optional;
 
 public class CommonIgnoreCommand<
     TString,
@@ -49,33 +53,32 @@ public class CommonIgnoreCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.IGNORE_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.ignoreCommandUsage(), source);
-            return;
+    @Inject
+    private Logger logger;
+
+    public int execute(CommandContext<TCommandSource> context, Class<?> playerClass) {
+        Optional<TPlayer> targetPlayer = userService.getPlayer(context.getArgument("target", String.class));
+        
+        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
+            logger.error("Player only command!");
+            return 0;
         }
 
-        String userName = args[0];
-        if (userService.get(userName).isPresent()) {
-            if (permissionService.hasPermission(
-                userService.getPlayer(userName).get(),
-                registry.getOrDefault(CatalystKeys.IGNORE_EXEMPT_PERMISSION))) {
-                textService.send(pluginMessages.ignoreExempt(), source);
-                return;
-            }
-
-            if (args.length == 1) {
-                textService.send(chatService.ignore(userService.getUUID((TPlayer) source),
-                    userService.getUUID(userService.get(userName).get())), source);
-            }
-        } else {
-            textService.send(pluginMessages.offlineOrInvalidPlayer(), source);
+        if (!targetPlayer.isPresent()) {
+            textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
+            return 0;
         }
+
+        if (permissionService.hasPermission(targetPlayer.get(), registry.getOrDefault(CatalystKeys.IGNORE_EXEMPT_PERMISSION))) {
+            textService.send(pluginMessages.ignoreExempt(), context.getSource());
+            return 0;
+        }
+
+        textService.send(
+            chatService.ignore(
+                userService.getUUID((TPlayer) context.getSource()),
+                userService.getUUID(targetPlayer.get())),
+            context.getSource());
+        return 1;
     }
 }
