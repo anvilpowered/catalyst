@@ -25,9 +25,8 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
 import java.util.Optional;
-import java.util.UUID;
 
-public class CommonReplyCommand<
+public class MessageCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
@@ -36,37 +35,49 @@ public class CommonReplyCommand<
     private PluginMessages<TString> pluginMessages;
 
     @Inject
-    private TextService<TString, TCommandSource> textService;
+    private PrivateMessageService<TString> privateMessageService;
 
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
     @Inject
-    private PrivateMessageService<TString> privateMessageService;
+    private TextService<TString, TCommandSource> textService;
 
-    public int execute(CommandContext<TCommandSource> context) {
-        String message = context.getArgument("message", String.class);
-        UUID senderUUID = userService.getUUID((TPlayer) context.getSource());
+    public int execute(CommandContext<TCommandSource> context, Class<?> consoleClass) {
+        String name = context.getArgument("target", String.class);
 
-        if (privateMessageService.replyMap().containsKey(senderUUID)) {
-            UUID recipientUUID = privateMessageService.replyMap().get(senderUUID);
-            Optional<TPlayer> recipient = userService.getPlayer(recipientUUID);
+        if (userService.getPlayer(name).isPresent()) {
+            String message = context.getArgument("message", String.class);
+            Optional<TPlayer> targetPlayer = userService.get(name);
+            if (consoleClass.isAssignableFrom(context.getSource().getClass()) && targetPlayer.isPresent()) {
+                privateMessageService.sendMessageFromConsole(
+                    userService.getUserName(targetPlayer.get()),
+                    message,
+                    consoleClass);
+                return 1;
+            }
 
-            if (recipient.isPresent()) {
+            if (targetPlayer.isPresent()) {
+                if (targetPlayer.get() == context.getSource()) {
+                    textService.send(pluginMessages.messageSelf(), context.getSource());
+                    return 0;
+                }
                 privateMessageService.sendMessage(
                     userService.getUserName((TPlayer) context.getSource()),
-                    userService.getUserName(recipient.get()),
+                    name,
                     message
                 );
                 privateMessageService.replyMap().put(
-                    userService.getUUID(recipient.get()),
+                    userService.getUUID(targetPlayer.get()),
                     userService.getUUID((TPlayer) context.getSource())
+                );
+                privateMessageService.replyMap().put(
+                    userService.getUUID((TPlayer) context.getSource()),
+                    userService.getUUID(targetPlayer.get())
                 );
             } else {
                 textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
             }
-        } else {
-            textService.send(textService.builder().red().append("Nobody to reply to!").build(), context.getSource());
         }
         return 1;
     }

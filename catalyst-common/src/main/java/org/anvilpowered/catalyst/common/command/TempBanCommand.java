@@ -27,7 +27,7 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-public class CommonTempBanCommand<
+public class TempBanCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {

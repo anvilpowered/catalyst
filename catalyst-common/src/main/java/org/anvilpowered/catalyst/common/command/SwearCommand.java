@@ -23,7 +23,7 @@ import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 
-public class CommonSwearCommand<TString, TCommandSource> {
+public class SwearCommand<TString, TCommandSource> {
 
     @Inject
     private TextService<TString, TCommandSource> textService;

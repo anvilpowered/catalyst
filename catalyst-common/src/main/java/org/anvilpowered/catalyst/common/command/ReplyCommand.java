@@ -24,9 +24,10 @@ import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
+import java.util.Optional;
 import java.util.UUID;
 
-public class CommonSocialSpyCommand<
+public class ReplyCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
@@ -43,18 +44,29 @@ public class CommonSocialSpyCommand<
     @Inject
     private PrivateMessageService<TString> privateMessageService;
 
-    public int execute(CommandContext<TCommandSource> context, Class<?> playerClass) {
-        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
-            textService.send(textService.of("Player only command!"), context.getSource());
-            return 0;
-        }
-        UUID playerUUID = userService.getUUID((TPlayer) context.getSource());
-        if (privateMessageService.socialSpySet().contains(playerUUID)) {
-            privateMessageService.socialSpySet().remove(playerUUID);
-            textService.send(pluginMessages.getSocialSpy(false), context.getSource());
+    public int execute(CommandContext<TCommandSource> context) {
+        String message = context.getArgument("message", String.class);
+        UUID senderUUID = userService.getUUID((TPlayer) context.getSource());
+
+        if (privateMessageService.replyMap().containsKey(senderUUID)) {
+            UUID recipientUUID = privateMessageService.replyMap().get(senderUUID);
+            Optional<TPlayer> recipient = userService.getPlayer(recipientUUID);
+
+            if (recipient.isPresent()) {
+                privateMessageService.sendMessage(
+                    userService.getUserName((TPlayer) context.getSource()),
+                    userService.getUserName(recipient.get()),
+                    message
+                );
+                privateMessageService.replyMap().put(
+                    userService.getUUID(recipient.get()),
+                    userService.getUUID((TPlayer) context.getSource())
+                );
+            } else {
+                textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
+            }
         } else {
-            privateMessageService.socialSpySet().add(playerUUID);
-            textService.send(pluginMessages.getSocialSpy(true), context.getSource());
+            textService.send(textService.builder().red().append("Nobody to reply to!").build(), context.getSource());
         }
         return 1;
     }

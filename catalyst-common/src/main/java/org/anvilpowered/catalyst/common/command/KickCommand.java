@@ -29,7 +29,7 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
 import java.util.Optional;
 
-public class CommonKickCommand<
+public class KickCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {

@@ -26,7 +26,7 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatService;
 
-public class CommonChannelCommand<
+public class ChannelCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {

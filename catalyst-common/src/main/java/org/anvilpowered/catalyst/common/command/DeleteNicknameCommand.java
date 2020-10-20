@@ -19,40 +19,40 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
-import org.anvilpowered.anvil.api.misc.Named;
-import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.member.MemberManager;
 
-public class CommonFindCommand<
+
+public class DeleteNicknameCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
-
-    @Inject
-    private PluginMessages<TString> pluginMessages;
 
 
     @Inject
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private MemberManager<TString> memberManager;
 
     @Inject
-    private LocationService locationService;
+    private UserService<TPlayer, TPlayer> userService;
 
-    public int execute(CommandContext<TCommandSource> context) {
-        String userName = context.getArgument("target", String.class);
-        if (userService.getPlayer(userName).isPresent()) {
-            textService.send(pluginMessages.getCurrentServer(
-                userName,
-                locationService.getServer(userName).map(Named::getName).orElse("null")
-            ), context.getSource());
-            return 1;
+    public int execute(CommandContext<TCommandSource> context, Class<?> playerClass) {
+        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
+            textService.send(textService.of("Player only command!"), context.getSource());
+            return 0;
         }
-        textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
+
+        memberManager.deleteNickName(userService.getUserName((TPlayer) context.getSource()))
+            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        return 1;
+    }
+
+    public int executeOther(CommandContext<TCommandSource> context) {
+        memberManager.deleteNickNameForUser(context.getArgument("target", String.class))
+            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
         return 1;
     }
 }

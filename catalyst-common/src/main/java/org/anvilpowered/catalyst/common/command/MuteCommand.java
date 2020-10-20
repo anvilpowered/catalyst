@@ -27,13 +27,18 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-public class CommonInfoCommand<
+import java.util.Optional;
+
+public class MuteCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
 
     @Inject
     private MemberManager<TString> memberManager;
+
+    @Inject
+    private UserService<TPlayer, TPlayer> userService;
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -47,29 +52,33 @@ public class CommonInfoCommand<
     @Inject
     private TextService<TString, TCommandSource> textService;
 
-    @Inject
-    private UserService<TPlayer, TPlayer> userService;
-
     public int execute(CommandContext<TCommandSource> context) {
-        if (!permissionService.hasPermission(context.getSource(),
-            registry.getOrDefault(CatalystKeys.INFO_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), context.getSource());
-            return 0;
-        }
-
-        boolean isActive = userService.get(context.getArgument("target", String.class)).isPresent();
-        boolean[] permissions = new boolean[3];
-        permissions[0] = permissionService.hasPermission(context.getSource(),
-            registry.getOrDefault(CatalystKeys.INFO_IP_PERMISSION));
-        permissions[1] = permissionService.hasPermission(context.getSource(),
-            registry.getOrDefault(CatalystKeys.INFO_BANNED_PERMISSION));
-        permissions[2] = permissionService.hasPermission(context.getSource(),
-            registry.getOrDefault(CatalystKeys.INFO_CHANNEL_PERMISSION));
-        memberManager.info(
+        return mute(
+            context,
             context.getArgument("target", String.class),
-            isActive,
-            permissions)
-            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+            context.getArgument("reason", String.class));
+    }
+
+    public int withoutReason(CommandContext<TCommandSource> context) {
+        return mute(
+            context,
+            context.getArgument("target", String.class),
+            "You have been muted!");
+    }
+
+    private int mute(CommandContext<TCommandSource> context, String userName, String reason) {
+        Optional<TPlayer> player = userService.get(userName);
+        if (player.isPresent()) {
+            if (permissionService.hasPermission(
+                player.get(),
+                registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
+                textService.send(pluginMessages.getMuteExempt(), context.getSource());
+                return 0;
+            }
+            memberManager.mute(userName, reason).thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        } else {
+            textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
+        }
         return 1;
     }
 }

@@ -19,22 +19,23 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
-import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.member.MemberManager;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.BroadcastService;
 
-public class CommonUnMuteCommand<
+
+public class BroadcastCommand<
     TString,
     TCommandSource> {
 
     @Inject
-    private TextService<TString, TCommandSource> textService;
+    private BroadcastService<TString> broadcastService;
 
     @Inject
-    private MemberManager<TString> memberManager;
+    private PluginMessages<TString> pluginMessages;
 
     public int execute(CommandContext<TCommandSource> context) {
-        memberManager.unMute(context.getArgument("target", String.class))
-            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        broadcastService.broadcast(pluginMessages.getBroadcast(context.getArgument(
+            "message", String.class)));
         return 1;
     }
 }

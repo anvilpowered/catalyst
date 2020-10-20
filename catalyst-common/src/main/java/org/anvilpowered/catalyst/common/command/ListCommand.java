@@ -18,17 +18,27 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
-import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.ChatService;
 
-public class CommonUnBanCommand<
+public class ListCommand<
     TString,
+    TPlayer extends TCommandSource,
     TCommandSource> {
+
+    @Inject
+    private ChatService<TString, TPlayer, TCommandSource> chatService;
+
+    @Inject
+    private PluginMessages<TString> pluginMessages;
+
+    @Inject
+    private Registry registry;
 
     @Inject
     private PermissionService permissionService;
@@ -37,33 +47,18 @@ public class CommonUnBanCommand<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private PluginMessages<TString> pluginMessages;
-
-    @Inject
-    private MemberManager<TString> memberManager;
-
-    @Inject
-    private Registry registry;
+    private UserService<TPlayer, TPlayer> userService;
 
     public void execute(TCommandSource source, String[] args) {
         if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.BAN_PERMISSION))) {
+            registry.getOrDefault(CatalystKeys.LIST_PERMISSION))) {
             textService.send(pluginMessages.getNoPermission(), source);
             return;
         }
-
-        if (!(args.length > 0)) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.unbanCommandUsage(), source);
+        if (userService.getOnlinePlayers().size() == 0) {
+            textService.send(textService.of("There are no players online!"), source);
             return;
         }
-        memberManager.unBan(args[0]).thenAcceptAsync(m -> textService.send(m, source));
-    }
-
-    public int unban(CommandContext<TCommandSource> context) {
-        execute(context.getSource(), new String[]{
-            context.getArgument("target", String.class)
-        });
-        return 1;
+        chatService.sendList(source);
     }
 }

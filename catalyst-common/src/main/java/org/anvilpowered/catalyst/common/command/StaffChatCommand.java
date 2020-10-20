@@ -28,7 +28,7 @@ import org.anvilpowered.catalyst.api.service.StaffChatService;
 
 import java.util.UUID;
 
-public class CommonStaffChatCommand<
+public class StaffChatCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {

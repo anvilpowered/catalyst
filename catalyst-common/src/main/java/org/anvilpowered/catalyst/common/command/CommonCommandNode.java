@@ -50,70 +50,70 @@ public abstract class CommonCommandNode<
     TCommandSource> implements CommandNode<TCommandSource> {
 
     @Inject
-    private CommonBanCommand<TString, TPlayer, TCommandSource> banCommand;
+    private BanCommand<TString, TPlayer, TCommandSource> banCommand;
 
     @Inject
-    private CommonTempBanCommand<TString, TPlayer, TCommandSource> tempBanCommand;
+    private TempBanCommand<TString, TPlayer, TCommandSource> tempBanCommand;
 
     @Inject
-    private CommonUnBanCommand<TString, TCommandSource> unBanCommand;
+    private UnBanCommand<TString, TCommandSource> unBanCommand;
 
     @Inject
-    private CommonBroadcastCommand<TString, TCommandSource> broadcastCommand;
+    private BroadcastCommand<TString, TCommandSource> broadcastCommand;
 
     @Inject
-    private CommonDeleteNicknameCommand<TString, TPlayer, TCommandSource> deleteNickCommand;
+    private DeleteNicknameCommand<TString, TPlayer, TCommandSource> deleteNickCommand;
 
     @Inject
-    private CommonNickNameCommand<TString, TPlayer, TCommandSource> nickCommand;
+    private NickNameCommand<TString, TPlayer, TCommandSource> nickCommand;
 
     @Inject
-    private CommonFindCommand<TString, TPlayer, TCommandSource> findCommand;
+    private FindCommand<TString, TPlayer, TCommandSource> findCommand;
 
     @Inject
-    private CommonInfoCommand<TString, TPlayer, TCommandSource> infoCommand;
+    private InfoCommand<TString, TPlayer, TCommandSource> infoCommand;
 
     @Inject
-    private CommonKickCommand<TString, TPlayer, TCommandSource> kickCommand;
+    private KickCommand<TString, TPlayer, TCommandSource> kickCommand;
 
     @Inject
-    private CommonMessageCommand<TString, TPlayer, TCommandSource> messageCommand;
+    private MessageCommand<TString, TPlayer, TCommandSource> messageCommand;
 
     @Inject
-    private CommonReplyCommand<TString, TPlayer, TCommandSource> replyCommand;
+    private ReplyCommand<TString, TPlayer, TCommandSource> replyCommand;
 
     @Inject
-    private CommonMuteCommand<TString, TPlayer, TCommandSource> muteCommand;
+    private MuteCommand<TString, TPlayer, TCommandSource> muteCommand;
 
     @Inject
-    private CommonTempMuteCommand<TString, TPlayer, TCommandSource> tempMuteCommand;
+    private TempMuteCommand<TString, TPlayer, TCommandSource> tempMuteCommand;
 
     @Inject
-    private CommonUnMuteCommand<TString, TCommandSource> unMuteCommand;
+    private UnMuteCommand<TString, TCommandSource> unMuteCommand;
 
     @Inject
-    private CommonSocialSpyCommand<TString, TPlayer, TCommandSource> socialSpyCommand;
+    private SocialSpyCommand<TString, TPlayer, TCommandSource> socialSpyCommand;
 
     @Inject
-    private CommonStaffChatCommand<TString, TPlayer, TCommandSource> staffChatCommand;
+    private StaffChatCommand<TString, TPlayer, TCommandSource> staffChatCommand;
 
     @Inject
-    private CommonExceptionCommand<TString, TCommandSource> exceptionCommand;
+    private ExceptionCommand<TString, TCommandSource> exceptionCommand;
 
     @Inject
-    private CommonSwearCommand<TString, TCommandSource> swearCommand;
+    private SwearCommand<TString, TCommandSource> swearCommand;
 
     @Inject
-    private CommonStaffListCommand<TString, TCommandSource> staffListCommand;
+    private StaffListCommand<TString, TCommandSource> staffListCommand;
 
     @Inject
-    private CommonSendCommand<TString, TPlayer, TCommandSource> sendCommand;
+    private SendCommand<TString, TPlayer, TCommandSource> sendCommand;
 
     @Inject
-    private CommonServerCommand<TString, TPlayer, TCommandSource> serverCommand;
+    private ServerCommand<TString, TPlayer, TCommandSource> serverCommand;
 
     @Inject
-    private CommonIgnoreCommand<TString, TPlayer, TCommandSource> ignoreCommand;
+    private IgnoreCommand<TString, TPlayer, TCommandSource> ignoreCommand;
 
     private boolean alreadyLoaded;
     protected Map<List<String>, Function<TCommandSource, String>> descriptions;

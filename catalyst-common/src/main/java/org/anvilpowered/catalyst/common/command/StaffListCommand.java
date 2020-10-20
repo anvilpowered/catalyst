@@ -6,7 +6,7 @@ import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 
-public class CommonStaffListCommand<TString, TCommandSource> {
+public class StaffListCommand<TString, TCommandSource> {
 
     @Inject
     private PluginInfo<TString> pluginInfo;

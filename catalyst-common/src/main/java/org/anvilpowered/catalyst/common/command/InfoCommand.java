@@ -18,21 +18,22 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
-import org.anvilpowered.catalyst.api.service.ChatService;
 
-public class CommonListCommand<
+public class InfoCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
 
     @Inject
-    private ChatService<TString, TPlayer, TCommandSource> chatService;
+    private MemberManager<TString> memberManager;
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -49,16 +50,26 @@ public class CommonListCommand<
     @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.LIST_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
+    public int execute(CommandContext<TCommandSource> context) {
+        if (!permissionService.hasPermission(context.getSource(),
+            registry.getOrDefault(CatalystKeys.INFO_PERMISSION))) {
+            textService.send(pluginMessages.getNoPermission(), context.getSource());
+            return 0;
         }
-        if (userService.getOnlinePlayers().size() == 0) {
-            textService.send(textService.of("There are no players online!"), source);
-            return;
-        }
-        chatService.sendList(source);
+
+        boolean isActive = userService.get(context.getArgument("target", String.class)).isPresent();
+        boolean[] permissions = new boolean[3];
+        permissions[0] = permissionService.hasPermission(context.getSource(),
+            registry.getOrDefault(CatalystKeys.INFO_IP_PERMISSION));
+        permissions[1] = permissionService.hasPermission(context.getSource(),
+            registry.getOrDefault(CatalystKeys.INFO_BANNED_PERMISSION));
+        permissions[2] = permissionService.hasPermission(context.getSource(),
+            registry.getOrDefault(CatalystKeys.INFO_CHANNEL_PERMISSION));
+        memberManager.info(
+            context.getArgument("target", String.class),
+            isActive,
+            permissions)
+            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        return 1;
     }
 }

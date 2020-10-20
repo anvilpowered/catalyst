@@ -22,15 +22,15 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import org.anvilpowered.catalyst.common.command.CommonListCommand;
+import org.anvilpowered.catalyst.common.command.ListCommand;
 
 public class BungeeListCommand extends Command {
 
     @Inject
-    private CommonListCommand<
-        TextComponent,
-        ProxiedPlayer,
-        CommandSender> listCommand;
+    private ListCommand<
+            TextComponent,
+            ProxiedPlayer,
+            CommandSender> listCommand;
 
     public BungeeListCommand() {
         super("list");

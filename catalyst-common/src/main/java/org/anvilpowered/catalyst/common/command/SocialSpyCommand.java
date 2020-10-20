@@ -21,38 +21,41 @@ import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.member.MemberManager;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 
+import java.util.UUID;
 
-public class CommonDeleteNicknameCommand<
+public class SocialSpyCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
 
+    @Inject
+    private PluginMessages<TString> pluginMessages;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private MemberManager<TString> memberManager;
+    private UserService<TPlayer, TPlayer> userService;
 
     @Inject
-    private UserService<TPlayer, TPlayer> userService;
+    private PrivateMessageService<TString> privateMessageService;
 
     public int execute(CommandContext<TCommandSource> context, Class<?> playerClass) {
         if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
             textService.send(textService.of("Player only command!"), context.getSource());
             return 0;
         }
-
-        memberManager.deleteNickName(userService.getUserName((TPlayer) context.getSource()))
-            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
-        return 1;
-    }
-
-    public int executeOther(CommandContext<TCommandSource> context) {
-        memberManager.deleteNickNameForUser(context.getArgument("target", String.class))
-            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        UUID playerUUID = userService.getUUID((TPlayer) context.getSource());
+        if (privateMessageService.socialSpySet().contains(playerUUID)) {
+            privateMessageService.socialSpySet().remove(playerUUID);
+            textService.send(pluginMessages.getSocialSpy(false), context.getSource());
+        } else {
+            privateMessageService.socialSpySet().add(playerUUID);
+            textService.send(pluginMessages.getSocialSpy(true), context.getSource());
+        }
         return 1;
     }
 }

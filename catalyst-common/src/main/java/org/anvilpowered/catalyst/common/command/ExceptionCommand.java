@@ -15,27 +15,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.command;
+package org.anvilpowered.catalyst.common.command;
 
-import com.velocitypowered.api.command.Command;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.TextComponent;
-import org.anvilpowered.catalyst.common.command.ChannelCommand;
+import com.google.inject.Inject;
+import com.mojang.brigadier.context.CommandContext;
+import org.anvilpowered.anvil.api.registry.Registry;
+import org.anvilpowered.anvil.api.util.TextService;
+import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 
-public class VelocityChannelCommand extends ChannelCommand<
-    TextComponent,
-    Player,
-    CommandSource>
-    implements Command {
+public class ExceptionCommand<TString, TCommandSource> {
 
-    @Override
-    public void setChannelId(String channelId) {
-        super.setChannelId(channelId);
-    }
+    @Inject
+    private TextService<TString, TCommandSource> textService;
 
-    @Override
-    public void execute(CommandSource source, String[] args) {
-        execute(source, args, Player.class);
+    @Inject
+    private Registry registry;
+
+    public int execute(CommandContext<TCommandSource> context) {
+        textService.send(textService.of(String.join(
+            ", ",
+            registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS))),
+            context.getSource());
+        return 1;
     }
 }

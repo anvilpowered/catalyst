@@ -19,23 +19,40 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
-import org.anvilpowered.anvil.api.registry.Registry;
+import org.anvilpowered.anvil.api.misc.Named;
+import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.anvil.api.util.UserService;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-public class CommonExceptionCommand<TString, TCommandSource> {
+public class FindCommand<
+    TString,
+    TPlayer extends TCommandSource,
+    TCommandSource> {
+
+    @Inject
+    private PluginMessages<TString> pluginMessages;
+
 
     @Inject
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private Registry registry;
+    private UserService<TPlayer, TPlayer> userService;
+
+    @Inject
+    private LocationService locationService;
 
     public int execute(CommandContext<TCommandSource> context) {
-        textService.send(textService.of(String.join(
-            ", ",
-            registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS))),
-            context.getSource());
+        String userName = context.getArgument("target", String.class);
+        if (userService.getPlayer(userName).isPresent()) {
+            textService.send(pluginMessages.getCurrentServer(
+                userName,
+                locationService.getServer(userName).map(Named::getName).orElse("null")
+            ), context.getSource());
+            return 1;
+        }
+        textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
         return 1;
     }
 }

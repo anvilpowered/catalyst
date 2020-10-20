@@ -27,18 +27,13 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-import java.util.Optional;
-
-public class CommonMuteCommand<
+public class NickNameCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
 
     @Inject
     private MemberManager<TString> memberManager;
-
-    @Inject
-    private UserService<TPlayer, TPlayer> userService;
 
     @Inject
     private PluginMessages<TString> pluginMessages;
@@ -52,33 +47,39 @@ public class CommonMuteCommand<
     @Inject
     private TextService<TString, TCommandSource> textService;
 
-    public int execute(CommandContext<TCommandSource> context) {
-        return mute(
-            context,
-            context.getArgument("target", String.class),
-            context.getArgument("reason", String.class));
-    }
+    @Inject
+    private UserService<TPlayer, TPlayer> userService;
 
-    public int withoutReason(CommandContext<TCommandSource> context) {
-        return mute(
-            context,
-            context.getArgument("target", String.class),
-            "You have been muted!");
-    }
-
-    private int mute(CommandContext<TCommandSource> context, String userName, String reason) {
-        Optional<TPlayer> player = userService.get(userName);
-        if (player.isPresent()) {
-            if (permissionService.hasPermission(
-                player.get(),
-                registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
-                textService.send(pluginMessages.getMuteExempt(), context.getSource());
-                return 0;
-            }
-            memberManager.mute(userName, reason).thenAcceptAsync(m -> textService.send(m, context.getSource()));
-        } else {
-            textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
+    public int execute(CommandContext<TCommandSource> context, Class<?> playerClass) {
+        String nick = context.getArgument("nickname", String.class);
+        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
+            textService.send(textService.of("Player only command!"), context.getSource());
+            return 1;
         }
+
+        if (nick.contains("&")) {
+            if (permissionService.hasPermission(context.getSource(),
+                registry.getOrDefault(CatalystKeys.NICKNAME_COLOR_PERMISSION))) {
+                if ((!permissionService.hasPermission(context.getSource(),
+                    registry.getOrDefault(CatalystKeys.NICKNAME_MAGIC_PERMISSION)) && nick.contains("&k"))) {
+                    textService.send(pluginMessages.getNoNickMagicPermission(), context.getSource());
+                    nick = nick.replaceAll("&k", "");
+                }
+            } else {
+                nick = pluginMessages.removeColor(nick);
+                textService.send(pluginMessages.getNoNickColorPermission(), context.getSource());
+            }
+        }
+        memberManager.setNickName(userService.getUserName((TPlayer) context.getSource()), nick)
+            .thenAcceptAsync(m -> textService.send(m, context.getSource()));
+        return 1;
+    }
+
+    public int executeOther(CommandContext<TCommandSource> context) {
+        memberManager.setNickNameForUser(context.getArgument("target", String.class),
+            context.getArgument("targetnick", String.class)).thenAcceptAsync(m ->
+            textService.send(m, context.getSource()));
         return 1;
     }
 }
+

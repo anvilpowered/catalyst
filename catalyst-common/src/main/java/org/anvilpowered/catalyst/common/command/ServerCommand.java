@@ -14,7 +14,7 @@ import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 
 import java.util.Optional;
 
-public class CommonServerCommand<
+public class ServerCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {

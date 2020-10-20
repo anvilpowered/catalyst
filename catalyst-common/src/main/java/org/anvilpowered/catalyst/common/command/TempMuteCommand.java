@@ -27,8 +27,7 @@ import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 
-
-public class CommonBanCommand<
+public class TempMuteCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
@@ -51,48 +50,28 @@ public class CommonBanCommand<
     @Inject
     private Registry registry;
 
+    public int execute(CommandContext<TCommandSource> context, String reason) {
+        String userName = context.getArgument("target", String.class);
+        String duration = context.getArgument("duration", String.class);
 
-    public void execute(TCommandSource source, String[] args) {
-        if (!permissionService.hasPermission(source,
-            registry.getOrDefault(CatalystKeys.BAN_PERMISSION))) {
-            textService.send(pluginMessages.getNoPermission(), source);
-            return;
-        }
-
-        if (args.length == 0) {
-            textService.send(pluginMessages.getNotEnoughArgs(), source);
-            textService.send(pluginMessages.banCommandUsage(), source);
-            return;
-        }
-        String userName = args[0];
         if (userService.get(userName).isPresent()) {
             if (permissionService.hasPermission(
                 userService.get(userName).get(),
-                registry.getOrDefault(CatalystKeys.BAN_EXEMPT_PERMISSION))) {
-                textService.send(pluginMessages.getBanExempt(), source);
-                return;
+                registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
+                textService.send(pluginMessages.getMuteExempt(), context.getSource());
+                return 0;
             }
         }
-        if (args.length == 1) {
-            memberManager.ban(userName).thenAcceptAsync(m -> textService.send(m, source));
-        } else {
-            String reason = String.join(" ", args).replace(userName + " ", " ");
-            memberManager.ban(userName, reason).thenAcceptAsync(m -> textService.send(m, source));
-        }
+        memberManager.tempMute(userName, duration, reason).thenAcceptAsync(m ->
+            textService.send(m, context.getSource()));
+        return 1;
     }
 
     public int withReason(CommandContext<TCommandSource> context) {
-        execute(context.getSource(), new String[]{
-            context.getArgument("target", String.class),
-            context.getArgument("reason", String.class)
-        });
-        return 1;
+        return execute(context, context.getArgument("reason", String.class));
     }
 
     public int withoutReason(CommandContext<TCommandSource> context) {
-        execute(context.getSource(), new String[]{
-            context.getArgument("target", String.class)
-        });
-        return 1;
+        return execute(context, "You have been muted temporarily.");
     }
 }
