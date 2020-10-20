@@ -353,7 +353,6 @@ public class CommonChatService<
         if (uuidList == null) {
             return false;
         }
-        System.out.println(uuidList.contains(targetPlayerUUID));
         return uuidList.contains(targetPlayerUUID);
     }
 

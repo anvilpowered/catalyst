@@ -267,17 +267,16 @@ public class VelocityListener {
         if (proxyServer.getConfiguration().isAnnounceForge()) {
             if (useCatalyst) {
                 for (AdvancedServerInfo advancedServerInfo : advancedServerInfoList) {
-                    if (playerProvidedHost.equalsIgnoreCase(advancedServerInfo.hostName)) {
+                    if (playerProvidedHost.startsWith(advancedServerInfo.hostName)) {
                         for (RegisteredServer pServer : proxyServer.getAllServers()) {
                             try {
-                                serverPing = pServer.ping().get();
-                            } catch (InterruptedException | ExecutionException e) {
-                                continue;
-                            }
-                            if (advancedServerInfo.port == pServer.getServerInfo().getAddress().getPort()) {
-                                if (serverPing.getModinfo().isPresent()) {
-                                    modInfo = serverPing.getModinfo().get();
+                                if (pServer.getServerInfo().getName().contains(advancedServerInfo.prefix)) {
+                                    serverPing = pServer.ping().get();
+                                    if (serverPing.getModinfo().isPresent()) {
+                                        modInfo = serverPing.getModinfo().get();
+                                    }
                                 }
+                            } catch (InterruptedException | ExecutionException ignored) {
                             }
                         }
                     }
