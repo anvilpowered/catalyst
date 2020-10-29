@@ -270,7 +270,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.IGNORE_COMMAND_ENABLED,
             "\nToggle ignore command handling" +
                 "\n(true = enabled | false = disabled)" +
-                "Permission: " + CatalystKeys.IGNORE_PERMISSION.getFallbackValue());
+                "\nPermission: " + CatalystKeys.IGNORE_PERMISSION.getFallbackValue());
         setDescription(CatalystKeys.COMMAND_LOGGING_ENABLED,
             "Toggle command logging " +
                 "\n(true = enabled | false = disabled)");
