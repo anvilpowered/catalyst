@@ -23,6 +23,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.utils.Compression;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
@@ -67,7 +69,12 @@ public class CommonJDAService<
                 jda.shutdownNow();
             }
             try {
-                jda = JDABuilder.createDefault(registry.getOrDefault(CatalystKeys.BOT_TOKEN)).build().awaitReady();
+                JDABuilder builder = JDABuilder.createDefault(registry.getOrDefault(CatalystKeys.BOT_TOKEN));
+                builder.setCompression(Compression.NONE);
+                builder.setBulkDeleteSplittingEnabled(false);
+                builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
+
+                jda = builder.build();
                 String playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS);
                 String nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE);
                 if (userService.getOnlinePlayers().size() != 0) {
@@ -83,6 +90,7 @@ public class CommonJDAService<
                     executor.scheduleAtFixedRate(this.updateTopic(), 1,
                         registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_DELAY), TimeUnit.MINUTES);
                 }
+                jda.awaitReady();
             } catch (LoginException | InterruptedException e) {
                 e.printStackTrace();
             }

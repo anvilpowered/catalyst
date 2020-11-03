@@ -27,8 +27,8 @@ import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
-import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.DiscordCommandService;
+import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -62,10 +62,9 @@ public class CommonDiscordListener<
     @Inject
     private EmojiService emojiService;
 
+    @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getAuthor().getId().equals(event.getJDA().getSelfUser().getId())
-            || event.isWebhookMessage()
-            || event.getMember().isFake()) {
+        if (event.isWebhookMessage() || event.getAuthor().isBot()) {
             return;
         }
 
@@ -133,6 +132,5 @@ public class CommonDiscordListener<
             });
             logger.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
         }
-
     }
 }
