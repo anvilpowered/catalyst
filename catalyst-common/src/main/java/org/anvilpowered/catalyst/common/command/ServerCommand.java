@@ -82,20 +82,21 @@ public class ServerCommand<
             return alreadyConnected(targetServer, player);
         }
 
+
         for (BackendServer server : locationService.getServers()) {
-            if (useAdvServerInfo) {
-                commenceConnection(player, prefix + server.getName(), targetServer);
+            String serverName = server.getName();
+            if (useAdvServerInfo && serverName.equalsIgnoreCase(prefix + targetServer)) {
+                commenceConnection(player, serverName);
             }
-            commenceConnection(player, server.getName(), targetServer);
+            if (serverName.equalsIgnoreCase(targetServer)) {
+                commenceConnection(player, serverName);
+            }
         }
         return 1;
     }
 
-    private void commenceConnection(TPlayer player, String server, String targetServer) {
+    private void commenceConnection(TPlayer player, String server) {
         String userName = userService.getUserName(player);
-        if (!server.equalsIgnoreCase(targetServer)) {
-            return;
-        }
         locationService.getServerForName(server).map(s -> s.connect(userName).thenApply(result -> {
             if (result) {
                 textService.builder()
