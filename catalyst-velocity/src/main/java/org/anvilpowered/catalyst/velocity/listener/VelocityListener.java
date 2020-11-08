@@ -264,7 +264,11 @@ public class VelocityListener {
             advancedServerInfoList.forEach(advancedServerInfo -> {
                 if (playerProvidedHost.equals(advancedServerInfo.hostName)) {
                     hostNameExists.set(true);
-                    builder.description(textService.deserialize(advancedServerInfo.motd));
+                    TextComponent withColorCodes =
+                        LegacyComponentSerializer.legacyAmpersand().deserialize(advancedServerInfo.motd);
+                    builder.description(MiniMessage.get().deserialize(
+                        MiniMessage.markdown().serialize(withColorCodes.asComponent())
+                    ));
                 }
             });
             if (!hostNameExists.get()) {
@@ -276,7 +280,8 @@ public class VelocityListener {
             TextComponent withColorCodes =
                 LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.MOTD));
             builder.description(MiniMessage.get().deserialize(
-                MiniMessage.markdown().serialize(withColorCodes.asComponent())));
+                MiniMessage.markdown().serialize(withColorCodes.asComponent())
+            ));
         } else {
             return;
         }
@@ -291,6 +296,7 @@ public class VelocityListener {
                                     serverPing = pServer.ping().get();
                                     if (serverPing.getModinfo().isPresent()) {
                                         modInfo = serverPing.getModinfo().get();
+                                        break;
                                     }
                                 }
                             } catch (InterruptedException | ExecutionException ignored) {
@@ -306,6 +312,7 @@ public class VelocityListener {
                     if (ping == null) continue;
                     if (ping.getModinfo().isPresent()) {
                         modInfo = ping.getModinfo().get();
+                        break;
                     }
                 }
             }
