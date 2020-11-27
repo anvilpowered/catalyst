@@ -24,7 +24,7 @@ import net.kyori.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.JDAService;
 
 import java.util.Objects;

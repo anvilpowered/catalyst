@@ -31,7 +31,7 @@ import org.anvilpowered.catalyst.api.service.DiscordCommandService;
 import org.anvilpowered.catalyst.bungee.command.BungeeCommandNode;
 import org.anvilpowered.catalyst.bungee.service.BungeeBroadcastService;
 import org.anvilpowered.catalyst.bungee.service.BungeeDiscordCommandService;
-import org.anvilpowered.catalyst.common.data.config.ProxyConfigurationService;
+import org.anvilpowered.catalyst.common.registry.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 

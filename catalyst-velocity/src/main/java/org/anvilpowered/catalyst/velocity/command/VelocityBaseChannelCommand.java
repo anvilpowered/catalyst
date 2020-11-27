@@ -25,7 +25,7 @@ import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.TextComponent;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.checkerframework.checker.nullness.qual.NonNull;

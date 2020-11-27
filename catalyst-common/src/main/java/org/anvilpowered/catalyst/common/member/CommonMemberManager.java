@@ -31,7 +31,7 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.TimeFormatService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.anvil.base.datastore.BaseManager;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.member.MemberManager;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages;

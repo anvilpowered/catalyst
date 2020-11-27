@@ -1,28 +1,29 @@
 /*
- *     Copyright (C) 2020 STG_Allen
+ * Catalyst - AnvilPowered
+ *   Copyright (C) 2020
  *
  *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
+ *     it under the terms of the GNU Lesser General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *     GNU Lesser General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.common.data.config;
+package org.anvilpowered.catalyst.common.registry;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.anvilpowered.anvil.base.registry.BaseConfigurationService;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.slf4j.Logger;
 
 import java.util.HashMap;

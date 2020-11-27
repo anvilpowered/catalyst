@@ -17,7 +17,7 @@
 
 package org.anvilpowered.catalyst.api.service;
 
-import org.anvilpowered.catalyst.api.data.config.ChatChannel;
+import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 
 import java.util.List;

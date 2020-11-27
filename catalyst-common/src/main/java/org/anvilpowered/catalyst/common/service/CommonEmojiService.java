@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 
 import java.util.Map;

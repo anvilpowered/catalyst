@@ -20,8 +20,8 @@ package org.anvilpowered.catalyst.api.service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
-import org.anvilpowered.catalyst.api.data.key.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 
 import java.util.ArrayList;
 import java.util.HashMap;

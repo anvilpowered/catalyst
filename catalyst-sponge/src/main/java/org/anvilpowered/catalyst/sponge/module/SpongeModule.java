@@ -21,7 +21,7 @@ import com.google.inject.TypeLiteral;
 import org.anvilpowered.anvil.api.command.CommandNode;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.DiscordCommandService;
-import org.anvilpowered.catalyst.common.data.config.BackendConfigurationService;
+import org.anvilpowered.catalyst.common.registry.BackendConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.sponge.command.SpongeCommandNode;
 import org.anvilpowered.catalyst.sponge.data.config.SpongeConfigurationService;

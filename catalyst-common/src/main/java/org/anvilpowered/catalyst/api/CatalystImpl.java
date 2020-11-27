@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.api;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.anvilpowered.anvil.api.Environment;
-import org.anvilpowered.catalyst.api.data.config.AdvancedServerInfo;
+import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.service.EventRegistrationService;
 import org.anvilpowered.catalyst.api.service.JDAService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;

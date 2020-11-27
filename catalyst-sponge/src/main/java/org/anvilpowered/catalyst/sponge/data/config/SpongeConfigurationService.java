@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.sponge.data.config;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.anvilpowered.catalyst.common.data.config.BackendConfigurationService;
+import org.anvilpowered.catalyst.common.registry.BackendConfigurationService;
 import org.spongepowered.api.config.DefaultConfig;
 
 public class SpongeConfigurationService extends BackendConfigurationService {
