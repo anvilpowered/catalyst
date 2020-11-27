@@ -1,6 +1,4 @@
-plugins {
-    id 'java-library'
-}
+version = rootProject.apiVersion
 
 dependencies {
     api anvil_api

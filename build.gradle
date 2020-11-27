@@ -1,16 +1,24 @@
 plugins {
-    id 'java'
+    id 'io.codearte.nexus-staging' version '0.21.2'
 }
 
+ext.apiVersion = "0.3-SNAPSHOT"
+
+allprojects {
+    group = "org.anvilpowered"
+    version = "0.3.0-SNAPSHOT"
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+}
+
+String _username = project.hasProperty("username") ? username : ""
+String _password = project.hasProperty("password") ? password : ""
+String _keyId = project.hasProperty("keyId") ? keyId : ""
+String _ringFile = project.hasProperty("ringFile") ? ringFile : ""
 
 subprojects {
-    apply plugin: 'java'
-    group "org.anvilpowered"
-    version "0.3.0-SNAPSHOT"
     sourceCompatibility = 1.8
-    if (project.hasProperty("buildNumber") && version.contains("-SNAPSHOT")) {
-        version = version.replace("-SNAPSHOT", "-RC${buildNumber}")
-    }
     repositories {
         mavenCentral()
         jcenter()
@@ -19,7 +27,6 @@ subprojects {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
     dependencies {
-        implementation anvil_api
         implementation apache_http_async
         implementation apache_http_client
         implementation apache_http_core
@@ -29,11 +36,76 @@ subprojects {
         implementation jackson_annotations
         implementation jackson_core
         implementation jackson_databind
-        implementation jda
         implementation json
         implementation kyori_event
-        implementation luckperms
         implementation okio
         implementation unirest
+    }
+    if (project.hasProperty("buildNumber") && version.contains("-SNAPSHOT")) {
+        version = version.replace("-SNAPSHOT", "-RC${buildNumber}")
+    }
+    nexusStaging {
+        packageGroup = 'org.anvilpowered'
+        username = _username
+        password = _password
+    }
+
+    if (project.hasProperty("sign")) {
+        ext.'signing.keyId' = _keyId
+        ext.'signing.password' = _password
+        ext.'signing.secretKeyRingFile' = _ringFile
+        signing {
+            sign publishing.publications
+            sign configurations.archives
+        }
+    }
+}
+
+
+project(':catalyst-api') {
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+    afterEvaluate {
+        publishing {
+            repositories {
+                maven {
+                    credentials {
+                        username _username
+                        password _password
+                    }
+                    def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                    url version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+                }
+            }
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+
+                    pom {
+                        name = 'Catalyst'
+                        description = 'An essentials plugin for Minecraft proxies that will provide your server with a strong ' +
+                                'baseline; giving you all the useful commands you need.'
+                        url = 'https://github.com/AnvilPowered/Catalyst'
+
+                        scm {
+                            url = 'https://github.com/AnvilPowered/Catalyst'
+                            connection = 'scm:git:https://github.com/AnvilPowered/Catalyst.git'
+                            developerConnection = 'scm:git:https://github.com/AnvilPowered/Catalyst.git'
+                        }
+
+                        licenses {
+                            license {
+                                name = 'GNU LESSER GENERAL PUBLIC LICENSE Version 3'
+                                url = 'https://www.gnu.org/licenses/lgpl-3.0.html'
+                                distribution = 'repo'
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
