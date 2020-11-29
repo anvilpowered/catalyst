@@ -2,11 +2,11 @@ plugins {
     id 'io.codearte.nexus-staging' version '0.21.2'
 }
 
-ext.apiVersion = "0.3"
+ext.apiVersion = "0.4-SNAPSHOT"
 
 allprojects {
     group = "org.anvilpowered"
-    version = "0.3.0"
+    version = "0.3.1-SNAPSHOT"
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
