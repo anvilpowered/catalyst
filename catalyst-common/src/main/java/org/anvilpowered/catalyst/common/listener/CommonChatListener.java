@@ -67,10 +67,13 @@ public class CommonChatListener<
     @Override
     public void onPlayerChat(ChatEvent<TString, TPlayer> event) {
         UUID playerUUID = userService.getUUID(event.getPlayer());
-        TPlayer player = userService.getPlayer(playerUUID).get();
+        Optional<TPlayer> player = userService.getPlayer(playerUUID);
+        if (!player.isPresent()) {
+            return;
+        }
         String message = event.getRawMessage();
         if (staffChatService.contains(playerUUID)) {
-            staffChatEvent.setPlayer(player);
+            staffChatEvent.setPlayer(player.get());
             staffChatEvent.setMessage(event.getMessage());
             staffChatEvent.setIsConsole(false);
             staffChatEvent.setRawMessage(event.getRawMessage());
@@ -79,10 +82,11 @@ public class CommonChatListener<
         }
 
         Optional<ChatChannel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
-        message = chatService.checkPlayerName(player, message);
+        message = chatService.checkPlayerName(player.get(), message);
 
         if (channel.isPresent()) {
-            if (!permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
+            if (!permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))
+                && registry.getOrDefault(CatalystKeys.CHAT_FILTER_ENABLED)) {
                 event.setRawMessage(chatFilter.replaceSwears(message));
             }
             chatService.sendChatMessage(event);
