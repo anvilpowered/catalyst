@@ -24,6 +24,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.anvilpowered.anvil.api.registry.Registry;
+import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
 import org.anvilpowered.catalyst.bungee.CatalystBungee;
 import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;
@@ -48,17 +49,31 @@ public class BungeeCommandNode
 
     @Override
     public void loadCommands() {
-        //There is little to 0 documentation on registering brigadier commands
-        //This may need to be changed
+        List<BungeeCommand> bungeeCommands = new ArrayList<>();
         for (Map.Entry<List<String>, LiteralCommandNode<CommandSender>> entry : commands.entrySet()) {
-            List<String> k = entry.getKey();
-            LiteralCommandNode<CommandSender> v = entry.getValue();
-            List<String> withoutFirst = new ArrayList<>(k);
+            List<String> withoutFirst = new ArrayList<>(entry.getKey());
             withoutFirst.remove(0);
-            commandDispatcher.register(k.get(0), v, withoutFirst);
-            ProxyServer.getInstance().getPluginManager()
-                .registerCommand(plugin,
-                    new BungeeCommand(k.get(0), withoutFirst.toArray(new String[0])));
+
+            commandDispatcher.register(entry.getKey().get(0), entry.getValue(), withoutFirst);
+            BungeeCommand command = new BungeeCommand(
+                entry.getKey().get(0),
+                withoutFirst.toArray(new String[0]),
+                entry.getValue(),
+                super.registry,
+                super.advancedServerInfo,
+                super.locationService
+            );
+            ProxyServer.getInstance().getPluginManager().registerCommand(plugin, command);
+            bungeeCommands.add(command);
+        }
+
+        for (Map.Entry<LiteralCommandNode<CommandSender>, Map<Integer, CommandSuggestionType>> entry : suggestionType.entrySet()) {
+            Map<Integer, CommandSuggestionType> suggestionMap = entry.getValue();
+            for (BungeeCommand command : bungeeCommands) {
+                if (command.compareNode(entry.getKey())) {
+                    command.setSuggestions(suggestionMap);
+                }
+            }
         }
     }
 }

@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.common.command;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -32,9 +33,10 @@ import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
+import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.common.util.CommonArgumentType;
 
@@ -121,6 +123,7 @@ public abstract class CommonCommandNode<
     protected Map<List<String>, Predicate<TCommandSource>> permissions;
     protected Map<List<String>, Function<TCommandSource, String>> usages;
     protected Map<List<String>, LiteralCommandNode<TCommandSource>> commands;
+    protected Map<LiteralCommandNode<TCommandSource>, Map<Integer, CommandSuggestionType>> suggestionType;
 
     @Inject
     protected PermissionService permissionService;
@@ -138,10 +141,10 @@ public abstract class CommonCommandNode<
     private PluginInfo<TString> pluginInfo;
 
     @Inject
-    private LocationService locationService;
+    protected LocationService locationService;
 
     @Inject
-    private AdvancedServerInfoService advancedServerInfo;
+    protected AdvancedServerInfoService advancedServerInfo;
 
     protected Registry registry;
     protected Class<?> playerClass;
@@ -161,6 +164,7 @@ public abstract class CommonCommandNode<
         descriptions = new HashMap<>();
         permissions = new HashMap<>();
         usages = new HashMap<>();
+        suggestionType = new HashMap<>();
     }
 
     protected abstract void loadCommands();
@@ -569,6 +573,9 @@ public abstract class CommonCommandNode<
             commands.put(ImmutableList.of("tempban", "ctempban"), tempBan);
             commands.put(ImmutableList.of("ban", "cban"), ban);
             commands.put(ImmutableList.of("unban", "cunban"), unban);
+            suggestionType.put(tempBan, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
+            suggestionType.put(ban, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
+            suggestionType.put(unban, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
         }
         if (registry.getOrDefault(CatalystKeys.BROADCAST_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("broadcast", "cbroadcast"), broadcast);
@@ -579,21 +586,28 @@ public abstract class CommonCommandNode<
         }
         if (registry.getOrDefault(CatalystKeys.FIND_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("find", "cfind"), find);
+            suggestionType.put(find, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
         }
         if (registry.getOrDefault(CatalystKeys.INFO_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("info", "cinfo"), info);
+            suggestionType.put(info, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
         }
         if (registry.getOrDefault(CatalystKeys.KICK_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("kick", "ckick"), kick);
+            suggestionType.put(kick, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
         }
         if (registry.getOrDefault(CatalystKeys.MESSAGE_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("msg", "m", "w", "t", "whisper", "tell"), message);
             commands.put(ImmutableList.of("reply", "r"), reply);
+            suggestionType.put(message, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
         }
         if (registry.getOrDefault(CatalystKeys.MUTE_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("mute", "cmute"), mute);
             commands.put(ImmutableList.of("tempmute", "ctempmute"), tempMute);
             commands.put(ImmutableList.of("unmute", "cunmute"), unmute);
+            suggestionType.put(mute, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
+            suggestionType.put(tempMute, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
+            suggestionType.put(unmute, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
         }
         if (registry.getOrDefault(CatalystKeys.SOCIALSPY_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("socialspy", "ss"), socialSpy);
@@ -607,12 +621,15 @@ public abstract class CommonCommandNode<
         }
         if (registry.getOrDefault(CatalystKeys.SEND_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("send", "csend"), send);
+            suggestionType.put(send, ImmutableMap.of(1, CommandSuggestionType.PLAYER, 2, CommandSuggestionType.SERVER));
         }
         if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("server", "cserver"), server);
+            suggestionType.put(server, ImmutableMap.of(1, CommandSuggestionType.SERVER));
         }
         if (registry.getOrDefault(CatalystKeys.IGNORE_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("ignore", "cignore"), ignore);
+            suggestionType.put(ignore, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
         }
         commands.put(ImmutableList.of("stafflist"), staffList);
     }
@@ -620,7 +637,11 @@ public abstract class CommonCommandNode<
     private SuggestionProvider<TCommandSource> suggest() {
         return (context, builder) -> {
             for (TPlayer player : userService.getOnlinePlayers()) {
-                builder.suggest(userService.getUserName(player), () -> "target");
+                String userName = userService.getUserName(player);
+                if (userName.toLowerCase().startsWith(context.getInput().toLowerCase())
+                    || userName.equalsIgnoreCase(context.getInput())) {
+                    builder.suggest(userService.getUserName(player), () -> "target");
+                }
             }
             return builder.buildFuture();
         };

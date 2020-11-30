@@ -18,16 +18,46 @@
 package org.anvilpowered.catalyst.bungee.command;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
+import org.anvilpowered.anvil.api.registry.Registry;
+import org.anvilpowered.anvil.api.server.BackendServer;
+import org.anvilpowered.anvil.api.server.LocationService;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
+import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
+import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class BungeeCommand extends Command implements TabExecutor {
 
-    public BungeeCommand(String name,
-                         String[] aliases) {
+    private final AdvancedServerInfoService advancedServerInfo;
+    private final LocationService locationService;
+    private final Registry registry;
+    private final LiteralCommandNode<CommandSender> commandNode;
+    private Map<Integer, CommandSuggestionType> suggestionPosition;
+
+    public BungeeCommand(
+        String name,
+        String[] aliases,
+        LiteralCommandNode<CommandSender> commandNode,
+        Registry registry,
+        AdvancedServerInfoService advancedServerInfo,
+        LocationService locationService
+    ) {
         super(name, "", aliases);
+        this.commandNode = commandNode;
+        this.registry = registry;
+        this.advancedServerInfo = advancedServerInfo;
+        this.locationService = locationService;
     }
+
 
     /**
      * This execute method is being handled by the {@link org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher}
@@ -38,6 +68,47 @@ public class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return ImmutableList.of("Unsupported");
+        for (Map.Entry<Integer, CommandSuggestionType> entry : suggestionPosition.entrySet()) {
+            Integer position = entry.getKey();
+            if (args.length == position) {
+                switch (entry.getValue()) {
+                    case SERVER:
+                        List<String> servers = new ArrayList<>();
+                        if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
+                            String prefix = advancedServerInfo.getPrefixForPlayer(sender.getName());
+                            for (BackendServer server : locationService.getServers()) {
+                                if (server.getName().startsWith(prefix)) {
+                                    servers.add(server.getName().replace(prefix, ""));
+                                }
+                            }
+                        } else {
+                            for (BackendServer server : locationService.getServers()) {
+                                if (server.getName().toLowerCase().startsWith(args[entry.getKey() - 1].toLowerCase())) {
+                                    servers.add(server.getName());
+                                }
+                            }
+                        }
+                        return servers;
+                    case PLAYER:
+                        List<String> players = new ArrayList<>();
+                        for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                            if (player.getDisplayName().toLowerCase().startsWith(args[entry.getKey() - 1].toLowerCase())) {
+                                players.add(player.getName());
+                            }
+                        }
+                        return players;
+                }
+            }
+        }
+        return ImmutableList.of();
+    }
+
+    void setSuggestions(Map<Integer, CommandSuggestionType> suggestions) {
+        this.suggestionPosition = suggestions;
+    }
+
+
+    boolean compareNode(LiteralCommandNode<CommandSender> node) {
+        return this.commandNode.equals(node);
     }
 }
