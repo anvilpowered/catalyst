@@ -38,7 +38,6 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
-import org.anvilpowered.catalyst.common.util.CommonArgumentType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -290,7 +289,7 @@ public abstract class CommonCommandNode<
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
-                "nickname", new CommonArgumentType())
+                "nickname", StringArgumentType.greedyString())
                 .executes(ctx -> nickCommand.execute(ctx, playerClass))
                 .build())
             .then(LiteralArgumentBuilder.<TCommandSource>literal("other")
