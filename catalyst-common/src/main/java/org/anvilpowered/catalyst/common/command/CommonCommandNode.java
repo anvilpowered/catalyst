@@ -183,7 +183,7 @@ public abstract class CommonCommandNode<
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.string())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(banCommand::withoutReason)
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "reason", StringArgumentType.greedyString())
@@ -272,7 +272,7 @@ public abstract class CommonCommandNode<
                     .requires(source ->
                         permissionService.hasPermission(source,
                             registry.getOrDefault(CatalystKeys.NICKNAME_OTHER_PERMISSION)))
-                    .suggests(suggest())
+                    .suggests(suggestPlayers())
                     .executes(deleteNickCommand::executeOther)
                     .build())
                 .build())
@@ -305,7 +305,7 @@ public abstract class CommonCommandNode<
                 })
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "target", StringArgumentType.word())
-                    .suggests(suggest())
+                    .suggests(suggestPlayers())
                     .executes(e -> {
                         textService.builder()
                             .append(pluginMessages.getNotEnoughArgs())
@@ -332,7 +332,7 @@ public abstract class CommonCommandNode<
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.string())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(findCommand::execute)
                 .build())
             .build();
@@ -346,7 +346,7 @@ public abstract class CommonCommandNode<
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.string())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(infoCommand::execute)
                 .build())
             .build();
@@ -362,7 +362,7 @@ public abstract class CommonCommandNode<
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.word())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(kickCommand::withoutReason)
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "reason", StringArgumentType.greedyString())
@@ -382,7 +382,7 @@ public abstract class CommonCommandNode<
                 return 1;
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.word())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(e -> {
                     textService.builder()
                         .append(pluginMessages.getNotEnoughArgs())
@@ -426,7 +426,7 @@ public abstract class CommonCommandNode<
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.word())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(muteCommand::withoutReason)
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "reason", StringArgumentType.greedyString())
@@ -447,7 +447,7 @@ public abstract class CommonCommandNode<
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.word())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(e -> {
                     textService.builder()
                         .append(pluginMessages.getNotEnoughArgs())
@@ -478,7 +478,7 @@ public abstract class CommonCommandNode<
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.word())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(unMuteCommand::execute)
                 .build())
             .build();
@@ -529,7 +529,7 @@ public abstract class CommonCommandNode<
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "player", StringArgumentType.word())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(ctx -> {
                     textService.builder()
                         .append(pluginInfo.getPrefix())
@@ -564,7 +564,7 @@ public abstract class CommonCommandNode<
             })
             .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                 "target", StringArgumentType.word())
-                .suggests(suggest())
+                .suggests(suggestPlayers())
                 .executes(ctx -> ignoreCommand.execute(ctx, playerClass))
                 .build())
             .build();
@@ -633,7 +633,7 @@ public abstract class CommonCommandNode<
         commands.put(ImmutableList.of("stafflist"), staffList);
     }
 
-    private SuggestionProvider<TCommandSource> suggest() {
+    private SuggestionProvider<TCommandSource> suggestPlayers() {
         return (context, builder) -> {
             for (TPlayer player : userService.getOnlinePlayers()) {
                 String userName = userService.getUserName(player);
