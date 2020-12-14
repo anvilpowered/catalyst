@@ -68,10 +68,12 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     }
 
     @Override
-    public TString getNoServerPermission() {
+    public TString getNoServerPermission(String serverName) {
         return textService.builder()
             .append(pluginInfo.getPrefix())
-            .red().append("You do not have permission to join this server!")
+            .red().append("You do not have permission to enter ")
+            .gold().append(serverName)
+            .red().append("!")
             .build();
     }
 
@@ -256,17 +258,6 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     @Override
     public TString getRemoveException(String exception) {
         return getForList(false, false, false, exception);
-    }
-
-    public String removeColor(String in) {
-        return in.replace("&0", "").replaceAll("&1", "").replaceAll("&2", "")
-            .replaceAll("&3", "").replaceAll("&4", "").replaceAll("&5", "")
-            .replaceAll("&6", "").replaceAll("&7", "").replaceAll("&8", "")
-            .replaceAll("&a", "").replaceAll("&b", "").replaceAll("&c", "")
-            .replaceAll("&d", "").replaceAll("&e", "").replaceAll("&f", "")
-            .replaceAll("&k", "").replaceAll("&l", "").replaceAll("&m", "")
-            .replaceAll("&n", "").replaceAll("&o", "").replaceAll("&r", "")
-            .replaceAll("&k", "").replaceAll("&9", "");
     }
 
     @Override

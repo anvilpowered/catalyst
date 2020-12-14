@@ -27,6 +27,7 @@ import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
+import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 
@@ -58,6 +59,9 @@ public class ServerCommand<
     @Inject
     private PermissionService permissionService;
 
+    @Inject
+    private PluginMessages<TString> pluginMessages;
+
     public int execute(CommandContext<TCommandSource> context) {
         TPlayer player = (TPlayer) context.getSource();
         String userName = userService.getUserName(player);
@@ -68,12 +72,7 @@ public class ServerCommand<
 
         if (registry.getOrDefault(CatalystKeys.ENABLE_PER_SERVER_PERMS)
             && !permissionService.hasPermission(player, "catalyst.server." + targetServer)) {
-            textService.builder()
-                .append(pluginInfo.getPrefix())
-                .red().append("You do not have permission to enter ")
-                .gold().append(targetServer)
-                .red().append("!")
-                .sendTo(player);
+            textService.send(pluginMessages.getNoServerPermission(targetServer), player);
             return 0;
         }
 

@@ -386,7 +386,7 @@ public class CommonChatService<
         String chatColor = luckpermsService.getChatColor(event.getPlayer());
         String nameColor = luckpermsService.getNameColor(event.getPlayer());
         String suffix = luckpermsService.getSuffix(event.getPlayer());
-        String userName = pluginMessages.removeColor(userService.getUserName((TUser) event.getPlayer()));
+        String userName = textService.serializePlain(textService.of(userService.getUserName((TUser) event.getPlayer())));
         String server = locationService.getServer(userName).map(Named::getName).orElseThrow(() ->
             new IllegalStateException(userName + " is not in a valid server!"));
         UUID playerUUID = userService.getUUID((TUser) event.getPlayer());

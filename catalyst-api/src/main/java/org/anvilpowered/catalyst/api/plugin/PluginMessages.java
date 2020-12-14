@@ -29,7 +29,7 @@ public interface PluginMessages<TString> {
 
     TString getNoPermission();
 
-    TString getNoServerPermission();
+    TString getNoServerPermission(String serverName);
 
     TString getNoNickColorPermission();
 
@@ -76,8 +76,6 @@ public interface PluginMessages<TString> {
     TString getRemoveSwear(String swear);
 
     TString getRemoveException(String exception);
-
-    String removeColor(String text);
 
     TString banCommandUsage();
 
