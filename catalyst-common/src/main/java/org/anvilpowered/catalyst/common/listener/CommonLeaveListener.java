@@ -21,9 +21,9 @@ import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.listener.LeaveListener;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
@@ -67,19 +67,21 @@ public class CommonLeaveListener<
             ? emojiService.toEmoji(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE), "&f")
             : registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE);
 
-        broadcastService.broadcast(
-            textService.deserialize(
-                message
-                    .replace("%player%", userService.getUserName((TUser) player))
-            ));
-
-        logger.info(
-            textService.serializePlain(
-                textService.of(
-                    registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
+        if (registry.getOrDefault(CatalystKeys.LEAVE_LISTENER_ENABLED)) {
+            broadcastService.broadcast(
+                textService.deserialize(
+                    message
                         .replace("%player%", userService.getUserName((TUser) player))
+                ));
+
+            logger.info(
+                textService.serializePlain(
+                    textService.of(
+                        registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE)
+                            .replace("%player%", userService.getUserName((TUser) player))
+                    )
                 )
-            )
-        );
+            );
+        }
     }
 }

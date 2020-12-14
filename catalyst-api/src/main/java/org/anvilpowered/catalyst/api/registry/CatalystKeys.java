@@ -61,10 +61,20 @@ public final class CatalystKeys {
             .name("JOIN_MESSAGE")
             .fallback("%player% has joined the proxy")
             .build();
+    public static final Key<Boolean> JOIN_LISTENER_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+        .name("JOIN_LISTENER_ENABLED")
+        .fallback(true)
+        .build();
     public static final Key<String> LEAVE_MESSAGE =
         Key.builder(TypeTokens.STRING)
             .name("LEAVE_MESSAGE")
             .fallback("%player% has left the proxy")
+            .build();
+    public static final Key<Boolean> LEAVE_LISTENER_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("LEAVE_LISTENER_ENABLED")
+            .fallback(true)
             .build();
     public static final Key<Boolean> PROXY_CHAT_ENABLED =
         Key.builder(TypeTokens.BOOLEAN)

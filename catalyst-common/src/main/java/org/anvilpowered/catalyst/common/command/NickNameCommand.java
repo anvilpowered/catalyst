@@ -19,6 +19,9 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
+import org.anvilpowered.anvil.api.Anvil;
+import org.anvilpowered.anvil.api.coremember.CoreMemberManager;
+import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -66,7 +69,7 @@ public class NickNameCommand<
                     nick = nick.replaceAll("&k", "");
                 }
             } else {
-                nick = pluginMessages.removeColor(nick);
+                nick = textService.serializePlain(textService.of(nick));
                 textService.send(pluginMessages.getNoNickColorPermission(), context.getSource());
             }
         }

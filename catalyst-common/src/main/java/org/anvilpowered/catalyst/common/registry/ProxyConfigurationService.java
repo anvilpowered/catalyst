@@ -45,7 +45,9 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.CHAT_FILTER_ENABLED, "chat.filter.enabled");
         setName(CatalystKeys.FIRST_JOIN, "join.firstJoin");
         setName(CatalystKeys.JOIN_MESSAGE, "join.message");
+        setName(CatalystKeys.JOIN_LISTENER_ENABLED, "modules.listener.join");
         setName(CatalystKeys.LEAVE_MESSAGE, "leave.message");
+        setName(CatalystKeys.LEAVE_LISTENER_ENABLED, "modules.listener.leave");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE, "chat.format.message");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_HOVER, "chat.format.hover");
         setName(CatalystKeys.PROXY_CHAT_FORMAT_CLICK_COMMAND, "chat.format.click");
@@ -125,8 +127,12 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nFormat for the message that is displayed when a player joins the proxy for the first time");
         setDescription(CatalystKeys.JOIN_MESSAGE,
             "\nFormat for the message that is displayed when a player joins the proxy");
+        setDescription(CatalystKeys.JOIN_LISTENER_ENABLED,
+            "\nToggle join messages");
         setDescription(CatalystKeys.LEAVE_MESSAGE,
             "\nFormat for the message that is displayed when a player leaves the proxy");
+        setDescription(CatalystKeys.LEAVE_LISTENER_ENABLED,
+            "\nToggle leave messages");
         setDescription(CatalystKeys.PROXY_CHAT_FORMAT_MESSAGE,
             "\nFormat for the proxy-wide chat");
         setDescription(CatalystKeys.PROXY_CHAT_FORMAT_HOVER,

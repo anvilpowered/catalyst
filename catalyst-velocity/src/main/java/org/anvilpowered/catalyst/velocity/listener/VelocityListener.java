@@ -42,6 +42,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.coremember.CoreMemberManager;
+import org.anvilpowered.anvil.api.datastore.Manager;
 import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
@@ -156,7 +157,7 @@ public class VelocityListener {
             if (!optionalMember.isPresent()) {
                 return;
             }
-            if (flags[0]) {
+            if (flags[0] && registry.getOrDefault(CatalystKeys.JOIN_LISTENER_ENABLED)) {
                 broadcastService.broadcast(
                     textService.deserialize(
                         registry.getOrDefault(CatalystKeys.FIRST_JOIN)

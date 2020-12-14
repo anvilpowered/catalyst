@@ -22,10 +22,10 @@ import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.listener.StaffChatListener;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.slf4j.Logger;
 
@@ -67,8 +67,10 @@ public class CommonStaffChatListener<
             String finalMessage = message;
             userService.getOnlinePlayers().forEach(p -> {
                 if (permissionService.hasPermission(p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
-                    textService.send(pluginMessages.getStaffChatMessageFormatted("Console",
-                        textService.deserialize(finalMessage)), (TCommandSource) p);
+                    textService.send(
+                        pluginMessages.getStaffChatMessageFormattedConsole(textService.deserialize(finalMessage)),
+                        (TCommandSource) p
+                    );
                 }
             });
             logger.info("[STAFF] Console: " + message);
