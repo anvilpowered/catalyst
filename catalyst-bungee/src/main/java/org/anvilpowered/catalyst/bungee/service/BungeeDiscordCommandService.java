@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.bungee.service;
 
 import com.google.inject.Inject;
 import net.md_5.bungee.api.ProxyServer;
-import org.anvilpowered.catalyst.api.service.DiscordCommandService;
+import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
 import org.anvilpowered.catalyst.bungee.discord.DiscordCommandSource;
 
 public class BungeeDiscordCommandService implements DiscordCommandService {
@@ -27,8 +27,20 @@ public class BungeeDiscordCommandService implements DiscordCommandService {
     @Inject
     private DiscordCommandSource discordCommandSource;
 
+    private String channelId;
+
     @Override
     public void executeDiscordCommand(String command) {
         ProxyServer.getInstance().getPluginManager().dispatchCommand(discordCommandSource, command);
+    }
+
+    @Override
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    @Override
+    public String getChannelId() {
+        return channelId;
     }
 }

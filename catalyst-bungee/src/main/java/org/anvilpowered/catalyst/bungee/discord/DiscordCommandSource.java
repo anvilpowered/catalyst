@@ -23,8 +23,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
-import org.anvilpowered.catalyst.api.service.JDAService;
+import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
+import org.anvilpowered.catalyst.api.discord.JDAService;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -32,13 +32,13 @@ import java.util.Objects;
 public class DiscordCommandSource implements CommandSender {
 
     @Inject
-    private Registry registry;
-
-    @Inject
     private JDAService jdaService;
 
     @Inject
     private TextService<TextComponent, CommandSender> textService;
+
+    @Inject
+    private DiscordCommandService discordCommandService;
 
     @Override
     public String getName() {
@@ -47,10 +47,9 @@ public class DiscordCommandSource implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        Objects.requireNonNull(
-            Objects.requireNonNull(jdaService.getJDA()
-                .getTextChannelById(registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL)))
-                .sendMessage("```" + message + "```")
+        Objects.requireNonNull(Objects.requireNonNull(jdaService.getJDA()
+            .getTextChannelById(discordCommandService.getChannelId()))
+            .sendMessage("```" + message + "```")
         ).queue();
     }
 

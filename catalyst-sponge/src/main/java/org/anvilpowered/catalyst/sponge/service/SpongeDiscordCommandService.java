@@ -17,11 +17,21 @@
 
 package org.anvilpowered.catalyst.sponge.service;
 
-import org.anvilpowered.catalyst.api.service.DiscordCommandService;
+import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
 
 public class SpongeDiscordCommandService implements DiscordCommandService {
 
     @Override
     public void executeDiscordCommand(String command) {
+    }
+
+    @Override
+    public void setChannelId(String channelId) {
+
+    }
+
+    @Override
+    public String getChannelId() {
+        return null;
     }
 }

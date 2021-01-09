@@ -63,9 +63,9 @@ public final class CatalystKeys {
             .build();
     public static final Key<Boolean> JOIN_LISTENER_ENABLED =
         Key.builder(TypeTokens.BOOLEAN)
-        .name("JOIN_LISTENER_ENABLED")
-        .fallback(true)
-        .build();
+            .name("JOIN_LISTENER_ENABLED")
+            .fallback(true)
+            .build();
     public static final Key<String> LEAVE_MESSAGE =
         Key.builder(TypeTokens.STRING)
             .name("LEAVE_MESSAGE")
@@ -551,6 +551,11 @@ public final class CatalystKeys {
             .name("BROADCAST_COMMAND_ENABLED")
             .fallback(true)
             .build();
+    public static final Key<Boolean> CHANNEL_COMMAND_ENABLED =
+        Key.builder(TypeTokens.BOOLEAN)
+            .name("CHANNEL_COMMAND_ENABLED")
+            .fallback(true)
+            .build();
     public static final Key<Boolean> NICKNAME_COMMAND_ENABLED =
         Key.builder(TypeTokens.BOOLEAN)
             .name("NICKNAME_COMMAND_ENABLED")
@@ -677,17 +682,19 @@ public final class CatalystKeys {
         ChatChannel global = new ChatChannel();
         global.id = "global";
         global.aliases = Arrays.asList("globalchat", "globalchannel");
-        global.prefix = "[G]";
+        global.prefix = "[Global]";
         global.servers = Arrays.asList("main", "wild");
         global.alwaysVisible = true;
+        global.discordChannel = "123456789";
         chatChannels.add(global);
-        ChatChannel staff = new ChatChannel();
-        staff.id = "staff";
-        staff.aliases = Arrays.asList("staffchannel", "staffchat");
-        staff.prefix = "[S]";
-        staff.alwaysVisible = true;
-        staff.servers = Arrays.asList("main", "wild");
-        chatChannels.add(staff);
+        ChatChannel admin = new ChatChannel();
+        admin.id = "admin";
+        admin.aliases = Arrays.asList("adminchat", "adminchannel");
+        admin.prefix = "[Admin Chat]";
+        admin.alwaysVisible = true;
+        admin.servers = Arrays.asList("main", "wild");
+        admin.discordChannel = "123456789";
+        chatChannels.add(admin);
     }
 
     static {
@@ -787,6 +794,7 @@ public final class CatalystKeys {
             .register(VIA_VERSION_ENABLED)
             .register(BAN_COMMAND_ENABLED)
             .register(BROADCAST_COMMAND_ENABLED)
+            .register(CHANNEL_COMMAND_ENABLED)
             .register(NICKNAME_COMMAND_ENABLED)
             .register(FIND_COMMAND_ENABLED)
             .register(INFO_COMMAND_ENABLED)

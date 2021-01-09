@@ -64,6 +64,9 @@ public abstract class CommonCommandNode<
     private BroadcastCommand<TString, TCommandSource> broadcastCommand;
 
     @Inject
+    private ChannelCommand<TString, TPlayer, TCommandSource> channelCommand;
+
+    @Inject
     private DeleteNicknameCommand<TString, TPlayer, TCommandSource> deleteNickCommand;
 
     @Inject
@@ -249,6 +252,20 @@ public abstract class CommonCommandNode<
                 "message", StringArgumentType.greedyString())
                 .executes(broadcastCommand::execute)
                 .build())
+            .build();
+        final LiteralCommandNode<TCommandSource> channel = LiteralArgumentBuilder
+            .<TCommandSource>literal("channel")
+            .executes(ctx -> channelCommand.list(ctx, playerClass))
+            .then(LiteralArgumentBuilder.<TCommandSource>literal("set")
+                .executes(ctx -> {
+                    textService.send(pluginMessages.getNotEnoughArgs(), ctx.getSource());
+                    return 1;
+                })
+                .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                    "channel", StringArgumentType.greedyString())
+                    .executes(ctx -> channelCommand.set(ctx, playerClass))
+                    .build())
+            )
             .build();
         final LiteralCommandNode<TCommandSource> delNick = LiteralArgumentBuilder
             .<TCommandSource>literal("delnick")
@@ -578,6 +595,9 @@ public abstract class CommonCommandNode<
         }
         if (registry.getOrDefault(CatalystKeys.BROADCAST_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("broadcast", "cbroadcast"), broadcast);
+        }
+        if (registry.getOrDefault(CatalystKeys.CHANNEL_COMMAND_ENABLED)) {
+            commands.put(ImmutableList.of("channel", "chatchannel"), channel);
         }
         if (registry.getOrDefault(CatalystKeys.NICKNAME_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("delnick", "deletenick"), delNick);

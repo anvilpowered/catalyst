@@ -22,7 +22,7 @@ import com.google.inject.Module;
 import org.anvilpowered.anvil.api.Environment;
 import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.service.EventRegistrationService;
-import org.anvilpowered.catalyst.api.service.JDAService;
+import org.anvilpowered.catalyst.api.discord.JDAService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 

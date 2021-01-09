@@ -28,10 +28,9 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
-import org.anvilpowered.catalyst.api.service.JDAService;
+import org.anvilpowered.catalyst.api.discord.JDAService;
 import org.slf4j.Logger;
 
-import javax.security.auth.login.LoginException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -91,7 +90,7 @@ public class CommonJDAService<
                         registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_DELAY), TimeUnit.MINUTES);
                 }
                 jda.awaitReady();
-            } catch (LoginException | InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {

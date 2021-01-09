@@ -90,6 +90,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.VIA_VERSION_ENABLED, "advanced.viaversion");
         setName(CatalystKeys.BAN_COMMAND_ENABLED, "commands.ban");
         setName(CatalystKeys.BROADCAST_COMMAND_ENABLED, "commands.broadcast");
+        setName(CatalystKeys.CHANNEL_COMMAND_ENABLED, "commands.channel");
         setName(CatalystKeys.NICKNAME_COMMAND_ENABLED, "commands.nickname");
         setName(CatalystKeys.FIND_COMMAND_ENABLED, "commands.find");
         setName(CatalystKeys.INFO_COMMAND_ENABLED, "commands.info");
@@ -229,6 +230,9 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nToggle broadcast command handling " +
                 "\n(true = enabled | false = disabled)" +
                 "\nPermission : " + CatalystKeys.BROADCAST_PERMISSION.getFallbackValue());
+        setDescription(CatalystKeys.CHANNEL_COMMAND_ENABLED,
+            "\nToggle channel command handling" +
+                "\n(true = enabled | false = disabled)");
         setDescription(CatalystKeys.NICKNAME_COMMAND_ENABLED,
             "\nToggle nickname command handling " +
                 "\n(true = enabled | false = disabled)" +

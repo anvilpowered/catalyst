@@ -21,11 +21,11 @@ import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.registry.ChatChannel;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.listener.ChatListener;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EventService;
@@ -34,6 +34,7 @@ import org.anvilpowered.catalyst.api.service.StaffChatService;
 import java.util.Optional;
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage")
 public class CommonChatListener<
     TString,
     TPlayer,

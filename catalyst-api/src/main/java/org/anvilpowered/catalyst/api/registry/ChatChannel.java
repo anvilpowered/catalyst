@@ -38,6 +38,9 @@ public class ChatChannel {
     @Setting("servers")
     public List<String> servers;
 
-    @Setting(value = "alwaysVisible", comment = "Whether members of this channel will always recieve messages from this channel even when they are not in it. ")
+    @Setting(value = "alwaysVisible", comment = "Whether members of this channel will always receive messages from this channel even when they are not in it. ")
     public boolean alwaysVisible;
+
+    @Setting(value = "discordChannel", comment = "Discord channel id that chat should be relayed to")
+    public String discordChannel;
 }

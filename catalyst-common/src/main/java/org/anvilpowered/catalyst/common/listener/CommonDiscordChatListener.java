@@ -23,19 +23,28 @@ import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.discord.WebhookSender;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.event.StaffChatEvent;
 import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
+import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
 
-public class CommonDiscordChatListener<TUser, TString, TPlayer> implements DiscordChatListener<TString, TPlayer> {
+import java.util.Optional;
+
+public class CommonDiscordChatListener<
+    TUser,
+    TString,
+    TPlayer,
+    TCommandSource>
+    implements DiscordChatListener<TString, TPlayer> {
 
     @Inject
     private Registry registry;
@@ -51,6 +60,9 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
 
     @Inject
     private AdvancedServerInfoService serverService;
+
+    @Inject
+    private ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
     private LocationService locationService;
@@ -69,13 +81,25 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return;
         if (staffChatService.contains(userService.getUUID((TUser) event.getPlayer()))) return;
 
+        Optional<ChatChannel> optionalChannel =
+            chatService.getChannelFromId(chatService.getChannelIdForUser(userService.getUUID((TUser) event.getPlayer())));
+        String dChannelId = registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL);
+        String channelPrefix = "";
+
+        if (optionalChannel.isPresent()) {
+            channelPrefix = optionalChannel.get().prefix;
+            if (optionalChannel.get().discordChannel != null) {
+                dChannelId = optionalChannel.get().discordChannel;
+            }
+        }
+
         String message = event.getRawMessage();
         if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
             for (String key : emojiService.getEmojis().keySet()) {
                 message = message.replace(emojiService.getEmojis().get(key).toString(), key);
             }
         }
-        if(!permissionService.hasPermission(event.getPlayer(),
+        if (!permissionService.hasPermission(event.getPlayer(),
             registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
             message = message.replaceAll("@", "");
         }
@@ -87,6 +111,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
         }
 
         String name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
+            .replace("%channel%", channelPrefix)
             .replace("%server%", server)
             .replace("%player%", userService.getUserName((TUser) event.getPlayer()))
             .replace("%prefix%", luckPermsService.getPrefix(event.getPlayer()))
@@ -95,7 +120,7 @@ public class CommonDiscordChatListener<TUser, TString, TPlayer> implements Disco
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
             name,
             message,
-            registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL),
+            dChannelId,
             event.getPlayer()
         );
     }

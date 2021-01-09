@@ -28,7 +28,7 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.anvilpowered.anvil.api.command.CommandNode;
 import org.anvilpowered.anvil.api.registry.ConfigurationService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
-import org.anvilpowered.catalyst.api.service.DiscordCommandService;
+import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 import org.anvilpowered.catalyst.common.registry.ProxyConfigurationService;

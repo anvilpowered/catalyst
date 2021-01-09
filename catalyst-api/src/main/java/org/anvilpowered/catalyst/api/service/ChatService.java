@@ -17,8 +17,8 @@
 
 package org.anvilpowered.catalyst.api.service;
 
-import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
+import org.anvilpowered.catalyst.api.registry.ChatChannel;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,14 +38,11 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     int getChannelUserCount(String channelId);
 
-    TString getUsersInChannel(String channelId);
+    List<TPlayer> getUsersInChannel(String channelId);
 
     CompletableFuture<Void> sendMessageToChannel(String channelId,
                                                  TString message,
-                                                 String server,
-                                                 String userName,
-                                                 UUID userUUID,
-                                                 Predicate<? super TPlayer> checkOverridePerm);
+                                                 UUID userUUID);
 
     CompletableFuture<Void> sendGlobalMessage(TPlayer player, TString message);
 
@@ -63,8 +60,6 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
     List<TString> getPlayerList();
 
     void sendList(TCommandSource commandSource);
-
-    TString createTempChannel(String prefix, UUID creator);
 
     TString ignore(UUID playerUUID, UUID targetPlayerUUID);
 

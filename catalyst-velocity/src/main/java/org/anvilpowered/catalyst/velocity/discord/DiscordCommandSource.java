@@ -20,19 +20,17 @@ package org.anvilpowered.catalyst.velocity.discord;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.permission.Tristate;
-import net.kyori.text.Component;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
-import org.anvilpowered.catalyst.api.service.JDAService;
+import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
+import org.anvilpowered.catalyst.api.discord.JDAService;
 
 import java.util.Objects;
 
 public class DiscordCommandSource implements CommandSource {
-
-    @Inject
-    private Registry registry;
 
     @Inject
     private JDAService jdaHook;
@@ -40,17 +38,25 @@ public class DiscordCommandSource implements CommandSource {
     @Inject
     private TextService<TextComponent, CommandSource> textService;
 
+    @Inject
+    private DiscordCommandService discordCommandService;
+
     @Override
     public boolean hasPermission(String permission) {
         return true;
     }
 
     @Override
-    public void sendMessage(Component component) {
+    public void sendMessage(net.kyori.text.Component component) {
+        //Not implemented due to deprecation
+    }
+
+    @Override
+    public void sendMessage(Identity identity, Component message, MessageType type) {
         Objects.requireNonNull(
             jdaHook.getJDA()
-                .getTextChannelById(registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL)))
-            .sendMessage("```" + textService.serializePlain((TextComponent) component) + "```")
+                .getTextChannelById(discordCommandService.getChannelId()))
+            .sendMessage("```" + textService.serializePlain((TextComponent) message) + "```")
             .queue();
     }
 

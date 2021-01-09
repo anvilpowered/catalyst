@@ -26,7 +26,7 @@ import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.discord.WebhookSender;
-import org.anvilpowered.catalyst.api.service.JDAService;
+import org.anvilpowered.catalyst.api.discord.JDAService;
 import org.json.JSONObject;
 
 public class CommonWebhookSender<TUser, TPlayer> implements WebhookSender {

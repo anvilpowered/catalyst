@@ -20,6 +20,7 @@ package org.anvilpowered.catalyst.velocity.listener;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -42,23 +43,23 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.anvilpowered.anvil.api.Anvil;
 import org.anvilpowered.anvil.api.coremember.CoreMemberManager;
-import org.anvilpowered.anvil.api.datastore.Manager;
 import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
-import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.event.CommandEvent;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
+import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
 import org.anvilpowered.catalyst.api.service.TabService;
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -107,7 +108,9 @@ public class VelocityListener {
 
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
-        if (event.getLoginStatus().toString().equals("PRE_SERVER_JOIN")) return;
+        if (event.getLoginStatus().toString().equals("PRE_SERVER_JOIN")) {
+            return;
+        }
         leaveEvent.setPlayer(event.getPlayer());
         eventService.getEventBus().post(leaveEvent);
     }
@@ -119,24 +122,25 @@ public class VelocityListener {
             if (s == null || s.getVersion() == null) {
                 event.getPlayer().disconnect(textService.of("Failed to connect."));
             } else {
-                if (event.getPlayer().getVirtualHost().isPresent()) {
+                Optional<InetSocketAddress> virtualHost = player.getVirtualHost();
+                if (virtualHost.isPresent()) {
                     if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
                         AtomicBoolean hostNameExists = new AtomicBoolean(false);
                         for (AdvancedServerInfo serverInfo : registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO)) {
                             if (serverInfo.hostName.equalsIgnoreCase(
-                                event.getPlayer().getVirtualHost().get().getHostString())) {
+                                virtualHost.get().getHostString())) {
                                 hostNameExists.set(true);
                             }
                         }
                         if (!hostNameExists.get()) {
-                            event.getPlayer().disconnect(textService.deserialize(
+                            player.disconnect(textService.deserialize(
                                 "&4Please re-connect using the correct IP!"
                             ));
                         }
                     }
                     joinEvent.setPlayer(player);
                     joinEvent.setPlayerUUID(player.getUniqueId());
-                    joinEvent.setHostString(player.getVirtualHost().get().getHostString());
+                    joinEvent.setHostString(virtualHost.get().getHostString());
                     eventService.getEventBus().post(joinEvent);
                 }
             }
@@ -166,9 +170,9 @@ public class VelocityListener {
             }
             CoreMember<?> coreMember = optionalMember.get();
             if (Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent().checkBanned(coreMember)) {
-                player.disconnect(
+                event.setResult(ResultedEvent.ComponentResult.denied(
                     pluginMessages.getBanMessage(coreMember.getBanReason(), coreMember.getBanEndUtc())
-                );
+                ));
             }
         }).join();
     }

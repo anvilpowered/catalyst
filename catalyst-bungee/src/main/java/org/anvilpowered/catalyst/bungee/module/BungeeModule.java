@@ -27,7 +27,7 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.anvilpowered.anvil.api.command.CommandNode;
 import org.anvilpowered.anvil.api.registry.ConfigurationService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
-import org.anvilpowered.catalyst.api.service.DiscordCommandService;
+import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
 import org.anvilpowered.catalyst.bungee.command.BungeeCommandNode;
 import org.anvilpowered.catalyst.bungee.service.BungeeBroadcastService;
 import org.anvilpowered.catalyst.bungee.service.BungeeDiscordCommandService;

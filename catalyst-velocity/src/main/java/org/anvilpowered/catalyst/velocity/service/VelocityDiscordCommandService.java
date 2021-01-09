@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.velocity.service;
 import com.google.inject.Inject;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.ProxyServer;
-import org.anvilpowered.catalyst.api.service.DiscordCommandService;
+import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource;
 import org.slf4j.Logger;
 
@@ -38,11 +38,23 @@ public class VelocityDiscordCommandService implements DiscordCommandService {
     @Inject
     private Logger logger;
 
+    private String channelId;
+
     @Override
     public void executeDiscordCommand(String command) {
         proxyServer.getScheduler().buildTask(pluginContainer, () -> {
             proxyServer.getCommandManager().executeAsync(discordCommandSource, command);
             logger.info("Discord: " + command);
         }).schedule();
+    }
+
+    @Override
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    @Override
+    public String getChannelId() {
+        return channelId;
     }
 }

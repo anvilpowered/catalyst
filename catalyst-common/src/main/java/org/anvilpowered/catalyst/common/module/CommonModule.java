@@ -42,7 +42,7 @@ import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.EventRegistrationService;
-import org.anvilpowered.catalyst.api.service.JDAService;
+import org.anvilpowered.catalyst.api.discord.JDAService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.service.StaffChatService;
@@ -199,7 +199,7 @@ public class CommonModule<
         be.bind(
             new TypeToken<DiscordChatListener<TString, TPlayer>>(getClass()) {
             },
-            new TypeToken<CommonDiscordChatListener<TUser, TString, TPlayer>>(getClass()) {
+            new TypeToken<CommonDiscordChatListener<TUser, TString, TPlayer, TCommandSource>>(getClass()) {
             }
         );
         be.bind(
