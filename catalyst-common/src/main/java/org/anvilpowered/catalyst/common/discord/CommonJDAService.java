@@ -27,12 +27,12 @@ import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.UserService;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.discord.JDAService;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.slf4j.Logger;
 
+import javax.security.auth.login.LoginException;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -42,7 +42,7 @@ public class CommonJDAService<
     TString,
     TCommandSource> implements JDAService {
 
-    private Registry registry;
+    private final Registry registry;
     private boolean isLoaded = false;
     private JDA jda;
 
@@ -63,38 +63,48 @@ public class CommonJDAService<
 
     @Override
     public void enableDiscordBot() {
-        if (registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
-            if (isLoaded) {
-                jda.shutdownNow();
-            }
-            try {
-                JDABuilder builder = JDABuilder.createDefault(registry.getOrDefault(CatalystKeys.BOT_TOKEN));
-                builder.setCompression(Compression.NONE);
-                builder.setBulkDeleteSplittingEnabled(false);
-                builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
-
-                jda = builder.build();
-                String playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS);
-                String nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE);
-                if (userService.getOnlinePlayers().size() != 0) {
-                    playerCount = Integer.toString(userService.getOnlinePlayers().size());
-                }
-                jda.getPresence().setActivity(
-                    Activity.playing(nowPlaying.replaceAll("%players%", playerCount))
-                );
-                jda.addEventListener(discordListener);
-                isLoaded = true;
-                if (registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_ENABLED)) {
-                    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-                    executor.scheduleAtFixedRate(this.updateTopic(), 1,
-                        registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_DELAY), TimeUnit.MINUTES);
-                }
-                jda.awaitReady();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
+        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
             logger.warn("The discord bot is disabled! Chat will not be transmitted from in-game to discord.");
+            return;
+        }
+        if (isLoaded) {
+            jda.shutdownNow();
+        }
+
+        try {
+            JDABuilder builder = JDABuilder.createDefault(registry.getOrDefault(CatalystKeys.BOT_TOKEN));
+            builder.setCompression(Compression.NONE);
+            builder.setBulkDeleteSplittingEnabled(false);
+            builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
+
+            jda = builder.build();
+        } catch (LoginException e) {
+            e.printStackTrace();
+        }
+
+        String playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS);
+        String nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE);
+
+        if (userService.getOnlinePlayers().size() != 0) {
+            playerCount = Integer.toString(userService.getOnlinePlayers().size());
+        }
+
+        jda.getPresence().setActivity(Activity.playing(nowPlaying.replaceAll("%players%", playerCount)));
+        jda.addEventListener(discordListener);
+        isLoaded = true;
+
+        if (registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_ENABLED)) {
+            Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
+                this.updateTopic(),
+                1,
+                registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_DELAY), TimeUnit.MINUTES
+            );
+        }
+
+        try {
+            jda.awaitReady();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -111,6 +121,10 @@ public class CommonJDAService<
                 jda.getPresence().setActivity(
                     Activity.playing(nowPlaying.replaceAll("%players%", playerCount))
                 );
+            }
+            if (channel == null) {
+                logger.error("Could not update the main channel topic!");
+                return;
             }
             channel.getManager().setTopic(
                 registry.getOrDefault(CatalystKeys.TOPIC_FORMAT)
