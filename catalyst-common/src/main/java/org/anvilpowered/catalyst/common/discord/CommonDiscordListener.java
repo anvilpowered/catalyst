@@ -58,9 +58,6 @@ public class CommonDiscordListener<
     private TextService<TString, TCommandSource> textService;
 
     @Inject
-    private PermissionService permissionService;
-
-    @Inject
     private Logger logger;
 
     @Inject
@@ -99,28 +96,6 @@ public class CommonDiscordListener<
                     .collect(Collectors.joining(", ")) + "```";
             }
             event.getChannel().sendMessage(playerNames).queue();
-            return;
-        }
-
-        if (event.getChannel().getId().equals(registry.getOrDefault(CatalystKeys.DISCORD_STAFF_CHANNEL))) {
-            if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
-                for (String key : emojiService.getEmojis().keySet()) {
-                    message = message.replace(key, emojiService.getEmojis().get(key).toString());
-                }
-            }
-            String finalMessage = registry.getOrDefault(CatalystKeys.DISCORD_STAFF_FORMAT)
-                .replace("%name%", event.getMember().getEffectiveName())
-                .replace("%message%", message);
-            userService.getOnlinePlayers().forEach(p -> {
-                if (permissionService.hasPermission(p, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION))) {
-                    textService.builder()
-                        .append(textService.deserialize(finalMessage))
-                        .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))
-                        .onHoverShowText(textService.of(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)))
-                        .sendTo((TCommandSource) p);
-                }
-            });
-            logger.info("[Discord][STAFF] " + event.getMember().getEffectiveName() + " : " + EmojiParser.parseToAliases(event.getMessage().getContentDisplay()));
             return;
         }
 

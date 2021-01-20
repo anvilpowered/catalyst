@@ -17,9 +17,15 @@
 
 package org.anvilpowered.catalyst.api.event;
 
-public interface LeaveEvent<TPlayer> {
+public final class LeaveEvent<TPlayer> {
 
-    TPlayer getPlayer();
+    private final TPlayer player;
 
-    void setPlayer(TPlayer player);
+    public LeaveEvent(TPlayer player) {
+        this.player = player;
+    }
+
+    public TPlayer getPlayer() {
+        return this.player;
+    }
 }

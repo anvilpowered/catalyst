@@ -19,17 +19,27 @@ package org.anvilpowered.catalyst.api.event;
 
 import java.util.UUID;
 
-public interface JoinEvent<TPlayer> {
+public final class JoinEvent<TPlayer> {
 
-    TPlayer getPlayer();
+    private final TPlayer player;
+    private final String hostString;
+    private final UUID playerUUID;
 
-    void setPlayer(TPlayer player);
+    public JoinEvent(TPlayer player, String hostString, UUID playerUUID) {
+        this.player = player;
+        this.hostString = hostString;
+        this.playerUUID = playerUUID;
+    }
 
-    String getHostString();
+    public TPlayer getPlayer() {
+        return player;
+    }
 
-    void setHostString(String hostString);
+    public String getHostString() {
+        return hostString;
+    }
 
-    UUID getPlayerUUID();
-
-    void setPlayerUUID(UUID playerUUID);
+    public UUID getPlayerUUID() {
+        return playerUUID;
+    }
 }

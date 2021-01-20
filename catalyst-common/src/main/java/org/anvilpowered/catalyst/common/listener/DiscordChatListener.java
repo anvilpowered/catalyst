@@ -17,6 +17,7 @@
 
 package org.anvilpowered.catalyst.common.listener;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.misc.Named;
 import org.anvilpowered.anvil.api.registry.Registry;
@@ -27,24 +28,20 @@ import org.anvilpowered.catalyst.api.discord.WebhookSender;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
-import org.anvilpowered.catalyst.api.event.StaffChatEvent;
-import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
-import org.anvilpowered.catalyst.api.service.StaffChatService;
 
 import java.util.Optional;
 
-public class CommonDiscordChatListener<
+public class DiscordChatListener<
     TUser,
     TString,
     TPlayer,
-    TCommandSource>
-    implements DiscordChatListener<TString, TPlayer> {
+    TCommandSource> {
 
     @Inject
     private Registry registry;
@@ -73,13 +70,11 @@ public class CommonDiscordChatListener<
     @Inject
     private PermissionService permissionService;
 
-    @Inject
-    private StaffChatService staffChatService;
-
-    @Override
+    @Subscribe
     public void onChatEvent(ChatEvent<TString, TPlayer> event) {
-        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return;
-        if (staffChatService.contains(userService.getUUID((TUser) event.getPlayer()))) return;
+        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
+            return;
+        }
 
         Optional<ChatChannel> optionalChannel =
             chatService.getChannelFromId(chatService.getChannelIdForUser(userService.getUUID((TUser) event.getPlayer())));
@@ -125,48 +120,11 @@ public class CommonDiscordChatListener<
         );
     }
 
-    @Override
-    public void onStaffChatEvent(StaffChatEvent<TString, TPlayer> event) {
-        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return;
-
-        String message = event.getRawMessage();
-        if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
-            for (String key : emojiService.getEmojis().keySet()) {
-                message = message.replace(emojiService.getEmojis().get(key).toString(), key);
-            }
-        }
-
-        if (event.getIsConsole()) {
-            webHookSender.sendConsoleWebhookMessage(
-                registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
-                message,
-                registry.getOrDefault(CatalystKeys.DISCORD_STAFF_CHANNEL)
-            );
+    @Subscribe
+    public void onPlayerJoinEvent(JoinEvent<TPlayer> event) {
+        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
             return;
         }
-
-
-        String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
-            ? serverService.getPrefixForPlayer(userService.getUserName((TUser) event.getPlayer()))
-            : locationService.getServer(userService.getUserName((TUser) event.getPlayer())).map(Named::getName).orElse("null");
-
-        String name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
-            .replace("%server%", server)
-            .replace("%player%", userService.getUserName((TUser) event.getPlayer()))
-            .replace("%prefix%", luckPermsService.getPrefix(event.getPlayer()))
-            .replace("%suffix%", luckPermsService.getSuffix(event.getPlayer()));
-        webHookSender.sendWebhookMessage(
-            registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
-            name,
-            message,
-            registry.getOrDefault(CatalystKeys.DISCORD_STAFF_CHANNEL),
-            event.getPlayer()
-        );
-    }
-
-    @Override
-    public void onPlayerJoinEvent(JoinEvent<TPlayer> event) {
-        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return;
 
         String joinMessage = registry.getOrDefault(CatalystKeys.DISCORD_JOIN_FORMAT);
         if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)) {
@@ -191,7 +149,7 @@ public class CommonDiscordChatListener<
         );
     }
 
-    @Override
+    @Subscribe
     public void onPlayerLeaveEvent(LeaveEvent<TPlayer> event) {
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return;
         String leaveMessage = registry.getOrDefault(CatalystKeys.DISCORD_LEAVE_FORMAT);

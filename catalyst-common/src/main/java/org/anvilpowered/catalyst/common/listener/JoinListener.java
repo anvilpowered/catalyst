@@ -17,6 +17,7 @@
 
 package org.anvilpowered.catalyst.common.listener;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.misc.Named;
 import org.anvilpowered.anvil.api.registry.Registry;
@@ -25,7 +26,6 @@ import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
-import org.anvilpowered.catalyst.api.listener.JoinListener;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
@@ -36,12 +36,11 @@ import org.slf4j.Logger;
 
 import java.util.UUID;
 
-public class CommonJoinListener<
+public class JoinListener<
     TUser,
     TString,
     TPlayer,
-    TCommandSource>
-    implements JoinListener<TPlayer> {
+    TCommandSource> {
 
     @Inject
     private UserService<TUser, TPlayer> userService;
@@ -77,7 +76,7 @@ public class CommonJoinListener<
     private EmojiService emojiService;
 
 
-    @Override
+    @Subscribe
     public void onPlayerJoin(JoinEvent<TPlayer> event) {
         TPlayer player = event.getPlayer();
         UUID playerUUID = event.getPlayerUUID();

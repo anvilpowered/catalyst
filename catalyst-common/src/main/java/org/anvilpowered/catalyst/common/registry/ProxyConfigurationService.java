@@ -71,7 +71,6 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.DISCORD_JOIN_FORMAT, "discord.format.join");
         setName(CatalystKeys.DISCORD_LEAVE_FORMAT, "discord.format.leave");
         setName(CatalystKeys.DISCORD_CHAT_FORMAT, "discord.format.discord");
-        setName(CatalystKeys.DISCORD_STAFF_FORMAT, "discord.format.staff");
         setName(CatalystKeys.TOPIC_FORMAT, "discord.topic.format");
         setName(CatalystKeys.TOPIC_UPDATE_ENABLED, "discord.topic.enabled");
         setName(CatalystKeys.TOPIC_UPDATE_DELAY, "discord.topic.updateInterval");
@@ -100,7 +99,6 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.SEND_COMMAND_ENABLED, "commands.send");
         setName(CatalystKeys.SERVER_COMMAND_ENABLED, "commands.server.enabled");
         setName(CatalystKeys.SOCIALSPY_COMMAND_ENABLED, "commands.socialspy");
-        setName(CatalystKeys.STAFFCHAT_COMMAND_ENABLED, "commands.staffchat");
         setName(CatalystKeys.MUTE_COMMAND_ENABLED, "commands.mute");
         setName(CatalystKeys.IGNORE_COMMAND_ENABLED, "commands.ignore");
         setName(CatalystKeys.ADVANCED_ROOT, "advanced");
@@ -181,8 +179,6 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nMessage to be sent to the discord each time a player leaves.");
         setDescription(CatalystKeys.DISCORD_CHAT_FORMAT,
             "\nFormat of the message being sent from discord to in-game");
-        setDescription(CatalystKeys.DISCORD_STAFF_FORMAT,
-            "\nFormat of the message being sent from the staffchat channel to in-game");
         setDescription(CatalystKeys.TOPIC_FORMAT,
             "\nFormat of the main channel topic");
         setDescription(CatalystKeys.TOPIC_UPDATE_DELAY,
@@ -270,10 +266,6 @@ public class ProxyConfigurationService extends BaseConfigurationService {
             "\nToggle SocialSpy command handling " +
                 "\n(true = enabled | false = disabled)" +
                 "\nPermission : " + CatalystKeys.SOCIALSPY_PERMISSION.getFallbackValue());
-        setDescription(CatalystKeys.STAFFCHAT_COMMAND_ENABLED,
-            "\nToggle staffchat command handling" +
-                "\n(true = enabled | false = disabled)" +
-                "\nPermission : " + CatalystKeys.STAFFCHAT_PERMISSION.getFallbackValue());
         setDescription(CatalystKeys.MUTE_COMMAND_ENABLED,
             "\nToggle mute command handling " +
                 "\n(true = enabled | false = disabled)" +

@@ -19,39 +19,38 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.catalyst.api.listener.ChatListener;
-import org.anvilpowered.catalyst.api.listener.CommandListener;
-import org.anvilpowered.catalyst.api.listener.DiscordChatListener;
-import org.anvilpowered.catalyst.api.listener.LeaveListener;
-import org.anvilpowered.catalyst.api.listener.StaffChatListener;
 import org.anvilpowered.catalyst.api.service.EventRegistrationService;
 import org.anvilpowered.catalyst.api.service.EventService;
-import org.anvilpowered.catalyst.common.listener.CommonJoinListener;
+import org.anvilpowered.catalyst.common.listener.ChatListener;
+import org.anvilpowered.catalyst.common.listener.CommandListener;
+import org.anvilpowered.catalyst.common.listener.DiscordChatListener;
+import org.anvilpowered.catalyst.common.listener.JoinListener;
+import org.anvilpowered.catalyst.common.listener.LeaveListener;
 
-public class CommonEventRegistrationService<TUser, TPlayer, TString, TCommandSource> implements EventRegistrationService {
-
+public class CommonEventRegistrationService<
+    TUser,
+    TString,
+    TPlayer,
+    TCommandSource>
+    implements EventRegistrationService {
 
     @Inject
     private EventService eventService;
 
     @Inject
-    private ChatListener<TString, TPlayer> chatListener;
+    private ChatListener<TString, TPlayer, TCommandSource> chatListener;
 
     @Inject
-    private StaffChatListener<TString, TPlayer> staffChatListener;
+    private JoinListener<TUser, TString, TPlayer, TCommandSource> joinListener;
 
     @Inject
-    private CommonJoinListener<TUser, TString, TPlayer, TCommandSource> joinListener;
+    private LeaveListener<TUser, TString, TPlayer, TCommandSource> leaveListener;
 
     @Inject
-    private LeaveListener<TPlayer> leaveListener;
-
-    @Inject
-    private DiscordChatListener<TString, TPlayer> discordChatListener;
+    private DiscordChatListener<TUser, TString, TPlayer, TCommandSource> discordChatListener;
 
     @Inject
     private CommandListener commandListener;
-
 
     @Inject
     public CommonEventRegistrationService(Registry registry) {
@@ -60,7 +59,6 @@ public class CommonEventRegistrationService<TUser, TPlayer, TString, TCommandSou
 
     public void registerEvents() {
         eventService.getEventBus().register(chatListener);
-        eventService.getEventBus().register(staffChatListener);
         eventService.getEventBus().register(joinListener);
         eventService.getEventBus().register(leaveListener);
         eventService.getEventBus().register(discordChatListener);

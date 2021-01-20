@@ -18,21 +18,33 @@
 
 package org.anvilpowered.catalyst.api.event;
 
-public interface CommandEvent {
+public final class CommandEvent {
 
-    Object getSourceType();
+    private final Object sourceType;
+    private final String sourceName;
+    private final String command;
+    private final boolean result;
 
-    void setSourceType(Object sourceType);
+    public CommandEvent(Object sourceType, String sourceName, String command, boolean result) {
+        this.sourceType = sourceType;
+        this.sourceName = sourceName;
+        this.command = command;
+        this.result = result;
+    }
 
-    String getCommand();
+    public Object getSourceType() {
+        return sourceType;
+    }
 
-    void setCommand(String command);
+    public String getSourceName() {
+        return sourceName;
+    }
 
-    Boolean getResult();
+    public String getCommand() {
+        return command;
+    }
 
-    void setResult(boolean result);
-
-    String getSourceName();
-
-    void setSourceName(String name);
+    public boolean getResult() {
+        return result;
+    }
 }

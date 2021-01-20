@@ -303,12 +303,6 @@ public final class CatalystKeys {
             .fallback("catalyst.admin.command.socialspy.onjoin")
             .sensitive()
             .build();
-    public static final Key<String> STAFFCHAT_PERMISSION =
-        Key.builder(TypeTokens.STRING)
-            .name("STAFFCHAT_PERMISSION")
-            .fallback("catalyst.admin.command.staffchat")
-            .sensitive()
-            .build();
     public static final Key<String> STAFFLIST_ADMIN_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("STAFFLIST_ADMIN_PERMISSION")
@@ -387,11 +381,6 @@ public final class CatalystKeys {
         Key.builder(TypeTokens.STRING)
             .name("DISCORD_CHAT_FORMAT")
             .fallback("&6[Discord]&7 %name% : %message%")
-            .build();
-    public static final Key<String> DISCORD_STAFF_FORMAT =
-        Key.builder(TypeTokens.STRING)
-            .name("DISCORD_STAFF_FORMAT")
-            .fallback("&b[STAFF] &7Discord %name%:&b %message%")
             .build();
     public static final Key<String> TOPIC_FORMAT =
         Key.builder(TypeTokens.STRING)
@@ -601,11 +590,6 @@ public final class CatalystKeys {
             .name("SOCIALSPY_COMMAND_ENABLED")
             .fallback(true)
             .build();
-    public static final Key<Boolean> STAFFCHAT_COMMAND_ENABLED =
-        Key.builder(TypeTokens.BOOLEAN)
-            .name("STAFFCHAT_COMMAND_ENABLED")
-            .fallback(true)
-            .build();
     public static final Key<Boolean> MUTE_COMMAND_ENABLED =
         Key.builder(TypeTokens.BOOLEAN)
             .name("MUTE_COMMAND_ENABLED")
@@ -754,7 +738,6 @@ public final class CatalystKeys {
             .register(SEND_PERMISSION)
             .register(SOCIALSPY_PERMISSION)
             .register(SOCIALSPY_ONJOIN_PERMISSION)
-            .register(STAFFCHAT_PERMISSION)
             .register(STAFFLIST_ADMIN_PERMISSION)
             .register(STAFFLIST_BASE_PERMISSION)
             .register(STAFFLIST_OWNER_PERMISSION)
@@ -764,12 +747,10 @@ public final class CatalystKeys {
             .register(BOT_NAME)
             .register(BOT_TOKEN)
             .register(DISCORD_MAIN_CHANNEL)
-            .register(DISCORD_STAFF_CHANNEL)
             .register(DISCORD_PLAYER_CHAT_FORMAT)
             .register(DISCORD_JOIN_FORMAT)
             .register(DISCORD_LEAVE_FORMAT)
             .register(DISCORD_CHAT_FORMAT)
-            .register(DISCORD_STAFF_FORMAT)
             .register(TOPIC_FORMAT)
             .register(TOPIC_UPDATE_ENABLED)
             .register(TOPIC_UPDATE_DELAY)
@@ -804,7 +785,6 @@ public final class CatalystKeys {
             .register(SEND_COMMAND_ENABLED)
             .register(SERVER_COMMAND_ENABLED)
             .register(SOCIALSPY_COMMAND_ENABLED)
-            .register(STAFFCHAT_COMMAND_ENABLED)
             .register(MUTE_COMMAND_ENABLED)
             .register(IGNORE_COMMAND_ENABLED)
             .register(ADVANCED_ROOT)

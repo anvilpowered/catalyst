@@ -17,24 +17,23 @@
 
 package org.anvilpowered.catalyst.common.listener;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
-import org.anvilpowered.catalyst.api.listener.LeaveListener;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
 import org.slf4j.Logger;
 
-public class CommonLeaveListener<
+public class LeaveListener<
     TUser,
     TString,
     TPlayer,
-    TCommandSource>
-    implements LeaveListener<TPlayer> {
+    TCommandSource> {
 
     @Inject
     private UserService<TUser, TPlayer> userService;
@@ -58,7 +57,7 @@ public class CommonLeaveListener<
     private EmojiService emojiService;
 
 
-    @Override
+    @Subscribe
     public void onPlayerLeave(LeaveEvent<TPlayer> event) {
         TPlayer player = event.getPlayer();
         staffListService.removeStaffNames(userService.getUserName((TUser) player));

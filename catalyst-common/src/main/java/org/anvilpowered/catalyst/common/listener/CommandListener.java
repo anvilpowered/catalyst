@@ -18,16 +18,16 @@
 
 package org.anvilpowered.catalyst.common.listener;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.CommandEvent;
-import org.anvilpowered.catalyst.api.listener.CommandListener;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.slf4j.Logger;
 
 import java.util.List;
 
-public class CommonCommandListener implements CommandListener {
+public class CommandListener {
 
     @Inject
     private Logger logger;
@@ -35,7 +35,7 @@ public class CommonCommandListener implements CommandListener {
     @Inject
     private Registry registry;
 
-    @Override
+    @Subscribe
     public void onCommandExecution(CommandEvent event) {
         if (registry.getOrDefault(CatalystKeys.COMMAND_LOGGING_ENABLED)) {
             List<String> commandList = registry.getOrDefault(CatalystKeys.COMMAND_LOGGING_FILTER);

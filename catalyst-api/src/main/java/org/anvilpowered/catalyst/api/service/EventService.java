@@ -31,4 +31,7 @@ public class EventService {
         return this.eventBus;
     }
 
+    public void post(Object event) {
+        this.eventBus.post(event);
+    }
 }

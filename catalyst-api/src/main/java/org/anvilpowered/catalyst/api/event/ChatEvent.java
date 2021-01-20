@@ -17,17 +17,31 @@
 
 package org.anvilpowered.catalyst.api.event;
 
-public interface ChatEvent<TString, TPlayer> {
+public final class ChatEvent<TString, TPlayer> {
 
-    TPlayer getPlayer();
+    private final TPlayer player;
+    private String rawMessage;
+    private final TString message;
 
-    void setPlayer(TPlayer sender);
+    public ChatEvent(TPlayer player, String rawMessage, TString message) {
+        this.player = player;
+        this.rawMessage = rawMessage;
+        this.message = message;
+    }
 
-    String getRawMessage();
+    public TPlayer getPlayer() {
+        return player;
+    }
 
-    void setRawMessage(String rawMessage);
+    public String getRawMessage() {
+        return rawMessage;
+    }
 
-    TString getMessage();
+    public TString getMessage() {
+        return message;
+    }
 
-    void setMessage(TString message);
+    public void setRawMessage(String rawMessage) {
+        this.rawMessage = rawMessage;
+    }
 }

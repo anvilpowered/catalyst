@@ -55,7 +55,6 @@ import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EventService;
-import org.anvilpowered.catalyst.api.service.StaffChatService;
 import org.anvilpowered.catalyst.api.service.TabService;
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource;
 
@@ -80,19 +79,7 @@ public class VelocityListener {
     private TabService<TextComponent, Player> tabService;
 
     @Inject
-    private ChatEvent<TextComponent, Player> chatEvent;
-
-    @Inject
     private EventService eventService;
-
-    @Inject
-    private JoinEvent<Player> joinEvent;
-
-    @Inject
-    private LeaveEvent<Player> leaveEvent;
-
-    @Inject
-    private CommandEvent commandEvent;
 
     @Inject
     private PluginMessages<TextComponent> pluginMessages;
@@ -103,16 +90,12 @@ public class VelocityListener {
     @Inject
     private TextService<TextComponent, CommandSource> textService;
 
-    @Inject
-    private StaffChatService staffChatService;
-
     @Subscribe
     public void onPlayerLeave(DisconnectEvent event) {
         if (event.getLoginStatus().toString().equals("PRE_SERVER_JOIN")) {
             return;
         }
-        leaveEvent.setPlayer(event.getPlayer());
-        eventService.getEventBus().post(leaveEvent);
+        eventService.post(new LeaveEvent<>(event.getPlayer()));
     }
 
     @Subscribe
@@ -138,10 +121,7 @@ public class VelocityListener {
                             ));
                         }
                     }
-                    joinEvent.setPlayer(player);
-                    joinEvent.setPlayerUUID(player.getUniqueId());
-                    joinEvent.setHostString(virtualHost.get().getHostString());
-                    eventService.getEventBus().post(joinEvent);
+                    eventService.post(new JoinEvent<>(player, virtualHost.get().getHostName(), player.getUniqueId()));
                 }
             }
         }).join());
@@ -179,8 +159,7 @@ public class VelocityListener {
 
     @Subscribe
     public void onChat(PlayerChatEvent e) {
-        if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)
-            || staffChatService.contains(e.getPlayer().getUniqueId())) {
+        if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
             Player player = e.getPlayer();
             e.setResult(PlayerChatEvent.ChatResult.denied());
             Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()
@@ -197,28 +176,23 @@ public class VelocityListener {
                         pluginMessages.getMuteMessage(coreMember.getMuteReason(), coreMember.getMuteEndUtc())
                     );
                 } else {
-                    chatEvent.setPlayer(player);
-                    chatEvent.setRawMessage(e.getMessage());
-                    chatEvent.setMessage(textService.of(e.getMessage()));
-                    eventService.getEventBus().post(chatEvent);
+                    eventService.post(new ChatEvent<>(player, e.getMessage(), textService.of(e.getMessage())));
                 }
             });
         }
     }
 
     @Subscribe
-    public void onCommand(CommandExecuteEvent executeEvent) {
-        if (executeEvent.getCommandSource() instanceof ConsoleCommandSource) {
-            commandEvent.setSourceName("Console");
-        } else if (executeEvent.getCommandSource() instanceof DiscordCommandSource) {
-            commandEvent.setSourceName("Discord");
+    public void onCommand(CommandExecuteEvent e) {
+        String sourceName;
+        if (e.getCommandSource() instanceof ConsoleCommandSource) {
+            sourceName = "Console";
+        } else if (e.getCommandSource() instanceof DiscordCommandSource) {
+            sourceName = "Discord";
         } else {
-            commandEvent.setSourceName(((Player) executeEvent.getCommandSource()).getUsername());
+            sourceName = ((Player) e.getCommandSource()).getUsername();
         }
-        commandEvent.setSourceType(executeEvent.getCommandSource());
-        commandEvent.setCommand(executeEvent.getCommand());
-        commandEvent.setResult(executeEvent.getResult().isAllowed());
-        eventService.getEventBus().post(commandEvent);
+        eventService.post(new CommandEvent(e.getCommandSource(), sourceName, e.getCommand(), e.getResult().isAllowed()));
     }
 
     @Subscribe

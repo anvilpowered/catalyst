@@ -27,19 +27,13 @@ import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
+import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 
 public class BungeeListener implements Listener {
-
-    @Inject
-    private JoinEvent<ProxiedPlayer> joinEvent;
-
-    @Inject
-    private LeaveEvent<ProxiedPlayer> leaveEvent;
 
     @Inject
     private EventService eventService;
@@ -50,38 +44,36 @@ public class BungeeListener implements Listener {
     @Inject
     private BungeeCommandDispatcher dispatcher;
 
-    @Inject
-    private org.anvilpowered.catalyst.api.event.ChatEvent<TextComponent, ProxiedPlayer> chatEvent;
-
     @EventHandler
-    public void onPlayerJoin(PostLoginEvent event) {
-        joinEvent.setPlayer(event.getPlayer());
-        joinEvent.setPlayerUUID(event.getPlayer().getUniqueId());
-        joinEvent.setHostString(event.getPlayer().getAddress().toString());
-        eventService.getEventBus().post(joinEvent);
+    public void onPlayerJoin(PostLoginEvent e) {
+        eventService.post(
+            new JoinEvent<>(e.getPlayer(), e.getPlayer().getAddress().toString(), e.getPlayer().getUniqueId())
+        );
     }
 
     @EventHandler
-    public void onPlayerLeave(PlayerDisconnectEvent event) {
-        leaveEvent.setPlayer(event.getPlayer());
-        eventService.getEventBus().post(leaveEvent);
+    public void onPlayerLeave(PlayerDisconnectEvent e) {
+        eventService.post(new LeaveEvent<>(e.getPlayer()));
     }
 
     @EventHandler
-    public void onChat(ChatEvent event) {
-        if (event.isCommand()) {
+    public void onChat(ChatEvent e) {
+        if (e.isCommand()) {
             try {
-                dispatcher.execute(event.getMessage().replaceAll("/", ""), (CommandSender) event.getSender());
+                dispatcher.execute(e.getMessage().replaceAll("/", ""), (CommandSender) e.getSender());
             } catch (Exception ignored) {
             }
             return;
         }
-        if (!registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) return;
-        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        chatEvent.setPlayer(player);
-        chatEvent.setRawMessage(event.getMessage());
-        chatEvent.setMessage(new TextComponent(event.getMessage()));
-        eventService.getEventBus().post(chatEvent);
-        event.setCancelled(true);
+        if (!registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
+            return;
+        }
+        eventService.post(
+            new org.anvilpowered.catalyst.api.event.ChatEvent<>(
+                (ProxiedPlayer) e.getSender(),
+                e.getMessage(),
+                new TextComponent(e.getMessage())
+            ));
+        e.setCancelled(true);
     }
 }

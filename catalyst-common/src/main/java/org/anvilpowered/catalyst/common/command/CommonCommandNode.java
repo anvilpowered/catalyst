@@ -100,9 +100,6 @@ public abstract class CommonCommandNode<
     private SocialSpyCommand<TString, TPlayer, TCommandSource> socialSpyCommand;
 
     @Inject
-    private StaffChatCommand<TString, TPlayer, TCommandSource> staffChatCommand;
-
-    @Inject
     private ExceptionCommand<TString, TCommandSource> exceptionCommand;
 
     @Inject
@@ -505,16 +502,6 @@ public abstract class CommonCommandNode<
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.SOCIALSPY_PERMISSION)))
             .executes(ctx -> socialSpyCommand.execute(ctx, playerClass))
             .build();
-        final LiteralCommandNode<TCommandSource> staffChat = LiteralArgumentBuilder
-            .<TCommandSource>literal("staffchat")
-            .requires(source ->
-                permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.STAFFCHAT_PERMISSION)))
-            .executes(ctx -> staffChatCommand.toggle(ctx, playerClass))
-            .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
-                "message", StringArgumentType.greedyString())
-                .executes(ctx -> staffChatCommand.execute(ctx, playerClass))
-                .build())
-            .build();
         final LiteralCommandNode<TCommandSource> exception = LiteralArgumentBuilder
             .<TCommandSource>literal("exception")
             .requires(source ->
@@ -630,9 +617,6 @@ public abstract class CommonCommandNode<
         }
         if (registry.getOrDefault(CatalystKeys.SOCIALSPY_COMMAND_ENABLED)) {
             commands.put(ImmutableList.of("socialspy", "ss"), socialSpy);
-        }
-        if (registry.getOrDefault(CatalystKeys.STAFFCHAT_COMMAND_ENABLED)) {
-            commands.put(ImmutableList.of("staffchat", "sc"), staffChat);
         }
         if (registry.getOrDefault(CatalystKeys.CHAT_FILTER_ENABLED)) {
             commands.put(ImmutableList.of("exception"), exception);

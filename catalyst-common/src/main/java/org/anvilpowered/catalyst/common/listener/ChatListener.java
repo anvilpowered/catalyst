@@ -17,29 +17,25 @@
 
 package org.anvilpowered.catalyst.common.listener;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.event.ChatEvent;
-import org.anvilpowered.catalyst.api.event.StaffChatEvent;
-import org.anvilpowered.catalyst.api.listener.ChatListener;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.ChatFilter;
 import org.anvilpowered.catalyst.api.service.ChatService;
-import org.anvilpowered.catalyst.api.service.EventService;
-import org.anvilpowered.catalyst.api.service.StaffChatService;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @SuppressWarnings("UnstableApiUsage")
-public class CommonChatListener<
+public class ChatListener<
     TString,
     TPlayer,
-    TCommandSource>
-    implements ChatListener<TString, TPlayer> {
+    TCommandSource> {
 
     @Inject
     private ChatService<TString, TPlayer, TCommandSource> chatService;
@@ -48,24 +44,15 @@ public class CommonChatListener<
     private PermissionService permissionService;
 
     @Inject
-    private StaffChatService staffChatService;
-
-    @Inject
-    private EventService eventService;
-
-    @Inject
     private ChatFilter chatFilter;
 
     @Inject
     private Registry registry;
 
     @Inject
-    private StaffChatEvent<TString, TPlayer> staffChatEvent;
-
-    @Inject
     private UserService<TPlayer, TPlayer> userService;
 
-    @Override
+    @Subscribe
     public void onPlayerChat(ChatEvent<TString, TPlayer> event) {
         UUID playerUUID = userService.getUUID(event.getPlayer());
         Optional<TPlayer> player = userService.getPlayer(playerUUID);
@@ -73,15 +60,6 @@ public class CommonChatListener<
             return;
         }
         String message = event.getRawMessage();
-        if (staffChatService.contains(playerUUID)) {
-            staffChatEvent.setPlayer(player.get());
-            staffChatEvent.setMessage(event.getMessage());
-            staffChatEvent.setIsConsole(false);
-            staffChatEvent.setRawMessage(event.getRawMessage());
-            eventService.getEventBus().post(staffChatEvent);
-            return;
-        }
-
         Optional<ChatChannel> channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
         message = chatService.checkPlayerName(player.get(), message);
 

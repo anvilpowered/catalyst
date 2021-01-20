@@ -35,6 +35,9 @@ public class ChatChannel {
     @Setting("prefix")
     public String prefix;
 
+    @Setting("format")
+    public String format;
+
     @Setting("servers")
     public List<String> servers;
 
