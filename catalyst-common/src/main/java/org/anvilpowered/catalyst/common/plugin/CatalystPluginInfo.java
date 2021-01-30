@@ -18,10 +18,9 @@
 package org.anvilpowered.catalyst.common.plugin;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.util.TextService;
-
-import javax.inject.Singleton;
 
 @Singleton
 public final class CatalystPluginInfo<TString, TCommandSource> implements PluginInfo<TString> {

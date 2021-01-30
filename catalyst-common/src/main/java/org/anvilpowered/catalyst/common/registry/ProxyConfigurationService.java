@@ -101,6 +101,7 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setName(CatalystKeys.SOCIALSPY_COMMAND_ENABLED, "commands.socialspy");
         setName(CatalystKeys.MUTE_COMMAND_ENABLED, "commands.mute");
         setName(CatalystKeys.IGNORE_COMMAND_ENABLED, "commands.ignore");
+        setName(CatalystKeys.CATALYST_PREFIX, "advanced.prefix");
         setName(CatalystKeys.ADVANCED_ROOT, "advanced");
         setName(CatalystKeys.COMMANDS_ROOT, "commands");
         setName(CatalystKeys.CHAT_ROOT, "chat");
@@ -288,6 +289,8 @@ public class ProxyConfigurationService extends BaseConfigurationService {
         setDescription(CatalystKeys.MOTD_ENABLED,
             "Toggle MOTD handling" +
                 "\nBy default, Catalyst will not control the MOTD");
+        setDescription(CatalystKeys.CATALYST_PREFIX,
+            "\nPrefix to be used when displaying messages to players when commands are executed.");
         setDescription(CatalystKeys.ADVANCED_ROOT,
             " |------------------------------------------------------------|\n" +
                 " |                           Advanced                         |\n" +

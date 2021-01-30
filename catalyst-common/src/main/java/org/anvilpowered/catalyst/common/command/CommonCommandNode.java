@@ -35,6 +35,7 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
@@ -261,6 +262,7 @@ public abstract class CommonCommandNode<
                 .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
                     "channel", StringArgumentType.greedyString())
                     .executes(ctx -> channelCommand.set(ctx, playerClass))
+                    .suggests(suggestChannels())
                     .build())
             )
             .build();
@@ -678,6 +680,19 @@ public abstract class CommonCommandNode<
         return (context, builder) -> {
             for (BackendServer server : locationService.getServers()) {
                 builder.suggest(server.getName(), () -> "server");
+            }
+            return builder.buildFuture();
+        };
+    }
+
+    private SuggestionProvider<TCommandSource> suggestChannels() {
+        return (context, builder) -> {
+            for (ChatChannel channel : registry.getOrDefault(CatalystKeys.CHAT_CHANNELS)) {
+                if (permissionService.hasPermission(context.getSource(),
+                    registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + channel.id)
+                ) {
+                    builder.suggest(channel.id);
+                }
             }
             return builder.buildFuture();
         };

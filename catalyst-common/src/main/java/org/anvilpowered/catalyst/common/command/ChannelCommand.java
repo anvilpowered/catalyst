@@ -19,16 +19,18 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.anvilpowered.anvil.api.registry.Registry;
+import org.anvilpowered.anvil.api.server.BackendServer;
+import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.ChatService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChannelCommand<
     TString,
@@ -40,6 +42,9 @@ public class ChannelCommand<
 
     @Inject
     private ChatService<TString, TPlayer, TCommandSource> chatService;
+
+    @Inject
+    private LocationService locationService;
 
     @Inject
     private UserService<TPlayer, TPlayer> userService;
@@ -61,26 +66,57 @@ public class ChannelCommand<
     }
 
     public int set(CommandContext<TCommandSource> context, Class<?> playerClass) {
-        if (!playerClass.isAssignableFrom(context.getSource().getClass())) {
-            textService.send(textService.of("Player only command!"), context.getSource());
+        TCommandSource source = context.getSource();
+        if (!playerClass.isAssignableFrom(source.getClass())) {
+            textService.send(textService.of("Player only command!"), source);
             return 0;
         }
         String channel = context.getArgument("channel", String.class);
+        String userName = userService.getUserName((TPlayer) source);
 
         if (channel.contains(" ")) {
             return 0;
         }
         if (!exists(channel)) {
-            textService.send(textService.of("Invalid channel!"), context.getSource());
-        }
-        if (channel.equals(chatService.getChannelIdForUser(userService.getUUID((TPlayer) context.getSource())))) {
+            textService.send(textService.of("Invalid channel!"), source);
             return 0;
         }
-        if (permissionService.hasPermission(context.getSource(), registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + channel)) {
-            chatService.switchChannel(userService.getUUID((TPlayer) context.getSource()), channel);
-            textService.send(textService.of("Switched to channel " + channel), context.getSource());
+        // we already check if the channel exists above
+        ChatChannel chatChannel = chatService.getChannelFromId(channel).get();
+
+        if (channel.equals(chatService.getChannelIdForUser(userService.getUUID((TPlayer) source)))) {
+            textService.builder()
+                .appendPrefix()
+                .yellow().append("You are already in channel \"")
+                .green().append(channel)
+                .yellow().append("\"!")
+                .sendTo(source);
+            return 0;
         }
 
+        Optional<BackendServer> currentServer = (Optional<BackendServer>) locationService.getServer(userName);
+        if (!currentServer.isPresent()) {
+            return 0;
+        }
+        String server = currentServer.get().getName();
+
+        if (permissionService.hasPermission(source,
+            registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + channel)) {
+            if (!chatChannel.servers.contains(server)
+                && !permissionService.hasPermission(source,
+                registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))) {
+
+                textService.builder()
+                    .appendPrefix()
+                    .yellow().append("Could not join channel ")
+                    .green().append(chatChannel.id)
+                    .yellow().append(" because you are not in a allowed server!")
+                    .sendTo(source);
+                return 0;
+            }
+            chatService.switchChannel(userService.getUUID((TPlayer) source), channel);
+            textService.send(textService.of("Switched to channel " + channel), source);
+        }
         return 1;
     }
 
