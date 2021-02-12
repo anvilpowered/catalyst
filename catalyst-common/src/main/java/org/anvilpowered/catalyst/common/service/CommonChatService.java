@@ -19,6 +19,14 @@ package org.anvilpowered.catalyst.common.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import org.anvilpowered.anvil.api.misc.Named;
 import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.registry.Key;
@@ -38,15 +46,6 @@ import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-
 @Singleton
 public class CommonChatService<
     TUser,
@@ -57,6 +56,7 @@ public class CommonChatService<
 
     Map<UUID, String> channelMap = new HashMap<>();
     Map<UUID, List<UUID>> ignoreMap = new HashMap<>();
+    List<UUID> disabledList = new ArrayList<>();
 
     @Inject
     private Registry registry;
@@ -398,5 +398,24 @@ public class CommonChatService<
                 return null;
             }
         });
+    }
+
+    @Override
+    public void toggleChatForUser(TPlayer player) {
+        UUID userUUID = userService.getUUID((TUser) player);
+        if (!disabledList.contains(userUUID)) {
+            disabledList.add(userUUID);
+            return;
+        }
+        disabledList.remove(userUUID);
+    }
+
+    @Override
+    public boolean isDisabledForUser(TPlayer player) {
+        UUID userUUID = userService.getUUID((TUser) player);
+        if (disabledList.contains(userUUID)) {
+            return true;
+        }
+        return false;
     }
 }

@@ -52,8 +52,6 @@ import org.slf4j.Logger;
 public class CatalystVelocity extends CatalystImpl {
 
     @Inject
-    Logger logger;
-    @Inject
     private ProxyServer proxyServer;
 
     @Inject
@@ -64,7 +62,6 @@ public class CatalystVelocity extends CatalystImpl {
     @Override
     protected void whenReady(Environment environment) {
         super.whenReady(environment);
-        logger.info("Injecting listeners");
         proxyServer.getEventManager().register(
             this,
             environment.getInjector().getInstance(VelocityListener.class)

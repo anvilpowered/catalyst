@@ -25,6 +25,12 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import org.anvilpowered.anvil.api.command.CommandNode;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.registry.Registry;
@@ -39,13 +45,6 @@ import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
 import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public abstract class CommonCommandNode<
     TString,
@@ -93,6 +92,9 @@ public abstract class CommonCommandNode<
 
     @Inject
     private TempMuteCommand<TString, TPlayer, TCommandSource> tempMuteCommand;
+
+    @Inject
+    private ToggleProxyChat<TString, TPlayer, TCommandSource> toggleProxyChat;
 
     @Inject
     private UnMuteCommand<TString, TCommandSource> unMuteCommand;
@@ -481,6 +483,12 @@ public abstract class CommonCommandNode<
                     .build())
                 .build())
             .build();
+        final LiteralCommandNode<TCommandSource> toggleChat = LiteralArgumentBuilder
+            .<TCommandSource>literal("toggleproxychat")
+            .requires(source ->
+                permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.TOGGLE_CHAT_PERMISSION)))
+            .executes(e -> toggleProxyChat.execute(e, playerClass))
+            .build();
         final LiteralCommandNode<TCommandSource> unmute = LiteralArgumentBuilder
             .<TCommandSource>literal("unmute")
             .requires(source ->
@@ -637,6 +645,7 @@ public abstract class CommonCommandNode<
             suggestionType.put(ignore, ImmutableMap.of(1, CommandSuggestionType.PLAYER));
         }
         commands.put(ImmutableList.of("stafflist"), staffList);
+        commands.put(ImmutableList.of("toggleproxychat"), toggleChat);
     }
 
     private SuggestionProvider<TCommandSource> suggestPlayers() {

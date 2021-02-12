@@ -104,13 +104,14 @@ public class ChannelCommand<
             registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION) + channel)) {
             if (!chatChannel.servers.contains(server)
                 && !permissionService.hasPermission(source,
-                registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))) {
+                registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
+            && !chatChannel.servers.contains("*")) {
 
                 textService.builder()
                     .appendPrefix()
                     .yellow().append("Could not join channel ")
                     .green().append(chatChannel.id)
-                    .yellow().append(" because you are not in a allowed server!")
+                    .yellow().append(" because you are not in an allowed server!")
                     .sendTo(source);
                 return 0;
             }

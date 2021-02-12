@@ -20,6 +20,8 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
+import java.util.Optional;
+import java.util.UUID;
 import org.anvilpowered.anvil.api.plugin.PluginInfo;
 import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.api.server.BackendServer;
@@ -29,14 +31,17 @@ import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
+import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
-
-import java.util.Optional;
+import org.anvilpowered.catalyst.api.service.ChatService;
 
 public class ServerCommand<
     TString,
     TPlayer extends TCommandSource,
     TCommandSource> {
+
+    @Inject
+    private ChatService<TString, TPlayer, TCommandSource> chatService;
 
     @Inject
     private PluginInfo<TString> pluginInfo;
@@ -103,6 +108,7 @@ public class ServerCommand<
                     .green().append("Connected to ")
                     .gold().append(server)
                     .sendTo(player);
+                testChannel(player, server);
                 return 1;
             }
             textService.builder()
@@ -113,6 +119,31 @@ public class ServerCommand<
                 .sendTo(player);
             return 0;
         }).join());
+    }
+
+    private void testChannel(TPlayer player, String server) {
+        UUID playerUUID = userService.getUUID(player);
+        Optional<ChatChannel> channel =
+            chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID));
+        if (channel.isPresent()) {
+            if (!channel.get().servers.contains(server) && !permissionService.hasPermission(player,
+                registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
+                && !channel.get().servers.contains("*")) {
+                ChatChannel defaultChannel =
+                    chatService.getChannelFromId(registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL))
+                        .orElseThrow(() -> new AssertionError("A default channel must be specified!"));
+                chatService.switchChannel(playerUUID, defaultChannel.id);
+                textService.builder()
+                    .appendPrefix()
+                    .yellow().append("Channel ")
+                    .gold().append(channel.get().id)
+                    .yellow().append(" is not allowed in ")
+                    .gold().append(server)
+                    .yellow().append(". You have been moved to ")
+                    .gold().append(defaultChannel.id)
+                    .sendTo(player);
+            }
+        }
     }
 
     public int sendServers(CommandContext<TCommandSource> context) {

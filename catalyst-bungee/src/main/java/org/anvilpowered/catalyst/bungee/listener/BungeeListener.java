@@ -30,10 +30,14 @@ import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.api.event.JoinEvent;
 import org.anvilpowered.catalyst.api.event.LeaveEvent;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
+import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 
 public class BungeeListener implements Listener {
+
+    @Inject
+    private ChatService<TextComponent, ProxiedPlayer, CommandSender> chatService;
 
     @Inject
     private EventService eventService;
@@ -66,6 +70,9 @@ public class BungeeListener implements Listener {
             return;
         }
         if (!registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
+            return;
+        }
+        if (chatService.isDisabledForUser((ProxiedPlayer) e.getSender())) {
             return;
         }
         eventService.post(

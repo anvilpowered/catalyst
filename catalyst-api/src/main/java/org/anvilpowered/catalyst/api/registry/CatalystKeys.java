@@ -20,15 +20,14 @@ package org.anvilpowered.catalyst.api.registry;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
-import org.anvilpowered.anvil.api.registry.Key;
-import org.anvilpowered.anvil.api.registry.Keys;
-import org.anvilpowered.anvil.api.registry.TypeTokens;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.anvilpowered.anvil.api.registry.Key;
+import org.anvilpowered.anvil.api.registry.Keys;
+import org.anvilpowered.anvil.api.registry.TypeTokens;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public final class CatalystKeys {
@@ -327,6 +326,12 @@ public final class CatalystKeys {
             .fallback("catalyst.stafflist.staff")
             .sensitive()
             .build();
+    public static final Key<String> TOGGLE_CHAT_PERMISSION =
+        Key.builder(TypeTokens.STRING)
+        .name("TOGGLE_CHAT_PERMISSION")
+        .fallback("catalyst.chat.toggle")
+        .sensitive()
+        .build();
     public static final Key<String> ALL_CHAT_CHANNELS_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("ALL_CHAT_CHANNELS_PERMISSION")
@@ -747,6 +752,7 @@ public final class CatalystKeys {
             .register(STAFFLIST_BASE_PERMISSION)
             .register(STAFFLIST_OWNER_PERMISSION)
             .register(STAFFLIST_STAFF_PERMISSION)
+            .register(TOGGLE_CHAT_PERMISSION)
             .register(ALL_CHAT_CHANNELS_PERMISSION)
             .register(CHANNEL_BASE_PERMISSION)
             .register(BOT_NAME)

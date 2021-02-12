@@ -37,6 +37,13 @@ import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.util.ModInfo;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -54,20 +61,16 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.BroadcastService;
+import org.anvilpowered.catalyst.api.service.ChatService;
 import org.anvilpowered.catalyst.api.service.EventService;
 import org.anvilpowered.catalyst.api.service.TabService;
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource;
 
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 @SuppressWarnings("UnstableApiUsage")
 public class VelocityListener {
+
+    @Inject
+    private ChatService<TextComponent, Player, CommandSource> chatService;
 
     @Inject
     private ProxyServer proxyServer;
@@ -161,6 +164,9 @@ public class VelocityListener {
     public void onChat(PlayerChatEvent e) {
         if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
             Player player = e.getPlayer();
+            if (chatService.isDisabledForUser(player)) {
+                return;
+            }
             e.setResult(PlayerChatEvent.ChatResult.denied());
             Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()
                 .getOneForUser(

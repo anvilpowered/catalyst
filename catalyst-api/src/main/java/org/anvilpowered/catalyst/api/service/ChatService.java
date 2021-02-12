@@ -69,4 +69,8 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
     String checkPlayerName(TPlayer sender, String message);
 
     void sendChatMessage(ChatEvent<TString, TPlayer> chatEvent);
+
+    void toggleChatForUser(TPlayer player);
+
+    boolean isDisabledForUser(TPlayer player);
 }
