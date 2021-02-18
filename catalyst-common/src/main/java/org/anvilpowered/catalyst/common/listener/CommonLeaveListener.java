@@ -52,6 +52,9 @@ public class CommonLeaveListener<
     private BroadcastService<TString> broadcastService;
 
     @Inject
+    private LuckpermsService luckpermsService;
+
+    @Inject
     private Logger logger;
 
     @Inject
@@ -62,6 +65,9 @@ public class CommonLeaveListener<
     public void onPlayerLeave(LeaveEvent<TPlayer> event) {
         TPlayer player = event.getPlayer();
         staffListService.removeStaffNames(userService.getUserName((TUser) player));
+        
+        String prefix = luckpermsService.getPrefix(player);
+        String suffix = luckpermsService.getSuffix(player);
 
         String message = registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
             ? emojiService.toEmoji(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE), "&f")
@@ -70,7 +76,9 @@ public class CommonLeaveListener<
         broadcastService.broadcast(
             textService.deserialize(
                 message
+                    .replace("%prefix", prefix)
                     .replace("%player%", userService.getUserName((TUser) player))
+                    .replace("%suffix", suffix)
             ));
 
         logger.info(

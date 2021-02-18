@@ -32,6 +32,7 @@ import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.service.EmojiService;
 import org.anvilpowered.catalyst.api.service.PrivateMessageService;
 import org.anvilpowered.catalyst.api.service.StaffListService;
+import org.anvilpowered.catalyst.api.service.LuckpermsService;
 import org.slf4j.Logger;
 
 import java.util.UUID;
@@ -65,6 +66,9 @@ public class CommonJoinListener<
     private BroadcastService<TString> broadcastService;
 
     @Inject
+    private LuckpermsService luckpermsService;
+
+    @Inject
     private Logger logger;
 
     @Inject
@@ -87,6 +91,10 @@ public class CommonJoinListener<
             registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN_PERMISSION))) {
             privateMessageService.socialSpySet().add(playerUUID);
         }
+        
+        String prefix = luckpermsService.getPrefix(player);
+        String suffix = luckpermsService.getSuffix(player);
+
         String userName = userService.getUserName((TUser) player);
         String server = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
             ? locationService.getServer(userName).map(Named::getName).orElse("null")
@@ -120,7 +128,9 @@ public class CommonJoinListener<
         broadcastService.broadcast(
             textService.deserialize(
                 joinMessage
+                    .replace("%prefix%", prefix)
                     .replace("%player%", userName)
+                    .replace("%suffix%", suffix)
                     .replace("%server%", server)
             )
         );
@@ -128,7 +138,9 @@ public class CommonJoinListener<
             textService.serializePlain(
                 textService.of(
                     registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
+                        .replace("%prefix%", prefix)
                         .replace("%player%", userName)
+                        .replace("%suffix%", suffix)
                         .replace("%server%", server)
                 )
             )
