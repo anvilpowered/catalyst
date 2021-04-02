@@ -39,7 +39,7 @@ public class CommonCommandListener implements CommandListener {
     public void onCommandExecution(CommandEvent event) {
         if (registry.getOrDefault(CatalystKeys.COMMAND_LOGGING_ENABLED)) {
             List<String> commandList = registry.getOrDefault(CatalystKeys.COMMAND_LOGGING_FILTER);
-            if ((commandList.size() == 1 && commandList.get(0).equals("*"))
+            if (commandList.contains("*")
                 || commandList.contains(event.getCommand())) {
                 logger.info(event.getSourceName() + " executed command : " + event.getCommand());
             }

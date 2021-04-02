@@ -60,8 +60,6 @@ public class CommonStaffChatListener<
     @Override
     public void onStaffChatEvent(StaffChatEvent<TString, TPlayer> event) {
         String message = event.getRawMessage();
-        TUser player = (TUser) event.getPlayer();
-        String userName = userService.getUserName(player);
 
         if (event.getIsConsole()) {
             String finalMessage = message;
@@ -76,6 +74,9 @@ public class CommonStaffChatListener<
             logger.info("[STAFF] Console: " + message);
             return;
         }
+
+        TUser player = (TUser) event.getPlayer();
+        String userName = userService.getUserName(player);
 
         if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)
             && permissionService.hasPermission(player,
