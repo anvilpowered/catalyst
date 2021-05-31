@@ -19,6 +19,9 @@ package org.anvilpowered.catalyst.common.command;
 
 import com.google.inject.Inject;
 import com.mojang.brigadier.context.CommandContext;
+import org.anvilpowered.anvil.api.Anvil;
+import org.anvilpowered.anvil.api.coremember.CoreMemberManager;
+import org.anvilpowered.anvil.api.model.coremember.CoreMember;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
@@ -62,19 +65,35 @@ public class MessageCommand<
                     textService.send(pluginMessages.messageSelf(), context.getSource());
                     return 0;
                 }
-                privateMessageService.sendMessage(
-                    userService.getUserName((TPlayer) context.getSource()),
-                    name,
-                    message
-                );
-                privateMessageService.replyMap().put(
-                    userService.getUUID(targetPlayer.get()),
-                    userService.getUUID((TPlayer) context.getSource())
-                );
-                privateMessageService.replyMap().put(
-                    userService.getUUID((TPlayer) context.getSource()),
-                    userService.getUUID(targetPlayer.get())
-                );
+                Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent()
+                        .getOneForUser(
+                                userService.getUUID((TPlayer) context.getSource())
+                        ).thenAcceptAsync(optionalMember -> {
+                    if (!optionalMember.isPresent()) {
+                        return;
+                    }
+                    CoreMember<?> coreMember = optionalMember.get();
+                    if (Anvil.getServiceManager().provide(CoreMemberManager.class).getPrimaryComponent().checkMuted(coreMember)) {
+                        textService.send(
+                                pluginMessages.getMuteMessage(coreMember.getMuteReason(), coreMember.getMuteEndUtc()),
+                                context.getSource()
+                        );
+                    } else {
+                        privateMessageService.sendMessage(
+                                userService.getUserName((TPlayer) context.getSource()),
+                                name,
+                                message
+                        );
+                        privateMessageService.replyMap().put(
+                                userService.getUUID(targetPlayer.get()),
+                                userService.getUUID((TPlayer) context.getSource())
+                        );
+                        privateMessageService.replyMap().put(
+                                userService.getUUID((TPlayer) context.getSource()),
+                                userService.getUUID(targetPlayer.get())
+                        );
+                    }
+                });
             } else {
                 textService.send(pluginMessages.offlineOrInvalidPlayer(), context.getSource());
             }
