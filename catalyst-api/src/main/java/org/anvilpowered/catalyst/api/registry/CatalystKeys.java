@@ -171,6 +171,11 @@ public final class CatalystKeys {
             .fallback("catalyst.command.broadcast")
             .sensitive()
             .build();
+    public static final Key<String> CHANNEL_EDIT_PERMISSION =
+      Key.builder(TypeTokens.STRING)
+            .name("CHANNEL_EDIT_PERMISSION")
+            .fallback("catalyst.command.channel.edit")
+            .build();
     public static final Key<String> CHAT_COLOR_PERMISSION =
         Key.builder(TypeTokens.STRING)
             .name("CHAT_COLOR_PERMISSION")
@@ -674,20 +679,22 @@ public final class CatalystKeys {
 
     static {
         ChatChannel global = new ChatChannel();
-        global.id = "global";
-        global.aliases = Arrays.asList("globalchat", "globalchannel");
-        global.prefix = "[Global]";
-        global.servers = Arrays.asList("main", "wild");
         global.alwaysVisible = true;
+        global.click = "/msg %player%";
         global.discordChannel = "123456789";
+        global.format = "[Global] %player% : %message%";
+        global.hoverMessage = "Click here to message %player%";
+        global.id = "global";
+        global.servers = Arrays.asList("main", "wild");
         chatChannels.add(global);
         ChatChannel admin = new ChatChannel();
-        admin.id = "admin";
-        admin.aliases = Arrays.asList("adminchat", "adminchannel");
-        admin.prefix = "[Admin Chat]";
         admin.alwaysVisible = true;
-        admin.servers = Arrays.asList("main", "wild");
+        admin.click = "/msg %player%";
         admin.discordChannel = "123456789";
+        admin.format = "[Admin Chat] %player% : %message%";
+        admin.hoverMessage = "Click here to message %player%";
+        admin.id = "admin";
+        admin.servers = Arrays.asList("main", "wild");
         chatChannels.add(admin);
     }
 
@@ -726,6 +733,7 @@ public final class CatalystKeys {
             .register(TEMP_BAN_PERMISSION)
             .register(BAN_EXEMPT_PERMISSION)
             .register(BROADCAST_PERMISSION)
+            .register(CHANNEL_EDIT_PERMISSION)
             .register(CHAT_COLOR_PERMISSION)
             .register(FIND_PERMISSION)
             .register(INFO_PERMISSION)

@@ -29,14 +29,14 @@ public class ChatChannel {
     @Setting("id")
     public String id;
 
-    @Setting("aliases")
-    public List<String> aliases;
-
-    @Setting("prefix")
-    public String prefix;
-
     @Setting("format")
     public String format;
+
+    @Setting(value = "hoverMessage", comment = "Text shown when hovering over a message in chat")
+    public String hoverMessage;
+
+    @Setting(value = "click", comment = "A command to run when the player clicks on the message")
+    public String click;
 
     @Setting("servers")
     public List<String> servers;

@@ -16,13 +16,20 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.common.command
 
-/**
- * Represents the type of suggestion that is sent to the player.
- * This is only used for BungeeCord commands.
- */
-public enum CommandSuggestionType {
-    SERVER,
-    PLAYER
+import com.google.inject.Inject
+import com.mojang.brigadier.context.CommandContext
+import org.anvilpowered.catalyst.api.plugin.PluginMessages
+import org.anvilpowered.catalyst.api.service.BroadcastService
+
+class BroadcastCommand<TString, TCommandSource> @Inject constructor(
+  private val broadcastService: BroadcastService<TString>,
+  private val pluginMessages: PluginMessages<TString>
+) {
+
+  fun execute(context: CommandContext<TCommandSource>): Int {
+    broadcastService.broadcast(pluginMessages.getBroadcast(context.getArgument("message", String::class.java)))
+    return 1
+  }
 }

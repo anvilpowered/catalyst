@@ -39,9 +39,6 @@ public class VelocityCommandNode
     private ProxyServer proxyServer;
 
     @Inject
-    private VelocityListCommand listCommand;
-
-    @Inject
     public VelocityCommandNode(Registry registry) {
         super(registry, Player.class, ConsoleCommandSource.class);
     }
@@ -64,10 +61,5 @@ public class VelocityCommandNode
             }
             manager.register(metaBuilder.build(), new BrigadierCommand(command));
         });
-
-        if (registry.getOrDefault(CatalystKeys.LIST_COMMAND_ENABLED)) {
-            proxyServer.getCommandManager().register(
-                "list", listCommand, "clist");
-        }
     }
 }

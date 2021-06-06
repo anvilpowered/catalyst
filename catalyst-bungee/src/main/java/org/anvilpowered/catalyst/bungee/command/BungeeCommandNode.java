@@ -24,7 +24,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.anvilpowered.anvil.api.registry.Registry;
-import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
+import org.anvilpowered.catalyst.api.CommandSuggestionType;
 import org.anvilpowered.catalyst.bungee.CatalystBungee;
 import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
 import org.anvilpowered.catalyst.common.command.CommonCommandNode;

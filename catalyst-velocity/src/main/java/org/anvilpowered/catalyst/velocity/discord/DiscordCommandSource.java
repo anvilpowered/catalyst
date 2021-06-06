@@ -47,11 +47,6 @@ public class DiscordCommandSource implements CommandSource {
     }
 
     @Override
-    public void sendMessage(net.kyori.text.Component component) {
-        //Not implemented due to deprecation
-    }
-
-    @Override
     public void sendMessage(Identity identity, Component message, MessageType type) {
         Objects.requireNonNull(
             jdaHook.getJDA()

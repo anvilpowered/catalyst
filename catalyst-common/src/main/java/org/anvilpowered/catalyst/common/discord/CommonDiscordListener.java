@@ -132,7 +132,6 @@ public class CommonDiscordListener<
         }
         TString finalMessage = textService.builder()
             .append(textService.deserialize(registry.getOrDefault(CatalystKeys.DISCORD_CHAT_FORMAT)
-                .replace("%channel%", targetChannel.prefix)
                 .replace("%name%", userName)
                 .replace("%message%", message)))
             .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))

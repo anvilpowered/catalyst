@@ -29,7 +29,7 @@ import org.anvilpowered.anvil.api.server.BackendServer;
 import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
-import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
+import org.anvilpowered.catalyst.api.CommandSuggestionType;
 
 import java.util.ArrayList;
 import java.util.List;

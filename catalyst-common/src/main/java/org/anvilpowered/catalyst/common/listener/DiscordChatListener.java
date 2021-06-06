@@ -79,10 +79,8 @@ public class DiscordChatListener<
         Optional<ChatChannel> optionalChannel =
             chatService.getChannelFromId(chatService.getChannelIdForUser(userService.getUUID((TUser) event.getPlayer())));
         String dChannelId = registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL);
-        String channelPrefix = "";
 
         if (optionalChannel.isPresent()) {
-            channelPrefix = optionalChannel.get().prefix;
             if (optionalChannel.get().discordChannel != null) {
                 dChannelId = optionalChannel.get().discordChannel;
             }
@@ -106,7 +104,6 @@ public class DiscordChatListener<
         }
 
         String name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
-            .replace("%channel%", channelPrefix)
             .replace("%server%", server)
             .replace("%player%", userService.getUserName((TUser) event.getPlayer()))
             .replace("%prefix%", luckPermsService.getPrefix(event.getPlayer()))

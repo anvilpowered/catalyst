@@ -1,5 +1,6 @@
 plugins {
     id 'io.codearte.nexus-staging' version '0.21.2'
+    id("org.jetbrains.kotlin.jvm") version "${kotlin_version}"
 }
 
 ext.apiVersion = "0.6-SNAPSHOT"
@@ -10,6 +11,23 @@ allprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+
+    repositories {
+        mavenCentral()
+    }
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
 }
 
 String _username = project.hasProperty("username") ? username : ""

@@ -27,6 +27,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -39,11 +40,11 @@ import org.anvilpowered.anvil.api.server.LocationService;
 import org.anvilpowered.anvil.api.util.PermissionService;
 import org.anvilpowered.anvil.api.util.TextService;
 import org.anvilpowered.anvil.api.util.UserService;
+import org.anvilpowered.catalyst.api.CommandSuggestionType;
 import org.anvilpowered.catalyst.api.plugin.PluginMessages;
 import org.anvilpowered.catalyst.api.registry.CatalystKeys;
 import org.anvilpowered.catalyst.api.registry.ChatChannel;
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService;
-import org.anvilpowered.catalyst.api.service.CommandSuggestionType;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 
 public abstract class CommonCommandNode<
@@ -267,6 +268,75 @@ public abstract class CommonCommandNode<
                     .suggests(suggestChannels())
                     .build())
             )
+          .then(LiteralArgumentBuilder.<TCommandSource>literal("info")
+            .executes(ctx -> {
+              textService.send(pluginMessages.getNotEnoughArgs(), ctx.getSource());
+              return 1;
+            })
+            .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+              "channel", StringArgumentType.greedyString())
+              .executes(ctx -> channelCommand.info(ctx))
+              .suggests(suggestChannels())
+              .build()
+            ))
+          .then(LiteralArgumentBuilder.<TCommandSource>literal("edit")
+            .executes(ctx -> {
+              textService.send(pluginMessages.getNotEnoughArgs(), ctx.getSource());
+              return 1;
+            })
+            .requires(source ->
+              permissionService.hasPermission(source, "catalyst.admin.channel")
+            )
+            .then(LiteralArgumentBuilder.<TCommandSource>literal("abort")
+              .executes(channelCommand::abort)
+              .build()
+            )
+            .then(LiteralArgumentBuilder.<TCommandSource>literal("start")
+              .executes(ctx -> {
+               textService.send(pluginMessages.getNotEnoughArgs(), ctx.getSource());
+               return 1;
+              })
+              .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                "channel", StringArgumentType.greedyString())
+                .executes(ctx -> channelCommand.startEdit(ctx))
+                .suggests(suggestChannels())
+                .build()
+              )
+            )
+            .then(LiteralArgumentBuilder.<TCommandSource>literal("property")
+              .executes(ctx -> {
+                textService.send(pluginMessages.getNotEnoughArgs(), ctx.getSource());
+                return 1;
+              })
+              .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                "name", StringArgumentType.word())
+                .executes( ctx -> {
+                  textService.send(pluginMessages.getNotEnoughArgs(), ctx.getSource());
+                  return 1;
+                })
+                .suggests((context, builder) -> {
+                  builder.suggest("format");
+                  builder.suggest("id");
+                  builder.suggest("visibility");
+                  builder.suggest("discord");
+                  builder.suggest("hovermessage");
+                  builder.suggest("hover");
+                  builder.suggest("click");
+                  builder.suggest("onclick");
+                  builder.suggest("server");
+                  return builder.buildFuture();
+                })
+                .then(RequiredArgumentBuilder.<TCommandSource, String>argument(
+                  "value", StringArgumentType.string())
+                  .executes(channelCommand::editProperty)
+                  .build()
+                )
+              )
+            )
+            .then(LiteralArgumentBuilder.<TCommandSource>literal("commit")
+            .executes(ctx -> channelCommand.commit(ctx))
+            .build()
+            ))
             .build();
         final LiteralCommandNode<TCommandSource> delNick = LiteralArgumentBuilder
             .<TCommandSource>literal("delnick")
@@ -363,7 +433,7 @@ public abstract class CommonCommandNode<
                     .sendTo(e.getSource());
                 return 1;
             })
-            .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.string())
+            .then(RequiredArgumentBuilder.<TCommandSource, String>argument("target", StringArgumentType.word())
                 .suggests(suggestPlayers())
                 .executes(infoCommand::execute)
                 .build())
@@ -484,7 +554,7 @@ public abstract class CommonCommandNode<
                 .build())
             .build();
         final LiteralCommandNode<TCommandSource> toggleChat = LiteralArgumentBuilder
-            .<TCommandSource>literal("toggleproxychat")
+            .<TCommandSource>literal("togglechat")
             .requires(source ->
                 permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.TOGGLE_CHAT_PERMISSION)))
             .executes(e -> toggleProxyChat.execute(e, playerClass))
@@ -650,10 +720,11 @@ public abstract class CommonCommandNode<
 
     private SuggestionProvider<TCommandSource> suggestPlayers() {
         return (context, builder) -> {
+          String input = context.getInput().substring(context.getInput().indexOf(' ') + 1).toLowerCase(Locale.ROOT);
             for (TPlayer player : userService.getOnlinePlayers()) {
                 String userName = userService.getUserName(player);
-                if (userName.toLowerCase().startsWith(context.getInput().toLowerCase())
-                    || userName.equalsIgnoreCase(context.getInput())) {
+                if (userName.toLowerCase(Locale.ROOT).startsWith(input)
+                    || userName.toLowerCase(Locale.ROOT).equals(input)) {
                     builder.suggest(userService.getUserName(player), () -> "target");
                 }
             }

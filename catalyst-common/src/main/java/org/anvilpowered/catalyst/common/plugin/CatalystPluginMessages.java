@@ -51,7 +51,7 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     public TString getNotEnoughArgs() {
         return textService.builder()
             .appendPrefix()
-            .red().append("Not enough arguments!\n")
+            .red().append("Not enough arguments!")
             .build();
     }
 

@@ -33,8 +33,6 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     Optional<ChatChannel> getChannelFromId(String channelId);
 
-    Optional<String> getChannelPrefix(String channelId);
-
     int getChannelUserCount(String channelId);
 
     List<TPlayer> getUsersInChannel(String channelId);
@@ -53,8 +51,7 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
                                                        boolean hasChatColorPermission,
                                                        String suffix,
                                                        String serverName,
-                                                       String channelId,
-                                                       String channelPrefix);
+                                                       String channelId);
 
     List<TString> getPlayerList();
 

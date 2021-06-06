@@ -3,6 +3,5 @@ rootProject.name = 'Catalyst'
 include 'catalyst-api'
 include 'catalyst-bungee'
 include 'catalyst-common'
-include 'catalyst-sponge'
 include 'catalyst-velocity'
 
