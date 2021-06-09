@@ -107,6 +107,10 @@ public interface PluginMessages<TString> {
 
     TString infoCommandUsage();
 
+    TString channelEditStartUsage();
+
+    TString channelEditPropertyUsage();
+
     TString swearAddCommandUsage();
 
     TString exceptionAddCommandUsage();

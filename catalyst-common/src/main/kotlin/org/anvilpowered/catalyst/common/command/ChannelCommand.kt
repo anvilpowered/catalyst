@@ -105,7 +105,7 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
     return 1
   }
 
-  fun abort(context: CommandContext<TCommandSource>): Int {
+  fun abortEdit(context: CommandContext<TCommandSource>): Int {
     val source = context.source
     if (ChannelEdit.currentChannel.containsKey(source.uuid())) {
       val channelId = ChannelEdit.currentChannel[source.uuid()]?.id
@@ -199,18 +199,38 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
     val value = context.getArgument("value", String::class.java)
 
     val edited = ChannelEdit.editProperty(source.uuid(), context.getArgument("name", String::class.java), channel, value)
+
     if (edited) {
       textService.builder()
-        .green().append("Successfully edited property ")
+        .green().append("Successfully changed property ")
         .gold().append(context.getArgument("name", String::class.java))
+        .green().append(" to ")
+        .gold().append(value)
+        .green().append(" for ")
+        .gold().append(channel.id)
         .green().append(
           textService.builder()
-            .append("\nClick here to commit changes.")
+            .append("\n[ Commit ]")
             .onClickRunCommand("/channel edit commit")
+            .onHoverShowText(textService.of("Save your changes"))
+            .build()
+        )
+        .red().append(
+          textService.builder()
+            .append(" [ Abort ]")
+            .onClickRunCommand("/channel edit abort")
+            .onHoverShowText(textService.of("Abort your changes"))
             .build()
         )
         .sendTo(source)
     } else {
+      textService.builder()
+        .appendPrefix()
+        .yellow().append("Failed to edit property\"")
+        .green().append(context.getArgument("name", String::class.java))
+        .yellow().append("\" for ")
+        .green().append(channel.id)
+        .sendTo(source)
       return 0
     }
 
@@ -283,12 +303,12 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
     return textService.builder()
       .append(editBar(channelId))
       .append(basicProperty("Active Users", chatService.getUsersInChannel(channelId).size.toString()))
-      .append(editableProperty(channelId, "Format", chatChannel.format))
-      .append(editableProperty(channelId, "Hover Message", chatChannel.hoverMessage))
-      .append(editableProperty(channelId, "OnClick", chatChannel.click))
-      .append(editableProperty(channelId, "Server Requirement", chatChannel.servers.joinToString(", ")))
-      .append(editableProperty(channelId, "Always Visible", chatChannel.alwaysVisible.toString()))
-      .append(editableProperty(channelId, "Discord Channel ID", chatChannel.discordChannel))
+      .append(editableProperty("Format", chatChannel.format))
+      .append(editableProperty("Hover Message", chatChannel.hoverMessage))
+      .append(editableProperty("OnClick", chatChannel.click))
+      .append(editableProperty("Server Requirement", chatChannel.servers.joinToString(", ")))
+      .append(editableProperty("Always Visible", chatChannel.alwaysVisible.toString()))
+      .append(editableProperty("Discord Channel ID", chatChannel.discordChannel))
       .build()
   }
 
@@ -315,7 +335,7 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
       .build()
   }
 
-  private fun editableProperty(channelId: String, name: String, value: String): TString {
+  private fun editableProperty(name: String, value: String): TString {
     val propertyName = name.replace("\\s+".toRegex(), "")
     return textService.builder()
       .gray().append("\n", name, ": ")

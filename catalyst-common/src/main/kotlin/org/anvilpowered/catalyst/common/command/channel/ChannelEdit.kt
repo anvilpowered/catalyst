@@ -40,7 +40,7 @@ object ChannelEdit {
       "click", "onclick", "clickcommand" -> {
         channel.click = value
       }
-      "discordid", "discordchannelid", "discordchannel" -> {
+      "discord", "discordid", "discordchannelid", "discordchannel" -> {
         channel.discordChannel = value
       }
       "visibility", "alwaysvisible" -> {

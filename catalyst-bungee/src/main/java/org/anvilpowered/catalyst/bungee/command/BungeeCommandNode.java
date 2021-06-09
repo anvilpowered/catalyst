@@ -27,11 +27,11 @@ import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.catalyst.api.CommandSuggestionType;
 import org.anvilpowered.catalyst.bungee.CatalystBungee;
 import org.anvilpowered.catalyst.bungee.service.BungeeCommandDispatcher;
-import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.anvilpowered.catalyst.common.command.CommonCommandNode;
 
 public class BungeeCommandNode
     extends CommonCommandNode<TextComponent, ProxiedPlayer, CommandSender> {
@@ -50,7 +50,7 @@ public class BungeeCommandNode
     @Override
     public void loadCommands() {
         List<BungeeCommand> bungeeCommands = new ArrayList<>();
-        for (Map.Entry<List<String>, LiteralCommandNode<CommandSender>> entry : commands.entrySet()) {
+        for (Map.Entry<List<String>, LiteralCommandNode<CommandSender>> entry : getCommands().entrySet()) {
             List<String> withoutFirst = new ArrayList<>(entry.getKey());
             withoutFirst.remove(0);
 
@@ -59,7 +59,7 @@ public class BungeeCommandNode
                 entry.getKey().get(0),
                 withoutFirst.toArray(new String[0]),
                 entry.getValue(),
-                super.registry,
+                super.getRegistry(),
                 super.advancedServerInfo,
                 super.locationService
             );
@@ -67,7 +67,7 @@ public class BungeeCommandNode
             bungeeCommands.add(command);
         }
 
-        for (Map.Entry<LiteralCommandNode<CommandSender>, Map<Integer, CommandSuggestionType>> entry : suggestionType.entrySet()) {
+        for (Map.Entry<LiteralCommandNode<CommandSender>, Map<Integer, CommandSuggestionType>> entry : getSuggestionType().entrySet()) {
             Map<Integer, CommandSuggestionType> suggestionMap = entry.getValue();
             for (BungeeCommand command : bungeeCommands) {
                 if (command.compareNode(entry.getKey())) {

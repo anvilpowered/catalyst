@@ -371,6 +371,22 @@ public class CatalystPluginMessages<TString, TCommandSource> implements PluginMe
     }
 
     @Override
+    public TString channelEditStartUsage() {
+        return textService.builder()
+          .red().append("Usage: ")
+          .yellow().append("/channel edit start <channel>")
+          .build();
+    }
+
+    @Override
+    public TString channelEditPropertyUsage() {
+        return textService.builder()
+          .red().append("Usage: ")
+          .yellow().append("/channel edit property <name> <\"value\">")
+          .build();
+    }
+
+    @Override
     public TString swearAddCommandUsage() {
         return textService.builder()
             .red().append("Usage: ")
