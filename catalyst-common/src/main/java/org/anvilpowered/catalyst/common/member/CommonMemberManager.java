@@ -44,7 +44,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class CommonMemberManager<
-    TUser,
     TPlayer,
     TString,
     TCommandSource>
@@ -70,7 +69,7 @@ public class CommonMemberManager<
     protected TimeFormatService timeFormatService;
 
     @Inject
-    protected UserService<TUser, TPlayer> userService;
+    protected UserService<TPlayer, TPlayer> userService;
 
     @Inject
     protected ChatService<TString, TPlayer, TCommandSource> chatService;
@@ -188,7 +187,7 @@ public class CommonMemberManager<
     @Override
     public CompletableFuture<TString> setNickName(String userName, String nickName) {
         return getPrimaryComponent().setNickNameForUser(userName,
-            registry.getOrDefault(CatalystKeys.NICKNAME_PREFIX) + nickName).thenApplyAsync(result -> {
+            registry.getOrDefault(CatalystKeys.INSTANCE.getNICKNAME_PREFIX()) + nickName).thenApplyAsync(result -> {
             if (result) {
                 return textService.success("Set nickname to " + nickName);
             } else {
@@ -199,7 +198,7 @@ public class CommonMemberManager<
 
     @Override
     public CompletableFuture<TString> setNickNameForUser(String userName, String nickName) {
-        return getPrimaryComponent().setNickNameForUser(userName, registry.getOrDefault(CatalystKeys.NICKNAME_PREFIX) + nickName).thenApplyAsync(result -> {
+        return getPrimaryComponent().setNickNameForUser(userName, registry.getOrDefault(CatalystKeys.INSTANCE.getNICKNAME_PREFIX()) + nickName).thenApplyAsync(result -> {
             if (result) {
                 userService.getPlayer(userName).ifPresent(p -> textService.builder().green().append("Your nickname was set to " + nickName).sendTo((TCommandSource) p));
                 return textService.success("Set " + userName + "'s nickname to " + nickName);

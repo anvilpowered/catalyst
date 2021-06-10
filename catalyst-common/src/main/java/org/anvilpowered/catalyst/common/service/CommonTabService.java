@@ -62,7 +62,7 @@ public class CommonTabService<
     public TString format(TPlayer player, int ping, int playerCount) {
         return textService.deserialize(
             replacePlaceholders(
-                registry.getOrDefault(CatalystKeys.TAB_FORMAT),
+                registry.getOrDefault(CatalystKeys.INSTANCE.getTAB_FORMAT()),
                 player,
                 ping,
                 playerCount
@@ -78,7 +78,7 @@ public class CommonTabService<
     public TString formatHeader(TPlayer player, int ping, int playerCount) {
         return textService.deserialize(
             replacePlaceholders(
-                registry.getOrDefault(CatalystKeys.TAB_HEADER),
+                registry.getOrDefault(CatalystKeys.INSTANCE.getTAB_HEADER()),
                 player,
                 ping,
                 playerCount
@@ -89,7 +89,7 @@ public class CommonTabService<
     public TString formatFooter(TPlayer player, int ping, int playerCount) {
         return textService.deserialize(
             replacePlaceholders(
-                registry.getOrDefault(CatalystKeys.TAB_FOOTER),
+                registry.getOrDefault(CatalystKeys.INSTANCE.getTAB_FOOTER()),
                 player,
                 ping,
                 playerCount
@@ -120,7 +120,7 @@ public class CommonTabService<
             .replace("%prefix%", luckpermsService.getPrefix(player))
             .replace("%suffix%", luckpermsService.getSuffix(player))
             .replace("%server%",
-                registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
+                registry.getOrDefault(CatalystKeys.INSTANCE.getADVANCED_SERVER_INFO_ENABLED())
                     ? locationService.getServer(userName).map(Named::getName).orElse("null")
                     .replace(advancedServerInfoService.getPrefixForPlayer(userName), "")
                     : locationService.getServer(userName).map(Named::getName).orElse("null"))

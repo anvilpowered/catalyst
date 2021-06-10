@@ -42,7 +42,7 @@ public class AdvancedServerInfoService {
     }
 
     private void whenLoaded() {
-        advancedServerInfos = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO);
+        advancedServerInfos = registry.getOrDefault(CatalystKeys.INSTANCE.getADVANCED_SERVER_INFO());
     }
 
     public String getPrefix(String virtualHost) {

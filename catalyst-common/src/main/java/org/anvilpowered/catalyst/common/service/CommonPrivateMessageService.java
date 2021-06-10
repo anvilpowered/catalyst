@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 @Singleton
-public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource> implements PrivateMessageService<TString> {
+public class CommonPrivateMessageService<TPlayer, TString, TCommandSource> implements PrivateMessageService<TString> {
 
     private final Set<UUID> socialSpySet = new HashSet<>();
     private final Map<UUID, UUID> replyMap = new HashMap<>();
@@ -43,7 +43,7 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
     private String rawMessage;
 
     @Inject
-    private UserService<TUser, TPlayer> userService;
+    private UserService<TPlayer, TPlayer> userService;
 
     @Inject
     private TextService<TString, TCommandSource> textService;
@@ -94,7 +94,7 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
     @Override
     public TString formatMessage(String sender, String recipient, String rawMessage) {
         return textService.deserialize(
-            registry.getOrDefault(CatalystKeys.PRIVATE_MESSAGE_FORMAT)
+            registry.getOrDefault(CatalystKeys.INSTANCE.getPRIVATE_MESSAGE_FORMAT())
                 .replace("%sender%", sender)
                 .replace("%recipient%", recipient)
                 .replace("%message%", rawMessage.trim())
@@ -120,11 +120,11 @@ public class CommonPrivateMessageService<TUser, TPlayer, TString, TCommandSource
     @Override
     public CompletableFuture<Void> socialSpy(String sender, String recipient, String rawMessage) {
         return CompletableFuture.runAsync(() -> userService.getOnlinePlayers().forEach(p -> {
-                if (socialSpySet.isEmpty() && !socialSpySet.contains(userService.getUUID((TUser) p))) {
+                if (socialSpySet.isEmpty() && !socialSpySet.contains(userService.getUUID(p))) {
                     return;
                 }
-                if (userService.getUserName((TUser) p).equalsIgnoreCase(sender)
-                    || userService.getUserName((TUser) p).equalsIgnoreCase(recipient)) {
+                if (userService.getUserName(p).equalsIgnoreCase(sender)
+                    || userService.getUserName(p).equalsIgnoreCase(recipient)) {
                     return;
                 }
                 textService.send(formatSocialSpyMessage(sender, recipient, rawMessage), (TCommandSource) p);

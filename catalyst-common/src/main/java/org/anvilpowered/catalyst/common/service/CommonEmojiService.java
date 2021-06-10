@@ -31,7 +31,7 @@ public class CommonEmojiService implements EmojiService {
 
     @Override
     public Map<String, Character> getEmojis() {
-        return registry.getOrDefault(CatalystKeys.EMOJI_MAP);
+        return registry.getOrDefault(CatalystKeys.INSTANCE.getEMOJI_MAP());
     }
 
     @Override

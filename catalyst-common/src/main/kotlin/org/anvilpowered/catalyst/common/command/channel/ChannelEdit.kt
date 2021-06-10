@@ -52,6 +52,9 @@ object ChannelEdit {
       "servers", "server" -> {
         channel.servers = channel.servers.plus(value)
       }
+      "passthrough" -> {
+        channel.passthrough = value.toBoolean()
+      }
       else -> return false
     }
 
@@ -59,12 +62,13 @@ object ChannelEdit {
     return true
   }
 
-  fun commit(uuid: UUID, registry: Registry, config: ConfigurationService) {
-    val channels = registry.getOrDefault(CatalystKeys.CHAT_CHANNELS)
-    channels.remove(currentChannel[uuid])
-    channels.add(editedChannel[uuid])
-    config.set(CatalystKeys.CHAT_CHANNELS, channels!!)
-    config.save()
+  fun commit(uuid: UUID, registry: Registry) {
+    registry.transform(CatalystKeys.CHAT_CHANNELS) { it: MutableList<ChatChannel>? ->
+      it?.remove(currentChannel[uuid])
+      it?.add(editedChannel[uuid]!!)
+      it
+    }
+    (registry as? ConfigurationService)?.save()
     currentChannel.remove(uuid)
     editedChannel.remove(uuid)
   }

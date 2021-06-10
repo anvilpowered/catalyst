@@ -35,13 +35,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Singleton
-public class CommonLuckpermsService<TUser, TPlayer> implements LuckpermsService {
+public class CommonLuckpermsService<TPlayer> implements LuckpermsService {
 
     private final UserManager userManager;
     private final ContextManager contextManager;
 
     @Inject
-    private UserService<TUser, TPlayer> userService;
+    private UserService<TPlayer, TPlayer> userService;
 
     @Inject
     public CommonLuckpermsService(Registry registry) {
@@ -51,7 +51,7 @@ public class CommonLuckpermsService<TUser, TPlayer> implements LuckpermsService 
 
     @Override
     public Optional<CachedMetaData> getCachedPlayerData(Object player) {
-        User lpUser = userManager.getUser(userService.getUUID((TUser) player));
+        User lpUser = userManager.getUser(userService.getUUID((TPlayer) player));
         if (lpUser == null) return Optional.empty();
         return Optional.of(lpUser.getCachedData().getMetaData(getQueryOptions(lpUser)));
     }
@@ -108,7 +108,7 @@ public class CommonLuckpermsService<TUser, TPlayer> implements LuckpermsService 
 
     @Override
     public @Nullable String getGroupName(Object player) {
-        User user = userManager.getUser(userService.getUUID((TUser) player));
+        User user = userManager.getUser(userService.getUUID((TPlayer) player));
         if (user == null) {
             return "";
         }

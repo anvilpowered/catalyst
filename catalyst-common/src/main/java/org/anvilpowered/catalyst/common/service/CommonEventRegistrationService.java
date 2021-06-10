@@ -28,7 +28,6 @@ import org.anvilpowered.catalyst.common.listener.JoinListener;
 import org.anvilpowered.catalyst.common.listener.LeaveListener;
 
 public class CommonEventRegistrationService<
-    TUser,
     TString,
     TPlayer,
     TCommandSource>
@@ -41,13 +40,13 @@ public class CommonEventRegistrationService<
     private ChatListener<TString, TPlayer, TCommandSource> chatListener;
 
     @Inject
-    private JoinListener<TUser, TString, TPlayer, TCommandSource> joinListener;
+    private JoinListener<TString, TPlayer, TCommandSource> joinListener;
 
     @Inject
-    private LeaveListener<TUser, TString, TPlayer, TCommandSource> leaveListener;
+    private LeaveListener<TString, TPlayer, TCommandSource> leaveListener;
 
     @Inject
-    private DiscordChatListener<TUser, TString, TPlayer, TCommandSource> discordChatListener;
+    private DiscordChatListener<TString, TPlayer, TCommandSource> discordChatListener;
 
     @Inject
     private CommandListener commandListener;

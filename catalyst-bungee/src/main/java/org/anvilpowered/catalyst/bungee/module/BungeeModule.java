@@ -31,16 +31,15 @@ import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
 import org.anvilpowered.catalyst.bungee.command.BungeeCommandNode;
 import org.anvilpowered.catalyst.bungee.service.BungeeBroadcastService;
 import org.anvilpowered.catalyst.bungee.service.BungeeDiscordCommandService;
-import org.anvilpowered.catalyst.common.registry.ProxyConfigurationService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
 
 import java.io.File;
 import java.nio.file.Paths;
+import org.anvilpowered.catalyst.common.registry.CommonConfigurationService;
 
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class BungeeModule extends CommonModule<
-    ProxiedPlayer,
     ProxiedPlayer,
     TextComponent,
     CommandSender> {
@@ -63,7 +62,6 @@ public class BungeeModule extends CommonModule<
             .setPath(Paths.get(configFilesLocation + "/catalyst.conf"))
             .build());
 
-        bind(ConfigurationService.class).to(ProxyConfigurationService.class);
         bind(new TypeLiteral<BroadcastService<TextComponent>>() {
         }).to(BungeeBroadcastService.class);
         bind(DiscordCommandService.class).to(BungeeDiscordCommandService.class);

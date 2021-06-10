@@ -74,7 +74,7 @@ public class BungeeCommand extends Command implements TabExecutor {
                 switch (entry.getValue()) {
                     case SERVER:
                         List<String> servers = new ArrayList<>();
-                        if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
+                        if (registry.getOrDefault(CatalystKeys.INSTANCE.getADVANCED_SERVER_INFO_ENABLED())) {
                             String prefix = advancedServerInfo.getPrefixForPlayer(sender.getName());
                             for (BackendServer server : locationService.getServers()) {
                                 if (server.getName().startsWith(prefix)) {

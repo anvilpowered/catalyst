@@ -96,15 +96,15 @@ public class CommonStaffListService<TString, TPlayer, TCommandSource> implements
                         userName,
                         permissionService.hasPermission(
                             player,
-                            registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN_PERMISSION)
+                            registry.getOrDefault(CatalystKeys.INSTANCE.getSTAFFLIST_ADMIN_PERMISSION())
                         ),
                         permissionService.hasPermission(
                             player,
-                            registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF_PERMISSION)
+                            registry.getOrDefault(CatalystKeys.INSTANCE.getSTAFFLIST_STAFF_PERMISSION())
                         ),
                         permissionService.hasPermission(
                             player,
-                            registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER_PERMISSION)
+                            registry.getOrDefault(CatalystKeys.INSTANCE.getSTAFFLIST_OWNER_PERMISSION())
                         ));
                 }
             });

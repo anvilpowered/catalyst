@@ -33,6 +33,8 @@ public interface ChatService<TString, TPlayer, TCommandSource> {
 
     Optional<ChatChannel> getChannelFromId(String channelId);
 
+    Optional<ChatChannel> getChannelFromUUID(UUID userUUID);
+
     int getChannelUserCount(String channelId);
 
     List<TPlayer> getUsersInChannel(String channelId);

@@ -59,10 +59,10 @@ public class CommonChatFilter implements ChatFilter {
     @Override
     public List<int[]> findSwears(String message, List<Integer> spacePositions) {
         List<int[]> swearList = new ArrayList<>(); // List of all swear word locations
-        List<String> exceptions = registry.getOrDefault(CatalystKeys.CHAT_FILTER_EXCEPTIONS).stream()
+        List<String> exceptions = registry.getOrDefault(CatalystKeys.INSTANCE.getCHAT_FILTER_EXCEPTIONS()).stream()
             .map(String::toLowerCase).collect(Collectors.toList()); /* Gets exceptions from API, then, via a map,
                                                                            makes them lowercase. */
-        for (String bannedWord : registry.getOrDefault(CatalystKeys.CHAT_FILTER_SWEARS)) { /* Iterates through every
+        for (String bannedWord : registry.getOrDefault(CatalystKeys.INSTANCE.getCHAT_FILTER_SWEARS())) { /* Iterates through every
                                                                                             banned word to see if the message contains it.*/
             if (message.contains(bannedWord) && (!exceptions.contains(bannedWord))) { /* If the message contains the
                                                                                          word and the word is not exempt. */

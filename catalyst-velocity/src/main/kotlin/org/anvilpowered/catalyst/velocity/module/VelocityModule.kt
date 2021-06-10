@@ -32,15 +32,14 @@ import org.anvilpowered.catalyst.api.discord.DiscordCommandService
 import org.anvilpowered.catalyst.api.service.BroadcastService
 import org.anvilpowered.catalyst.common.module.CommonModule
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo
-import org.anvilpowered.catalyst.common.registry.ProxyConfigurationService
+import org.anvilpowered.catalyst.common.registry.CommonConfigurationService
 import org.anvilpowered.catalyst.velocity.command.VelocityCommandNode
 import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService
 import org.anvilpowered.catalyst.velocity.service.VelocityDiscordCommandService
 import java.nio.file.Paths
 
 @Singleton
-class VelocityModule :
-  CommonModule<Player, Player, TextComponent, CommandSource>() {
+class VelocityModule : CommonModule<Player, TextComponent, CommandSource>() {
   override fun configure() {
     super.configure()
     bind(object : TypeLiteral<CommandNode<CommandSource>>() {}).to(VelocityCommandNode::class.java)
@@ -54,7 +53,6 @@ class VelocityModule :
         .setPath(Paths.get("$configFilesLocation/catalyst.conf"))
         .build()
     )
-    bind(ConfigurationService::class.java).to(ProxyConfigurationService::class.java)
     bind(object : TypeLiteral<BroadcastService<TextComponent>>() {
     }).to(VelocityBroadcastService::class.java)
     bind(DiscordCommandService::class.java).to(VelocityDiscordCommandService::class.java)

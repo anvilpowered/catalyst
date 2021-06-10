@@ -69,7 +69,7 @@ public class BungeeListener implements Listener {
             }
             return;
         }
-        if (!registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
+        if (!registry.getOrDefault(CatalystKeys.INSTANCE.getPROXY_CHAT_ENABLED())) {
             return;
         }
         if (chatService.isDisabledForUser((ProxiedPlayer) e.getSender())) {

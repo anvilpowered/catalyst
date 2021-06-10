@@ -36,6 +36,7 @@ import org.anvilpowered.catalyst.api.CommandSuggestionType
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
+import org.anvilpowered.catalyst.common.command.channel.ChannelCommand
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo
 import java.util.HashMap
 import java.util.Locale
@@ -45,8 +46,8 @@ import java.util.function.Predicate
 
 abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSource> protected constructor(
   protected var registry: Registry,
-  protected var playerClass: Class<*>,
-  protected var consoleClass: Class<*>
+  private var playerClass: Class<*>,
+  private var consoleClass: Class<*>
 ) : CommandNode<TCommandSource> {
 
   @Inject
@@ -232,7 +233,7 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
           .executes { sendNotEnoughArgs(it, pluginMessages.channelEditPropertyUsage()) }
           .then(RequiredArgumentBuilder.argument<TCommandSource, String>("name", StringArgumentType.word())
             .executes { sendNotEnoughArgs(it, pluginMessages.channelEditPropertyUsage()) }
-            .suggests { _: CommandContext<TCommandSource>, builder: SuggestionsBuilder ->
+            .suggests { _, builder ->
               builder.suggest("format")
               builder.suggest("id")
               builder.suggest("visibility")
@@ -242,6 +243,7 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
               builder.suggest("click")
               builder.suggest("onclick")
               builder.suggest("server")
+              builder.suggest("passthrough")
               builder.buildFuture()
             }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("value", StringArgumentType.string())
