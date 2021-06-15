@@ -23,11 +23,13 @@ import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
+import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatFilter
 import org.anvilpowered.catalyst.api.service.ChatService
 
 class ChatListener<TString, TPlayer, TCommandSource> @Inject constructor(
   private val chatService: ChatService<TString, TPlayer, TCommandSource>,
+  private val channelService: ChannelService<TPlayer>,
   private val permissionService: PermissionService,
   private val chatFilter: ChatFilter,
   private val registry: Registry,
@@ -42,9 +44,9 @@ class ChatListener<TString, TPlayer, TCommandSource> @Inject constructor(
       return
     }
     var message = event.rawMessage
-    val channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID))
+    val channel = channelService.getChannelFromId(channelService.getChannelIdForUser(playerUUID))
     message = chatService.checkPlayerName(player.get(), message)
-    if (channel.isPresent) {
+    if (channel != null) {
       if (!permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))
         && registry.getOrDefault(CatalystKeys.CHAT_FILTER_ENABLED)
       ) {

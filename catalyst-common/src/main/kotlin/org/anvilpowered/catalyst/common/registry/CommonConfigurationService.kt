@@ -57,8 +57,7 @@ class CommonConfigurationService @Inject constructor(
     setName(CatalystKeys.CHAT_CHANNELS, "chat.channels")
     setName(CatalystKeys.CHAT_DEFAULT_CHANNEL, "chat.channelDefault")
     setName(CatalystKeys.BOT_TOKEN, "discord.bot.token")
-    setName(CatalystKeys.DISCORD_MAIN_CHANNEL, "discord.channel.main")
-    setName(CatalystKeys.DISCORD_STAFF_CHANNEL, "discord.channel.staff")
+    setName(CatalystKeys.BOT_NAME, "discord.bot.name")
     setName(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT, "discord.format.proxy")
     setName(CatalystKeys.DISCORD_JOIN_FORMAT, "discord.format.join")
     setName(CatalystKeys.DISCORD_LEAVE_FORMAT, "discord.format.leave")
@@ -81,7 +80,8 @@ class CommonConfigurationService @Inject constructor(
     setName(CatalystKeys.VIA_VERSION_ENABLED, "advanced.viaversion")
     setName(CatalystKeys.BAN_COMMAND_ENABLED, "commands.ban")
     setName(CatalystKeys.BROADCAST_COMMAND_ENABLED, "commands.broadcast")
-    setName(CatalystKeys.CHANNEL_COMMAND_ENABLED, "commands.channel")
+    setName(CatalystKeys.CHANNEL_COMMAND_ENABLED, "commands.channel.base")
+    setName(CatalystKeys.CHANNEL_COMMAND_ALIAS_ENABLED, "commands.channel.alias")
     setName(CatalystKeys.NICKNAME_COMMAND_ENABLED, "commands.nickname")
     setName(CatalystKeys.FIND_COMMAND_ENABLED, "commands.find")
     setName(CatalystKeys.INFO_COMMAND_ENABLED, "commands.info")
@@ -153,14 +153,6 @@ class CommonConfigurationService @Inject constructor(
       "\nToken for the discord bot"
     )
     setDescription(
-      CatalystKeys.DISCORD_MAIN_CHANNEL,
-      "\nDiscord channel that in-game chat is sent to"
-    )
-    setDescription(
-      CatalystKeys.DISCORD_STAFF_CHANNEL,
-      "\nDiscord channel id that staff chat is sent to"
-    )
-    setDescription(
       CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT,
       "\nFormat of the message to be sent to discord from in-game"
     )
@@ -217,8 +209,8 @@ class CommonConfigurationService @Inject constructor(
     setDescription(
       CatalystKeys.SERVER_PING_MESSAGE,
       """
-        \nThis message is shown when players hover over the player count.
-        \nThis message will only appear when the mode is set to MESSAGE
+        This message is shown when players hover over the player count.
+        This message will only appear when the mode is set to MESSAGE
         """.trimIndent()
     )
     setDescription(
@@ -233,151 +225,162 @@ class CommonConfigurationService @Inject constructor(
       CatalystKeys.ADVANCED_SERVER_INFO,
       """
         This config option is for users that would like to have multiple servers,
-        \neach with differing MOTD and/or Mods \n
-        Note: To do this, the IP specified MUST correlate to the IP defined in the forced host section\n
+        each with differing MOTD and/or Mods 
+        Note: To do this, the IP specified MUST correlate to the IP defined in the forced host section
         of the velocity config. Also, your players must use the IP defined in this config to connect
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.EMOJI_ENABLE,
       """
-        \nToggle emojis in chat
-        \nEnabling emojis means that you will have to have your players download a select texture pack, found on the github page.
-        \n(true = enabled)
+        Toggle emojis in chat
+        Enabling emojis means that you will have to have your players download a select texture pack, found on the github page.
+        (true = enabled)
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.VIA_VERSION_ENABLED,
       """
-        \nIf you are running servers with ViaVersion, this will disable the version checking done in the /server command.
-        \n(true = enabled)
+        If you are running servers with ViaVersion, this will disable the version checking done in the /server command.
+        (true = enabled)
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.BAN_COMMAND_ENABLED,
       """
-        \nToggle ban command handling 
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.BAN_PERMISSION.fallbackValue}
+        Toggle ban command handling 
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.BAN_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.BROADCAST_COMMAND_ENABLED,
-      """Toggle broadcast command handling
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.BROADCAST_PERMISSION.fallbackValue}
+      """
+        Toggle broadcast command handling
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.BROADCAST_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(CatalystKeys.CHANNEL_COMMAND_ENABLED, "\nToggle channel command handling \n(true = enabled | false = disabled)")
     setDescription(
+      CatalystKeys.CHANNEL_COMMAND_ALIAS_ENABLED,
+      """
+        Toggle channel alias command handling
+        When enabled, channel ID's will also be a command in-game to quickly switch channels
+        For example, a chat channel with the id "admin" will have the command "/admin" in-game
+        (true = enabled | false = disabled)
+        """.trimIndent()
+    )
+    setDescription(
       CatalystKeys.NICKNAME_COMMAND_ENABLED,
-      """\nToggle nickname command handling 
-        \n(true = enabled | false = disabled)
-        \nBase Permission : ${CatalystKeys.NICKNAME_PERMISSION.fallbackValue} 
-        \nColor Permission : ${CatalystKeys.NICKNAME_COLOR_PERMISSION.fallbackValue}
-        \nMagic Permission : ${CatalystKeys.NICKNAME_MAGIC_PERMISSION.fallbackValue} 
-        \nOther permission : ${CatalystKeys.NICKNAME_OTHER_PERMISSION.fallbackValue}
+      """
+        Toggle nickname command handling 
+        (true = enabled | false = disabled)
+        Base Permission : ${CatalystKeys.NICKNAME_PERMISSION.fallbackValue} 
+        Color Permission : ${CatalystKeys.NICKNAME_COLOR_PERMISSION.fallbackValue}
+        Magic Permission : ${CatalystKeys.NICKNAME_MAGIC_PERMISSION.fallbackValue} 
+        Other permission : ${CatalystKeys.NICKNAME_OTHER_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.FIND_COMMAND_ENABLED,
       """
-        \nToggle find command handling
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.FIND_PERMISSION.fallbackValue}
+        Toggle find command handling
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.FIND_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.INFO_COMMAND_ENABLED,
       """
         Toggle info command handling 
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.INFO_PERMISSION.fallbackValue}
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.INFO_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.KICK_COMMAND_ENABLED,
       """
-        \nToggle kick command handling
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.KICK_PERMISSION.fallbackValue}
+        Toggle kick command handling
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.KICK_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.LIST_COMMAND_ENABLED,
       """
-        \nToggle list command handling 
-        \n(true = enabled | false = disabled)
+        Toggle list command handling 
+        (true = enabled | false = disabled)
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.MESSAGE_COMMAND_ENABLED,
       """
-        \nToggle message command handling 
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.MESSAGE_PERMISSION.fallbackValue}
+        Toggle message command handling 
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.MESSAGE_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.SEND_COMMAND_ENABLED,
       """
-        \nToggle send command handling
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.SEND_PERMISSION.fallbackValue}
+        Toggle send command handling
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.SEND_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.SERVER_COMMAND_ENABLED,
       """
-        \nToggle server command handling
-        \n(true = enabled | false = disabled)
+        Toggle server command handling
+        (true = enabled | false = disabled)
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.SOCIALSPY_COMMAND_ENABLED,
       """
-        \nToggle SocialSpy command handling
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.SOCIALSPY_PERMISSION.fallbackValue}
+        Toggle SocialSpy command handling
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.SOCIALSPY_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.MUTE_COMMAND_ENABLED,
       """
-        \nToggle mute command handling
-        \n(true = enabled | false = disabled)
-        \nPermission : ${CatalystKeys.MUTE_PERMISSION.fallbackValue}
+        Toggle mute command handling
+        (true = enabled | false = disabled)
+        Permission : ${CatalystKeys.MUTE_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.IGNORE_COMMAND_ENABLED,
       """
-        \nToggle ignore command handling
-        \n(true = enabled | false = disabled)
-        \nPermission: ${CatalystKeys.IGNORE_PERMISSION.fallbackValue}
+        Toggle ignore command handling
+        (true = enabled | false = disabled)
+        Permission: ${CatalystKeys.IGNORE_PERMISSION.fallbackValue}
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.COMMAND_LOGGING_ENABLED,
       """
         Toggle command logging
-        \n(true = enabled | false = disabled)
+        (true = enabled | false = disabled)
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.COMMAND_LOGGING_FILTER,
       """
         Filter commands that you want logged to the console.
-        \nBy default, catalyst will log all commands.
+        By default, catalyst will log all commands.
         """.trimIndent()
     )
     setDescription(
       CatalystKeys.ENABLE_PER_SERVER_PERMS,
       """
         Enforces the following permission check
-        \ncatalyst.server.<name> when a player uses the /server command.
-        \nFor example, if the target server is called lobby, catalyst will test
-        \nthe permission catalyst.server.lobby
+        catalyst.server.<name> when a player uses the /server command.
+        For example, if the target server is called lobby, catalyst will test
+        the permission catalyst.server.lobby
         """.trimIndent()
     )
     setDescription(CatalystKeys.MOTD_ENABLED, "Toggle MOTD handling \nBy default, Catalyst will not control the MOTD")

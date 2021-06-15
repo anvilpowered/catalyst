@@ -31,8 +31,8 @@ import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.registry.ChatChannel
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
+import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.EmojiService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
@@ -40,10 +40,10 @@ import org.slf4j.Logger
 import java.util.Optional
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
-import java.util.stream.Collectors
 
 @Singleton
 class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
+  private val channelService: ChannelService<TPlayer>,
   private val serverService: AdvancedServerInfoService,
   private val emojiService: EmojiService,
   private val logger: Logger,
@@ -57,49 +57,14 @@ class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
   private val userService: UserService<TPlayer, TPlayer>
 ) : ChatService<TString, TPlayer, TCommandSource> {
 
-  var channelMap = mutableMapOf<UUID, String>()
   var ignoreMap = mutableMapOf<UUID, MutableList<UUID>>()
   var disabledList = mutableListOf<UUID>()
-
-  override fun switchChannel(userUUID: UUID, channelId: String) {
-    channelMap[userUUID] = channelId
-  }
-
-  override fun getChannelIdForUser(userUUID: UUID): String {
-    return channelMap[userUUID] ?: registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL)
-  }
-
-  override fun getChannelFromId(channelId: String): Optional<ChatChannel> {
-    return registry.get(CatalystKeys.CHAT_CHANNELS).flatMap {
-      it.stream()
-        .filter { c: ChatChannel -> c.id == channelId }
-        .findAny()
-    }
-  }
-
-  override fun getChannelFromUUID(userUUID: UUID): Optional<ChatChannel> {
-    return getChannelFromId(getChannelIdForUser(userUUID))
-  }
-
-  override fun getChannelUserCount(channelId: String): Int {
-    return userService.onlinePlayers
-      .stream()
-      .filter { getChannelIdForUser(userService.getUUID(it as TPlayer)) == channelId }
-      .count().toInt()
-  }
-
-  override fun getUsersInChannel(channelId: String): List<TPlayer>? {
-    return userService.onlinePlayers
-      .stream()
-      .filter { getChannelIdForUser(userService.getUUID(it as TPlayer)) == channelId }
-      .collect(Collectors.toList())
-  }
 
   override fun sendMessageToChannel(channelId: String, message: TString, senderUUID: UUID): CompletableFuture<Void?>? {
     return CompletableFuture.runAsync {
       userService.onlinePlayers.forEach {
         if (permissionService.hasPermission(it, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
-          || getChannelIdForUser(userService.getUUID(it as TPlayer)) == channelId
+          || channelService.getChannelIdForUser(userService.getUUID(it as TPlayer)) == channelId
         ) {
           if (senderUUID != userService.getUUID(it as TPlayer)) {
             if (!isIgnored(userService.getUUID(it), senderUUID)) {
@@ -130,17 +95,11 @@ class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
     serverName: String,
     channelId: String
   ): CompletableFuture<Optional<TString>> {
-    val channel = getChannelFromId(channelId)
-    val format: String
-    val hover: String
-    val click: String
-    if (channel.isPresent) {
-      format = channel.get().format
-      hover = channel.get().hoverMessage
-      click = channel.get().click
-    } else {
-      throw java.lang.IllegalStateException("Missing chat channel!")
-    }
+    val channel = channelService.getChannelFromId(channelId) ?: channelService.defaultChannel
+    ?: throw java.lang.IllegalStateException("Invalid channel configuration!")
+    val format = channel.format
+    val hover = channel.hoverMessage
+    val click = channel.click
     return memberManager.primaryComponent.getOneForUser(userUUID)
       .thenApplyAsync { optionalMember ->
         if (!optionalMember.isPresent) {
@@ -230,7 +189,7 @@ class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
 
   override fun getPlayerList(): List<TString> {
     val playerList: MutableList<String> = ArrayList()
-    userService.onlinePlayers.forEach{ playerList.add(userService.getUserName(it)) }
+    userService.onlinePlayers.forEach { playerList.add(userService.getUserName(it)) }
     val tempList: MutableList<TString> = ArrayList()
     var builder = StringBuilder()
     for (s in playerList) {
@@ -321,7 +280,7 @@ class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
       .orElseThrow { IllegalStateException("$userName is not in a valid server!") }
     val playerUUID = userService.getUUID(event.player)
     var message = event.rawMessage
-    val channelId = getChannelIdForUser(playerUUID)
+    val channelId = channelService.getChannelIdForUser(playerUUID)
     val hasColorPermission: Boolean = permissionService.hasPermission(event.player, registry.getOrDefault(CatalystKeys.CHAT_COLOR_PERMISSION))
     message = chatColor + message
     if (registry.getOrDefault(CatalystKeys.EMOJI_ENABLE)

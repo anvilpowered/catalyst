@@ -27,7 +27,10 @@ import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.discord.JDAService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
+import org.anvilpowered.catalyst.api.service.ChannelService
+import org.anvilpowered.catalyst.api.service.ChatService
 import org.slf4j.Logger
+import java.lang.IllegalStateException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.security.auth.login.LoginException
@@ -37,8 +40,8 @@ class CommonJDAService<TPlayer, TString, TCommandSource> @Inject constructor(
   private val registry: Registry,
   private val userService: UserService<TPlayer, TPlayer>,
   private val logger: Logger,
-  private val discordListener: CommonDiscordListener<TString, TPlayer, TCommandSource>
-
+  private val discordListener: CommonDiscordListener<TString, TPlayer, TCommandSource>,
+  private val channelService: ChannelService<TPlayer>
 ) : JDAService {
 
   private var isLoaded = false
@@ -63,8 +66,8 @@ class CommonJDAService<TPlayer, TString, TCommandSource> @Inject constructor(
     }
     var playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS)
     val nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE)
-    if (userService.onlinePlayers.size != 0) {
-      playerCount = Integer.toString(userService.onlinePlayers.size)
+    if (userService.onlinePlayers.isNotEmpty()) {
+      playerCount = userService.onlinePlayers.size.toString()
     }
     jda!!.presence.activity = Activity.playing(nowPlaying.replace("%players%".toRegex(), playerCount))
     jda!!.addEventListener(discordListener)
@@ -84,8 +87,12 @@ class CommonJDAService<TPlayer, TString, TCommandSource> @Inject constructor(
   }
 
   override fun updateTopic(): Runnable {
+    val channelId = registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL)
+    if (channelId.isEmpty()) {
+      throw IllegalStateException("Default chat channel must not be empty!")
+    }
     return Runnable {
-      val channel = jda!!.getTextChannelById(registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL))
+      val channel = jda!!.getTextChannelById(channelService.getChannelFromId(channelId)?.discordChannel ?: "")
       var playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS)
       val nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE)
       if (userService.onlinePlayers.isNotEmpty()) {

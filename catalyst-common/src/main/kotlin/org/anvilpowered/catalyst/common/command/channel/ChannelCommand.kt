@@ -27,12 +27,13 @@ import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.TextService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
+import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
 import java.util.ArrayList
 import java.util.Optional
 
 class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject constructor(
-  private val chatService: ChatService<TString, TPlayer, TCommandSource>,
+  private val channelService: ChannelService<TPlayer>,
   private val locationService: LocationService,
   private val permissionService: PermissionService,
   private val registry: Registry,
@@ -42,30 +43,24 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
 
   private fun exists(channelId: String): Boolean = registry.getOrDefault(CatalystKeys.CHAT_CHANNELS).any { it.id == channelId }
 
-  fun set(context: CommandContext<TCommandSource>, playerClass: Class<*>): Int {
+  fun setAlias(context: CommandContext<TCommandSource>, channelId: String, playerClass: Class<*>): Int {
     val source = context.source
     if (!playerClass.isAssignableFrom(source!!::class.java)) {
       textService.send(textService.of("Player only command!"), source)
       return 0
     }
-    val channel = context.getArgument("channel", String::class.java)
     val userName = userService.getUserName(source as TPlayer)
 
-    if (channel.contains(" ")) {
-      return 0
-    }
-
-    if (!exists(channel)) {
+    if (!exists(channelId)) {
       textService.send(textService.of("Invalid channel!"), source)
       return 0
     }
-
-    val chatChannel = chatService.getChannelFromId(channel).get()
-    if (channel == chatService.getChannelIdForUser(userService.getUUID(source as TPlayer))) {
+    val chatChannel = channelService.getChannelFromId(channelId)
+    if (channelId == channelService.getChannelIdForUser(userService.getUUID(source as TPlayer))) {
       textService.builder()
         .appendPrefix()
         .yellow().append("You are already in \"")
-        .green().append(channel)
+        .green().append(channelId)
         .yellow().append("\"!")
         .sendTo(source)
       return 0
@@ -77,8 +72,8 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
     }
     val server = currentServer.get().name
 
-    if (permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION).toString() + channel)) {
-      if (!chatChannel.servers.contains(server)
+    if (permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION).toString() + channelId)) {
+      if (!chatChannel?.servers?.contains(server)!!
         && !permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
         && !chatChannel.servers.contains("*")
       ) {
@@ -90,16 +85,31 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
           .sendTo(source)
         return 0
       }
-      chatService.switchChannel(userService.getUUID(source), channel)
+      channelService.switchChannel(userService.getUUID(source), channelId)
       textService.send(
         textService.builder()
           .green().append("Successfully switched to ")
-          .gold().append(channel)
+          .gold().append(channelId)
+          .green().append(" channel.")
           .build(),
         source
       )
     }
     return 1
+  }
+
+  fun set(context: CommandContext<TCommandSource>, playerClass: Class<*>): Int {
+    val channel = context.getArgument("channel", String::class.java)
+    if (channel.contains(" ")) {
+      textService.send(
+        textService.builder()
+          .red().append("Channel names must not contain a space!")
+          .build(),
+        context.source
+      )
+      return 0
+    }
+    return setAlias(context, channel, playerClass)
   }
 
   fun abortEdit(context: CommandContext<TCommandSource>): Int {
@@ -133,7 +143,7 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
       if (permissionService.hasPermission(context.source, basePerm + channel.id)) {
         availableChannels.add(
           channelInfo(
-            channel.id, chatService.getChannelIdForUser(context.source.uuid()) == channel.id
+            channel.id, channelService.getChannelIdForUser(context.source.uuid()) == channel.id
           )
         )
       }
@@ -158,7 +168,7 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
         .gray().append("Status: ")
         .green().append(if (active) "Active" else "Inactive")
         .gray().append("\nActive Users: ")
-        .green().append(chatService.getChannelUserCount(channelId))
+        .green().append(channelService.getChannelUserCount(channelId))
         .build()
     )
     return component.build()
@@ -175,7 +185,7 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
         .sendTo(source)
       return 0
     }
-    ChannelEdit.currentChannel[source.uuid()] = chatService.getChannelFromId(channelId).get()
+    ChannelEdit.currentChannel[source.uuid()] = channelService.getChannelFromId(channelId) ?: return 0
     textService.send(editableInfo(channelId), source)
     return 1
   }
@@ -271,10 +281,10 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
       return null
     }
 
-    val chatChannel = chatService.getChannelFromId(channelId).get()
+    val chatChannel = channelService.getChannelFromId(channelId) ?: return textService.fail("Invalid channel!")
     return textService.builder()
       .append(infoBar(channelId))
-      .append(basicProperty("Active Users", chatService.getUsersInChannel(channelId).size.toString()))
+      .append(basicProperty("Active Users", channelService.getUsersInChannel(channelId).size.toString()))
       .append(basicProperty("Format", chatChannel.format))
       .append(basicProperty("Hover Message", chatChannel.hoverMessage))
       .append(basicProperty("OnClick", chatChannel.click))
@@ -290,10 +300,10 @@ class ChannelCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject 
       return null
     }
 
-    val chatChannel = chatService.getChannelFromId(channelId).get()
+    val chatChannel = channelService.getChannelFromId(channelId) ?: return textService.of("Invalid channel!")
     return textService.builder()
       .append(editBar(channelId))
-      .append(basicProperty("Active Users", chatService.getUsersInChannel(channelId).size.toString()))
+      .append(basicProperty("Active Users", channelService.getUsersInChannel(channelId).size.toString()))
       .append(editableProperty("Format", chatChannel.format))
       .append(editableProperty("Hover Message", chatChannel.hoverMessage))
       .append(editableProperty("OnClick", chatChannel.click))

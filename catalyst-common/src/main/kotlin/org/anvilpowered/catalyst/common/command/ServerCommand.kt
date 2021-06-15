@@ -29,20 +29,20 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
-import org.anvilpowered.catalyst.api.service.ChatService
+import org.anvilpowered.catalyst.api.service.ChannelService
 
 class ServerCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject constructor(
-  private val chatService: ChatService<TString, TPlayer, TCommandSource>,
+  private val channelService: ChannelService<TPlayer>,
   private val pluginInfo: PluginInfo<TString>,
   private val textService: TextService<TString, TCommandSource>,
-  private val registry: Registry, 
+  private val registry: Registry,
   private val advancedServerInfo: AdvancedServerInfoService,
   private val userService: UserService<TPlayer, TPlayer>,
   private val locationService: LocationService,
-  private val permissionService: PermissionService, 
+  private val permissionService: PermissionService,
   private val pluginMessages: PluginMessages<TString>
 ) {
-  
+
   fun execute(context: CommandContext<TCommandSource>): Int {
     val player = context.source as TPlayer
     val userName = userService.getUserName(player)
@@ -99,27 +99,25 @@ class ServerCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject c
 
   private fun testChannel(player: TPlayer, server: String) {
     val playerUUID = userService.getUUID(player)
-    val channel = chatService.getChannelFromId(chatService.getChannelIdForUser(playerUUID))
-    if (channel.isPresent) {
-      if (!channel.get().servers.contains(server) && !permissionService.hasPermission(
-          player,
-          registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION)
-        )
-        && !channel.get().servers.contains("*")
-      ) {
-        val defaultChannel = chatService.getChannelFromId(registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL))
-          .orElseThrow { AssertionError("A default channel must be specified!") }
-        chatService.switchChannel(playerUUID, defaultChannel.id)
-        textService.builder()
-          .appendPrefix()
-          .yellow().append("Channel ")
-          .gold().append(channel.get().id)
-          .yellow().append(" is not allowed in ")
-          .gold().append(server)
-          .yellow().append(". You have been moved to ")
-          .gold().append(defaultChannel.id)
-          .sendTo(player)
-      }
+    val channel = channelService.getChannelFromId(channelService.getChannelIdForUser(playerUUID)) ?: channelService.defaultChannel
+    ?: throw IllegalStateException("Invalid chat channnel configuration!")
+    if (!channel.servers.contains(server) && !permissionService.hasPermission(
+        player,
+        registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION)
+      )
+      && !channel.servers.contains("*")
+    ) {
+      val defaultChannel = channelService.defaultChannel ?: throw AssertionError("A default chat channel must be defined")
+      channelService.switchChannel(playerUUID, defaultChannel.id)
+      textService.builder()
+        .appendPrefix()
+        .yellow().append("Channel ")
+        .gold().append(channel.id)
+        .yellow().append(" is not allowed in ")
+        .gold().append(server)
+        .yellow().append(". You have been moved to ")
+        .gold().append(defaultChannel.id)
+        .sendTo(player)
     }
   }
 

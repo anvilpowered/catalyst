@@ -425,6 +425,13 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
       commands[ImmutableList.of("broadcast", "cbroadcast")] = broadcast
     }
     if (registry.getOrDefault(CatalystKeys.CHANNEL_COMMAND_ENABLED)) {
+      if (registry.getOrDefault(CatalystKeys.CHANNEL_COMMAND_ALIAS_ENABLED)) {
+        for (channel in registry.getOrDefault(CatalystKeys.CHAT_CHANNELS)) {
+          commands[ImmutableList.of(channel.id)] = LiteralArgumentBuilder.literal<TCommandSource>(channel.id)
+            .executes { channelCommand.setAlias(it, channel.id, playerClass) }
+            .build()
+        }
+      }
       commands[ImmutableList.of("channel", "chatchannel")] = channel
     }
     if (registry.getOrDefault(CatalystKeys.NICKNAME_COMMAND_ENABLED)) {

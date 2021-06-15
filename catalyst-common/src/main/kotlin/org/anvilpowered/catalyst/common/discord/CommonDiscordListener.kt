@@ -27,7 +27,7 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.discord.DiscordCommandService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.registry.ChatChannel
-import org.anvilpowered.catalyst.api.service.ChatService
+import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.EmojiService
 import org.slf4j.Logger
 import java.util.stream.Collectors
@@ -39,9 +39,9 @@ class CommonDiscordListener<TString, TPlayer, TCommandSource> @Inject constructo
   private val textService: TextService<TString, TCommandSource>,
   private val logger: Logger,
   private val emojiService: EmojiService,
-  private val chatService: ChatService<TString, TPlayer, TCommandSource>
+  private val channelService: ChannelService<TPlayer>
 ) : ListenerAdapter() {
-  
+
   override fun onMessageReceived(event: MessageReceivedEvent) {
     if (event.isWebhookMessage || event.author.isBot) {
       return
@@ -60,8 +60,7 @@ class CommonDiscordListener<TString, TPlayer, TCommandSource> @Inject constructo
       || messageRaw.contains("!list")
     ) {
       val onlinePlayers = userService.onlinePlayers
-      val playerNames: String
-      playerNames = if (onlinePlayers.size == 0) {
+      val playerNames: String = if (onlinePlayers.size == 0) {
         "```There are currently no players online!```"
       } else {
         ("**Online Players:**```"
@@ -92,12 +91,12 @@ class CommonDiscordListener<TString, TPlayer, TCommandSource> @Inject constructo
         targetChannel = channel
       }
     }
-    if (targetChannel == null && channelId == registry.getOrDefault(CatalystKeys.DISCORD_MAIN_CHANNEL)) {
-      val mainChannel = chatService.getChannelFromId(registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL))
-      targetChannel = if (mainChannel.isPresent) {
-        mainChannel.get()
+    if (targetChannel == null) {
+      val mainChannel = channelService.defaultChannel
+      targetChannel = if (mainChannel != null) {
+        mainChannel
       } else {
-        logger.error("Could not fall back to the main discord channel! Please check your configuration!")
+        logger.error("Could not find a channel to fall back to! Please ensure you have properly setup discord channels in your config.")
         return
       }
     }
@@ -112,7 +111,7 @@ class CommonDiscordListener<TString, TPlayer, TCommandSource> @Inject constructo
       .onClickOpenUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL))
       .onHoverShowText(textService.of(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)))
       .build()
-    for (player in chatService.getUsersInChannel(targetChannel!!.id)) {
+    for (player in channelService.getUsersInChannel(targetChannel.id)) {
       textService.send(finalMessage, player as TCommandSource)
     }
   }

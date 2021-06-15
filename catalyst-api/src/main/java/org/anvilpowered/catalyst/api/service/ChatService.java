@@ -27,18 +27,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ChatService<TString, TPlayer, TCommandSource> {
 
-    void switchChannel(UUID userUUID, String channelId);
-
-    String getChannelIdForUser(UUID userUUID);
-
-    Optional<ChatChannel> getChannelFromId(String channelId);
-
-    Optional<ChatChannel> getChannelFromUUID(UUID userUUID);
-
-    int getChannelUserCount(String channelId);
-
-    List<TPlayer> getUsersInChannel(String channelId);
-
     CompletableFuture<Void> sendMessageToChannel(String channelId,
                                                  TString message,
                                                  UUID userUUID);

@@ -16,19 +16,6 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.common.registry;
+package org.anvilpowered.catalyst.common
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.anvilpowered.anvil.base.registry.BaseConfigurationService;
-
-@Singleton
-public class BackendConfigurationService extends BaseConfigurationService {
-
-    @Inject
-    public BackendConfigurationService(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
-        super(configLoader);
-    }
-}
+fun String.withoutColor() = this.replace("&[0-9a-fklmnor]".toRegex(), "")

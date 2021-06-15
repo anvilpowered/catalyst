@@ -52,6 +52,7 @@ import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.BroadcastService
+import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.EventService
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
@@ -61,6 +62,7 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.atomic.AtomicBoolean
 
 class VelocityListener @Inject constructor(
+  private val channelService: ChannelService<Player>,
   private val chatService: ChatService<TextComponent, Player, CommandSource>,
   private val proxyServer: ProxyServer,
   private val registry: Registry,
@@ -72,7 +74,7 @@ class VelocityListener @Inject constructor(
 
   @Subscribe
   fun onPlayerLeave(event: DisconnectEvent) {
-    if (event.loginStatus.toString() == "PRE_SERVER_JOIN") {
+    if (event.loginStatus == DisconnectEvent.LoginStatus.PRE_SERVER_JOIN) {
       return
     }
     eventService.post(LeaveEvent(event.player))
@@ -138,7 +140,7 @@ class VelocityListener @Inject constructor(
     if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
       val player = e.player
       if (chatService.isDisabledForUser(player)
-        || chatService.getChannelFromUUID(player.uniqueId).orElse(null).passthrough
+        || channelService.getChannelFromUUID(player.uniqueId)?.passthrough == true
       ) {
         return
       } else {
@@ -228,14 +230,18 @@ class VelocityListener @Inject constructor(
           }
         }
       } else {
+        var end = false
         for (server in proxyServer.configuration.attemptConnectionOrder) {
           val registeredServer = proxyServer.getServer(server)
           if (!registeredServer.isPresent) return
-          val ping = registeredServer.get().ping().join() ?: continue
-          if (ping.modinfo.isPresent) {
-            modInfo = ping.modinfo.get()
-            break
-          }
+          if (end) break
+          registeredServer.get().ping()
+            .thenApply {
+              if (it.modinfo.isPresent) {
+                modInfo = it.modinfo.get()
+                end = true
+              }
+            }
         }
       }
       if (modInfo != null) {
