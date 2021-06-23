@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "${kotlin_version}"
 }
 
-ext.apiVersion = "0.6-SNAPSHOT"
+ext.apiVersion = "0.4.0-SNAPSHOT"
 
 allprojects {
     group = "org.anvilpowered"
