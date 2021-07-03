@@ -66,7 +66,7 @@ class CommonDiscordListener<TString, TPlayer, TCommandSource> @Inject constructo
       } else {
         ("**Online Players:**```"
           + userService.onlinePlayers.stream()
-          .map { p: TPlayer -> userService.getUserName(p) }
+          .map { userService.getUserName(it) }
           .collect(Collectors.joining(", ")) + "```")
       }
       event.channel.sendMessage(playerNames).queue()

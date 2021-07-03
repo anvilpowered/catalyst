@@ -20,13 +20,13 @@ package org.anvilpowered.catalyst.common.discord
 import com.google.inject.Inject
 import com.mashape.unirest.http.Unirest
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.Webhook
 import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.discord.JDAService
 import org.anvilpowered.catalyst.api.discord.WebhookSender
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
+import org.anvilpowered.catalyst.common.command.withoutColor
 import org.json.JSONObject
 
 class CommonWebhookSender<TPlayer> @Inject constructor(
@@ -35,42 +35,26 @@ class CommonWebhookSender<TPlayer> @Inject constructor(
   private val userService: UserService<TPlayer, TPlayer>,
 ) : WebhookSender {
 
-  private val COLOR_REGEX = "&(0-9a-fA-FlkKrR)"
-
   override fun sendWebhookMessage(webHook: String, player: String, message: String, channelId: String, source: Any) {
-    val webhook = getWebhook(channelId)
-    if (webHook == null) {
-      return
-    }
-    if (webhook != null) {
-      sendWebhook(
-        webhook, org.anvilpowered.catalyst.api.discord.Webhook.of(
-          registry.getOrDefault(CatalystKeys.WEBHOOK_URL)
-            .replace("%uuid%", userService.getUUID(source as TPlayer).toString()),
-          player.replace(COLOR_REGEX.toRegex(), ""),
-          message.replace(COLOR_REGEX.toRegex(), "")
-        )
+    val webhook = getWebhook(channelId) ?: return
+    sendWebhook(
+      webhook, org.anvilpowered.catalyst.api.discord.Webhook.of(
+        registry.getOrDefault(CatalystKeys.WEBHOOK_URL).replace("%uuid%", userService.getUUID(source as TPlayer).toString()),
+        player.withoutColor(),
+        message.withoutColor()
       )
-    }
+    )
   }
 
   override fun sendConsoleWebhookMessage(webHook: String, message: String, channelId: String) {
-    val webhook = getWebhook(channelId)
-    if (webhook != null) {
-      sendWebhook(
-        webhook, org.anvilpowered.catalyst.api.discord.Webhook.of(
-          "",
-          "Console",
-          message.replace(COLOR_REGEX.toRegex(), "")
-        )
-      )
-    }
+    val webhook = getWebhook(channelId) ?: return
+    sendWebhook(webhook, org.anvilpowered.catalyst.api.discord.Webhook.of("", "Console", message.withoutColor()))
   }
 
   override fun sendWebhook(webhook: Webhook, webhookUtils: org.anvilpowered.catalyst.api.discord.Webhook) {
     val jsonObject = JSONObject()
-    jsonObject.put("content", webhookUtils.message)
-      .put("username", webhookUtils.name.replace(COLOR_REGEX.toRegex(), ""))
+      .put("content", webhookUtils.message)
+      .put("username", webhookUtils.name.withoutColor())
       .put("avatar_url", webhookUtils.avatarURL)
     try {
       Unirest.post(webhook.url).header("Content-Type", "application/json").body(jsonObject).asJsonAsync()
@@ -80,7 +64,7 @@ class CommonWebhookSender<TPlayer> @Inject constructor(
   }
 
   override fun getWebhook(channelID: String): Webhook? {
-    if (channelID == "") {
+    if (channelID.isEmpty()) {
       return null
     }
     val channel = jdaService.jda.getTextChannelById(channelID) ?: throw AssertionError("Discord channel may not be null!")

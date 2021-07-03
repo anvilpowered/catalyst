@@ -19,6 +19,8 @@
 package org.anvilpowered.catalyst.bungee.module;
 
 import com.google.inject.TypeLiteral;
+import java.io.File;
+import java.nio.file.Paths;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -26,18 +28,13 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.anvilpowered.anvil.api.command.CommandNode;
-import org.anvilpowered.anvil.api.registry.ConfigurationService;
-import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.api.discord.DiscordCommandService;
+import org.anvilpowered.catalyst.api.service.BroadcastService;
 import org.anvilpowered.catalyst.bungee.command.BungeeCommandNode;
 import org.anvilpowered.catalyst.bungee.service.BungeeBroadcastService;
 import org.anvilpowered.catalyst.bungee.service.BungeeDiscordCommandService;
 import org.anvilpowered.catalyst.common.module.CommonModule;
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo;
-
-import java.io.File;
-import java.nio.file.Paths;
-import org.anvilpowered.catalyst.common.registry.CommonConfigurationService;
 
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
 public class BungeeModule extends CommonModule<

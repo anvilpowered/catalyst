@@ -1,7 +1,0 @@
-version = rootProject.apiVersion
-
-dependencies {
-    api anvil_api
-    api jda
-    api luckperms
-}

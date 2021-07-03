@@ -92,30 +92,25 @@ class CommonMemberManager<TPlayer, TString, TCommandSource> @Inject constructor(
         .append(textService.builder().green().append(member.userName))
         .append(textService.builder().blue().append("\nNickname : "))
         .append(textService.deserialize(nick))
-      if (permissions[0]) {
-        message.append(textService.builder().blue().append("\nIP : ")).append(textService.builder().green().append(member.ipAddress))
-      }
+        .appendIf(permissions[0], textService.builder().blue().append("\nIP : ").append(textService.builder().green().append(member.ipAddress)))
       message.append(textService.builder().blue().append("\nJoined Date : "))
         .append(textService.builder().green().append(member.createdUtc.toString()))
         .append(textService.builder().blue().append("\nLast Seen : "))
         .append(textService.builder().green().append(lastSeen))
-      if (permissions[1]) {
-        message.append(textService.builder().blue().append("\nBanned : ").append(textService.builder().green().append(banReason)))
-      }
-      if (permissions[2]) {
-        message.append(
+        .appendIf(permissions[1], textService.builder().blue().append("\nBanned : ").append(textService.builder().green().append(banReason)))
+        .appendIf(
+          permissions[2],
           textService.builder().blue().append("\nChannel : ")
             .append(textService.builder().green().append(channelService.getChannelIdForUser(member.userUUID)))
         )
-      }
-      message.append(
-        textService.builder()
-          .blue().append("\nCurrent Server : ")
-          .append(
-            textService.builder().gold()
-              .append(locationService.getServer(member.userUUID).map { obj: Named -> obj.name }.orElse("Offline User."))
-          )
-      )
+        .append(
+          textService.builder()
+            .blue().append("\nCurrent Server : ")
+            .append(
+              textService.builder().gold()
+                .append(locationService.getServer(member.userUUID).map { it.name }.orElse("Offline User."))
+            )
+        )
       message.build()
     }.exceptionally { e: Throwable ->
       e.printStackTrace()
@@ -151,8 +146,8 @@ class CommonMemberManager<TPlayer, TString, TCommandSource> @Inject constructor(
   override fun deleteNickNameForUser(userName: String): CompletableFuture<TString> {
     return primaryComponent.deleteNickNameForUser(userName).thenApplyAsync { result: Boolean ->
       if (result) {
-        userService.getPlayer(userName).ifPresent { p: TPlayer ->
-          textService.builder().green().append("Your nickname was deleted.").sendTo(p as TCommandSource)
+        userService.getPlayer(userName).ifPresent {
+          textService.builder().green().append("Your nickname was deleted.").sendTo(it as TCommandSource)
         }
         textService.success("Successfully deleted $userName's nickname.")
       } else {
@@ -162,8 +157,8 @@ class CommonMemberManager<TPlayer, TString, TCommandSource> @Inject constructor(
   }
 
   override fun deleteNickName(userName: String): CompletableFuture<TString> {
-    return primaryComponent.deleteNickNameForUser(userName).thenApplyAsync { result: Boolean ->
-      if (result) {
+    return primaryComponent.deleteNickNameForUser(userName).thenApplyAsync {
+      if (it) {
         textService.success("Successfully deleted your nickname.")
       } else {
         textService.fail("Failed to delete your nickname.")
@@ -173,8 +168,8 @@ class CommonMemberManager<TPlayer, TString, TCommandSource> @Inject constructor(
 
   override fun ban(userName: String, reason: String): CompletableFuture<TString> {
     val endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(Duration.ofDays(3600))
-    return primaryComponent.banUser(userName, endUtc, reason).thenApplyAsync { b: Boolean ->
-      if (b) {
+    return primaryComponent.banUser(userName, endUtc, reason).thenApplyAsync {
+      if (it) {
         kickService.kick(userName, pluginMessages.getBanMessage(reason, endUtc))
         textService.success("Banned $userName for $reason")
       }
@@ -202,8 +197,8 @@ class CommonMemberManager<TPlayer, TString, TCommandSource> @Inject constructor(
   }
 
   override fun unBan(userName: String): CompletableFuture<TString> {
-    return primaryComponent.unBanUser(userName).thenApplyAsync { b: Boolean ->
-      if (b) {
+    return primaryComponent.unBanUser(userName).thenApplyAsync {
+      if (it) {
         textService.success("Unbanned $userName")
       }
       textService.fail("Invalid user.")
@@ -214,8 +209,8 @@ class CommonMemberManager<TPlayer, TString, TCommandSource> @Inject constructor(
 
   override fun mute(userName: String, reason: String): CompletableFuture<TString> {
     val endUtc = OffsetDateTime.now(ZoneOffset.UTC).toInstant().plus(Duration.ofDays(3600))
-    return primaryComponent.muteUser(userName, endUtc, reason).thenApplyAsync { b: Boolean ->
-      if (b) {
+    return primaryComponent.muteUser(userName, endUtc, reason).thenApplyAsync {
+      if (it) {
         userService.getPlayer(userName).ifPresent { textService.send(pluginMessages.getMuteMessage(reason, endUtc), it as TCommandSource) }
         textService.success("Muted $userName")
       }

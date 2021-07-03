@@ -84,10 +84,10 @@ class CommonTabService<TString, TPlayer, TCommandSource> @Inject constructor(
       .replace("%prefix%", luckpermsService.getPrefix(player))
       .replace("%suffix%", luckpermsService.getSuffix(player))
       .replace("%server%",
-        if (registry.getOrDefault(ADVANCED_SERVER_INFO_ENABLED)) locationService.getServer(userName).map { obj: Named -> obj.name }
+        if (registry.getOrDefault(ADVANCED_SERVER_INFO_ENABLED)) locationService.getServer(userName).map { it.name }
           .orElse("null")
           .replace(advancedServerInfoService.getPrefixForPlayer(userName), "") else locationService.getServer(userName)
-          .map { obj: Named -> obj.name }
+          .map {it.name }
           .orElse("null"))
       .replace("%ping%", ping.toString())
       .replace("%playercount%", playerCount.toString())

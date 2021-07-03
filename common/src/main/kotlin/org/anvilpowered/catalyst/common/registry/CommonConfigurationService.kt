@@ -127,85 +127,30 @@ class CommonConfigurationService @Inject constructor(
     setDescription(CatalystKeys.TAB_FOOTER, "\nFormat for the tab footer")
     setDescription(CatalystKeys.TAB_FORMAT, "\nFormat for how each player is displayed in the tab")
     setDescription(CatalystKeys.TAB_FORMAT_CUSTOM, "\nFormat for extra information that can be displayed in the tab.")
-    setDescription(
-      CatalystKeys.TAB_UPDATE,
-      "\nTime setting for how often the tab updates in seconds"
-    )
-    setDescription(
-      CatalystKeys.TAB_ORDER,
-      "\nOrder in which players should be listed in the tab list." +
-        "\nOptions: group, a-z"
-    )
-    setDescription(
-      CatalystKeys.TAB_GROUP_ORDER,
-      "\nOrder in which groups should be displayed in the tab."
-    )
-    setDescription(
-      CatalystKeys.CHAT_CHANNELS,
-      "\nChat Channels"
-    )
-    setDescription(
-      CatalystKeys.CHAT_DEFAULT_CHANNEL,
-      "\nDefault chat channel"
-    )
-    setDescription(
-      CatalystKeys.BOT_TOKEN,
-      "\nToken for the discord bot"
-    )
-    setDescription(
-      CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT,
-      "\nFormat of the message to be sent to discord from in-game"
-    )
-    setDescription(
-      CatalystKeys.DISCORD_JOIN_FORMAT,
-      "\nMessage to be sent to the discord each time a player joins."
-    )
-    setDescription(
-      CatalystKeys.DISCORD_LEAVE_FORMAT,
-      "\nMessage to be sent to the discord each time a player leaves."
-    )
-    setDescription(
-      CatalystKeys.DISCORD_CHAT_FORMAT,
-      "\nFormat of the message being sent from discord to in-game"
-    )
-    setDescription(
-      CatalystKeys.TOPIC_FORMAT,
-      "\nFormat of the main channel topic"
-    )
+    setDescription(CatalystKeys.TAB_UPDATE, "\nTime setting for how often the tab updates in seconds")
+    setDescription(CatalystKeys.TAB_ORDER, "\nOrder in which players should be listed in the tab list.\nOptions: group, a-z")
+    setDescription(CatalystKeys.TAB_GROUP_ORDER, "\nOrder in which groups should be displayed in the tab.")
+    setDescription(CatalystKeys.CHAT_CHANNELS, "\nChat Channels")
+    setDescription(CatalystKeys.CHAT_DEFAULT_CHANNEL, "\nDefault chat channel")
+    setDescription(CatalystKeys.BOT_TOKEN, "\nToken for the discord bot")
+    setDescription(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT, "\nFormat of the message to be sent to discord from in-game")
+    setDescription(CatalystKeys.DISCORD_JOIN_FORMAT, "\nMessage to be sent to the discord each time a player joins.")
+    setDescription(CatalystKeys.DISCORD_LEAVE_FORMAT, "\nMessage to be sent to the discord each time a player leaves.")
+    setDescription(CatalystKeys.DISCORD_CHAT_FORMAT, "\nFormat of the message being sent from discord to in-game")
+    setDescription(CatalystKeys.TOPIC_FORMAT, "\nFormat of the main channel topic")
     setDescription(
       CatalystKeys.TOPIC_UPDATE_DELAY,
       "\nHow often you would like the topic to be updated in minutes. Setting this below " +
         "the default will result in constant RateLimit issues. If you experience issues " +
         "with 5 minutes, set this to 10 or higher."
     )
-    setDescription(
-      CatalystKeys.TOPIC_NO_ONLINE_PLAYERS,
-      "\nMessage to be shown when there are no players online"
-    )
-    setDescription(
-      CatalystKeys.NOW_PLAYING_MESSAGE,
-      "\nThe message being shown as the \"now playing\" for the discord bot."
-    )
-    setDescription(
-      CatalystKeys.DISCORD_HOVER_MESSAGE,
-      "\nThe message being shown when a player hovers over a message sent from discord"
-    )
-    setDescription(
-      CatalystKeys.WEBHOOK_URL,
-      "\nURL that gets the player avatar when sending messages to discord"
-    )
-    setDescription(
-      CatalystKeys.DISCORD_URL,
-      "\nDiscord invite link"
-    )
-    setDescription(
-      CatalystKeys.DISCORD_ENABLE,
-      "\nToggle the discord bot (false = disabled)."
-    )
-    setDescription(
-      CatalystKeys.SERVER_PING,
-      "\nSpecify what you would like to be shown in the server list, either PLAYERS or MESSAGE"
-    )
+    setDescription(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS, "\nMessage to be shown when there are no players online")
+    setDescription(CatalystKeys.NOW_PLAYING_MESSAGE, "\nThe message being shown as the \"now playing\" for the discord bot.")
+    setDescription(CatalystKeys.DISCORD_HOVER_MESSAGE, "\nThe message being shown when a player hovers over a message sent from discord")
+    setDescription(CatalystKeys.WEBHOOK_URL, "\nURL that gets the player avatar when sending messages to discord")
+    setDescription(CatalystKeys.DISCORD_URL, "\nDiscord invite link")
+    setDescription(CatalystKeys.DISCORD_ENABLE, "\nToggle the discord bot (false = disabled).")
+    setDescription(CatalystKeys.SERVER_PING, "\nSpecify what you would like to be shown in the server list, either PLAYERS or MESSAGE")
     setDescription(
       CatalystKeys.SERVER_PING_MESSAGE,
       """
@@ -213,14 +158,8 @@ class CommonConfigurationService @Inject constructor(
         This message will only appear when the mode is set to MESSAGE
         """.trimIndent()
     )
-    setDescription(
-      CatalystKeys.MOTD,
-      "\nDefault MOTD that catalyst uses if the advanced server information is disabled."
-    )
-    setDescription(
-      CatalystKeys.ADVANCED_SERVER_INFO_ENABLED,
-      "\nToggle the Advanced Server Information handling"
-    )
+    setDescription(CatalystKeys.MOTD, "\nDefault MOTD that catalyst uses if the advanced server information is disabled.")
+    setDescription(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "\nToggle the Advanced Server Information handling")
     setDescription(
       CatalystKeys.ADVANCED_SERVER_INFO,
       """

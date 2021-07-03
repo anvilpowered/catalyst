@@ -25,6 +25,7 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys.CHAT_FILTER_SWEARS
 import org.anvilpowered.catalyst.api.service.ChatFilter
 import java.util.ArrayList
 import java.util.Collections
+import java.util.Locale
 import java.util.stream.Collectors
 
 class CommonChatFilter @Inject constructor(
@@ -32,7 +33,7 @@ class CommonChatFilter @Inject constructor(
 ) : ChatFilter {
 
   override fun stripMessage(checkMessage: String): String {
-    return checkMessage.toLowerCase()
+    return checkMessage.lowercase(Locale.getDefault())
       .replace("[*()/.,;'#~^+\\-]".toRegex(), " ").replace("[0@]".toRegex(), "o")
       .replace("1".toRegex(), "i").replace("\\$".toRegex(), "s")
   }
@@ -53,7 +54,7 @@ class CommonChatFilter @Inject constructor(
 
   override fun findSwears(message: String, spacePositions: List<Int>): List<IntArray> {
     val swearList: MutableList<IntArray> = ArrayList()
-    val exceptions = registry.getOrDefault(CHAT_FILTER_EXCEPTIONS).stream().map { obj: String -> obj.toLowerCase() }.collect(Collectors.toList())
+    val exceptions = registry.getOrDefault(CHAT_FILTER_EXCEPTIONS).stream().map { obj: String -> obj.lowercase(Locale.getDefault()) }.collect(Collectors.toList())
     for (bannedWord in registry.getOrDefault(CHAT_FILTER_SWEARS)) {
       if (message.contains(bannedWord) && !exceptions.contains(bannedWord)) {
         var startIndex = message.indexOf(bannedWord)
