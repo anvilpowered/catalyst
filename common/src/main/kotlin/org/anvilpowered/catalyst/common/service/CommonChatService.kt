@@ -37,6 +37,7 @@ import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.EmojiService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.slf4j.Logger
+import java.util.Locale
 import java.util.Optional
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
@@ -239,10 +240,7 @@ class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
       uuidList.remove(targetPlayerUUID)
       ignoreMap.replace(playerUUID, uuidList)
     }
-    return textService.success(
-      "You are no longer ignoring " +
-        userService.getUserName(targetPlayerUUID)
-    )
+    return textService.success("You are no longer ignoring ${userService.getUserName(targetPlayerUUID)}")
   }
 
   override fun isIgnored(playerUUID: UUID, targetPlayerUUID: UUID): Boolean {
@@ -254,12 +252,12 @@ class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
     var message = msg
     for (player in userService.onlinePlayers) {
       val username = userService.getUserName(player)
-      if (message.toLowerCase().contains(username.toLowerCase())) {
+      if (message.lowercase(Locale.getDefault()).contains(username.lowercase(Locale.getDefault()))) {
         val occurrences: MutableList<Int> = ArrayList()
-        var startIndex = message.toLowerCase().indexOf(username.toLowerCase())
+        var startIndex = message.lowercase(Locale.getDefault()).indexOf(username.lowercase(Locale.getDefault()))
         while (startIndex != -1) {
           occurrences.add(startIndex)
-          startIndex = message.toLowerCase().indexOf(username.toLowerCase(), startIndex + 1)
+          startIndex = message.lowercase(Locale.getDefault()).indexOf(username.lowercase(Locale.getDefault()), startIndex + 1)
         }
         val chatColor = luckpermsService.getChatColor(sender)
         for (occurrence in occurrences) {

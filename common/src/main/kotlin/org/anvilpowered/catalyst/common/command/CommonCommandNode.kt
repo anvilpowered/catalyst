@@ -18,7 +18,6 @@
 package org.anvilpowered.catalyst.common.command
 
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
 import com.google.inject.Inject
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
@@ -33,13 +32,11 @@ import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.TextService
 import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.CommandSuggestionType
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
 import org.anvilpowered.catalyst.common.command.channel.ChannelCommand
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo
-import java.util.HashMap
 import java.util.Locale
 import java.util.Objects
 import java.util.function.Function
@@ -122,7 +119,6 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
 
   private var alreadyLoaded: Boolean = false
   protected var commands = mutableMapOf<MutableList<String>, LiteralCommandNode<TCommandSource>>()
-  protected var suggestionType = mutableMapOf<LiteralCommandNode<TCommandSource>, Map<Int, CommandSuggestionType>>()
 
   @Inject
   protected lateinit var permissionService: PermissionService
@@ -418,9 +414,6 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
       commands[ImmutableList.of("tempban", "ctempban")] = tempBan
       commands[ImmutableList.of("ban", "cban")] = ban
       commands[ImmutableList.of("unban", "cunban")] = unban
-      suggestionType[tempBan] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
-      suggestionType[ban] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
-      suggestionType[unban] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
     }
     if (registry.getOrDefault(CatalystKeys.BROADCAST_COMMAND_ENABLED)) {
       commands[ImmutableList.of("broadcast", "cbroadcast")] = broadcast
@@ -441,28 +434,21 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
     }
     if (registry.getOrDefault(CatalystKeys.FIND_COMMAND_ENABLED)) {
       commands[ImmutableList.of("find", "cfind")] = find
-      suggestionType[find] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
     }
     if (registry.getOrDefault(CatalystKeys.INFO_COMMAND_ENABLED)) {
       commands[ImmutableList.of("info", "cinfo")] = info
-      suggestionType[info] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
     }
     if (registry.getOrDefault(CatalystKeys.KICK_COMMAND_ENABLED)) {
       commands[ImmutableList.of("kick", "ckick")] = kick
-      suggestionType[kick] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
     }
     if (registry.getOrDefault(CatalystKeys.MESSAGE_COMMAND_ENABLED)) {
       commands[ImmutableList.of("msg", "m", "w", "t", "whisper", "tell")] = message
       commands[ImmutableList.of("reply", "r")] = reply
-      suggestionType[message] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
     }
     if (registry.getOrDefault(CatalystKeys.MUTE_COMMAND_ENABLED)) {
       commands[ImmutableList.of("mute", "cmute")] = mute
       commands[ImmutableList.of("tempmute", "ctempmute")] = tempMute
       commands[ImmutableList.of("unmute", "cunmute")] = unmute
-      suggestionType[mute] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
-      suggestionType[tempMute] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
-      suggestionType[unmute] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
     }
     if (registry.getOrDefault(CatalystKeys.SOCIALSPY_COMMAND_ENABLED)) {
       commands[ImmutableList.of("socialspy", "ss")] = socialSpy
@@ -473,15 +459,12 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
     }
     if (registry.getOrDefault(CatalystKeys.SEND_COMMAND_ENABLED)) {
       commands[ImmutableList.of("send", "csend")] = send
-      suggestionType[send] = ImmutableMap.of(1, CommandSuggestionType.PLAYER, 2, CommandSuggestionType.SERVER)
     }
     if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
       commands[ImmutableList.of("server", "cserver")] = server
-      suggestionType[server] = ImmutableMap.of(1, CommandSuggestionType.SERVER)
     }
     if (registry.getOrDefault(CatalystKeys.IGNORE_COMMAND_ENABLED)) {
       commands[ImmutableList.of("ignore", "cignore")] = ignore
-      suggestionType[ignore] = ImmutableMap.of(1, CommandSuggestionType.PLAYER)
     }
     commands[ImmutableList.of("stafflist")] = staffList
     commands[ImmutableList.of("toggleproxychat")] = toggleChat
@@ -489,12 +472,10 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
 
   private fun suggestPlayers(): SuggestionProvider<TCommandSource> {
     return SuggestionProvider { context: CommandContext<TCommandSource>, builder: SuggestionsBuilder ->
-      val input = context.input.substring(context.input.indexOf(' ') + 1).toLowerCase(Locale.ROOT)
+      val input = context.input.substring(context.input.indexOf(' ') + 1).lowercase(Locale.ROOT)
       for (player in userService.onlinePlayers) {
         val userName = userService.getUserName(player)
-        if (userName.toLowerCase(Locale.ROOT).startsWith(input)
-          || userName.toLowerCase(Locale.ROOT) == input
-        ) {
+        if (userName.lowercase(Locale.ROOT).startsWith(input) || userName.lowercase(Locale.ROOT) == input) {
           builder.suggest(userService.getUserName(player)) { "target" }
         }
       }
@@ -562,7 +543,6 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
     }.register()
 
     alreadyLoaded = false
-    suggestionType = HashMap()
   }
 
   private fun sendNotEnoughArgs(ctx: CommandContext<TCommandSource>, usage: TString): Int {

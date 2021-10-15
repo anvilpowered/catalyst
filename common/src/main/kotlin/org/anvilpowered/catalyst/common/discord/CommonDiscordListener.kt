@@ -61,7 +61,7 @@ class CommonDiscordListener<TString, TPlayer, TCommandSource> @Inject constructo
       || messageRaw.contains("!list")
     ) {
       val onlinePlayers = userService.onlinePlayers
-      val playerNames: String = if (onlinePlayers.size == 0) {
+      val playerNames: String = if (onlinePlayers.isEmpty()) {
         "```There are currently no players online!```"
       } else {
         ("**Online Players:**```"

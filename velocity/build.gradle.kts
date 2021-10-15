@@ -64,6 +64,7 @@ tasks {
       include(dependency("net.kyori:event-method-asm:$kyoriVersion"))
       include(dependency("com.neovisionaries:nv-websocket-client:$websocketVersion"))
       include(dependency("com.squareup.okhttp3:okhttp:$okhttp3Version"))
+      include(dependency("com.squareup.okio:okio:$okioVersion"))
       include(dependency("net.kyori:event-method-asm:$kyoriVersion"))
       include(dependency("net.sf.trove4j:trove4j:$troveVersion"))
       include(dependency("com.mashape.unirest:unirest-java:$unirestVersion"))

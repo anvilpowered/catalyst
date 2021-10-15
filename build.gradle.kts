@@ -64,6 +64,7 @@ subprojects {
     implementation("org.json:json:$jsonVersion")
     implementation("net.kyori:event-method-asm:$kyoriVersion")
     implementation("net.kyori:event-method-asm:$kyoriVersion")
+    implementation("com.squareup.okio:okio:$okioVersion")
     implementation("com.mashape.unirest:unirest-java:$unirestVersion")
   }
   if (project.hasProperty("buildNumber") && (version as String).contains("-SNAPSHOT")) {

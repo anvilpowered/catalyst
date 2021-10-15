@@ -54,7 +54,7 @@ class CommonJDAService<TPlayer, TString, TCommandSource> @Inject constructor(
       return
     }
     if (isLoaded) {
-      jda!!.shutdownNow()
+      jda?.shutdownNow()
     }
     try {
       val builder = JDABuilder.createDefault(registry.getOrDefault(CatalystKeys.BOT_TOKEN))
@@ -81,7 +81,7 @@ class CommonJDAService<TPlayer, TString, TCommandSource> @Inject constructor(
       )
     }
     try {
-      jda!!.awaitReady()
+      jda?.awaitReady()
     } catch (e: InterruptedException) {
       e.printStackTrace()
     }
