@@ -40,14 +40,14 @@ class InfoCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject con
       textService.send(pluginMessages.noPermission, context.source)
       return 0
     }
-    val isActive = userService[context.getArgument("target", String::class.java)].isPresent
+    val isActive = userService[context.getArgument<String>("target")].isPresent
 
     val permissions = BooleanArray(3)
     permissions[0] = permissionService.hasPermission(context.source, registry.getOrDefault(CatalystKeys.INFO_IP_PERMISSION))
     permissions[1] = permissionService.hasPermission(context.source, registry.getOrDefault(CatalystKeys.INFO_BANNED_PERMISSION))
     permissions[2] = permissionService.hasPermission(context.source, registry.getOrDefault(CatalystKeys.INFO_CHANNEL_PERMISSION))
 
-    memberManager.info(context.getArgument("target", String::class.java), isActive, permissions)
+    memberManager.info(context.getArgument<String>("target"), isActive, permissions)
       .thenAcceptAsync { textService.send(it, context.source) }
     return 1
   }

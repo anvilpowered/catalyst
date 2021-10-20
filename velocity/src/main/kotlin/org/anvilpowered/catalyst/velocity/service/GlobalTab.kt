@@ -31,8 +31,6 @@ import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.api.service.TabService
-import java.util.ArrayList
-import java.util.HashMap
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -41,8 +39,7 @@ class GlobalTab @Inject constructor(
   private val registry: Registry,
   private val pluginContainer: PluginContainer,
   private val proxyServer: ProxyServer,
-  private val tabService: TabService<TextComponent, Player>,
-  private val luckpermsService: LuckpermsService
+  private val tabService: TabService<TextComponent, Player>
 ) {
 
   init {
@@ -80,19 +77,10 @@ class GlobalTab @Inject constructor(
       if (playerCount == 0) {
         return@buildTask
       }
-      val groupOrder = registry.getOrDefault(CatalystKeys.TAB_GROUP_ORDER)
       for (currentPlayerToProcess in proxyServer.allPlayers) {
         for (process in proxyServer.allPlayers) {
-          var tempName = process.username
-          if (registry.getOrDefault(CatalystKeys.TAB_ORDER).equals("group", ignoreCase = true)) {
-            for (group in groupOrder) {
-              if (luckpermsService.getGroupName(process).equals(group, ignoreCase = true)) {
-                tempName = groupOrder.indexOf(group).toString()
-              }
-            }
-          }
           val currentEntry = TabListEntry.builder()
-            .profile(GameProfile(process.uniqueId, tempName, process.gameProfileProperties))
+            .profile(GameProfile(process.uniqueId, process.username, process.gameProfileProperties))
             .displayName(tabService.format(process, process.ping.toInt(), playerCount))
             .tabList(currentPlayerToProcess.tabList)
             .build()

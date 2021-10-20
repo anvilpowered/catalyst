@@ -26,7 +26,6 @@ import org.anvilpowered.anvil.api.util.TextService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
 import org.anvilpowered.catalyst.api.service.BroadcastService
 import org.anvilpowered.catalyst.api.service.EmojiService
 import org.anvilpowered.catalyst.api.service.PrivateMessageService
@@ -42,7 +41,6 @@ class JoinListener<TString, TPlayer, TCommandSource> @Inject constructor(
   private val staffListService: StaffListService<TString>,
   private val broadcastService: BroadcastService<TString>,
   private val logger: Logger,
-  private val serverService: AdvancedServerInfoService,
   private val locationService: LocationService,
   private val emojiService: EmojiService
 ) {
@@ -50,21 +48,12 @@ class JoinListener<TString, TPlayer, TCommandSource> @Inject constructor(
   fun onPlayerJoin(event: JoinEvent<TPlayer>) {
     val player = event.player
     val playerUUID = event.playerUUID
-    val virtualHost = event.hostString
     if (permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN_PERMISSION))) {
       privateMessageService.socialSpySet().add(playerUUID)
     }
     val userName = userService.getUserName(player as TPlayer)
-    var server = if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-      locationService.getServer(userName).map { it.name }.orElse("null")
-    } else {
-      locationService.getServer(playerUUID).map { it.name }.orElse("null")
-    }
+    val server = locationService.getServer(playerUUID).map { it.name }.orElse("null")
 
-    if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-      serverService.insertPlayer(userName, serverService.getPrefix(virtualHost))
-      server = serverService.getPrefixForPlayer(userName)
-    }
     staffListService.getStaffNames(
       userName,
       permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN_PERMISSION)),

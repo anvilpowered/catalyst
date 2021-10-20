@@ -54,7 +54,7 @@ class CommonChatFilter @Inject constructor(
 
   override fun findSwears(message: String, spacePositions: List<Int>): List<IntArray> {
     val swearList: MutableList<IntArray> = ArrayList()
-    val exceptions = registry.getOrDefault(CHAT_FILTER_EXCEPTIONS).stream().map { obj: String -> obj.lowercase(Locale.getDefault()) }.collect(Collectors.toList())
+    val exceptions = registry.getOrDefault(CHAT_FILTER_EXCEPTIONS).stream().map { it.lowercase(Locale.getDefault()) }.collect(Collectors.toList())
     for (bannedWord in registry.getOrDefault(CHAT_FILTER_SWEARS)) {
       if (message.contains(bannedWord) && !exceptions.contains(bannedWord)) {
         var startIndex = message.indexOf(bannedWord)

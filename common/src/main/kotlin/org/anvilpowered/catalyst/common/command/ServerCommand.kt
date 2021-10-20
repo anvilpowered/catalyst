@@ -28,7 +28,6 @@ import org.anvilpowered.anvil.api.util.TextService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
 import org.anvilpowered.catalyst.api.service.ChannelService
 
 class ServerCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject constructor(
@@ -36,7 +35,6 @@ class ServerCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject c
   private val pluginInfo: PluginInfo<TString>,
   private val textService: TextService<TString, TCommandSource>,
   private val registry: Registry,
-  private val advancedServerInfo: AdvancedServerInfoService,
   private val userService: UserService<TPlayer, TPlayer>,
   private val locationService: LocationService,
   private val permissionService: PermissionService,
@@ -46,8 +44,6 @@ class ServerCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject c
   fun execute(context: CommandContext<TCommandSource>): Int {
     val player = context.source as TPlayer
     val userName = userService.getUserName(player)
-    val prefix = advancedServerInfo.getPrefixForPlayer(userName)
-    val useAdvServerInfo = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
     val currentServer = locationService.getServer(userName)
     val targetServer = context.getArgument<String>("server")
     if (registry.getOrDefault(CatalystKeys.ENABLE_PER_SERVER_PERMS)
@@ -56,16 +52,11 @@ class ServerCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject c
       textService.send(pluginMessages.getNoServerPermission(targetServer), player)
       return 0
     }
-    if (useAdvServerInfo && currentServer.map { it.name.equals(prefix + targetServer, ignoreCase = true) }.orElse(false)
-      || currentServer.map { server: BackendServer -> server.name.equals(targetServer, ignoreCase = true) }.orElse(false)
-    ) {
+    if (currentServer.map { server: BackendServer -> server.name.equals(targetServer, ignoreCase = true) }.orElse(false)) {
       return alreadyConnected(targetServer, player)
     }
     for (server in locationService.servers) {
       val serverName = server.name
-      if (useAdvServerInfo && serverName.equals(prefix + targetServer, ignoreCase = true)) {
-        commenceConnection(player, serverName)
-      }
       if (serverName.equals(targetServer, ignoreCase = true)) {
         commenceConnection(player, serverName)
       }
@@ -99,12 +90,11 @@ class ServerCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject c
 
   private fun testChannel(player: TPlayer, server: String) {
     val playerUUID = userService.getUUID(player)
-    val channel = channelService.getChannelFromId(channelService.getChannelIdForUser(playerUUID)) ?: channelService.defaultChannel
-    ?: throw IllegalStateException("Invalid chat channnel configuration!")
-    if (!channel.servers.contains(server) && !permissionService.hasPermission(
-        player,
-        registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION)
-      )
+    val channel = channelService.getChannelFromId(channelService.getChannelIdForUser(playerUUID))
+      ?: channelService.defaultChannel
+      ?: throw IllegalStateException("Invalid chat channel configuration!")
+    if (!channel.servers.contains(server)
+      && !permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
       && !channel.servers.contains("*")
     ) {
       val defaultChannel = channelService.defaultChannel ?: throw AssertionError("A default chat channel must be defined")
@@ -123,59 +113,30 @@ class ServerCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject c
 
   fun sendServers(context: CommandContext<TCommandSource>): Int {
     val availableServers = textService.builder()
-    val useAdvServerInfo = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
     val userName = userService.getUserName(context.source as TPlayer)
-    val prefix = advancedServerInfo.getPrefixForPlayer(userName)
     val currentServer = locationService.getServer(userName)
-    var count = 0
     if (!currentServer.isPresent) {
       return 0
     }
     for (server in locationService.servers) {
       val onlinePlayers = server.playerUUIDs.size
       val serverName = server.name
-      if (useAdvServerInfo) {
-        if (server.name.contains(prefix)) {
-          if (count >= 8) {
-            availableServers.append(textService.of("\n"))
-            count = 0
-          }
-          if (currentServer.map { cs: BackendServer -> cs.name.equals(serverName, ignoreCase = true) }.orElse(false)) {
-            availableServers.append(
-              textService.builder()
-                .green().append(server.name.replace(prefix, "") + " ")
-                .onHoverShowText(textService.of("Online Players: $onlinePlayers"))
-                .build()
-            )
-          } else {
-            availableServers.append(
-              textService.builder()
-                .gray().append(server.name.replace(prefix, "") + " ")
-                .onClickRunCommand("/server $serverName")
-                .onHoverShowText(textService.of("Online Players: $onlinePlayers"))
-                .build()
-            )
-          }
-        }
+      if (currentServer.map { it.name.equals(serverName, ignoreCase = true) }.orElse(false)) {
+        availableServers.append(
+          textService.builder()
+            .green().append(server.name + " ")
+            .onHoverShowText(textService.of("Online Players: $onlinePlayers"))
+            .build()
+        )
       } else {
-        if (currentServer.map { cs: BackendServer -> cs.name.equals(serverName, ignoreCase = true) }.orElse(false)) {
-          availableServers.append(
-            textService.builder()
-              .green().append(server.name + " ")
-              .onHoverShowText(textService.of("Online Players: $onlinePlayers"))
-              .build()
-          )
-        } else {
-          availableServers.append(
-            textService.builder()
-              .gray().append("$serverName ")
-              .onClickRunCommand("/server $serverName")
-              .onHoverShowText(textService.of("Online Players: $onlinePlayers"))
-              .build()
-          )
-        }
+        availableServers.append(
+          textService.builder()
+            .gray().append("$serverName ")
+            .onClickRunCommand("/server $serverName")
+            .onHoverShowText(textService.of("Online Players: $onlinePlayers"))
+            .build()
+        )
       }
-      count++
     }
     textService.builder()
       .append(pluginInfo.prefix)

@@ -34,7 +34,6 @@ import org.anvilpowered.anvil.api.util.TextService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
 import org.anvilpowered.catalyst.common.command.channel.ChannelCommand
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo
 import java.util.Locale
@@ -134,9 +133,6 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
 
   @Inject
   protected lateinit var locationService: LocationService
-
-  @Inject
-  protected lateinit var advancedServerInfo: AdvancedServerInfoService
 
   protected abstract fun loadCommands()
 
@@ -487,17 +483,6 @@ abstract class CommonCommandNode<TString, TPlayer : TCommandSource, TCommandSour
     SuggestionProvider { context: CommandContext<TCommandSource>, builder: SuggestionsBuilder ->
       val source = context.source
       if (!playerClass.isAssignableFrom(source!!::class.java)) {
-        return@SuggestionProvider builder.buildFuture()
-      }
-      if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-        if (source.javaClass.isAssignableFrom(playerClass)) {
-          val prefix = advancedServerInfo.getPrefixForPlayer(userService.getUserName(source as TPlayer))
-          for (server in locationService.servers) {
-            if (server.name.startsWith(prefix)) {
-              builder.suggest(server.name.replace(prefix, "")) { "server" }
-            }
-          }
-        }
         return@SuggestionProvider builder.buildFuture()
       }
       for (server in locationService.servers) {

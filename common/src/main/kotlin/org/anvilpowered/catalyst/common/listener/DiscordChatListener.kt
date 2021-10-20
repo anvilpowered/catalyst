@@ -29,7 +29,6 @@ import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.EmojiService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
@@ -40,7 +39,6 @@ class DiscordChatListener<TString, TPlayer> @Inject constructor(
   private val luckPermsService: LuckpermsService,
   private val webHookSender: WebhookSender,
   private val userService: UserService<TPlayer, TPlayer>,
-  private val serverService: AdvancedServerInfoService,
   private val channelService: ChannelService<TPlayer>,
   private val locationService: LocationService,
   private val emojiService: EmojiService,
@@ -62,18 +60,11 @@ class DiscordChatListener<TString, TPlayer> @Inject constructor(
         message = message.replace(emojiService.emojis[key].toString(), key)
       }
     }
-    if (!permissionService.hasPermission(
-        event.player,
-        registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION)
-      )
-    ) {
+    if (!permissionService.hasPermission(event.player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
       message = message.replace("@".toRegex(), "")
     }
     var server = locationService.getServer(userService.getUserName(event.player)).map { obj: Named -> obj.name }
       .orElse("null")
-    if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-      server = serverService.getPrefixForPlayer(userService.getUserName(event.player))
-    }
     val name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
       .replace("%server%", server)
       .replace("%channel%", channelService.getChannelIdForUser(userService.getUUID(event.player)))
@@ -100,9 +91,7 @@ class DiscordChatListener<TString, TPlayer> @Inject constructor(
         joinMessage = joinMessage.replace(emojiService.emojis[key].toString(), key)
       }
     }
-    val server = if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) serverService.getPrefixForPlayer(
-      userService.getUserName(event.player)
-    ) else locationService.getServer(userService.getUserName(event.player)).map { obj: Named -> obj.name }
+    val server = locationService.getServer(userService.getUserName(event.player)).map { it.name }
       .orElse("null")
     webHookSender.sendWebhookMessage(
       registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
@@ -123,10 +112,7 @@ class DiscordChatListener<TString, TPlayer> @Inject constructor(
         leaveMessage = leaveMessage.replace(emojiService.emojis[key].toString(), key)
       }
     }
-    val server = if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) serverService.getPrefixForPlayer(
-      userService.getUserName(event.player)
-    ) else locationService.getServer(userService.getUserName(event.player)).map { obj: Named -> obj.name }
-      .orElse("null")
+    val server = locationService.getServer(userService.getUserName(event.player)).map { it.name }.orElse("null")
     val discordChannel = channelService.getDiscordChannelId(channel?.id) ?: channelService.defaultChannel?.discordChannel ?: return
     webHookSender.sendWebhookMessage(
       registry.getOrDefault(CatalystKeys.WEBHOOK_URL),

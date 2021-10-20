@@ -31,7 +31,6 @@ import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.EmojiService
@@ -45,7 +44,6 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
   private val channelService: ChannelService<TPlayer>,
-  private val serverService: AdvancedServerInfoService,
   private val emojiService: EmojiService,
   private val logger: Logger,
   private val locationService: LocationService,
@@ -175,12 +173,8 @@ class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
     serverName: String,
     format: String
   ): String {
-    var server = locationService.getServer(rawUserName).map { obj: Named -> obj.name }.orElse("null")
-    if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-      server = serverService.getPrefixForPlayer(rawUserName)
-    }
     return format
-      .replace("%server%", server)
+      .replace("%server%", locationService.getServer(rawUserName).map { it.name }.orElse("null"))
       .replace("%servername%", serverName)
       .replace("%prefix%", prefix)
       .replace("%player%", userName)
@@ -274,7 +268,7 @@ class CommonChatService<TPlayer, TString, TCommandSource> @Inject constructor(
     val nameColor = luckpermsService.getNameColor(event.player)
     val suffix = luckpermsService.getSuffix(event.player)
     val userName = textService.serializePlain(textService.of(userService.getUserName(event.player)))
-    val server = locationService.getServer(userName).map { obj: Named -> obj.name }
+    val server = locationService.getServer(userName).map { it.name }
       .orElseThrow { IllegalStateException("$userName is not in a valid server!") }
     val playerUUID = userService.getUUID(event.player)
     var message = event.rawMessage

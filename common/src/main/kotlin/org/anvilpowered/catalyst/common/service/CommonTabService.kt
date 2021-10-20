@@ -20,16 +20,13 @@ package org.anvilpowered.catalyst.common.service
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import org.anvilpowered.anvil.api.misc.Named
 import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.TextService
 import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.registry.CatalystKeys.ADVANCED_SERVER_INFO_ENABLED
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FOOTER
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FORMAT
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_HEADER
-import org.anvilpowered.catalyst.api.service.AdvancedServerInfoService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.api.service.TabService
 import java.util.HashMap
@@ -39,7 +36,6 @@ class CommonTabService<TString, TPlayer, TCommandSource> @Inject constructor(
   private val registry: Registry,
   private val textService: TextService<TString, TCommandSource>,
   private val locationService: LocationService,
-  private val advancedServerInfoService: AdvancedServerInfoService,
   private val userService: UserService<TPlayer, TPlayer>,
   private val luckpermsService: LuckpermsService
 ) : TabService<TString, TPlayer> {
@@ -83,12 +79,7 @@ class CommonTabService<TString, TPlayer, TCommandSource> @Inject constructor(
     return format.replace("%player%", userName)
       .replace("%prefix%", luckpermsService.getPrefix(player))
       .replace("%suffix%", luckpermsService.getSuffix(player))
-      .replace("%server%",
-        if (registry.getOrDefault(ADVANCED_SERVER_INFO_ENABLED)) locationService.getServer(userName).map { it.name }
-          .orElse("null")
-          .replace(advancedServerInfoService.getPrefixForPlayer(userName), "") else locationService.getServer(userName)
-          .map {it.name }
-          .orElse("null"))
+      .replace("%server%", locationService.getServer(userName).map { it.name }.orElse(null))
       .replace("%ping%", ping.toString())
       .replace("%playercount%", playerCount.toString())
       .replace("%balance%", getBalance(userName))

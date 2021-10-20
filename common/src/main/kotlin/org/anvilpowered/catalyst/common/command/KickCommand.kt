@@ -58,7 +58,7 @@ class KickCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject con
         textService.send(pluginMessages.kickExempt, context.source)
         return 0
       }
-      kickService.kick(context.getArgument<String>("target"), reason)
+      kickService.kick(userService.getUUID(player.get()), reason)
     } else {
       textService.send(pluginMessages.offlineOrInvalidPlayer(), context.source)
     }

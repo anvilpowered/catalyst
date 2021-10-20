@@ -52,8 +52,6 @@ class CommonConfigurationService @Inject constructor(
     setName(CatalystKeys.TAB_FOOTER, "tab.format.footer")
     setName(CatalystKeys.TAB_FORMAT_CUSTOM, "tab.format.custom")
     setName(CatalystKeys.TAB_UPDATE, "tab.updateDelay")
-    setName(CatalystKeys.TAB_ORDER, "tab.order.order")
-    setName(CatalystKeys.TAB_GROUP_ORDER, "tab.order.groups")
     setName(CatalystKeys.CHAT_CHANNELS, "chat.channels")
     setName(CatalystKeys.CHAT_DEFAULT_CHANNEL, "chat.channelDefault")
     setName(CatalystKeys.BOT_TOKEN, "discord.bot.token")
@@ -74,8 +72,6 @@ class CommonConfigurationService @Inject constructor(
     setName(CatalystKeys.SERVER_PING, "ping.mode")
     setName(CatalystKeys.SERVER_PING_MESSAGE, "ping.message")
     setName(CatalystKeys.MOTD, "motd.message")
-    setName(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "modules.advancedServerInfo")
-    setName(CatalystKeys.ADVANCED_SERVER_INFO, "advanced.server.info")
     setName(CatalystKeys.EMOJI_ENABLE, "chat.emoji.enabled")
     setName(CatalystKeys.VIA_VERSION_ENABLED, "advanced.viaversion")
     setName(CatalystKeys.BAN_COMMAND_ENABLED, "commands.ban")
@@ -128,8 +124,6 @@ class CommonConfigurationService @Inject constructor(
     setDescription(CatalystKeys.TAB_FORMAT, "\nFormat for how each player is displayed in the tab")
     setDescription(CatalystKeys.TAB_FORMAT_CUSTOM, "\nFormat for extra information that can be displayed in the tab.")
     setDescription(CatalystKeys.TAB_UPDATE, "\nTime setting for how often the tab updates in seconds")
-    setDescription(CatalystKeys.TAB_ORDER, "\nOrder in which players should be listed in the tab list.\nOptions: group, a-z")
-    setDescription(CatalystKeys.TAB_GROUP_ORDER, "\nOrder in which groups should be displayed in the tab.")
     setDescription(CatalystKeys.CHAT_CHANNELS, "\nChat Channels")
     setDescription(CatalystKeys.CHAT_DEFAULT_CHANNEL, "\nDefault chat channel")
     setDescription(CatalystKeys.BOT_TOKEN, "\nToken for the discord bot")
@@ -159,16 +153,6 @@ class CommonConfigurationService @Inject constructor(
         """.trimIndent()
     )
     setDescription(CatalystKeys.MOTD, "\nDefault MOTD that catalyst uses if the advanced server information is disabled.")
-    setDescription(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED, "\nToggle the Advanced Server Information handling")
-    setDescription(
-      CatalystKeys.ADVANCED_SERVER_INFO,
-      """
-        This config option is for users that would like to have multiple servers,
-        each with differing MOTD and/or Mods 
-        Note: To do this, the IP specified MUST correlate to the IP defined in the forced host section
-        of the velocity config. Also, your players must use the IP defined in this config to connect
-        """.trimIndent()
-    )
     setDescription(
       CatalystKeys.EMOJI_ENABLE,
       """

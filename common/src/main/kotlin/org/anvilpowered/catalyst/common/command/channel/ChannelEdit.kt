@@ -22,6 +22,7 @@ import org.anvilpowered.anvil.api.registry.ConfigurationService
 import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.registry.ChatChannel
+import java.util.Locale
 import java.util.UUID
 
 object ChannelEdit {
@@ -30,7 +31,7 @@ object ChannelEdit {
   val editedChannel = mutableMapOf<UUID, ChatChannel>()
 
   fun editProperty(uuid: UUID, propertyName: String, channel: ChatChannel, value: String): Boolean {
-    when (propertyName.toLowerCase()) {
+    when (propertyName.lowercase(Locale.getDefault())) {
       "format" -> {
         channel.format = value
       }

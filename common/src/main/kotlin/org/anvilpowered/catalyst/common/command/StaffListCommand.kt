@@ -66,7 +66,7 @@ class StaffListCommand<TString, TCommandSource>@Inject constructor(
     get() = (staffListService.staffNames().isNotEmpty()
       || staffListService.adminNames().isNotEmpty()
       || staffListService.ownerNames().isNotEmpty())
-  val line: TString
+  private val line: TString
     get() {
       return textService.builder()
         .append("-----------------------------------------------------")

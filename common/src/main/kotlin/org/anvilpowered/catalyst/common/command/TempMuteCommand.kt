@@ -49,12 +49,7 @@ class TempMuteCommand<TString, TPlayer : TCommandSource, TCommandSource> @Inject
         return 0
       }
     }
-    memberManager.tempMute(userName, duration, reason).thenAcceptAsync { m: TString ->
-      textService.send(
-        m,
-        context.source
-      )
-    }
+    memberManager.tempMute(userName, duration, reason).thenAcceptAsync { textService.send(it, context.source) }
     return 1
   }
 

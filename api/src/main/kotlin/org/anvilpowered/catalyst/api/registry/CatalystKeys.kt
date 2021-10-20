@@ -99,14 +99,6 @@ object CatalystKeys {
     .name("TAB_UPDATE")
     .fallback(1)
     .build()
-  val TAB_ORDER = Key.builder(TypeTokens.STRING)
-    .name("TAB_ORDER")
-    .fallback("a-z")
-    .build()
-  val TAB_GROUP_ORDER = Key.builder(LIST_STRING)
-    .name("TAB_GROUP_ORDER")
-    .fallback(mutableListOf("admin", "mod", "player"))
-    .build()
   val CHAT_DEFAULT_CHANNEL = Key.builder(TypeTokens.STRING)
     .name("CHAT_DEFAULT_CHANNEL")
     .fallback("global")
@@ -375,10 +367,6 @@ object CatalystKeys {
     .name("MOTD_ENABLED")
     .fallback(false)
     .build()
-  val ADVANCED_SERVER_INFO_ENABLED = Key.builder(TypeTokens.BOOLEAN)
-    .name("ADVANCED_SERVER_INFO_ENABLED")
-    .fallback(false)
-    .build()
   private val emojiMap = mutableMapOf<String, Char>()
   var emojiChar = '\uac00'
   val EMOJI_ENABLE = Key.builder(TypeTokens.BOOLEAN)
@@ -399,11 +387,6 @@ object CatalystKeys {
   val CHAT_CHANNELS = Key.builder(object : TypeToken<MutableList<ChatChannel>>() {})
     .name("CHAT_CHANNELS")
     .fallback(chatChannels)
-    .build()
-  var advancedServerInfo: MutableList<AdvancedServerInfo> = LinkedList()
-  val ADVANCED_SERVER_INFO = Key.builder(object : TypeToken<MutableList<AdvancedServerInfo>>() {})
-    .name("ADVANCED_SERVER_INFO")
-    .fallback(advancedServerInfo)
     .build()
   val VIA_VERSION_ENABLED = Key.builder(TypeTokens.BOOLEAN)
     .name("VIA_VERSION_ENABLED")
@@ -563,14 +546,6 @@ object CatalystKeys {
     admin.servers = mutableListOf("main", "wild")
     chatChannels.add(admin)
 
-    val example = AdvancedServerInfo()
-    example.hostName = "lobby.hostname.com"
-    example.motd = "&cA Velocity Proxy"
-    example.prefix = "Lobby"
-    example.port = 30066
-    example.modded = false
-    advancedServerInfo.add(example)
-
     Keys.startRegistration("catalyst")
       .register(CHAT_FILTER_ENABLED)
       .register(CHAT_FILTER_EXCEPTIONS)
@@ -585,8 +560,6 @@ object CatalystKeys {
       .register(TAB_FORMAT)
       .register(TAB_FORMAT_CUSTOM)
       .register(TAB_UPDATE)
-      .register(TAB_ORDER)
-      .register(TAB_GROUP_ORDER)
       .register(CHAT_CHANNELS)
       .register(CHAT_DEFAULT_CHANNEL)
       .register(BAN_PERMISSION)
@@ -645,8 +618,6 @@ object CatalystKeys {
       .register(SYNC_COMMAND_PERMISSION)
       .register(MOTD)
       .register(MOTD_ENABLED)
-      .register(ADVANCED_SERVER_INFO_ENABLED)
-      .register(ADVANCED_SERVER_INFO)
       .register(EMOJI_ENABLE)
       .register(EMOJI_MAP)
       .register(EMOJI_PERMISSION)

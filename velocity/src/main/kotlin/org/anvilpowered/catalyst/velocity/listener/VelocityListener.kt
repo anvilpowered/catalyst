@@ -49,17 +49,13 @@ import org.anvilpowered.catalyst.api.event.CommandEvent
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
-import org.anvilpowered.catalyst.api.registry.AdvancedServerInfo
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.BroadcastService
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.EventService
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
-import java.util.ArrayList
 import java.util.UUID
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.atomic.AtomicBoolean
 
 class VelocityListener @Inject constructor(
   private val channelService: ChannelService<Player>,
@@ -91,17 +87,6 @@ class VelocityListener @Inject constructor(
           } else {
             val virtualHost = player.virtualHost
             if (virtualHost.isPresent) {
-              if (registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)) {
-                val hostNameExists = AtomicBoolean(false)
-                for (serverInfo in registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO)) {
-                  if (serverInfo.hostName.equals(virtualHost.get().hostString, ignoreCase = true)) {
-                    hostNameExists.set(true)
-                  }
-                }
-                if (!hostNameExists.get()) {
-                  player.disconnect(textService.deserialize("&4Please re-connect using the correct IP!"))
-                }
-              }
               eventService.post(JoinEvent(player, virtualHost.get().hostName, player.uniqueId))
             }
           }
@@ -180,73 +165,32 @@ class VelocityListener @Inject constructor(
 
   @Subscribe
   fun onServerListPing(proxyPingEvent: ProxyPingEvent) {
-    var serverPing = proxyPingEvent.ping
+    val serverPing = proxyPingEvent.ping
     val builder = ServerPing.builder()
     var modInfo: ModInfo? = null
-    val hostNameExists = AtomicBoolean(false)
-    var advancedServerInfoList: List<AdvancedServerInfo> = ArrayList()
-    val playerProvidedHost: String = if (proxyPingEvent.connection.virtualHost.isPresent) {
-      proxyPingEvent.connection.virtualHost.get().hostString
-    } else {
-      return
-    }
-    val useCatalyst = registry.getOrDefault(CatalystKeys.ADVANCED_SERVER_INFO_ENABLED)
-    if (useCatalyst) {
-      advancedServerInfoList =
-        registry.get(CatalystKeys.ADVANCED_SERVER_INFO).orElseThrow { IllegalArgumentException("Invalid server configuration!") }
-      advancedServerInfoList.forEach {
-        if (playerProvidedHost == it.hostName) {
-          hostNameExists.set(true)
-          val withColorCodes = LegacyComponentSerializer.legacyAmpersand().deserialize(it.motd)
-          builder.description(MiniMessage.get().deserialize(MiniMessage.markdown().serialize(withColorCodes.asComponent())))
-        }
-      }
-      if (!hostNameExists.get()) {
-        builder.description(textService.deserialize("&4Using the direct IP to connect has been disabled!"))
-      }
-    } else if (registry.getOrDefault(CatalystKeys.MOTD_ENABLED)) {
+    if (registry.getOrDefault(CatalystKeys.MOTD_ENABLED)) {
       val withColorCodes = LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.MOTD))
       builder.description(MiniMessage.get().deserialize(MiniMessage.markdown().serialize(withColorCodes.asComponent())))
     } else {
       return
     }
     if (proxyServer.configuration.isAnnounceForge) {
-      if (useCatalyst) {
-        for (advancedServerInfo in advancedServerInfoList) {
-          if (playerProvidedHost.startsWith(advancedServerInfo.hostName)) {
-            for (pServer in proxyServer.allServers) {
-              try {
-                if (pServer.serverInfo.name.contains(advancedServerInfo.prefix)) {
-                  serverPing = pServer.ping().get()
-                  if (serverPing.modinfo.isPresent) {
-                    modInfo = serverPing.modinfo.get()
-                    break
-                  }
-                }
-              } catch (ignored: InterruptedException) {
-              } catch (ignored: ExecutionException) {
-              }
+      var end = false
+      for (server in proxyServer.configuration.attemptConnectionOrder) {
+        val registeredServer = proxyServer.getServer(server)
+        if (!registeredServer.isPresent) return
+        if (end) break
+        registeredServer.get().ping()
+          .thenApply {
+            if (it.modinfo.isPresent) {
+              modInfo = it.modinfo.get()
+              end = true
             }
           }
-        }
-      } else {
-        var end = false
-        for (server in proxyServer.configuration.attemptConnectionOrder) {
-          val registeredServer = proxyServer.getServer(server)
-          if (!registeredServer.isPresent) return
-          if (end) break
-          registeredServer.get().ping()
-            .thenApply {
-              if (it.modinfo.isPresent) {
-                modInfo = it.modinfo.get()
-                end = true
-              }
-            }
-        }
       }
-      if (modInfo != null) {
-        builder.mods(modInfo)
-      }
+    }
+    if (modInfo != null) {
+      builder.mods(modInfo)
     }
     if (registry.getOrDefault(CatalystKeys.SERVER_PING).equals("players", ignoreCase = true)) {
       if (proxyServer.playerCount > 0) {
