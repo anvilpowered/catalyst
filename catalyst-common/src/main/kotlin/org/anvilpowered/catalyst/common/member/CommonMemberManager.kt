@@ -23,8 +23,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.api.Anvil
-import org.anvilpowered.anvil.api.coremember.CoreMemberManager
-import org.anvilpowered.anvil.api.coremember.CoreMemberRepository
 import org.anvilpowered.anvil.api.misc.appendIf
 import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.plugin.PluginInfo
@@ -33,7 +31,9 @@ import org.anvilpowered.anvil.api.util.KickService
 import org.anvilpowered.anvil.api.util.TimeFormatService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.anvil.base.datastore.BaseManager
+import org.anvilpowered.catalyst.api.Catalyst
 import org.anvilpowered.catalyst.api.member.MemberManager
+import org.anvilpowered.catalyst.api.member.MemberRepository
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.NICKNAME_PREFIX
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages
@@ -52,10 +52,7 @@ class CommonMemberManager<TPlayer> @Inject constructor(
     private val timeFormatService: TimeFormatService,
     private val userService: UserService<TPlayer, TPlayer>,
     private val channelService: ChannelService<TPlayer>
-) : BaseManager<CoreMemberRepository<*, *>>(registry), MemberManager {
-
-    override val primaryComponent: CoreMemberRepository<*, *> =
-        Anvil.environmentManager.coreEnvironment.injector.getInstance(CoreMemberManager::class.java).primaryComponent
+) : BaseManager<MemberRepository<*, *>>(registry), MemberManager {
 
     override fun info(
         userName: String, isOnline: Boolean,
@@ -131,6 +128,7 @@ class CommonMemberManager<TPlayer> @Inject constructor(
     }
 
     override fun setNickNameForUser(userName: String, nickName: String): CompletableFuture<Component> {
+
         return primaryComponent.setNickNameForUser(userName, registry.getOrDefault(NICKNAME_PREFIX).toString() + nickName)
             .thenApplyAsync { result: Boolean ->
                 if (result) {

@@ -18,47 +18,36 @@
 
 package org.anvilpowered.catalyst.common.module
 
-import com.google.common.reflect.TypeToken
 import com.google.inject.AbstractModule
 import com.google.inject.TypeLiteral
+import com.google.inject.name.Names
+import dev.morphia.Datastore
 import org.anvilpowered.anvil.api.misc.bind
 import org.anvilpowered.anvil.api.misc.to
+import org.anvilpowered.anvil.api.misc.withMongoDB
+import org.anvilpowered.anvil.api.misc.withXodus
 import org.anvilpowered.anvil.api.plugin.PluginInfo
-import org.anvilpowered.catalyst.api.discord.JDAService
-import org.anvilpowered.catalyst.api.discord.WebhookSender
 import org.anvilpowered.catalyst.api.member.MemberManager
+import org.anvilpowered.catalyst.api.member.MemberRepository
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
-import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatFilter
-import org.anvilpowered.catalyst.api.service.ChatService
-import org.anvilpowered.catalyst.api.service.EventRegistrationService
-import org.anvilpowered.catalyst.api.service.LuckpermsService
-import org.anvilpowered.catalyst.api.service.PrivateMessageService
-import org.anvilpowered.catalyst.api.service.StaffListService
-import org.anvilpowered.catalyst.api.service.TabService
-import org.anvilpowered.catalyst.common.discord.CommonJDAService
-import org.anvilpowered.catalyst.common.discord.CommonWebhookSender
 import org.anvilpowered.catalyst.common.member.CommonMemberManager
+import org.anvilpowered.catalyst.common.member.CommonMongoMemberRepository
+import org.anvilpowered.catalyst.common.member.CommonXodusMemberRepository
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages
 import org.anvilpowered.catalyst.common.registry.CommonConfigurationService
-import org.anvilpowered.catalyst.common.service.CommonChannelService
 import org.anvilpowered.catalyst.common.service.CommonChatFilter
-import org.anvilpowered.catalyst.common.service.CommonChatService
-import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
-import org.anvilpowered.catalyst.common.service.CommonLuckpermsService
-import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService
-import org.anvilpowered.catalyst.common.service.CommonStaffListService
-import org.anvilpowered.catalyst.common.service.CommonTabService
 import org.anvilpowered.registry.ConfigurationService
 import org.anvilpowered.registry.Registry
+import org.bson.types.ObjectId
 import org.spongepowered.configurate.CommentedConfigurationNode
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader
 import org.spongepowered.configurate.loader.ConfigurationLoader
 import java.nio.file.Paths
 
 @Suppress("UnstableApiUsage")
-open class CommonModule<TPlayer, TCommandSource>(private val configDir: String) : AbstractModule() {
+open class CommonModule(private val configDir: String) : AbstractModule() {
 
     override fun configure() {
         val configDirFull = Paths.get("$configDir/catalyst").toFile()
@@ -69,18 +58,19 @@ open class CommonModule<TPlayer, TCommandSource>(private val configDir: String) 
             HoconConfigurationLoader.builder().path(Paths.get("$configDirFull/catalyst.conf")).build()
         )
         with(binder()) {
+            bind<MemberRepository<*, *>>()
+                .annotatedWith(Names.named("mongodb"))
+                .to<CommonMongoMemberRepository>()
+            bind<MemberRepository<ObjectId, Datastore>>()
+                .to<CommonMongoMemberRepository>()
+            bind<MemberRepository<*, *>>()
+                .annotatedWith(Names.named("xodus"))
+                .to<CommonXodusMemberRepository>()
+            withMongoDB()
+            withXodus()
+
             bind<PluginInfo>().to<CatalystPluginInfo>()
             bind<PluginMessages>().to<CatalystPluginMessages>()
-            bind<MemberManager>().to<CommonMemberManager<TPlayer>>()
-            bind<ChannelService<TPlayer>>().to<CommonChannelService<TPlayer>>()
-            bind<ChatService<TPlayer, TCommandSource>>().to<CommonChatService<TPlayer, TCommandSource>>()
-            bind<PrivateMessageService>().to<CommonPrivateMessageService<TPlayer>>()
-            bind<StaffListService>().to<CommonStaffListService<TPlayer>>()
-            bind<TabService<TPlayer>>().to<CommonTabService<TPlayer>>()
-            bind<LuckpermsService>().to<CommonLuckpermsService<TPlayer>>()
-            bind<JDAService>().to<CommonJDAService<TPlayer>>()
-            bind<WebhookSender>().to<CommonWebhookSender<TPlayer>>()
-            bind<EventRegistrationService>().to<CommonEventRegistrationService<TPlayer, TCommandSource>>()
             bind<ChatFilter>().to<CommonChatFilter>()
             bind<ConfigurationService>().to<CommonConfigurationService>()
         }

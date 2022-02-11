@@ -16,7 +16,7 @@ dependencies {
     api("net.md-5:brigadier:$brigadierVersion")
 }
 
-/*
+
 blossom {
     replaceToken("{modVersion}", version)
     val format = SimpleDateFormat("yyyy-MM-dd-HH:mm:ss z")
@@ -24,4 +24,3 @@ blossom {
     val buildDate = format.format(Date())
     replaceToken("{buildDate}", buildDate)
 }
-*/

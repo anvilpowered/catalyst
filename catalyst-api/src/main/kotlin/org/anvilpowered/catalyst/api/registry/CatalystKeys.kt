@@ -507,63 +507,63 @@ object CatalystKeys {
 
 
     //Keys for root node comments
-    val ADVANCED_ROOT = Key.build<String> {
+    val ADVANCED_ROOT = Key.build {
         name("ADVANCED_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
-    val COMMANDS_ROOT = Key.build<String> {
+    val COMMANDS_ROOT = Key.build {
         name("COMMANDS_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
-    val CHAT_ROOT = Key.build<String> {
+    val CHAT_ROOT = Key.build {
         name("CHAT_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
     val DISCORD_ROOT = Key.build<String> {
         name("DISCORD_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
     val JOIN_ROOT = Key.build<String> {
         name("JOIN_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
     val LEAVE_ROOT = Key.build<String> {
         name("LEAVE_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
     val MODULES_ROOT = Key.build<String> {
         name("MODULES_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
     val MOTD_ROOT = Key.build<String> {
         name("MOTD_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
     val PING_ROOT = Key.build<String> {
         name("PING_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 
     val TAB_ROOT = Key.build<String> {
         name("TAB_ROOT")
-        fallback(null)
+        fallback("null")
         sensitive()
     }
 

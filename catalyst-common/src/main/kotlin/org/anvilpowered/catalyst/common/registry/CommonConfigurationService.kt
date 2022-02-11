@@ -19,9 +19,9 @@ package org.anvilpowered.catalyst.common.registry
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import org.anvilpowered.anvil.api.registry.AnvilConfigurationService
 import org.anvilpowered.anvil.api.registry.AnvilKeys
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.registry.ConfigurationService
 import org.spongepowered.configurate.CommentedConfigurationNode
 import org.spongepowered.configurate.loader.ConfigurationLoader
 import java.util.function.Function
@@ -30,9 +30,11 @@ import java.util.function.Predicate
 @Singleton
 class CommonConfigurationService @Inject constructor(
     configLoader: ConfigurationLoader<CommentedConfigurationNode>
-) : ConfigurationService(configLoader) {
+) : AnvilConfigurationService(configLoader) {
 
     init {
+        withDataStore()
+        withMongoDB()
         setDefault(AnvilKeys.BASE_SCAN_PACKAGE, "org.anvilpowered.catalyst.common.model")
         setName(CatalystKeys.CHAT_FILTER_SWEARS, "chat.filter.swears")
         setName(CatalystKeys.CHAT_FILTER_EXCEPTIONS, "chat.filter.exceptions")
@@ -300,39 +302,51 @@ class CommonConfigurationService @Inject constructor(
         setDescription(CatalystKeys.CATALYST_PREFIX, "\nPrefix to be used when displaying messages to players when commands are executed.")
         setDescription(
             CatalystKeys.ADVANCED_ROOT,
-            (" |------------------------------------------------------------|\n" +
-                " |                           Advanced                         |\n" +
-                " |------------------------------------------------------------| ")
+            """
+                |------------------------------------------------------------|
+                |                           Advanced                         |
+                |------------------------------------------------------------|
+            """.trimIndent()
         )
         setDescription(
             CatalystKeys.COMMANDS_ROOT,
-            (" |------------------------------------------------------------|\n" +
-                " |                           Commands                         |\n" +
-                " |------------------------------------------------------------| ")
+            """
+                |------------------------------------------------------------|
+                |                           Commands                         |
+                |------------------------------------------------------------|
+            """.trimIndent()
         )
         setDescription(
             CatalystKeys.CHAT_ROOT,
-            (" |------------------------------------------------------------|\n" +
-                " |                           Chat                             |\n" +
-                " |------------------------------------------------------------| ")
+            """
+                |------------------------------------------------------------|
+                |                           Chat                             |
+                |------------------------------------------------------------|
+            """.trimIndent()
         )
         setDescription(
             CatalystKeys.DISCORD_ROOT,
-            (" |------------------------------------------------------------|\n"
-                + " |                           Discord                          |\n"
-                + " |------------------------------------------------------------|")
+            """
+                 |------------------------------------------------------------|
+                 |                           Discord                          |
+                 |------------------------------------------------------------|
+            """.trimIndent()
         )
         setDescription(
             CatalystKeys.JOIN_ROOT,
-            (" |------------------------------------------------------------|\n" +
-                " |                           Join                             |\n" +
-                " |------------------------------------------------------------| ")
+            """
+                 |------------------------------------------------------------|
+                 |                           Join                             |
+                 |------------------------------------------------------------|
+            """.trimIndent()
         )
         setDescription(
             CatalystKeys.LEAVE_ROOT,
-            (" |------------------------------------------------------------|\n" +
-                " |                           Leave                            |\n" +
-                " |------------------------------------------------------------| ")
+            """
+                |------------------------------------------------------------|
+                |                           Leave                            |
+                |------------------------------------------------------------|
+            """.trimIndent()
         )
         setDescription(
             CatalystKeys.MODULES_ROOT,
@@ -365,5 +379,7 @@ class CommonConfigurationService @Inject constructor(
                 message.replace("&".toRegex(), "\u00a7")
             }
         setVerification(CatalystKeys.SERVER_PING_MESSAGE, pingMessageMap)
+        withDataStoreCore()
+        withMongoDB()
     }
 }

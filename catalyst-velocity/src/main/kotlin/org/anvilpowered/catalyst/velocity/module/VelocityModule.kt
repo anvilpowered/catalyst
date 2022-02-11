@@ -24,18 +24,48 @@ import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.api.misc.bind
 import org.anvilpowered.anvil.api.misc.to
 import org.anvilpowered.catalyst.api.discord.DiscordCommandService
+import org.anvilpowered.catalyst.api.discord.JDAService
+import org.anvilpowered.catalyst.api.discord.WebhookSender
+import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.service.BroadcastService
+import org.anvilpowered.catalyst.api.service.ChannelService
+import org.anvilpowered.catalyst.api.service.ChatService
+import org.anvilpowered.catalyst.api.service.EventRegistrationService
+import org.anvilpowered.catalyst.api.service.LuckpermsService
+import org.anvilpowered.catalyst.api.service.PrivateMessageService
+import org.anvilpowered.catalyst.api.service.StaffListService
+import org.anvilpowered.catalyst.api.service.TabService
+import org.anvilpowered.catalyst.common.discord.CommonJDAService
+import org.anvilpowered.catalyst.common.discord.CommonWebhookSender
+import org.anvilpowered.catalyst.common.member.CommonMemberManager
 import org.anvilpowered.catalyst.common.module.CommonModule
+import org.anvilpowered.catalyst.common.service.CommonChannelService
+import org.anvilpowered.catalyst.common.service.CommonChatService
+import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
+import org.anvilpowered.catalyst.common.service.CommonLuckpermsService
+import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService
+import org.anvilpowered.catalyst.common.service.CommonStaffListService
+import org.anvilpowered.catalyst.common.service.CommonTabService
 import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService
 import org.anvilpowered.catalyst.velocity.service.VelocityDiscordCommandService
 
 @Singleton
-class VelocityModule : CommonModule<Player, CommandSource>("plugins") {
+class VelocityModule : CommonModule("plugins") {
     override fun configure() {
-        super.configure()
         with(binder()) {
             bind<BroadcastService>().to<VelocityBroadcastService>()
             bind<DiscordCommandService>().to<VelocityDiscordCommandService>()
+            bind<MemberManager>().to<CommonMemberManager<Player>>()
+            bind<ChannelService<Player>>().to<CommonChannelService<Player>>()
+            bind<ChatService<Player, CommandSource>>().to<CommonChatService<Player, CommandSource>>()
+            bind<PrivateMessageService>().to<CommonPrivateMessageService<Player>>()
+            bind<StaffListService>().to<CommonStaffListService<Player>>()
+            bind<TabService<Player>>().to<CommonTabService<Player>>()
+            bind<LuckpermsService>().to<CommonLuckpermsService<Player>>()
+            bind<JDAService>().to<CommonJDAService<Player>>()
+            bind<WebhookSender>().to<CommonWebhookSender<Player>>()
+            bind<EventRegistrationService>().to<CommonEventRegistrationService<Player, CommandSource>>()
         }
+        super.configure()
     }
 }

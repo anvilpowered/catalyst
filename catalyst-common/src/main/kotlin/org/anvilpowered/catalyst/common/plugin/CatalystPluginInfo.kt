@@ -24,7 +24,7 @@ import org.anvilpowered.anvil.api.plugin.PluginInfo
 
 @Singleton
 class CatalystPluginInfo : PluginInfo {
-    override var prefix: Component = Component.text().append(Component.text("[\$name]").color(NamedTextColor.GOLD)).build()
+    override var prefix: Component = Component.text().append(Component.text("[${Companion.name}] ").color(NamedTextColor.GOLD)).build()
     override val id: String = Companion.id
     override val name: String = Companion.name
     override val version: String = Companion.version

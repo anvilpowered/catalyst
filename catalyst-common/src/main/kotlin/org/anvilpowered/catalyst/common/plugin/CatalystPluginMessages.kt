@@ -186,28 +186,22 @@ class CatalystPluginMessages @Inject constructor(
 
     override fun getBanMessage(reason: String, endUtc: Instant): Component {
         return Component.text()
-            .append(Component.text("You have been banned for: ").append(LegacyComponentSerializer.legacyAmpersand().deserialize(reason)))
-            .append(
-                Component.text(
-                    "\n\nFor another ${
-                        timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc))?.withoutNano()
-                    }"
-                )
-            )
-            .append(Component.text("\n\nUntil ${timeFormatService.format(endUtc)?.withoutNano()}"))
+            .append(pluginInfo.prefix)
+            .append(Component.text("You have been banned for: $reason")
+                .color(NamedTextColor.RED))
+            .append(Component.text("\n\nFor another ${timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc))}")
+                .color(NamedTextColor.YELLOW))
+            .append(Component.text("\n\nUntil ${timeFormatService.format(endUtc)}"))
             .build()
     }
 
     override fun getMuteMessage(reason: String, endUtc: Instant): Component {
         return Component.text()
             .append(pluginInfo.prefix)
-            .append(Component.text("You have been muted for: ").append(LegacyComponentSerializer.legacyAmpersand().deserialize(reason)))
-            .append(
-                Component.text(
-                    "For another ${
-                        timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc))?.withoutNano()
-                    }"
-                ).color(NamedTextColor.YELLOW)
+            .append(Component.text("You have been muted for: $reason")
+                .color(NamedTextColor.RED))
+            .append(Component.text("\nFor another ${timeFormatService.format(Duration.between(OffsetDateTime.now(ZoneOffset.UTC).toInstant(), endUtc))}")
+                .color(NamedTextColor.YELLOW)
             )
             .build()
     }
