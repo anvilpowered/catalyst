@@ -4,7 +4,10 @@ include(":catalyst-api")
 include(":catalyst-common")
 include(":catalyst-velocity")
 
-project(":catalyst-api").projectDir = File("api")
-project(":catalyst-common").projectDir = File("common")
-project(":catalyst-velocity").projectDir = File("velocity")
-
+pluginManagement {
+    plugins {
+        val kotlinVersion: String by settings
+        kotlin("jvm") version kotlinVersion
+        id("net.kyori.blossom") version "1.3.0"
+    }
+}
