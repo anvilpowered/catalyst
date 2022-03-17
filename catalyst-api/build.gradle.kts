@@ -21,7 +21,7 @@ val unirestVersion: String by project
 
 dependencies {
     compileOnlyApi("com.google.inject:guice:5.0.1")
-    compileOnlyApi("org.anvilpowered:anvil-api:0.4.0-SNAPSHOT")
+    compileOnlyApi("org.anvilpowered:anvil-api:0.4-SNAPSHOT")
     api("net.dv8tion:JDA:$jdaVersion")
     compileOnlyApi("net.luckperms:api:$luckpermsVersion")
     api("org.apache.httpcomponents:httpasyncclient:$apacheAsyncVersion")

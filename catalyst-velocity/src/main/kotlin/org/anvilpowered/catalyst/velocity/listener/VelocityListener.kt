@@ -168,7 +168,7 @@ class VelocityListener @Inject constructor(
         var modInfo: ModInfo? = null
         if (registry.getOrDefault(CatalystKeys.MOTD_ENABLED)) {
             val withColorCodes = LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.MOTD))
-            builder.description(MiniMessage.get().deserialize(MiniMessage.markdown().serialize(withColorCodes.asComponent())))
+            builder.description(withColorCodes.asComponent())
         } else {
             return
         }
