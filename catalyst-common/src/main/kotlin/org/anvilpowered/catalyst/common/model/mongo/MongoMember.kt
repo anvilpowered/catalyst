@@ -26,16 +26,16 @@ import java.time.Instant
 import java.util.UUID
 
 @Entity("members")
-class MongoMember : MongoDbo(), Member<ObjectId>{
-    override lateinit var userUUID: UUID
-    override lateinit var userName: String
-    override lateinit var ipAddress: String
-    override lateinit var lastJoinedUtc: Instant
-    override lateinit var nickName: String
+open class MongoMember : MongoDbo(), Member<ObjectId> {
+    override var userUUID: UUID = UUID.randomUUID()
+    override var userName: String = ""
+    override var ipAddress: String = ""
+    override var lastJoinedUtc: Instant = Instant.now()
+    override var nickName: String = ""
     override var isBanned = false
     override var isMuted = false
-    override lateinit var banEndUtc: Instant
-    override lateinit var muteEndUtc: Instant
-    override lateinit var banReason: String
-    override lateinit var muteReason: String
+    override var banEndUtc: Instant = Instant.now()
+    override var muteEndUtc: Instant = Instant.now()
+    override var banReason: String = ""
+    override var muteReason: String = ""
 }

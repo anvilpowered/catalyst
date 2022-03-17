@@ -46,7 +46,7 @@ class InfoCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
         permissions[1] = permissionService.hasPermission(context.source, registry.getOrDefault(CatalystKeys.INFO_BANNED_PERMISSION))
         permissions[2] = permissionService.hasPermission(context.source, registry.getOrDefault(CatalystKeys.INFO_CHANNEL_PERMISSION))
 
-        memberManager.info(context.getArgument<String>("target"), isActive, permissions)
+        memberManager.info(context.getArgument("target"), isActive, permissions)
             .thenAcceptAsync { it.sendTo(context.source) }
         return 1
     }

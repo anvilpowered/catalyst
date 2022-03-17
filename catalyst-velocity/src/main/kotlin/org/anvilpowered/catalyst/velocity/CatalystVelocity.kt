@@ -29,6 +29,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.api.environment.Environment
 import org.anvilpowered.catalyst.api.CatalystImpl
 import org.anvilpowered.catalyst.common.command.CommonCommandNode
+import org.anvilpowered.catalyst.common.model.mongo.MongoMember
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo
 import org.anvilpowered.catalyst.velocity.command.VelocityCommandNode
 import org.anvilpowered.catalyst.velocity.listener.VelocityListener

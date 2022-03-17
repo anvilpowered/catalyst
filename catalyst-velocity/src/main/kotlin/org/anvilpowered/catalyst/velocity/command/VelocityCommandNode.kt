@@ -35,27 +35,27 @@ class VelocityCommandNode @Inject constructor(
     registry: Registry,
     private val proxyServer: ProxyServer
 ) : CommonCommandNode<Player, CommandSource>(
-  registry,
-  Player::class.java,
-  ConsoleCommandSource::class.java
+    registry,
+    Player::class.java,
+    ConsoleCommandSource::class.java
 ) {
 
-  public override fun loadCommands() {
-    // We unregister the command velocity has provided so that ours
-    // works properly
-    if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
-      proxyServer.commandManager.unregister("server")
-    }
+    public override fun loadCommands() {
+        // We unregister the command velocity has provided so that ours
+        // works properly
+        if (registry.getOrDefault(CatalystKeys.SERVER_COMMAND_ENABLED)) {
+            proxyServer.commandManager.unregister("server")
+        }
 
-    //register commands from CommonCommandNode
-    val manager = proxyServer.commandManager
-    commands.forEach { (aliases: List<String>, command: LiteralCommandNode<CommandSource>) ->
-      val metaBuilder = manager.metaBuilder(aliases[0])
-      //Skipping first entry as it is already defined
-      for (i in 1 until aliases.size) {
-        metaBuilder.aliases(aliases[i])
-      }
-      manager.register(metaBuilder.build(), BrigadierCommand(command))
+        //register commands from CommonCommandNode
+        val manager = proxyServer.commandManager
+        commands.forEach { (aliases: List<String>, command: LiteralCommandNode<CommandSource>) ->
+            val metaBuilder = manager.metaBuilder(aliases[0])
+            //Skipping first entry as it is already defined
+            for (i in 1 until aliases.size) {
+                metaBuilder.aliases(aliases[i])
+            }
+            manager.register(metaBuilder.build(), BrigadierCommand(command))
+        }
     }
-  }
 }

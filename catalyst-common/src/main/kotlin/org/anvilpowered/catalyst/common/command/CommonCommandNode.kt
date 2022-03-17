@@ -26,6 +26,9 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
@@ -125,9 +128,20 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
     private var alreadyLoaded: Boolean = false
     protected var commands = mutableMapOf<MutableList<String>, LiteralCommandNode<TCommandSource>>()
 
+    private fun notEnoughArgs(context: CommandContext<TCommandSource>): Int {
+        Component.text()
+            .append(Component.text("Invalid command usage!\n").color(NamedTextColor.RED))
+            .append(Component.text("Not enough arguments in: ").color(NamedTextColor.RED)
+                .append(Component.text(context.input).color(NamedTextColor.YELLOW))
+            )
+            .sendTo(context.source)
+        return 1
+    }
+
     private fun loadNodes() {
         val ban = LiteralArgumentBuilder
             .literal<TCommandSource>("ban")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.BAN_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.string())
                 .suggests(suggestPlayers())
@@ -140,6 +154,7 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
             ).build()
         val tempBan = LiteralArgumentBuilder
             .literal<TCommandSource>("tempban")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.TEMP_BAN_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.string())
                 .then(RequiredArgumentBuilder.argument<TCommandSource, String>("duration", StringArgumentType.string())
@@ -152,20 +167,21 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 ).build()
             ).build()
         val unban = LiteralArgumentBuilder.literal<TCommandSource>("unban")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.BAN_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.string())
                 .executes { unBanCommand.unban(it) }
                 .build()
             ).build()
-        val broadcast = LiteralArgumentBuilder
-            .literal<TCommandSource>("broadcast")
+        val broadcast = LiteralArgumentBuilder.literal<TCommandSource>("broadcast")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.BROADCAST_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("message", StringArgumentType.greedyString())
                 .executes { broadcastCommand.execute(it) }
                 .build()
             ).build()
-        val channel = LiteralArgumentBuilder
-            .literal<TCommandSource>("channel")
+        val channel = LiteralArgumentBuilder.literal<TCommandSource>("channel")
+            .executes(this::notEnoughArgs)
             .executes { channelCommand.list(it, playerClass) }
             .then(LiteralArgumentBuilder.literal<TCommandSource>("set")
                 .then(
@@ -219,6 +235,7 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 ).build()
             ).build()
         val delNick = LiteralArgumentBuilder.literal<TCommandSource>("delnick")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION)) }
             .executes { deleteNickCommand.execute(it, playerClass) }
             .then(LiteralArgumentBuilder.literal<TCommandSource>("other")
@@ -232,6 +249,7 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 ).build()
             ).build()
         val nickName = LiteralArgumentBuilder.literal<TCommandSource>("nick")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.NICKNAME_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("nickname", StringArgumentType.greedyString())
                 .executes { nickCommand.execute(it, playerClass) }
@@ -247,6 +265,7 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 ).build()
             ).build()
         val find = LiteralArgumentBuilder.literal<TCommandSource>("find")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.FIND_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.string())
                 .suggests(suggestPlayers())
@@ -254,12 +273,14 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 .build()
             ).build()
         val info = LiteralArgumentBuilder.literal<TCommandSource>("info")
+            .executes(this::notEnoughArgs)
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.word())
                 .suggests(suggestPlayers())
                 .executes { infoCommand.execute(it) }
                 .build()
             ).build()
         val kick = LiteralArgumentBuilder.literal<TCommandSource>("kick")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.KICK_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.word())
                 .suggests(suggestPlayers())
@@ -270,6 +291,7 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 ).build()
             ).build()
         val message = LiteralArgumentBuilder.literal<TCommandSource>("msg")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.word())
                 .suggests(suggestPlayers())
@@ -280,12 +302,14 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 ).build()
             ).build()
         val reply = LiteralArgumentBuilder.literal<TCommandSource>("reply")
+            .executes(this::notEnoughArgs)
             .requires { source: TCommandSource -> permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.MESSAGE_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("message", StringArgumentType.greedyString())
                 .executes { replyCommand.execute(it) }
                 .build()
             ).build()
         val mute = LiteralArgumentBuilder.literal<TCommandSource>("mute")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.MUTE_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.word())
                 .suggests(suggestPlayers())
@@ -296,6 +320,7 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 ).build()
             ).build()
         val tempMute = LiteralArgumentBuilder.literal<TCommandSource>("tempmute")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.MUTE_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.word())
                 .suggests(suggestPlayers())
@@ -308,10 +333,12 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 ).build()
             ).build()
         val toggleChat = LiteralArgumentBuilder.literal<TCommandSource>("togglechat")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.TOGGLE_CHAT_PERMISSION)) }
             .executes { toggleProxyChat.execute(it, playerClass) }
             .build()
         val unmute = LiteralArgumentBuilder.literal<TCommandSource>("unmute")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.MUTE_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.word())
                 .suggests(suggestPlayers())
@@ -319,22 +346,27 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 .build()
             ).build()
         val socialSpy = LiteralArgumentBuilder.literal<TCommandSource>("socialspy")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.SOCIALSPY_PERMISSION)) }
             .executes { socialSpyCommand.execute(it, playerClass) }
             .build()
         val exception = LiteralArgumentBuilder.literal<TCommandSource>("exception")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_LIST_PERMISSION)) }
             .executes { exceptionCommand.execute(it) }
             .build()
         val swear = LiteralArgumentBuilder.literal<TCommandSource>("swear")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.LANGUAGE_LIST_PERMISSION)) }
             .executes { swearCommand.execute(it) }
             .build()
         val staffList = LiteralArgumentBuilder.literal<TCommandSource>("stafflist")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.STAFFLIST_BASE_PERMISSION)) }
             .executes { staffListCommand.execute(it) }
             .build()
         val send = LiteralArgumentBuilder.literal<TCommandSource>("send")
+            .executes(this::notEnoughArgs)
             .requires { it.hasPermission(registry.getOrDefault(CatalystKeys.SEND_PERMISSION)) }
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("player", StringArgumentType.word())
                 .suggests(suggestPlayers())
@@ -352,6 +384,7 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
                 .build()
             ).build()
         val ignore = LiteralArgumentBuilder.literal<TCommandSource>("ignore")
+            .executes(this::notEnoughArgs)
             .then(RequiredArgumentBuilder.argument<TCommandSource, String>("target", StringArgumentType.word())
                 .suggests(suggestPlayers())
                 .executes { ignoreCommand.execute(it, playerClass) }

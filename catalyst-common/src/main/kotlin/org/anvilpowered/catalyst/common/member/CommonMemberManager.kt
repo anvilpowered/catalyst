@@ -107,8 +107,8 @@ class CommonMemberManager<TPlayer> @Inject constructor(
                         .append(Component.text(channelService.getChannelIdForUser(member.userUUID)).color(NamedTextColor.GREEN))
                         .build()
                 )
-                .append(Component.text("\nCurrent Server: ").color(NamedTextColor.GREEN))
-                .append(Component.text(locationService.getServer(member.userUUID)?.name ?: "Offline").color(NamedTextColor.BLUE))
+                .append(Component.text("\nCurrent Server: ").color(NamedTextColor.BLUE))
+                .append(Component.text(locationService.getServer(member.userUUID)?.name ?: "Offline").color(NamedTextColor.GREEN))
                 .build() as Component
         }.exceptionally { e: Throwable ->
             e.printStackTrace()

@@ -37,9 +37,7 @@ import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer
 import com.velocitypowered.api.util.ModInfo
 import net.kyori.adventure.identity.Identity
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.anvilpowered.anvil.api.Anvil
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.event.CommandEvent
 import org.anvilpowered.catalyst.api.event.JoinEvent
@@ -106,7 +104,7 @@ class VelocityListener @Inject constructor(
                 if (member == null) {
                     return@thenAcceptAsync
                 }
-                if (Anvil.serviceManager!!.provide(MemberManager::class.java).primaryComponent.checkBanned(member)) {
+                if (memberManager.primaryComponent.checkBanned(member)) {
                     event.result = ResultedEvent.ComponentResult.denied(pluginMessages.getBanMessage(member.banReason, member.banEndUtc))
                 }
                 if (flags[0] && registry.getOrDefault(CatalystKeys.JOIN_LISTENER_ENABLED)) {

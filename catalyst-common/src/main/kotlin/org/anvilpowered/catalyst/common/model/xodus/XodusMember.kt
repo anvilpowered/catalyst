@@ -27,22 +27,22 @@ import java.time.Instant
 import java.util.UUID
 
 @XodusEntity
-class XodusMember: XodusDbo(), Member<EntityId> {
+open class XodusMember: XodusDbo(), Member<EntityId> {
 
-    override lateinit var userUUID: UUID
-    override lateinit var userName: String
-    override lateinit var ipAddress: String
+    override var userUUID: UUID = UUID.randomUUID()
+    override var userName: String = ""
+    override var ipAddress: String = ""
     private var lastJoinedUtcSeconds: Long = 0
     private var lastJoinedUtcNanos = 0
-    override lateinit var nickName: String
+    override var nickName: String = ""
     override var isBanned = false
     override var isMuted = false
     private var banEndUtcSeconds: Long = 0
     private var banEndUtcNanos = 0
     private var muteEndUtcSeconds: Long = 0
     private var muteEndUtcNanos = 0
-    override lateinit var banReason: String
-    override lateinit var muteReason: String
+    override var banReason: String = ""
+    override var muteReason: String = ""
 
     override var lastJoinedUtc: Instant
         get() = Instant.ofEpochSecond(lastJoinedUtcSeconds, lastJoinedUtcNanos.toLong())

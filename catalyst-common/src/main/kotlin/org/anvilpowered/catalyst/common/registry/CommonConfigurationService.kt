@@ -142,7 +142,7 @@ class CommonConfigurationService @Inject constructor(
         This message will only appear when the mode is set to MESSAGE
         """.trimIndent()
         )
-        setDescription(CatalystKeys.MOTD, "\nDefault MOTD that catalyst uses if the advanced server information is disabled.")
+        setDescription(CatalystKeys.MOTD, "\nDefault MOTD.")
         setDescription(
             CatalystKeys.VIA_VERSION_ENABLED,
             """

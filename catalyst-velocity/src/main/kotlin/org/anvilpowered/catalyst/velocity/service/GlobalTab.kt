@@ -76,6 +76,9 @@ class GlobalTab @Inject constructor(
         return@buildTask
       }
       for (currentPlayerToProcess in proxyServer.allPlayers) {
+          for (entry in currentPlayerToProcess.tabList.entries) {
+              currentPlayerToProcess.tabList.removeEntry(entry.profile.id)
+          }
         for (process in proxyServer.allPlayers) {
           val currentEntry = TabListEntry.builder()
             .profile(GameProfile(process.uniqueId, process.username, process.gameProfileProperties))

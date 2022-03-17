@@ -26,6 +26,7 @@ import dev.morphia.query.experimental.updates.UpdateOperators
 import org.anvilpowered.anvil.base.datastore.BaseMongoRepository
 import org.anvilpowered.catalyst.api.member.MongoMemberRepository
 import org.anvilpowered.catalyst.api.model.Member
+import org.anvilpowered.catalyst.common.model.mongo.MongoMember
 import org.bson.types.ObjectId
 import java.time.Instant
 import java.time.OffsetDateTime
@@ -44,7 +45,7 @@ class CommonMongoMemberRepository : CommonMemberRepository<ObjectId, Datastore>(
         return getOneForUser(userUUID).thenApplyAsync {
             val now = OffsetDateTime.now(ZoneOffset.UTC).toInstant()
             if (it == null) {
-                val member = generateEmpty()
+                val member = MongoMember()
                 member.userUUID = userUUID
                 member.userName = userName
                 member.ipAddress = ipAddress
