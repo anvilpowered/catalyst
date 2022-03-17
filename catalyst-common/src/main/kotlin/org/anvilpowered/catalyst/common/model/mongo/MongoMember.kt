@@ -16,7 +16,7 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.common.member
+package org.anvilpowered.catalyst.common.model.mongo
 
 import dev.morphia.annotations.Entity
 import org.anvilpowered.anvil.base.model.MongoDbo

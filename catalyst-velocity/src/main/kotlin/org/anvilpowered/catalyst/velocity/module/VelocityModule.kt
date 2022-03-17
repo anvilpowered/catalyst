@@ -35,6 +35,7 @@ import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.api.service.PrivateMessageService
 import org.anvilpowered.catalyst.api.service.StaffListService
 import org.anvilpowered.catalyst.api.service.TabService
+import org.anvilpowered.catalyst.common.command.CommonCommandNode
 import org.anvilpowered.catalyst.common.discord.CommonJDAService
 import org.anvilpowered.catalyst.common.discord.CommonWebhookSender
 import org.anvilpowered.catalyst.common.member.CommonMemberManager

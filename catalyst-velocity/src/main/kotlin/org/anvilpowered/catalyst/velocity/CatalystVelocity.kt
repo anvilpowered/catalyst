@@ -20,12 +20,17 @@ package org.anvilpowered.catalyst.velocity
 
 import com.google.inject.Inject
 import com.google.inject.Injector
+import com.google.inject.TypeLiteral
+import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.plugin.Dependency
 import com.velocitypowered.api.plugin.Plugin
+import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.api.environment.Environment
 import org.anvilpowered.catalyst.api.CatalystImpl
+import org.anvilpowered.catalyst.common.command.CommonCommandNode
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo
+import org.anvilpowered.catalyst.velocity.command.VelocityCommandNode
 import org.anvilpowered.catalyst.velocity.listener.VelocityListener
 import org.anvilpowered.catalyst.velocity.module.VelocityModule
 import org.anvilpowered.catalyst.velocity.service.GlobalTab
@@ -47,6 +52,7 @@ class CatalystVelocity @Inject constructor(
     override fun applyToBuilder(builder: Environment.Builder) {
         super.applyToBuilder(builder)
         builder.addEarlyServices(GlobalTab::class.java)
+        builder.addEarlyServices(VelocityCommandNode::class.java)
     }
 
     override fun whenReady(environment: Environment) {

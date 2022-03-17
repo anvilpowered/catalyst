@@ -16,7 +16,7 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.common.member
+package org.anvilpowered.catalyst.common.model.xodus
 
 import jetbrains.exodus.entitystore.Entity
 import jetbrains.exodus.entitystore.EntityId
