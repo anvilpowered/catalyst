@@ -29,7 +29,7 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FORMAT
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_HEADER
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.api.service.TabService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 
 @Singleton
 class CommonTabService<TPlayer> @Inject constructor(

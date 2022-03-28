@@ -19,8 +19,8 @@ package org.anvilpowered.catalyst.common.registry
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import org.anvilpowered.anvil.api.registry.AnvilConfigurationService
 import org.anvilpowered.anvil.api.registry.AnvilKeys
+import org.anvilpowered.anvil.api.registry.BaseConfigurationService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.spongepowered.configurate.CommentedConfigurationNode
 import org.spongepowered.configurate.loader.ConfigurationLoader
@@ -30,7 +30,7 @@ import java.util.function.Predicate
 @Singleton
 class CommonConfigurationService @Inject constructor(
     configLoader: ConfigurationLoader<CommentedConfigurationNode>
-) : AnvilConfigurationService(configLoader) {
+) : BaseConfigurationService(configLoader) {
 
     init {
         withDataStore()

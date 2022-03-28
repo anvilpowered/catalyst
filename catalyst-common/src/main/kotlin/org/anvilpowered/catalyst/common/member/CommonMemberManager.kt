@@ -37,7 +37,7 @@ import org.anvilpowered.catalyst.api.member.MemberRepository
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.NICKNAME_PREFIX
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import java.time.Duration
 import java.time.OffsetDateTime
 import java.time.ZoneOffset

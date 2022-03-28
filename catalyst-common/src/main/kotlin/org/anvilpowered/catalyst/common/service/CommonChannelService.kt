@@ -24,7 +24,7 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.registry.ChatChannel
 import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 import java.util.stream.Collectors

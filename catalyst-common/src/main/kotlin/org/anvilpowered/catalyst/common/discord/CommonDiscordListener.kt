@@ -31,7 +31,7 @@ import org.anvilpowered.catalyst.api.discord.DiscordCommandService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.registry.ChatChannel
 import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 import java.util.stream.Collectors
 

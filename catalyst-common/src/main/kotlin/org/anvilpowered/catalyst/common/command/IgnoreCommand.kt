@@ -25,7 +25,7 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.IGNORE_EXEMPT_PERMISSION
 import org.anvilpowered.catalyst.api.service.ChatService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 
 class IgnoreCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(

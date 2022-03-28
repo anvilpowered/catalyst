@@ -30,7 +30,7 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.common.command.withoutColor
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 
 class DiscordChatListener<TPlayer> @Inject constructor(
     private val registry: Registry,

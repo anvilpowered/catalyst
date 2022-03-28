@@ -26,7 +26,7 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatFilter
 import org.anvilpowered.catalyst.api.service.ChatService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 
 class ChatListener<TPlayer, TCommandSource> @Inject constructor(
     private val chatService: ChatService<TPlayer, TCommandSource>,

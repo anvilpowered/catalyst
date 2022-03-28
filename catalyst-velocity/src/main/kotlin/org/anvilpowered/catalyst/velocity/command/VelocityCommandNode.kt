@@ -28,7 +28,7 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.common.command.CommonCommandNode
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 
 @Singleton
 class VelocityCommandNode @Inject constructor(

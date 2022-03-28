@@ -38,8 +38,8 @@ import org.anvilpowered.catalyst.common.plugin.CatalystPluginInfo
 import org.anvilpowered.catalyst.common.plugin.CatalystPluginMessages
 import org.anvilpowered.catalyst.common.registry.CommonConfigurationService
 import org.anvilpowered.catalyst.common.service.CommonChatFilter
-import org.anvilpowered.registry.ConfigurationService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.ConfigurationService
+import org.anvilpowered.anvil.api.registry.Registry
 import org.bson.types.ObjectId
 import org.spongepowered.configurate.CommentedConfigurationNode
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader

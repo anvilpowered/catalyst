@@ -28,7 +28,7 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.discord.JDAService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

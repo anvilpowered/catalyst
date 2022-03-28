@@ -26,7 +26,7 @@ import org.anvilpowered.catalyst.common.listener.CommandListener
 import org.anvilpowered.catalyst.common.listener.DiscordChatListener
 import org.anvilpowered.catalyst.common.listener.JoinListener
 import org.anvilpowered.catalyst.common.listener.LeaveListener
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 
 class CommonEventRegistrationService<TPlayer, TCommandSource> @Inject constructor(
     registry: Registry,

@@ -50,7 +50,7 @@ import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.EventService
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import java.util.UUID
 
 class VelocityListener @Inject constructor(

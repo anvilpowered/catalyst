@@ -21,7 +21,7 @@ import com.google.common.eventbus.Subscribe
 import com.google.inject.Inject
 import org.anvilpowered.catalyst.api.event.CommandEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 
 class CommandListener @Inject constructor(

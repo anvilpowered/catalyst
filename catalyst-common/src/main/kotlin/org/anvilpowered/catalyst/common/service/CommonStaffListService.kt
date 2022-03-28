@@ -27,7 +27,7 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys.STAFFLIST_ADMIN_PERMI
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.STAFFLIST_OWNER_PERMISSION
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.STAFFLIST_STAFF_PERMISSION
 import org.anvilpowered.catalyst.api.service.StaffListService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import java.util.ArrayList
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors

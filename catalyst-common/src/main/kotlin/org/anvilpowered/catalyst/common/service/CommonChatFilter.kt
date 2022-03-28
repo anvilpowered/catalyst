@@ -22,7 +22,7 @@ import com.google.inject.Inject
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.CHAT_FILTER_EXCEPTIONS
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.CHAT_FILTER_SWEARS
 import org.anvilpowered.catalyst.api.service.ChatFilter
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import java.util.Collections
 import java.util.Locale
 import java.util.stream.Collectors

@@ -22,7 +22,7 @@ import com.mojang.brigadier.context.CommandContext
 import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.CHAT_FILTER_EXCEPTIONS
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 
 class ExceptionCommand<TCommandSource> @Inject constructor(
     private val registry: Registry

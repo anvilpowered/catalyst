@@ -20,8 +20,8 @@ package org.anvilpowered.catalyst.common.command.channel
 
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.registry.ChatChannel
-import org.anvilpowered.registry.ConfigurationService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.ConfigurationService
+import org.anvilpowered.anvil.api.registry.Registry
 import java.util.Locale
 import java.util.UUID
 

@@ -18,9 +18,8 @@
 
 package org.anvilpowered.catalyst.api.registry
 
-import org.anvilpowered.registry.key.Key
-import org.anvilpowered.registry.key.Keys
-import java.io.File
+import org.anvilpowered.anvil.api.registry.key.Key
+import org.anvilpowered.anvil.api.registry.key.Keys
 
 object CatalystKeys {
 

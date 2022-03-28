@@ -25,7 +25,7 @@ import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 
 class KickCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
     private val pluginMessages: PluginMessages,

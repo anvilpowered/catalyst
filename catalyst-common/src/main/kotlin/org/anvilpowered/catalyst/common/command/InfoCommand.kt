@@ -25,7 +25,7 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 
 class InfoCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
     private val memberManager: MemberManager,

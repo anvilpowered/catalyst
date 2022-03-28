@@ -28,7 +28,7 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.BroadcastService
 import org.anvilpowered.catalyst.api.service.PrivateMessageService
 import org.anvilpowered.catalyst.api.service.StaffListService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 
 class JoinListener<TPlayer> @Inject constructor(

@@ -21,8 +21,8 @@ package org.anvilpowered.catalyst.api;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.anvilpowered.anvil.api.environment.Environment;
+import org.anvilpowered.anvil.api.registry.Registry;
 import org.anvilpowered.anvil.base.plugin.BasePlugin;
-import org.anvilpowered.registry.Registry;
 
 public class Catalyst extends BasePlugin {
 

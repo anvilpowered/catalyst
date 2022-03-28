@@ -36,7 +36,7 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 import java.util.Locale
 import java.util.UUID

@@ -35,7 +35,7 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.common.command.channel.ChannelCommand
-import org.anvilpowered.registry.Registry
+import org.anvilpowered.anvil.api.registry.Registry
 import java.util.Locale
 
 open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> constructor(
