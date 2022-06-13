@@ -136,7 +136,7 @@ class VelocityListener @Inject constructor(
                         if (memberManager.primaryComponent.checkMuted(member)) {
                             player.sendMessage(Identity.nil(), pluginMessages.getMuteMessage(member.muteReason, member.muteEndUtc))
                         } else {
-                            eventService.post(ChatEvent(player, e.message, Component.text(e.message)))
+                            eventService.post(ChatEvent(player, e.message, Component.text(e.message), player.uniqueId))
                         }
                     }
             }

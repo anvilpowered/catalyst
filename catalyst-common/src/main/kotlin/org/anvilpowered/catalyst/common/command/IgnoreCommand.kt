@@ -51,7 +51,7 @@ class IgnoreCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructo
             pluginMessages.ignoreExempt().sendTo(context.source)
             return 0
         }
-        chatService.ignore(userService.getUUID(context.source as TPlayer), userService.getUUID(targetPlayer))
+        chatService.ignore(userService.getUUID(context.source as TPlayer)!!, userService.getUUID(targetPlayer)!!)
             .sendTo(context.source)
         return 1
     }

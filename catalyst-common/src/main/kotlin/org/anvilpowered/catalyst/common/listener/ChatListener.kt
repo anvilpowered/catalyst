@@ -20,12 +20,17 @@ package org.anvilpowered.catalyst.common.listener
 import com.google.common.eventbus.Subscribe
 import com.google.inject.Inject
 import org.anvilpowered.anvil.api.registry.Registry
+import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
+import org.anvilpowered.catalyst.api.ChatMessage
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
+import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatFilter
 import org.anvilpowered.catalyst.api.service.ChatService
+import org.anvilpowered.catalyst.api.service.LuckpermsService
+import org.anvilpowered.catalyst.api.service.sendChatMessage
 
 class ChatListener<TPlayer, TCommandSource> @Inject constructor(
     private val chatService: ChatService<TPlayer, TCommandSource>,
@@ -33,6 +38,9 @@ class ChatListener<TPlayer, TCommandSource> @Inject constructor(
     private val chatFilter: ChatFilter,
     private val registry: Registry,
     private val userService: UserService<TPlayer, TPlayer>,
+    private val channelService: ChannelService<TPlayer>,
+    private val luckpermsService: LuckpermsService,
+    private val locationService: LocationService,
 ) {
 
     @Subscribe
@@ -46,6 +54,18 @@ class ChatListener<TPlayer, TCommandSource> @Inject constructor(
         ) {
             event.rawMessage = chatFilter.replaceSwears(message)
         }
-        chatService.sendChatMessage(event)
+        val chatMessage = ChatMessage.builder<TPlayer>()
+            .uuid(userService.getUUID(player)!!)
+            .message(event.rawMessage)
+            .prefix(luckpermsService.getPrefix(player))
+            .suffix(luckpermsService.getSuffix(player))
+            .color(luckpermsService.getChatColor(player))
+            .nameColor(luckpermsService.getNameColor(player))
+            .userName(userService.getUserName(player))
+            .server(locationService.getServer(playerUUID)?.name ?: "null")
+            .channel(channelService.fromUUID(playerUUID))
+            .hasColorPermission(permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.CHAT_COLOR_PERMISSION)))
+            .build()
+        chatService.sendChatMessage(chatMessage)
     }
 }

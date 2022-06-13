@@ -18,33 +18,40 @@
 
 package org.anvilpowered.catalyst.api.event;
 
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 
 public final class ChatEvent<TPlayer> {
 
-  private final TPlayer player;
-  private final Component message;
-  private String rawMessage;
+    final UUID userUUID;
+    final TPlayer player;
+    final Component message;
+    String rawMessage;
 
-  public ChatEvent(TPlayer player, String rawMessage, Component message) {
-    this.player = player;
-    this.rawMessage = rawMessage;
-    this.message = message;
-  }
+    public ChatEvent(TPlayer player, String rawMessage, Component message, UUID userUUID) {
+        this.player = player;
+        this.rawMessage = rawMessage;
+        this.message = message;
+        this.userUUID = userUUID;
+    }
 
-  public TPlayer getPlayer() {
-    return player;
-  }
+    public TPlayer getPlayer() {
+        return player;
+    }
 
-  public String getRawMessage() {
-    return rawMessage;
-  }
+    public String getRawMessage() {
+        return rawMessage;
+    }
 
-  public void setRawMessage(String rawMessage) {
-    this.rawMessage = rawMessage;
-  }
+    public void setRawMessage(String rawMessage) {
+        this.rawMessage = rawMessage;
+    }
 
-  public Component getMessage() {
-    return message;
-  }
+    public Component getMessage() {
+        return message;
+    }
+
+    public UUID getUserUUID() {
+        return userUUID;
+    }
 }
