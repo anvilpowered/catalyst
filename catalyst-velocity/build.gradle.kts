@@ -32,6 +32,6 @@ repositories {
 dependencies {
     implementation(project(":catalyst-common"))
     implementation("net.kyori:adventure-text-minimessage:$minimessageVersion")
-    compileOnly("com.velocitypowered:velocity-api:3.0.0-SNAPSHOT")
-    kapt("com.velocitypowered:velocity-api:3.0.0-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.1.0-SNAPSHOT")
+    kapt("com.velocitypowered:velocity-api:3.1.0-SNAPSHOT")
 }
