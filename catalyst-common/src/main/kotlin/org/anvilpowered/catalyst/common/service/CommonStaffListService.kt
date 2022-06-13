@@ -68,7 +68,7 @@ class CommonStaffListService<TPlayer> @Inject constructor(
   private fun update(): Runnable {
     return Runnable {
       CompletableFuture.runAsync {
-        for (player in userService.onlinePlayers) {
+        for (player in userService.onlinePlayers()) {
           val userName = userService.getUserName(player)
           getStaffNames(
             userName,

@@ -27,6 +27,7 @@ import net.kyori.adventure.text.feature.pagination.Pagination
 import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.plugin.PluginInfo
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.server.BackendServer
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
@@ -34,8 +35,6 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.common.command.getArgument
-import org.anvilpowered.anvil.api.registry.Registry
-import java.util.Optional
 
 class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
     private val channelService: ChannelService<TPlayer>,
@@ -71,11 +70,8 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
             return 0
         }
 
-        val currentServer = locationService.getServer(userName) as Optional<BackendServer>
-        if (!currentServer.isPresent) {
-            return 0
-        }
-        val server = currentServer.get().name
+        val currentServer = locationService.getServer(userName) ?: return 0
+        val server = currentServer.name
 
         if (permissionService.hasPermission(source, registry.getOrDefault(CatalystKeys.CHANNEL_BASE_PERMISSION).toString() + channelId)) {
             if (!chatChannel?.servers?.contains(server)!!

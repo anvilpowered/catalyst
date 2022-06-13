@@ -60,12 +60,12 @@ class CommonDiscordListener<TPlayer> @Inject constructor(
             || messageRaw.contains("!online")
             || messageRaw.contains("!list")
         ) {
-            val onlinePlayers = userService.onlinePlayers
+            val onlinePlayers = userService.onlinePlayers()
             val playerNames: String = if (onlinePlayers.isEmpty()) {
                 "```There are currently no players online!```"
             } else {
                 ("**Online Players:**```"
-                    + userService.onlinePlayers.stream()
+                    + userService.onlinePlayers().stream()
                     .map { userService.getUserName(it) }
                     .collect(Collectors.joining(", ")) + "```")
             }

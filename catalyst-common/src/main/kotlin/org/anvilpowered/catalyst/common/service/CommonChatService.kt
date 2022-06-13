@@ -25,9 +25,13 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.anvilpowered.anvil.api.Anvil
 import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
+import org.anvilpowered.anvil.api.misc.sendToConsole
+import org.anvilpowered.anvil.api.registry.Registry
+import org.anvilpowered.anvil.api.util.SendTextService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.member.MemberManager
@@ -36,7 +40,6 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
-import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 import java.util.Locale
 import java.util.UUID
@@ -60,7 +63,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
 
     override fun sendMessageToChannel(channelId: String, message: Component, senderUUID: UUID): CompletableFuture<Void?>? {
         return CompletableFuture.runAsync {
-            userService.onlinePlayers.forEach {
+            userService.onlinePlayers().forEach {
                 if (permissionService.hasPermission(it, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
                     || channelService.getChannelIdForUser(userService.getUUID(it)) == channelId
                 ) {
@@ -69,7 +72,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
                             message.sendTo(it)
                         }
                     } else {
-                        message.sendTo(it)
+                            Anvil.environment?.injector?.getInstance(SendTextService::class.java)?.send(it, message)
                     }
                 }
             }
@@ -78,7 +81,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
 
     override fun sendGlobalMessage(player: TPlayer, message: Component): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
-            userService.onlinePlayers.forEach { message.sendTo(it) }
+            userService.onlinePlayers().forEach { message.sendTo(it) }
         }
     }
 
@@ -224,7 +227,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
 
     override fun getPlayerList(): List<Component> {
         val playerList = mutableListOf<String>()
-        userService.onlinePlayers.forEach { playerList.add(userService.getUserName(it)) }
+        userService.onlinePlayers().forEach { playerList.add(userService.getUserName(it)) }
         val tempList = mutableListOf<Component>()
         var builder = StringBuilder()
         for (s in playerList) {
@@ -281,7 +284,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
 
     override fun checkPlayerName(sender: TPlayer, msg: String): String {
         var message = msg
-        for (player in userService.onlinePlayers) {
+        for (player in userService.onlinePlayers()) {
             val username = userService.getUserName(player)
             if (message.lowercase(Locale.getDefault()).contains(username.lowercase(Locale.getDefault()))) {
                 val occurrences: MutableList<Int> = ArrayList()
@@ -323,8 +326,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
             channelId
         ).thenApplyAsync { message ->
             if (message != null) {
-                //TODO serialize plain
-                logger.info(message.toString())
+                message.sendToConsole<TCommandSource>()
                 sendMessageToChannel(channelId, message, playerUUID)
                 return@thenApplyAsync message
             } else {

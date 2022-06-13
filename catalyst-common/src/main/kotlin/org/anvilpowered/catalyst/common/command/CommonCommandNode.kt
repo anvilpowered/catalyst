@@ -454,7 +454,7 @@ open class CommonCommandNode<TPlayer : TCommandSource, TCommandSource> construct
     private fun suggestPlayers(): SuggestionProvider<TCommandSource> {
         return SuggestionProvider { context: CommandContext<TCommandSource>, builder: SuggestionsBuilder ->
             val input = context.input.substring(context.input.indexOf(' ') + 1).lowercase(Locale.ROOT)
-            for (player in userService.onlinePlayers) {
+            for (player in userService.onlinePlayers()) {
                 val userName = userService.getUserName(player)
                 if (userName.lowercase(Locale.ROOT).startsWith(input) || userName.lowercase(Locale.ROOT) == input) {
                     builder.suggest(userService.getUserName(player)) { "target" }

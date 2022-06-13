@@ -125,12 +125,13 @@ class ServerCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructo
                 availableServers.append(
                     Component.text("${server.name} ")
                         .hoverEvent(HoverEvent.showText(Component.text("Online Players: $onlinePlayers")))
+                        .color(NamedTextColor.GREEN)
                         .toBuilder()
                 )
             } else {
                 availableServers.append(
                     Component.text()
-                        .append(Component.text(serverName).color(NamedTextColor.GRAY))
+                        .append(Component.text("$serverName ").color(NamedTextColor.GRAY))
                         .clickEvent(ClickEvent.runCommand("/server $serverName"))
                         .hoverEvent(HoverEvent.showText(Component.text("Online Players: $onlinePlayers")))
                         .build()

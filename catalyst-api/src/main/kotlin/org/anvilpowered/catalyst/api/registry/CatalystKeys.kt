@@ -568,26 +568,28 @@ object CatalystKeys {
 
 
     init {
-        val global = ChatChannel()
-        global.alwaysVisible = true;
-        global.click = "/msg %player%";
-        global.discordChannel = "123456789";
-        global.format = "[Global] %player% : %message%";
-        global.hoverMessage = "Click here to message %player%";
-        global.id = "global"
-        global.passthrough = false
-        global.servers = mutableListOf("main", "wild")
+        val global = ChatChannel.build {
+            id("global")
+            alwaysVisible(true)
+            click("/msg %player%")
+            discordChannel("123456789")
+            format("[Global] %player% : %message%")
+            hoverMessage("Click here to message %player%")
+            passthrough(false)
+            servers(mutableListOf("lobby", "minigames"))
+        }
         chatChannels.add(global)
 
-        val admin = ChatChannel()
-        admin.alwaysVisible = true
-        admin.click = "/msg %player%"
-        admin.discordChannel = "123456789"
-        admin.format = "[Admin Chat] %player% : %message%"
-        admin.hoverMessage = "Click here to message %player%"
-        admin.passthrough = false
-        admin.id = "admin"
-        admin.servers = mutableListOf("main", "wild")
+        val admin = ChatChannel.build {
+            id("admin")
+            alwaysVisible(true)
+            click("/msg %player%")
+            discordChannel("123456789")
+            format("[Admin Chat] %player% : %message%")
+            hoverMessage("Click here to message %player%")
+            passthrough(false)
+            servers(mutableListOf("lobby", "minigames"))
+        }
         chatChannels.add(admin)
 
         Keys.startRegistration("catalyst")

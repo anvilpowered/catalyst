@@ -48,13 +48,13 @@ class CommonChannelService<TPlayer> @Inject constructor(
     override fun getDiscordChannelId(channelId: String): String? = getChannelFromId(channelId)?.discordChannel
 
     override fun getChannelUserCount(channelId: String): Int =
-        userService.onlinePlayers
+        userService.onlinePlayers()
             .stream()
             .filter { getChannelIdForUser(userService.getUUID(it as TPlayer)!!) == channelId }
             .count().toInt()
 
     override fun getUsersInChannel(channelId: String): MutableList<TPlayer> =
-        userService.onlinePlayers
+        userService.onlinePlayers()
             .stream()
             .filter { getChannelIdForUser(userService.getUUID(it as TPlayer)!!) == channelId }
             .collect(Collectors.toList())

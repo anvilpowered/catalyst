@@ -35,7 +35,7 @@ class CatalystPluginMessages @Inject constructor(
 ) : PluginMessages {
 
     override fun getBroadcast(message: Component): Component {
-        return Component.text("[Broadcast] $message").color(NamedTextColor.GREEN)
+        return Component.text("[Broadcast] ").append(message).color(NamedTextColor.GREEN)
     }
 
     override fun getBroadcast(message: String): Component = getBroadcast(LegacyComponentSerializer.legacyAmpersand().deserialize(message))

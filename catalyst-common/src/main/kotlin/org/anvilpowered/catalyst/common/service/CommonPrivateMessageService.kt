@@ -24,6 +24,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.api.misc.sendTo
+import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.PRIVATE_MESSAGE_FORMAT
 import org.anvilpowered.catalyst.api.service.PrivateMessageService
@@ -85,7 +86,7 @@ class CommonPrivateMessageService<TPlayer> @Inject constructor(
 
     override fun socialSpy(sender: String, recipient: String, rawMessage: String): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
-            userService.onlinePlayers.forEach {
+            userService.onlinePlayers().forEach {
                 if (socialSpySet.isEmpty() && !socialSpySet.contains(userService.getUUID(it))) {
                     return@forEach
                 }

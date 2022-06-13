@@ -52,7 +52,7 @@ class SendCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
         if (target == "_a") {
             CompletableFuture.runAsync {
                 var total = 0
-                for (p in userService.onlinePlayers) {
+                for (p in userService.onlinePlayers()) {
                     val tempServer = locationService.getServerForName(serverName)
                     if (tempServer?.connect(p as Any)?.join() == true) {
                         ++total
@@ -76,7 +76,7 @@ class SendCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
             return 1
         }
         if (target == "_r") {
-            val onlinePlayers = userService.onlinePlayers
+            val onlinePlayers = userService.onlinePlayers()
             val random = (onlinePlayers.size * Math.random()).toInt() - 1
             if (onlinePlayers is List<*> && random >= -1) {
                 val randomPlayer = (onlinePlayers as List<TPlayer>)[random + 1]
@@ -99,7 +99,7 @@ class SendCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
         }
         if (target.startsWith("_")) {
             val targetServer = target.replace("_", "")
-            for (p in userService.onlinePlayers) {
+            for (p in userService.onlinePlayers()) {
                 val targetUserName = userService.getUserName(p)
                 if (targetServer == locationService.getServer(targetUserName)?.name) {
                     server.connect(p as Any).thenAccept {

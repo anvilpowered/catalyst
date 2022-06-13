@@ -65,8 +65,8 @@ class CommonJDAService<TPlayer> @Inject constructor(
         }
         var playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS)
         val nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE)
-        if (userService.onlinePlayers.isNotEmpty()) {
-            playerCount = userService.onlinePlayers.size.toString()
+        if (userService.onlinePlayers().isNotEmpty()) {
+            playerCount = userService.onlinePlayers().size.toString()
         }
         jda!!.presence.activity = Activity.playing(nowPlaying.replace("%players%".toRegex(), playerCount))
         jda!!.addEventListener(discordListener)
@@ -94,8 +94,8 @@ class CommonJDAService<TPlayer> @Inject constructor(
             val channel = jda!!.getTextChannelById(channelService.getChannelFromId(channelId)?.discordChannel ?: "")
             var playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS)
             val nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE)
-            if (userService.onlinePlayers.isNotEmpty()) {
-                playerCount = userService.onlinePlayers.size.toString()
+            if (userService.onlinePlayers().isNotEmpty()) {
+                playerCount = userService.onlinePlayers().size.toString()
             }
             if (nowPlaying.contains("%players%")) {
                 jda!!.presence.activity = Activity.playing(nowPlaying.replace("%players%".toRegex(), playerCount))
