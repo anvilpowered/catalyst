@@ -16,9 +16,25 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.api.service
 
-public interface EventRegistrationService {
+import net.luckperms.api.cacheddata.CachedMetaData
+import net.luckperms.api.model.user.User
+import net.luckperms.api.query.QueryOptions
 
-  void registerEvents();
+interface LuckpermsService {
+
+    fun cachedPlayerData(player: Any): CachedMetaData?
+
+    fun queryOptions(user: User): QueryOptions
+
+    fun prefix(player: Any): String
+
+    fun suffix(player: Any): String
+
+    fun chatColor(player: Any): String
+
+    fun nameColor(player: Any): String
+
+    fun groupName(player: Any): String
 }

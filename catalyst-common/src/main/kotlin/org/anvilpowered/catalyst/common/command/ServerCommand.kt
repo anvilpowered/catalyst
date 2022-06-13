@@ -93,13 +93,13 @@ class ServerCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructo
 
     private fun testChannel(player: TPlayer, server: String) {
         val playerUUID = userService.getUUID(player)
-        val channel = channelService.fromUUID(playerUUID)
+        val channel = channelService.fromUUID(playerUUID!!)
         if (!channel.servers.contains(server)
             && !permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
             && !channel.servers.contains("*")
         ) {
-            val defaultChannel = channelService.defaultChannel ?: throw AssertionError("A default chat channel must be defined")
-            channelService.switchChannel(playerUUID, defaultChannel.id)
+            val defaultChannel = channelService.defaultChannel() ?: throw AssertionError("A default chat channel must be defined")
+            channelService.switch(playerUUID, defaultChannel.id)
             Component.text()
                 .append(pluginInfo.prefix)
                 .append(Component.text("Channel ").color(NamedTextColor.YELLOW))

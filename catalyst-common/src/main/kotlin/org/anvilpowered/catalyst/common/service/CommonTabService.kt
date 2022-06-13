@@ -62,8 +62,8 @@ class CommonTabService<TPlayer> @Inject constructor(
     private fun replacePlaceholders(format: String, player: TPlayer, ping: Int, playerCount: Int): String {
         val userName = userService.getUserName(player)
         return format.replace("%player%", userName)
-            .replace("%prefix%", luckpermsService.getPrefix(player))
-            .replace("%suffix%", luckpermsService.getSuffix(player))
+            .replace("%prefix%", luckpermsService.prefix(player!!))
+            .replace("%suffix%", luckpermsService.suffix(player))
             .replace("%server%", locationService.getServer(userName)?.name ?: "null")
             .replace("%ping%", ping.toString())
             .replace("%playercount%", playerCount.toString())

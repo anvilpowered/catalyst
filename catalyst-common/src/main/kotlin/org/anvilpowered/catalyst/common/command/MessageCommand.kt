@@ -36,7 +36,7 @@ class MessageCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
             val message = context.getArgument<String>("message")
             val targetPlayer = userService[name]
             if (consoleClass.isAssignableFrom(context.source!!::class.java) && targetPlayer != null) {
-                privateMessageService.sendMessageFromConsole(userService.getUserName(targetPlayer), message, consoleClass)
+                privateMessageService.sendMessageFromConsole(userService.getUserName(targetPlayer), message)
                 return 1
             }
             if (targetPlayer != null) {
@@ -45,8 +45,8 @@ class MessageCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
                     return 0
                 }
                 privateMessageService.sendMessage(userService.getUserName(context.source as TPlayer), name, message)
-                privateMessageService.replyMap()[userService.getUUID(targetPlayer)] = userService.getUUID(context.source as TPlayer)
-                privateMessageService.replyMap()[userService.getUUID(context.source as TPlayer)] = userService.getUUID(targetPlayer)
+                privateMessageService.replyMap[userService.getUUID(targetPlayer)!!] = userService.getUUID(context.source as TPlayer)!!
+                privateMessageService.replyMap[userService.getUUID(context.source as TPlayer)!!] = userService.getUUID(targetPlayer)!!
             } else {
                 pluginMessages.offlineOrInvalidPlayer().sendTo(context.source)
             }

@@ -16,30 +16,11 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.api.service
 
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import org.anvilpowered.catalyst.api.registry.ChatChannel;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import net.kyori.adventure.text.Component
 
-public interface ChannelService<TPlayer> {
+interface BroadcastService {
 
-  void switchChannel(UUID userUUID, String channelId);
-
-  @Nullable ChatChannel getDefaultChannel();
-
-  @Nullable ChatChannel fromId(String channelId);
-
-  ChatChannel fromUUID(UUID userUUID);
-
-  @Nullable String discordChannelId(String channelId);
-
-  int userCount(String channelId);
-
-  List<TPlayer> getUsersInChannel(String channelId);
-
-  CompletableFuture<Boolean> moveUsersToChannel(String sourceChannel, String targetChannel);
-
+    fun broadcast(message: Component)
 }

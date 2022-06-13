@@ -35,12 +35,12 @@ class ReplyCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor
     fun execute(context: CommandContext<TCommandSource>): Int {
         val message = context.getArgument<String>("message")
         val senderUUID = userService.getUUID(context.source as TPlayer)
-        if (privateMessageService.replyMap().containsKey(senderUUID)) {
-            val recipientUUID = privateMessageService.replyMap()[senderUUID] ?: return 0
+        if (privateMessageService.replyMap.containsKey(senderUUID)) {
+            val recipientUUID = privateMessageService.replyMap[senderUUID] ?: return 0
             val recipient = userService.getPlayer(recipientUUID)
             if (recipient != null) {
                 privateMessageService.sendMessage(userService.getUserName(context.source as TPlayer), userService.getUserName(recipient), message)
-                privateMessageService.replyMap()[userService.getUUID(recipient)] = userService.getUUID(context.source as TPlayer)
+                privateMessageService.replyMap[userService.getUUID(recipient)!!] = userService.getUUID(context.source as TPlayer)!!
             } else {
                 pluginMessages.offlineOrInvalidPlayer().sendTo(context.source)
             }

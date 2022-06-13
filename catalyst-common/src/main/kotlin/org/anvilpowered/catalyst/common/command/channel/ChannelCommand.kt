@@ -59,7 +59,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
             return 0
         }
         val chatChannel = channelService.fromId(channelId)
-        if (channelId == channelService.fromUUID(userService.getUUID(source as TPlayer)).id) {
+        if (channelId == channelService.fromUUID(userService.getUUID(source as TPlayer)!!).id) {
             Component.text()
                 .append(pluginInfo.prefix)
                 .append(Component.text("You are already in \"").color(NamedTextColor.YELLOW))
@@ -85,7 +85,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
                     .sendTo(source)
                 return 0
             }
-            channelService.switchChannel(userService.getUUID(source), channelId)
+            channelService.switch(userService.getUUID(source)!!, channelId)
             Component.text()
                 .append(Component.text("Successfully switched to ").color(NamedTextColor.GREEN))
                 .append(Component.text(channelId).color(NamedTextColor.GOLD))
@@ -129,7 +129,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
         val availableChannels: MutableList<Component> = ArrayList()
         for (channel in channels) {
             if (permissionService.hasPermission(context.source, basePerm + channel.id)) {
-                availableChannels.add(channelInfo(channel.id, channelService.fromUUID(context.source.uuid()).id == channel.id))
+                availableChannels.add(channelInfo(channel.id, channelService.fromUUID(context.source.uuid()!!).id == channel.id))
             }
         }
 
@@ -171,7 +171,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
                 Component.text()
                     .append(Component.text("Status: ").color(NamedTextColor.GRAY))
                     .append(Component.text(if (active) "Active" else "Inactive").color(NamedTextColor.GREEN))
-                    .append(Component.text(channelService.userCount(channelId)).color(NamedTextColor.GREEN))
+                    .append(Component.text(channelService.usersInChannel(channelId).size).color(NamedTextColor.GREEN))
                     .build()
             )
         )
@@ -280,7 +280,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
         val chatChannel = channelService.fromId(channelId)!!
         return Component.text()
             .append(infoBar(channelId))
-            .append(basicProperty("Active Users", channelService.getUsersInChannel(channelId).size.toString()))
+            .append(basicProperty("Active Users", channelService.usersInChannel(channelId).size.toString()))
             .append(basicProperty("Format", chatChannel.format))
             .append(basicProperty("Hover Message", chatChannel.hoverMessage))
             .append(basicProperty("OnClick", chatChannel.click))
@@ -299,7 +299,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
         val chatChannel = channelService.fromId(channelId)!!
         return Component.text()
             .append(editBar(channelId))
-            .append(basicProperty("Active Users", channelService.getUsersInChannel(channelId).size.toString()))
+            .append(basicProperty("Active Users", channelService.usersInChannel(channelId).size.toString()))
             .append(editableProperty("Format", chatChannel.format))
             .append(editableProperty("Hover Message", chatChannel.hoverMessage))
             .append(editableProperty("OnClick", chatChannel.click))

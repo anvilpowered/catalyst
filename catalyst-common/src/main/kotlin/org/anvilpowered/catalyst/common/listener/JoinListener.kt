@@ -46,7 +46,7 @@ class JoinListener<TPlayer> @Inject constructor(
         val player = event.player
         val playerUUID = event.playerUUID
         if (permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.SOCIALSPY_ONJOIN_PERMISSION))) {
-            privateMessageService.socialSpySet().add(playerUUID)
+            privateMessageService.socialSpySet.add(playerUUID)
         }
         val userName = userService.getUserName(player as TPlayer)
         val server = locationService.getServer(playerUUID)?.name ?: "null"

@@ -20,12 +20,12 @@ package org.anvilpowered.catalyst.common.command
 import com.google.inject.Inject
 import com.mojang.brigadier.context.CommandContext
 import org.anvilpowered.anvil.api.misc.sendTo
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.anvil.api.registry.Registry
 
 class MuteCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
     private val memberManager: MemberManager,
@@ -45,15 +45,19 @@ class MuteCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
 
     private fun mute(context: CommandContext<TCommandSource>, userName: String, reason: String): Int {
         val player = userService[userName]
-        if (player != null) {
-            if (permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION))) {
-                pluginMessages.muteExempt.sendTo(context.source)
-                return 0
+        return when {
+            player == null -> {
+                pluginMessages.offlineOrInvalidPlayer().sendTo(context.source)
+                1
             }
-            memberManager.mute(userName, reason).thenAcceptAsync { it.sendTo(context.source) }
-        } else {
-            pluginMessages.offlineOrInvalidPlayer().sendTo(context.source)
+            permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.MUTE_EXEMPT_PERMISSION)) -> {
+                pluginMessages.muteExempt.sendTo(context.source)
+                0
+            }
+            else -> {
+                memberManager.mute(userName, reason).thenAcceptAsync { it.sendTo(context.source) }
+                1
+            }
         }
-        return 1
     }
 }

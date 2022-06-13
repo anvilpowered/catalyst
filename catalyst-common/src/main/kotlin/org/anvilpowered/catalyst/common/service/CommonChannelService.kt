@@ -34,30 +34,31 @@ class CommonChannelService<TPlayer> @Inject constructor(
     private val registry: Registry,
     private val userService: UserService<TPlayer, TPlayer>
 ) : ChannelService<TPlayer> {
-
     private var channelMap = mutableMapOf<UUID, String>()
 
-    //TODO force update when changes are made to the registry
-    private val defaultChannel = CatalystKeys.CHAT_DEFAULT_CHANNEL
+    init {
+        registry.whenLoaded(updateDefaultChannel()).register()
+    }
 
-    override fun switchChannel(userUUID: UUID, channelId: String) {
+    private fun updateDefaultChannel(): Runnable {
+        return Runnable {
+            defaultChannel = registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL)
+        }
+    }
+
+    //TODO force update when changes are made to the registry
+    private var defaultChannel = registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL)
+
+    override fun switch(userUUID: UUID, channelId: String) {
         channelMap[userUUID] = channelId
     }
 
-    override fun getDefaultChannel(): ChatChannel? = fromId(registry.getOrDefault(defaultChannel))
+    override fun defaultChannel(): ChatChannel? = fromId(defaultChannel)
     override fun fromId(channelId: String): ChatChannel? = registry[CatalystKeys.CHAT_CHANNELS]?.find { it.id == channelId }
-    override fun fromUUID(userUUID: UUID): ChatChannel = fromId(channelMap[userUUID] ?: registry.getOrDefault(defaultChannel))
-        ?: fromId(registry.getOrDefault(defaultChannel))!!
+    override fun fromUUID(userUUID: UUID): ChatChannel = fromId(channelMap[userUUID] ?: defaultChannel)
+        ?: fromId(defaultChannel)!!
 
-    override fun discordChannelId(channelId: String): String? = fromId(channelId)?.discordChannel
-
-    override fun userCount(channelId: String): Int =
-        userService.onlinePlayers()
-            .stream()
-            .filter { fromUUID(userService.getUUID(it as TPlayer)!!).id == channelId }
-            .count().toInt()
-
-    override fun getUsersInChannel(channelId: String): MutableList<TPlayer> =
+    override fun usersInChannel(channelId: String): MutableList<TPlayer> =
         userService.onlinePlayers()
             .stream()
             .filter { fromUUID(userService.getUUID(it as TPlayer)!!).id == channelId }
@@ -65,8 +66,8 @@ class CommonChannelService<TPlayer> @Inject constructor(
 
     override fun moveUsersToChannel(sourceChannel: String, targetChannel: String): CompletableFuture<Boolean> {
         return CompletableFuture.supplyAsync {
-            for (user in getUsersInChannel(sourceChannel)) {
-                switchChannel(userService.getUUID(user)!!, targetChannel)
+            for (user in usersInChannel(sourceChannel)) {
+                switch(userService.getUUID(user)!!, targetChannel)
             }
             return@supplyAsync true
         }

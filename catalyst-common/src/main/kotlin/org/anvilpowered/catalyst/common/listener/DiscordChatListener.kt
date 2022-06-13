@@ -19,6 +19,7 @@ package org.anvilpowered.catalyst.common.listener
 
 import com.google.common.eventbus.Subscribe
 import com.google.inject.Inject
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
@@ -30,7 +31,6 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.common.command.withoutColor
-import org.anvilpowered.anvil.api.registry.Registry
 
 class DiscordChatListener<TPlayer> @Inject constructor(
     private val registry: Registry,
@@ -47,10 +47,7 @@ class DiscordChatListener<TPlayer> @Inject constructor(
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
             return
         }
-        var channel = channelService.fromUUID(userService.getUUID(event.player))
-        if (channel == null) {
-            channel = channelService.defaultChannel ?: return
-        }
+        val channel = channelService.fromUUID(userService.getUUID(event.player)!!)
         var message = event.rawMessage
         if (!permissionService.hasPermission(event.player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
             message = message.replace("@".toRegex(), "")
@@ -58,10 +55,10 @@ class DiscordChatListener<TPlayer> @Inject constructor(
         val server = locationService.getServer(userService.getUserName(event.player))?.name ?: "null"
         val name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
             .replace("%server%", server)
-            .replace("%channel%", channelService.fromUUID(userService.getUUID(event.player)).id)
+            .replace("%channel%", channel.id)
             .replace("%player%", userService.getUserName(event.player))
-            .replace("%prefix%", luckPermsService.getPrefix(event.player))
-            .replace("%suffix%", luckPermsService.getSuffix(event.player))
+            .replace("%prefix%", luckPermsService.prefix(event.player!!))
+            .replace("%suffix%", luckPermsService.suffix(event.player!!))
         webHookSender.sendWebhookMessage(
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
             name.withoutColor(),
@@ -82,7 +79,7 @@ class DiscordChatListener<TPlayer> @Inject constructor(
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
             registry.getOrDefault(CatalystKeys.BOT_NAME),
             joinMessage.replace("%player%", userService.getUserName(event.player)).replace("%server%", server),
-            channelService.defaultChannel?.discordChannel,
+            channelService.defaultChannel()?.discordChannel,
             event.player
         )
     }
@@ -90,15 +87,13 @@ class DiscordChatListener<TPlayer> @Inject constructor(
     @Subscribe
     fun onPlayerLeaveEvent(event: LeaveEvent<TPlayer>) {
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return
-        val leaveMessage = registry.getOrDefault(CatalystKeys.DISCORD_LEAVE_FORMAT)
-        val channel = channelService.fromUUID(userService.getUUID(event.player))
-        val server = locationService.getServer(userService.getUserName(event.player))?.name ?: "null"
-        val discordChannel = channelService.discordChannelId(channel.id) ?: channelService.defaultChannel?.discordChannel ?: return
         webHookSender.sendWebhookMessage(
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
             registry.getOrDefault(CatalystKeys.BOT_NAME),
-            leaveMessage.replace("%player%", userService.getUserName(event.player)).replace("%server%", server),
-            discordChannel,
+            registry.getOrDefault(CatalystKeys.DISCORD_LEAVE_FORMAT)
+                .replace("%player%", userService.getUserName(event.player))
+                .replace("%server%", locationService.getServer(userService.getUserName(event.player))?.name ?: "null"),
+            channelService.fromUUID(userService.getUUID(event.player)!!).discordChannel,
             event.player
         )
     }

@@ -18,6 +18,7 @@
 
 package org.anvilpowered.catalyst.api.registry
 
+import org.anvilpowered.catalyst.api.builder.ChatChannelBuilderImpl
 import kotlin.experimental.ExperimentalTypeInference
 
 class ChatChannel(
@@ -56,7 +57,7 @@ class ChatChannel(
 
     companion object {
         fun builder(): Builder {
-            return ChatChannelBuilder()
+            return ChatChannelBuilderImpl()
         }
 
         @OptIn(ExperimentalTypeInference::class)

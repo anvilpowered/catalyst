@@ -26,7 +26,6 @@ import org.anvilpowered.anvil.api.Anvil
 import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.misc.sendToConsole
 import org.anvilpowered.anvil.api.registry.Registry
-import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.SendTextService
 import org.anvilpowered.anvil.api.util.UserService
@@ -42,7 +41,6 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
     private val channelService: ChannelService<TPlayer>,
-    private val locationService: LocationService,
     private val luckpermsService: LuckpermsService,
     private val permissionService: PermissionService,
     private val registry: Registry,

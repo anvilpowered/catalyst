@@ -21,12 +21,12 @@ import com.google.inject.Inject
 import com.mashape.unirest.http.Unirest
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Webhook
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.discord.JDAService
 import org.anvilpowered.catalyst.api.discord.WebhookSender
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.common.command.withoutColor
-import org.anvilpowered.anvil.api.registry.Registry
 import org.json.JSONObject
 
 class CommonWebhookSender<TPlayer> @Inject constructor(
@@ -36,9 +36,9 @@ class CommonWebhookSender<TPlayer> @Inject constructor(
 ) : WebhookSender {
 
     override fun sendWebhookMessage(webHook: String, player: String, message: String, channelId: String, source: Any) {
-        val webhook = getWebhook(channelId) ?: return
         sendWebhook(
-            webhook, org.anvilpowered.catalyst.api.discord.Webhook.of(
+            getWebhook(channelId) ?: return,
+            org.anvilpowered.catalyst.api.discord.Webhook.of(
                 registry.getOrDefault(CatalystKeys.WEBHOOK_URL).replace("%uuid%", userService.getUUID(source as TPlayer).toString()),
                 player.withoutColor(),
                 message.withoutColor()
@@ -47,17 +47,24 @@ class CommonWebhookSender<TPlayer> @Inject constructor(
     }
 
     override fun sendConsoleWebhookMessage(webHook: String, message: String, channelId: String) {
-        val webhook = getWebhook(channelId) ?: return
-        sendWebhook(webhook, org.anvilpowered.catalyst.api.discord.Webhook.of("", "Console", message.withoutColor()))
+        sendWebhook(
+            getWebhook(channelId) ?: return,
+            org.anvilpowered.catalyst.api.discord.Webhook.of(
+                "",
+                "Console",
+                message.withoutColor()
+            )
+        )
     }
 
     override fun sendWebhook(webhook: Webhook, webhookUtils: org.anvilpowered.catalyst.api.discord.Webhook) {
-        val jsonObject = JSONObject()
-            .put("content", webhookUtils.message)
-            .put("username", webhookUtils.name.withoutColor())
-            .put("avatar_url", webhookUtils.avatarURL)
         try {
-            Unirest.post(webhook.url).header("Content-Type", "application/json").body(jsonObject).asJsonAsync()
+            Unirest.post(webhook.url).header("Content-Type", "application/json").body(
+                JSONObject()
+                    .put("content", webhookUtils.message)
+                    .put("username", webhookUtils.name.withoutColor())
+                    .put("avatar_url", webhookUtils.avatarURL)
+            ).asJsonAsync()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -71,12 +78,8 @@ class CommonWebhookSender<TPlayer> @Inject constructor(
         if (channel.guild.selfMember.hasPermission(Permission.MANAGE_WEBHOOKS)) {
             throw AssertionError("Please allow the discord bot to handle webhooks!")
         }
-        var webhook = channel.guild
+        return channel.guild
             .retrieveWebhooks().complete().stream().filter { it.name.equals("Catalyst-DB: " + channel.name, ignoreCase = true) }
-            .findFirst().orElse(null)
-        if (webhook == null) {
-            webhook = channel.createWebhook("Catalyst-DB: " + channel.name).complete()
-        }
-        return webhook
+            .findFirst().orElse(null) ?: channel.createWebhook("Catalyst-DB " + channel.name).complete()
     }
 }

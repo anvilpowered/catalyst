@@ -16,27 +16,9 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.api.service
 
-import java.util.Optional;
-import net.luckperms.api.cacheddata.CachedMetaData;
-import net.luckperms.api.model.user.User;
-import net.luckperms.api.query.QueryOptions;
-import org.checkerframework.checker.nullness.qual.NonNull;
+interface EventRegistrationService {
 
-public interface LuckpermsService {
-
-  Optional<CachedMetaData> getCachedPlayerData(Object player);
-
-  QueryOptions getQueryOptions(User user);
-
-  @NonNull String getPrefix(Object player);
-
-  @NonNull String getSuffix(Object player);
-
-  @NonNull String getChatColor(Object player);
-
-  @NonNull String getNameColor(Object player);
-
-  String getGroupName(Object player);
+    fun registerEvents()
 }

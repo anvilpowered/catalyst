@@ -88,7 +88,7 @@ class CommonDiscordListener<TPlayer> @Inject constructor(
             }
         }
         if (targetChannel == null) {
-            val mainChannel = channelService.defaultChannel
+            val mainChannel = channelService.defaultChannel()
             targetChannel = if (mainChannel != null) {
                 mainChannel
             } else {
@@ -105,7 +105,7 @@ class CommonDiscordListener<TPlayer> @Inject constructor(
             .clickEvent(ClickEvent.openUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL)))
             .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE))))
             .build()
-        for (player in channelService.getUsersInChannel(targetChannel.id)) {
+        for (player in channelService.usersInChannel(targetChannel.id)) {
             finalMessage.sendTo(player)
         }
     }

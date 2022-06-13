@@ -16,11 +16,23 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.service;
+package org.anvilpowered.catalyst.api.service
 
-import net.kyori.adventure.text.Component;
+import org.anvilpowered.catalyst.api.registry.ChatChannel
+import java.util.UUID
+import java.util.concurrent.CompletableFuture
 
-public interface BroadcastService {
+interface ChannelService<TPlayer> {
 
-  void broadcast(Component message);
+    fun switch(userUUID: UUID, channelId: String)
+
+    fun defaultChannel(): ChatChannel?
+
+    fun fromId(channelId: String): ChatChannel?
+
+    fun fromUUID(userUUID: UUID): ChatChannel
+
+    fun usersInChannel(channelId: String): List<TPlayer>
+
+    fun moveUsersToChannel(sourceChannel: String, targetChannel: String): CompletableFuture<Boolean>
 }

@@ -16,9 +16,11 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.registry
+package org.anvilpowered.catalyst.api.builder
 
-internal class ChatChannelBuilder: ChatChannel.Builder {
+import org.anvilpowered.catalyst.api.registry.ChatChannel
+
+internal class ChatChannelBuilderImpl: ChatChannel.Builder {
     private var id: String = ""
     private var format: String = ""
     private var hoverMessage: String = ""

@@ -37,11 +37,11 @@ class SocialSpyCommand<TPlayer : TCommandSource, TCommandSource> @Inject constru
             return 0
         }
         val playerUUID = userService.getUUID(context.source as TPlayer)
-        if (privateMessageService.socialSpySet().contains(playerUUID)) {
-            privateMessageService.socialSpySet().remove(playerUUID)
+        if (privateMessageService.socialSpySet.contains(playerUUID)) {
+            privateMessageService.socialSpySet.remove(playerUUID)
             pluginMessages.getSocialSpy(false).sendTo(context.source)
         } else {
-            privateMessageService.socialSpySet().add(playerUUID)
+            privateMessageService.socialSpySet.add(playerUUID!!)
             pluginMessages.getSocialSpy(true).sendTo(context.source)
         }
         return 1

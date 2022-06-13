@@ -19,6 +19,7 @@
 package org.anvilpowered.catalyst.api
 
 import net.kyori.adventure.text.Component
+import org.anvilpowered.catalyst.api.builder.ChatMessageBuilderImpl
 import org.anvilpowered.catalyst.api.registry.ChatChannel
 import java.util.UUID
 import kotlin.experimental.ExperimentalTypeInference

@@ -16,7 +16,7 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api
+package org.anvilpowered.catalyst.api.builder
 
 import com.google.inject.Inject
 import net.kyori.adventure.text.Component
@@ -27,6 +27,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.UserService
+import org.anvilpowered.catalyst.api.ChatMessage
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.ChatChannel
@@ -126,7 +127,7 @@ internal class ChatMessageBuilderImpl<TPlayer> : ChatMessage.Builder {
         serverName: String,
         channelId: String
     ): CompletableFuture<Component?> {
-        val channel = channelService.fromId(channelId) ?: channelService.defaultChannel
+        val channel = channelService.fromId(channelId) ?: channelService.defaultChannel()
         ?: throw IllegalStateException("Invalid channel configuration!")
         val format = channel.format
         val hover = channel.hoverMessage

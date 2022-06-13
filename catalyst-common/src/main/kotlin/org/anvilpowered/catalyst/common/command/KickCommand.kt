@@ -20,12 +20,12 @@ package org.anvilpowered.catalyst.common.command
 import com.google.inject.Inject
 import com.mojang.brigadier.context.CommandContext
 import org.anvilpowered.anvil.api.misc.sendTo
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.KickService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.anvil.api.registry.Registry
 
 class KickCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
     private val pluginMessages: PluginMessages,
@@ -37,30 +37,37 @@ class KickCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructor(
 
     fun execute(context: CommandContext<TCommandSource>): Int {
         val player = userService.getPlayer(context.getArgument<String>("target"))
-        if (player != null) {
-            if (permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.KICK_EXEMPT_PERMISSION))) {
-                pluginMessages.kickExempt.sendTo(context.source)
-                return 0
+        return when {
+            player == null -> {
+                pluginMessages.offlineOrInvalidPlayer().sendTo(context.source)
+                1
             }
-            kickService.kick(context.getArgument<String>("target"), context.getArgument<String>("reason"))
-        } else {
-            pluginMessages.offlineOrInvalidPlayer().sendTo(context.source)
+            permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.KICK_EXEMPT_PERMISSION)) -> {
+                pluginMessages.kickExempt.sendTo(context.source)
+                0
+            }
+            else -> {
+                kickService.kick(context.getArgument<String>("target"), context.getArgument<String>("reason"))
+                1
+            }
         }
-        return 1
     }
 
     fun withoutReason(context: CommandContext<TCommandSource>): Int {
-        val reason = "You have been kicked!"
         val player = userService.getPlayer(context.getArgument<String>("target"))
-        if (player != null) {
-            if (permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.KICK_EXEMPT_PERMISSION))) {
-                pluginMessages.kickExempt.sendTo(context.source)
-                return 0
+        return when {
+            player == null -> {
+                pluginMessages.offlineOrInvalidPlayer().sendTo(context.source)
+                1
             }
-            kickService.kick(userService.getUUID(player)!!, reason)
-        } else {
-            pluginMessages.offlineOrInvalidPlayer().sendTo(context.source)
+            permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.KICK_EXEMPT_PERMISSION)) -> {
+                pluginMessages.kickExempt.sendTo(context.source)
+                0
+            }
+            else -> {
+                kickService.kick(userService.getUUID(player)!!, "You have been kicked!")
+                1
+            }
         }
-        return 1
     }
 }

@@ -28,7 +28,6 @@ import net.luckperms.api.model.user.UserManager
 import net.luckperms.api.query.QueryOptions
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
-import java.util.Optional
 
 @Singleton
 class CommonLuckpermsService<TPlayer> @Inject constructor(
@@ -38,57 +37,22 @@ class CommonLuckpermsService<TPlayer> @Inject constructor(
     private val userManager: UserManager = LuckPermsProvider.get().userManager
     private val contextManager: ContextManager = LuckPermsProvider.get().contextManager
 
-    override fun getCachedPlayerData(player: Any): Optional<CachedMetaData> {
-        val lpUser = userManager.getUser(userService.getUUID(player as TPlayer)!!) ?: return Optional.empty()
-        return Optional.of(lpUser.cachedData.getMetaData(getQueryOptions(lpUser)))
+    override fun cachedPlayerData(player: Any): CachedMetaData? {
+        val user = userManager.getUser(userService.getUUID(player as TPlayer)!!)
+        return user?.cachedData?.getMetaData(queryOptions(user))
     }
 
-    override fun getQueryOptions(user: User): QueryOptions {
+    override fun queryOptions(user: User): QueryOptions {
         return contextManager.getQueryOptions(user).orElseGet { contextManager.staticQueryOptions }
     }
 
-    override fun getPrefix(player: Any): String {
-        val playerData = getCachedPlayerData(player)
-        if (playerData.isPresent) {
-            if (playerData.get().prefix != null) {
-                return playerData.get().prefix ?: ""
-            }
-        }
-        return ""
-    }
+    override fun prefix(player: Any): String = cachedPlayerData(player)?.prefix ?: ""
+    override fun suffix(player: Any): String = cachedPlayerData(player)?.suffix ?: ""
+    override fun chatColor(player: Any): String = cachedPlayerData(player)?.getMetaValue("chat-color") ?: ""
+    override fun nameColor(player: Any): String = cachedPlayerData(player)?.getMetaValue("name-color") ?: ""
 
-    override fun getSuffix(player: Any): String {
-        val playerData = getCachedPlayerData(player)
-        return if (playerData.isPresent) {
-            if (playerData.get().suffix != null) {
-                playerData.get().suffix
-            }
-            ""
-        } else ""
-    }
-
-    override fun getChatColor(player: Any): String {
-        val playerData = getCachedPlayerData(player)
-        return if (playerData.isPresent) {
-            if (playerData.get().getMetaValue("chat-color") != null) {
-                playerData.get().getMetaValue("chat-color")
-            }
-            ""
-        } else ""
-    }
-
-    override fun getNameColor(player: Any): String {
-        val playerData = getCachedPlayerData(player)
-        return if (playerData.isPresent) {
-            if (playerData.get().getMetaValue("name-color") != null) {
-                playerData.get().getMetaValue("name-color")
-            }
-            ""
-        } else ""
-    }
-
-    override fun getGroupName(player: Any): String {
-        return userManager.getUser(userService.getUserName(player as TPlayer))?.primaryGroup ?:  ""
+    override fun groupName(player: Any): String {
+        return userManager.getUser(userService.getUserName(player as TPlayer))?.primaryGroup ?: ""
     }
 }
 

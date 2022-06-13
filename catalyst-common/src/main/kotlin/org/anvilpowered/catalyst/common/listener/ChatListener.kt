@@ -30,7 +30,6 @@ import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatFilter
 import org.anvilpowered.catalyst.api.service.ChatService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
-import org.anvilpowered.catalyst.api.service.sendChatMessage
 
 class ChatListener<TPlayer, TCommandSource> @Inject constructor(
     private val chatService: ChatService<TPlayer, TCommandSource>,
@@ -57,10 +56,10 @@ class ChatListener<TPlayer, TCommandSource> @Inject constructor(
         val chatMessage = ChatMessage.builder<TPlayer>()
             .uuid(userService.getUUID(player)!!)
             .message(event.rawMessage)
-            .prefix(luckpermsService.getPrefix(player))
-            .suffix(luckpermsService.getSuffix(player))
-            .color(luckpermsService.getChatColor(player))
-            .nameColor(luckpermsService.getNameColor(player))
+            .prefix(luckpermsService.prefix(player))
+            .suffix(luckpermsService.suffix(player))
+            .color(luckpermsService.chatColor(player))
+            .nameColor(luckpermsService.nameColor(player))
             .userName(userService.getUserName(player))
             .server(locationService.getServer(playerUUID)?.name ?: "null")
             .channel(channelService.fromUUID(playerUUID))
