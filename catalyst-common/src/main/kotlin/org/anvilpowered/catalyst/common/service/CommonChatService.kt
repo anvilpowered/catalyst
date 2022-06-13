@@ -48,7 +48,6 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
     private val channelService: ChannelService<TPlayer>,
-    private val logger: Logger,
     private val locationService: LocationService,
     private val luckpermsService: LuckpermsService,
     private val memberManager: MemberManager,
@@ -65,7 +64,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
         return CompletableFuture.runAsync {
             userService.onlinePlayers().forEach {
                 if (permissionService.hasPermission(it, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
-                    || channelService.getChannelIdForUser(userService.getUUID(it)) == channelId
+                    || channelService.fromUUID(userService.getUUID(it)).id == channelId
                 ) {
                     if (senderUUID != userService.getUUID(it)) {
                         if (!isIgnored(userService.getUUID(it)!!, senderUUID)) {
@@ -96,7 +95,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
         serverName: String,
         channelId: String
     ): CompletableFuture<Component?> {
-        val channel = channelService.getChannelFromId(channelId) ?: channelService.defaultChannel
+        val channel = channelService.fromId(channelId) ?: channelService.defaultChannel
         ?: throw java.lang.IllegalStateException("Invalid channel configuration!")
         val format = channel.format
         val hover = channel.hoverMessage
@@ -311,7 +310,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
         val server = locationService.getServer(userService.getUUID(event.player)!!)?.name ?: "null"
         val playerUUID = userService.getUUID(event.player)!!
         var message = event.rawMessage
-        val channelId = channelService.getChannelIdForUser(playerUUID)
+        val channelId = channelService.fromUUID(playerUUID).id
         val hasColorPermission: Boolean = permissionService.hasPermission(event.player, registry.getOrDefault(CatalystKeys.CHAT_COLOR_PERMISSION))
         message = chatColor + message
         formatMessage(

@@ -91,7 +91,7 @@ class CommonJDAService<TPlayer> @Inject constructor(
             throw IllegalStateException("Default chat channel must not be empty!")
         }
         return Runnable {
-            val channel = jda!!.getTextChannelById(channelService.getChannelFromId(channelId)?.discordChannel ?: "")
+            val channel = jda!!.getTextChannelById(channelService.fromId(channelId)?.discordChannel ?: "")
             var playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS)
             val nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE)
             if (userService.onlinePlayers().isNotEmpty()) {

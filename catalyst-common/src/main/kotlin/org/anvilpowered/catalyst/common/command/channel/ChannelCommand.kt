@@ -28,7 +28,6 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.plugin.PluginInfo
 import org.anvilpowered.anvil.api.registry.Registry
-import org.anvilpowered.anvil.api.server.BackendServer
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
@@ -59,8 +58,8 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
             Component.text("Invalid Channel!").color(NamedTextColor.YELLOW).sendTo(source)
             return 0
         }
-        val chatChannel = channelService.getChannelFromId(channelId)
-        if (channelId == channelService.getChannelIdForUser(userService.getUUID(source as TPlayer))) {
+        val chatChannel = channelService.fromId(channelId)
+        if (channelId == channelService.fromUUID(userService.getUUID(source as TPlayer)).id) {
             Component.text()
                 .append(pluginInfo.prefix)
                 .append(Component.text("You are already in \"").color(NamedTextColor.YELLOW))
@@ -130,7 +129,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
         val availableChannels: MutableList<Component> = ArrayList()
         for (channel in channels) {
             if (permissionService.hasPermission(context.source, basePerm + channel.id)) {
-                availableChannels.add(channelInfo(channel.id, channelService.getChannelIdForUser(context.source.uuid()) == channel.id))
+                availableChannels.add(channelInfo(channel.id, channelService.fromUUID(context.source.uuid()).id == channel.id))
             }
         }
 
@@ -172,7 +171,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
                 Component.text()
                     .append(Component.text("Status: ").color(NamedTextColor.GRAY))
                     .append(Component.text(if (active) "Active" else "Inactive").color(NamedTextColor.GREEN))
-                    .append(Component.text(channelService.getChannelUserCount(channelId)).color(NamedTextColor.GREEN))
+                    .append(Component.text(channelService.userCount(channelId)).color(NamedTextColor.GREEN))
                     .build()
             )
         )
@@ -190,7 +189,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
                 .sendTo(source)
             return 0
         }
-        ChannelEdit.currentChannel[source.uuid()!!] = channelService.getChannelFromId(channelId) ?: return 0
+        ChannelEdit.currentChannel[source.uuid()!!] = channelService.fromId(channelId) ?: return 0
         editableInfo(channelId).sendTo(source)
         return 1
     }
@@ -278,7 +277,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
             Component.text("Invalid channel id $channelId").color(NamedTextColor.RED)
         }
 
-        val chatChannel = channelService.getChannelFromId(channelId)!!
+        val chatChannel = channelService.fromId(channelId)!!
         return Component.text()
             .append(infoBar(channelId))
             .append(basicProperty("Active Users", channelService.getUsersInChannel(channelId).size.toString()))
@@ -297,7 +296,7 @@ class ChannelCommand<TPlayer : TCommandSource, TCommandSource> @Inject construct
             return Component.text("Invalid channel id!").color(NamedTextColor.RED)
         }
 
-        val chatChannel = channelService.getChannelFromId(channelId)!!
+        val chatChannel = channelService.fromId(channelId)!!
         return Component.text()
             .append(editBar(channelId))
             .append(basicProperty("Active Users", channelService.getUsersInChannel(channelId).size.toString()))

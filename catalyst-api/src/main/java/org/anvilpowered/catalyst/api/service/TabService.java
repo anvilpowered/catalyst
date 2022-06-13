@@ -29,8 +29,4 @@ public interface TabService<TPlayer> {
   Component formatHeader(TPlayer player, int ping, int playerCount);
 
   Component formatFooter(TPlayer player, int ping, int playerCount);
-
-  String getBalance(String userName);
-
-  void setBalance(String userName, double balance);
 }

@@ -59,37 +59,36 @@ class CommonLuckpermsService<TPlayer> @Inject constructor(
 
     override fun getSuffix(player: Any): String {
         val playerData = getCachedPlayerData(player)
-        if (playerData.isPresent) {
+        return if (playerData.isPresent) {
             if (playerData.get().suffix != null) {
-                return playerData.get().suffix ?: ""
+                playerData.get().suffix
             }
-        }
-        return ""
+            ""
+        } else ""
     }
 
     override fun getChatColor(player: Any): String {
         val playerData = getCachedPlayerData(player)
-        if (playerData.isPresent) {
+        return if (playerData.isPresent) {
             if (playerData.get().getMetaValue("chat-color") != null) {
-                return playerData.get().getMetaValue("chat-color") ?: ""
+                playerData.get().getMetaValue("chat-color")
             }
-        }
-        return ""
+            ""
+        } else ""
     }
 
     override fun getNameColor(player: Any): String {
         val playerData = getCachedPlayerData(player)
-        if (playerData.isPresent) {
+        return if (playerData.isPresent) {
             if (playerData.get().getMetaValue("name-color") != null) {
-                return playerData.get().getMetaValue("name-color") ?: ""
+                playerData.get().getMetaValue("name-color")
             }
-        }
-        return ""
+            ""
+        } else ""
     }
 
     override fun getGroupName(player: Any): String {
-        val user = userManager.getUser(userService.getUUID(player as TPlayer)!!) ?: return ""
-        return user.primaryGroup
+        return userManager.getUser(userService.getUserName(player as TPlayer))?.primaryGroup ?:  ""
     }
 }
 

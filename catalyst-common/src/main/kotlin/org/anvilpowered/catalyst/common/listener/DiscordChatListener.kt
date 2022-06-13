@@ -47,7 +47,7 @@ class DiscordChatListener<TPlayer> @Inject constructor(
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
             return
         }
-        var channel = channelService.getChannelFromId(channelService.getChannelIdForUser(userService.getUUID(event.player)))
+        var channel = channelService.fromUUID(userService.getUUID(event.player))
         if (channel == null) {
             channel = channelService.defaultChannel ?: return
         }
@@ -58,7 +58,7 @@ class DiscordChatListener<TPlayer> @Inject constructor(
         val server = locationService.getServer(userService.getUserName(event.player))?.name ?: "null"
         val name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
             .replace("%server%", server)
-            .replace("%channel%", channelService.getChannelIdForUser(userService.getUUID(event.player)))
+            .replace("%channel%", channelService.fromUUID(userService.getUUID(event.player)).id)
             .replace("%player%", userService.getUserName(event.player))
             .replace("%prefix%", luckPermsService.getPrefix(event.player))
             .replace("%suffix%", luckPermsService.getSuffix(event.player))
@@ -91,9 +91,9 @@ class DiscordChatListener<TPlayer> @Inject constructor(
     fun onPlayerLeaveEvent(event: LeaveEvent<TPlayer>) {
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return
         val leaveMessage = registry.getOrDefault(CatalystKeys.DISCORD_LEAVE_FORMAT)
-        val channel = channelService.getChannelFromUUID(userService.getUUID(event.player))
+        val channel = channelService.fromUUID(userService.getUUID(event.player))
         val server = locationService.getServer(userService.getUserName(event.player))?.name ?: "null"
-        val discordChannel = channelService.getDiscordChannelId(channel?.id) ?: channelService.defaultChannel?.discordChannel ?: return
+        val discordChannel = channelService.discordChannelId(channel.id) ?: channelService.defaultChannel?.discordChannel ?: return
         webHookSender.sendWebhookMessage(
             registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
             registry.getOrDefault(CatalystKeys.BOT_NAME),

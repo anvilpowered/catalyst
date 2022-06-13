@@ -122,7 +122,7 @@ class VelocityListener @Inject constructor(
         if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
             val player = e.player
             if (chatService.isDisabledForUser(player)
-                || channelService.getChannelFromUUID(player.uniqueId)?.passthrough == true
+                || channelService.fromUUID(player.uniqueId)?.passthrough == true
             ) {
                 return
             } else {

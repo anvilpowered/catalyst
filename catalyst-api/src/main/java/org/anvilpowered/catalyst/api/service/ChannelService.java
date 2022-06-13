@@ -30,15 +30,13 @@ public interface ChannelService<TPlayer> {
 
   @Nullable ChatChannel getDefaultChannel();
 
-  String getChannelIdForUser(UUID userUUID);
+  @Nullable ChatChannel fromId(String channelId);
 
-  @Nullable ChatChannel getChannelFromId(String channelId);
+  ChatChannel fromUUID(UUID userUUID);
 
-  @Nullable ChatChannel getChannelFromUUID(UUID userUUID);
+  @Nullable String discordChannelId(String channelId);
 
-  @Nullable String getDiscordChannelId(String channelId);
-
-  int getChannelUserCount(String channelId);
+  int userCount(String channelId);
 
   List<TPlayer> getUsersInChannel(String channelId);
 

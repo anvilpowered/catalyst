@@ -93,9 +93,7 @@ class ServerCommand<TPlayer : TCommandSource, TCommandSource> @Inject constructo
 
     private fun testChannel(player: TPlayer, server: String) {
         val playerUUID = userService.getUUID(player)
-        val channel = channelService.getChannelFromId(channelService.getChannelIdForUser(playerUUID))
-            ?: channelService.defaultChannel
-            ?: throw IllegalStateException("Invalid chat channel configuration!")
+        val channel = channelService.fromUUID(playerUUID)
         if (!channel.servers.contains(server)
             && !permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
             && !channel.servers.contains("*")

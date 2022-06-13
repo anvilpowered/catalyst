@@ -20,11 +20,11 @@ package org.anvilpowered.catalyst.common.service
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.registry.ChatChannel
 import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.anvil.api.registry.Registry
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 import java.util.stream.Collectors
@@ -37,26 +37,30 @@ class CommonChannelService<TPlayer> @Inject constructor(
 
     private var channelMap = mutableMapOf<UUID, String>()
 
+    //TODO force update when changes are made to the registry
+    private val defaultChannel = CatalystKeys.CHAT_DEFAULT_CHANNEL
+
     override fun switchChannel(userUUID: UUID, channelId: String) {
         channelMap[userUUID] = channelId
     }
 
-    override fun getDefaultChannel(): ChatChannel? = getChannelFromId(registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL))
-    override fun getChannelIdForUser(userUUID: UUID): String = channelMap[userUUID] ?: registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL)
-    override fun getChannelFromId(channelId: String): ChatChannel? = registry[CatalystKeys.CHAT_CHANNELS]?.find { it.id == channelId }
-    override fun getChannelFromUUID(userUUID: UUID): ChatChannel? = getChannelFromId(getChannelIdForUser(userUUID))
-    override fun getDiscordChannelId(channelId: String): String? = getChannelFromId(channelId)?.discordChannel
+    override fun getDefaultChannel(): ChatChannel? = fromId(registry.getOrDefault(defaultChannel))
+    override fun fromId(channelId: String): ChatChannel? = registry[CatalystKeys.CHAT_CHANNELS]?.find { it.id == channelId }
+    override fun fromUUID(userUUID: UUID): ChatChannel = fromId(channelMap[userUUID] ?: registry.getOrDefault(defaultChannel))
+        ?: fromId(registry.getOrDefault(defaultChannel))!!
 
-    override fun getChannelUserCount(channelId: String): Int =
+    override fun discordChannelId(channelId: String): String? = fromId(channelId)?.discordChannel
+
+    override fun userCount(channelId: String): Int =
         userService.onlinePlayers()
             .stream()
-            .filter { getChannelIdForUser(userService.getUUID(it as TPlayer)!!) == channelId }
+            .filter { fromUUID(userService.getUUID(it as TPlayer)!!).id == channelId }
             .count().toInt()
 
     override fun getUsersInChannel(channelId: String): MutableList<TPlayer> =
         userService.onlinePlayers()
             .stream()
-            .filter { getChannelIdForUser(userService.getUUID(it as TPlayer)!!) == channelId }
+            .filter { fromUUID(userService.getUUID(it as TPlayer)!!).id == channelId }
             .collect(Collectors.toList())
 
     override fun moveUsersToChannel(sourceChannel: String, targetChannel: String): CompletableFuture<Boolean> {

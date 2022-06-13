@@ -22,6 +22,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FOOTER
@@ -29,7 +30,6 @@ import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FORMAT
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_HEADER
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.api.service.TabService
-import org.anvilpowered.anvil.api.registry.Registry
 
 @Singleton
 class CommonTabService<TPlayer> @Inject constructor(
@@ -39,39 +39,24 @@ class CommonTabService<TPlayer> @Inject constructor(
     private val luckpermsService: LuckpermsService
 ) : TabService<TPlayer> {
 
-    var playerBalances: MutableMap<String, Double> = HashMap()
-
     override fun format(player: TPlayer, ping: Int, playerCount: Int): Component {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(replacePlaceholders(registry.getOrDefault(TAB_FORMAT), player, ping, playerCount))
+        return LegacyComponentSerializer.legacyAmpersand()
+            .deserialize(replacePlaceholders(registry.getOrDefault(TAB_FORMAT), player, ping, playerCount))
     }
 
     override fun formatCustom(format: String, player: TPlayer, ping: Int, playerCount: Int): Component {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(replacePlaceholders(format, player, ping, playerCount))
+        return LegacyComponentSerializer.legacyAmpersand()
+            .deserialize(replacePlaceholders(format, player, ping, playerCount))
     }
 
     override fun formatHeader(player: TPlayer, ping: Int, playerCount: Int): Component {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(replacePlaceholders(registry.getOrDefault(TAB_HEADER), player, ping,
-            playerCount))
+        return LegacyComponentSerializer.legacyAmpersand()
+            .deserialize(replacePlaceholders(registry.getOrDefault(TAB_HEADER), player, ping, playerCount))
     }
 
     override fun formatFooter(player: TPlayer, ping: Int, playerCount: Int): Component {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(replacePlaceholders(registry.getOrDefault(TAB_FOOTER), player, ping, playerCount))
-    }
-
-    override fun getBalance(userName: String): String {
-        return playerBalances[userName].toString()
-    }
-
-    override fun setBalance(userName: String, balance: Double) {
-        if (containsKey(userName)) {
-            playerBalances.replace(userName, balance)
-        } else {
-            playerBalances[userName] = balance
-        }
-    }
-
-    private fun containsKey(userName: String): Boolean {
-        return playerBalances.containsKey(userName)
+        return LegacyComponentSerializer.legacyAmpersand()
+            .deserialize(replacePlaceholders(registry.getOrDefault(TAB_FOOTER), player, ping, playerCount))
     }
 
     private fun replacePlaceholders(format: String, player: TPlayer, ping: Int, playerCount: Int): String {
@@ -82,6 +67,5 @@ class CommonTabService<TPlayer> @Inject constructor(
             .replace("%server%", locationService.getServer(userName)?.name ?: "null")
             .replace("%ping%", ping.toString())
             .replace("%playercount%", playerCount.toString())
-            .replace("%balance%", getBalance(userName))
     }
 }

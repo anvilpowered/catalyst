@@ -22,7 +22,6 @@ import com.google.inject.Inject
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.anvilpowered.anvil.api.Anvil
 import org.anvilpowered.anvil.api.misc.appendIf
 import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.plugin.PluginInfo
@@ -31,7 +30,6 @@ import org.anvilpowered.anvil.api.util.KickService
 import org.anvilpowered.anvil.api.util.TimeFormatService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.anvil.base.datastore.BaseManager
-import org.anvilpowered.catalyst.api.Catalyst
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.member.MemberRepository
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.NICKNAME_PREFIX
@@ -104,7 +102,7 @@ class CommonMemberManager<TPlayer> @Inject constructor(
                 .appendIf(
                     permissions[2], Component.text()
                         .append(Component.text("\nChannel: ").color(NamedTextColor.BLUE))
-                        .append(Component.text(channelService.getChannelIdForUser(member.userUUID)).color(NamedTextColor.GREEN))
+                        .append(Component.text(channelService.fromUUID(member.userUUID).id).color(NamedTextColor.GREEN))
                         .build()
                 )
                 .append(Component.text("\nCurrent Server: ").color(NamedTextColor.BLUE))
