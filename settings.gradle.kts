@@ -1,13 +1,32 @@
-rootProject.name = "Catalyst"
+@file:Suppress("UnstableApiUsage")
 
-include(":catalyst-api")
-include(":catalyst-common")
-include(":catalyst-velocity")
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven("https://libraries.minecraft.net")
+        maven("https://repo.papermc.io/repository/maven-public/")
+    }
+}
 
 pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        kotlin("jvm") version kotlinVersion
-        id("net.kyori.blossom") version "1.3.0"
+    includeBuild("build-logic")
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
     }
+}
+
+rootProject.name = "catalyst"
+
+sequenceOf(
+    "agent",
+    "agent-application",
+    "agent-mc-velocity",
+    "core",
+    "core-domain",
+).forEach {
+    val project = ":catalyst-$it"
+    include(project)
+    project(project).projectDir = file(it.replace('-', '/'))
 }
