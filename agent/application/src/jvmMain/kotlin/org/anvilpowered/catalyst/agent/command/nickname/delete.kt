@@ -16,20 +16,18 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.entity
+package org.anvilpowered.catalyst.agent.command.nickname
 
-import org.sourcegrade.kontour.Creates
-import org.sourcegrade.kontour.DomainEntity
-import org.sourcegrade.kontour.UUID
+import org.anvilpowered.anvil.user.CommandSource
+import org.anvilpowered.catalyst.agent.command.CommandDefaults
+import org.anvilpowered.catalyst.service.CatalystUserScope
+import org.anvilpowered.kbrig.builder.LiteralArgumentBuilder
+import org.anvilpowered.kbrig.builder.executesSingleSuccess
+import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-data class CatalystUser(
-    val nickname: String,
-    override val id: UUID,
-) : DomainEntity {
-
-    data class CreateDto(
-        val id: UUID,
-    ) : Creates<CatalystUser>
-
-    companion object Repository : DomainEntity.Repository<CatalystUser>
+context(CatalystUserScope.Nickname)
+fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> {
+    return LiteralArgumentBuilder<CommandSource>("delete")
+        .executes(CommandDefaults.usage("nickname|nick delete"))
+        .build()
 }

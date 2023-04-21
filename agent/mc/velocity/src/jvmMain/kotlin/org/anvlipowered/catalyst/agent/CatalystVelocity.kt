@@ -20,7 +20,6 @@ package org.anvlipowered.catalyst.agent
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.permission.Tristate
 import com.velocitypowered.api.plugin.Dependency
@@ -29,6 +28,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.catalyst.agent.chat.BroadcastScope
 import org.anvilpowered.catalyst.agent.command.CatalystCommand
 import org.anvilpowered.catalyst.agent.command.createBroadcast
+import org.anvilpowered.kbrig.builder.LiteralArgumentBuilder
 
 @Plugin(
     id = "catalyst",
@@ -43,8 +43,7 @@ class CatalystVelocity @Inject constructor(
 ) {
     context(BroadcastScope)
     fun foo() {
-        LiteralArgumentBuilder.literal<String>("test")
-
+        LiteralArgumentBuilder<String>("test")
         proxyServer.commandManager.register(
             BrigadierCommand(CatalystCommand.createBroadcast().mapSource(mapper)),
         )

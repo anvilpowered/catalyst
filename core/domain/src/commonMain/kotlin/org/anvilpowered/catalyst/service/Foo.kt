@@ -16,20 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.entity
+package org.anvilpowered.catalyst.service
 
-import org.sourcegrade.kontour.Creates
-import org.sourcegrade.kontour.DomainEntity
-import org.sourcegrade.kontour.UUID
-
-data class CatalystUser(
-    val nickname: String,
-    override val id: UUID,
-) : DomainEntity {
-
-    data class CreateDto(
-        val id: UUID,
-    ) : Creates<CatalystUser>
-
-    companion object Repository : DomainEntity.Repository<CatalystUser>
+class Foo {
 }

@@ -18,27 +18,27 @@
 
 package org.anvilpowered.catalyst.agent.command
 
+import org.anvilpowered.anvil.agent.command.requiresPermission
 import org.anvilpowered.anvil.user.CommandSource
 import org.anvilpowered.anvil.user.Component
-import org.anvilpowered.anvil.user.hasPermissionSet
 import org.anvilpowered.catalyst.agent.PluginMessages
 import org.anvilpowered.catalyst.agent.chat.BroadcastScope
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.LiteralArgumentBuilder
 import org.anvilpowered.kbrig.builder.RequiredArgumentBuilder
+import org.anvilpowered.kbrig.builder.executesSingleSuccess
 import org.anvilpowered.kbrig.context.get
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
 context(BroadcastScope)
 fun CatalystCommand.createBroadcast(): LiteralCommandNode<CommandSource> {
     return LiteralArgumentBuilder<CommandSource>("broadcast")
-        .executes(::notEnoughArgs)
-        .requires { it.hasPermissionSet("catalyst.chat.broadcast") }
+        .executes(CommandDefaults::notEnoughArgs)
+        .requiresPermission("catalyst.chat.broadcast")
         .then(
             RequiredArgumentBuilder<CommandSource, String>("message", StringArgumentType.GreedyPhrase)
-                .executes { context ->
+                .executesSingleSuccess { context ->
                     broadcast(PluginMessages.getBroadcast(Component.text(context.get<String>("message"))))
-                    1
                 }
                 .build(),
         )

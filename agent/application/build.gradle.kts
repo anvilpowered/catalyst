@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    commonMainApi(project(":catalyst-core-domain"))
     commonMainImplementation(libs.kbrig.core)
-    commonMainCompileOnly(libs.anvil.agent.application)
+    commonMainImplementation(libs.anvil.agent.application)
 }

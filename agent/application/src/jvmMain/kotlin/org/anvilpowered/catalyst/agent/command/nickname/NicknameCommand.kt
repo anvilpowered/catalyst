@@ -16,20 +16,13 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.entity
+package org.anvilpowered.catalyst.agent.command.nickname
 
-import org.sourcegrade.kontour.Creates
-import org.sourcegrade.kontour.DomainEntity
-import org.sourcegrade.kontour.UUID
+import org.anvilpowered.anvil.user.CommandSource
+import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-data class CatalystUser(
-    val nickname: String,
-    override val id: UUID,
-) : DomainEntity {
+object NicknameCommand {
+    fun create(): LiteralCommandNode<CommandSource> {
 
-    data class CreateDto(
-        val id: UUID,
-    ) : Creates<CatalystUser>
-
-    companion object Repository : DomainEntity.Repository<CatalystUser>
+    }
 }

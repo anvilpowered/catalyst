@@ -6,15 +6,4 @@ import org.anvilpowered.anvil.user.CommandSource
 import org.anvilpowered.kbrig.context.CommandContext
 
 object CatalystCommand {
-    internal fun notEnoughArgs(context: CommandContext<CommandSource>): Int {
-        context.source.sendMessage(
-            Component.text()
-                .append(Component.text("Invalid command usage!\n").color(NamedTextColor.RED))
-                .append(
-                    Component.text("Not enough arguments in: ").color(NamedTextColor.RED)
-                        .append(Component.text(context.input).color(NamedTextColor.YELLOW)),
-                ),
-        )
-        return 1
-    }
 }

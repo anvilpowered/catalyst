@@ -16,20 +16,22 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.entity
+package org.anvilpowered.catalyst.service
 
-import org.sourcegrade.kontour.Creates
+import org.anvilpowered.catalyst.entity.CatalystUser
 import org.sourcegrade.kontour.DomainEntity
 import org.sourcegrade.kontour.UUID
+import org.sourcegrade.kontour.scope.CrudScope
 
-data class CatalystUser(
-    val nickname: String,
-    override val id: UUID,
-) : DomainEntity {
+interface CatalystUserScope : CrudScope<CatalystUser, CatalystUser.CreateDto> {
 
-    data class CreateDto(
-        val id: UUID,
-    ) : Creates<CatalystUser>
+    interface Nickname {
+        fun DomainEntity.Repository<CatalystUser>.getNickname(id: UUID): String?
 
-    companion object Repository : DomainEntity.Repository<CatalystUser>
+        fun DomainEntity.Repository<CatalystUser>.updateNickname(id: UUID, nickname: String): CatalystUser?
+
+        fun DomainEntity.Repository<CatalystUser>.deleteNickname(id: UUID): Boolean
+    }
+
+    interface All : CatalystUserScope, Nickname
 }
