@@ -37,13 +37,13 @@ internal object CommandDefaults {
         return 1
     }
 
-    fun usage(text: String): Command<CommandSource> = Command { context ->
+    fun syntaxError(usage: String): Command<CommandSource> = Command { context ->
         context.source.sendMessage(
             Component.text()
                 .append(Component.text("Invalid command usage '${context.input}'").color(NamedTextColor.RED))
                 .append(Component.newline())
                 .append(Component.text("Usage: ").color(NamedTextColor.RED))
-                .append(Component.text(text).color(NamedTextColor.YELLOW))
+                .append(Component.text(usage).color(NamedTextColor.YELLOW)),
         )
         Command.SINGLE_SUCCESS
     }

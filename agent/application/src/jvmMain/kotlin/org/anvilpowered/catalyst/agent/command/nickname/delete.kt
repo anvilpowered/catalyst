@@ -18,16 +18,49 @@
 
 package org.anvilpowered.catalyst.agent.command.nickname
 
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import org.anvilpowered.anvil.agent.command.CustomCommandScope
 import org.anvilpowered.anvil.user.CommandSource
-import org.anvilpowered.catalyst.agent.command.CommandDefaults
+import org.anvilpowered.anvil.user.Player
+import org.anvilpowered.catalyst.agent.PluginMessages
+import org.anvilpowered.catalyst.agent.command.common.addHelpChild
+import org.anvilpowered.catalyst.entity.CatalystUser
 import org.anvilpowered.catalyst.service.CatalystUserScope
-import org.anvilpowered.kbrig.builder.LiteralArgumentBuilder
+import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.executesSingleSuccess
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-context(CatalystUserScope.Nickname)
+context(CatalystUserScope.Nickname, CustomCommandScope)
 fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> {
-    return LiteralArgumentBuilder<CommandSource>("delete")
-        .executes(CommandDefaults.usage("nickname|nick delete"))
+    return ArgumentBuilder.literal<CommandSource>("delete")
+        .addHelpChild("nickname|nick delete [<player>]")
+        .executesSingleSuccess { context ->
+            // without explicit target player
+            (context.source as? Player)?.let { player ->
+                if (CatalystUser.deleteNickname(player.user.id)) {
+                    player.sendMessage(
+                        PluginMessages.pluginPrefix
+                            .append(Component.text("Your nickname has been deleted!", NamedTextColor.RED)),
+                    )
+                } else {
+                    player.sendMessage(
+                        PluginMessages.pluginPrefix
+                            .append(Component.text("You don't have a nickname!", NamedTextColor.RED)),
+                    )
+                }
+            } ?: run {
+                context.source.sendMessage(
+                    PluginMessages.pluginPrefix
+                        .append(Component.text("You must be a player to use this command!", NamedTextColor.RED)),
+                )
+            }
+        }
+        .then(ArgumentBuilder.player { context, targetPlayer ->
+
+        }
+
+        )
+
         .build()
 }
