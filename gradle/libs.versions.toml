@@ -6,9 +6,10 @@ log4j = "2.20.0"
 
 
 [libraries]
-adventure-bom = "net.kyori:adventure-bom:4.12.0"
-anvil-agent-application = "org.anvilpowered:anvil-agent-application:0.4.0-SNAPSHOT"
-anvil-core-domain = "org.anvilpowered:anvil-core-domain:0.4.0-SNAPSHOT"
+adventure-bom = "net.kyori:adventure-bom:4.13.0"
+anvil-api = "org.anvilpowered:anvil-api-game:0.4.0-SNAPSHOT"
+anvil-domain = "org.anvilpowered:anvil-domain:0.4.0-SNAPSHOT"
+anvil-velocity = "org.anvilpowered:anvil-infrastructure-game-velocity:0.4.0-SNAPSHOT"
 annotations = "org.jetbrains:annotations:24.0.0"
 brigadier = "com.mojang:brigadier:1.0.18"
 coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta"
