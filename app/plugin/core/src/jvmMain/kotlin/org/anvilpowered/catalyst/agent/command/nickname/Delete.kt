@@ -71,7 +71,7 @@ fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> =
                 if (!context.source.permissionSubject.hasPermissionSet("catalyst.nickname.delete.other")) {
                     context.source.audience.sendMessage(
                         PluginMessages.pluginPrefix
-                            .append(Component.text("You don't have permission to delete other players' nicknames!", NamedTextColor.RED))
+                            .append(Component.text("You don't have permission to delete other players' nicknames!", NamedTextColor.RED)),
                     )
                     0
                 } else if (CatalystUser.deleteNickname(gameUser.id)) {

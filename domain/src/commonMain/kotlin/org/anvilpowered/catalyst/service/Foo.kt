@@ -18,5 +18,4 @@
 
 package org.anvilpowered.catalyst.service
 
-class Foo {
-}
+class Foo
