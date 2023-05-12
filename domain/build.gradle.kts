@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    commonMainCompileOnly(libs.anvil.domain)
+    commonMainApi(libs.anvil.domain)
 }

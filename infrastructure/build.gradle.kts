@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    commonMainImplementation(project(":catalyst-domain"))
+    commonMainApi(project(":catalyst-domain"))
 }
