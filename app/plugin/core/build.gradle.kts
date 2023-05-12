@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     commonMainApi(project(":catalyst-domain"))
-    commonMainImplementation(libs.kbrig.core)
-    jvmMainImplementation(libs.anvil.api)
+    commonMainApi(libs.kbrig.core)
+    commonMainApi(libs.anvil.api)
 }

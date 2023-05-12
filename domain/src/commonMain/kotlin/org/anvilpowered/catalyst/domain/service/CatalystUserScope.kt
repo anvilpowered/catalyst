@@ -16,6 +16,22 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.service
+package org.anvilpowered.catalyst.domain.service
 
-class Foo
+import org.anvilpowered.catalyst.domain.entity.CatalystUser
+import org.sourcegrade.kontour.DomainEntity
+import org.sourcegrade.kontour.UUID
+import org.sourcegrade.kontour.scope.CrudScope
+
+interface CatalystUserScope : CrudScope<CatalystUser, CatalystUser.CreateDto> {
+
+    interface Nickname {
+        suspend fun DomainEntity.Repository<CatalystUser>.getNickname(id: UUID): String?
+
+        suspend fun DomainEntity.Repository<CatalystUser>.updateNickname(id: UUID, nickname: String): Boolean
+
+        suspend fun DomainEntity.Repository<CatalystUser>.deleteNickname(id: UUID): Boolean
+    }
+
+    interface All : CatalystUserScope, Nickname
+}

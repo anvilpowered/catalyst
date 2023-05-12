@@ -25,8 +25,8 @@ import org.anvilpowered.anvil.domain.command.GameUserCommandScope
 import org.anvilpowered.anvil.domain.user.hasPermissionSet
 import org.anvilpowered.catalyst.agent.PluginMessages
 import org.anvilpowered.catalyst.agent.command.common.addHelpChild
-import org.anvilpowered.catalyst.entity.CatalystUser
-import org.anvilpowered.catalyst.service.CatalystUserScope
+import org.anvilpowered.catalyst.domain.entity.CatalystUser
+import org.anvilpowered.catalyst.domain.service.CatalystUserScope
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.executesSuspending
@@ -45,7 +45,7 @@ fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> =
                             .append(Component.text("You don't have permission to delete your nickname!", NamedTextColor.RED)),
                     )
                     0
-                } else if (CatalystUser.deleteNickname(player.user.id)) {
+                } else if (org.anvilpowered.catalyst.domain.entity.CatalystUser.deleteNickname(player.user.id)) {
                     player.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("Your nickname has been deleted!", NamedTextColor.RED)),
@@ -74,7 +74,7 @@ fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> =
                             .append(Component.text("You don't have permission to delete other players' nicknames!", NamedTextColor.RED)),
                     )
                     0
-                } else if (CatalystUser.deleteNickname(gameUser.id)) {
+                } else if (org.anvilpowered.catalyst.domain.entity.CatalystUser.deleteNickname(gameUser.id)) {
                     context.source.audience.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of ", NamedTextColor.RED))

@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.entity
+package org.anvilpowered.catalyst.domain.entity
 
 import org.sourcegrade.kontour.Creates
 import org.sourcegrade.kontour.DomainEntity

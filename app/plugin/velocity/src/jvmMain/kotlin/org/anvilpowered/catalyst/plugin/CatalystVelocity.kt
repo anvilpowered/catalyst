@@ -21,30 +21,46 @@ package org.anvilpowered.catalyst.plugin
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.velocitypowered.api.command.BrigadierCommand
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.permission.Tristate
-import com.velocitypowered.api.plugin.Dependency
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
+import org.anvilpowered.anvil.api.ApiBindings
+import org.anvilpowered.anvil.api.GameApiBindings
 import org.anvilpowered.anvil.command.toVelocity
-import org.anvilpowered.catalyst.agent.chat.BroadcastScope
-import org.anvilpowered.catalyst.agent.command.CatalystCommand
-import org.anvilpowered.catalyst.agent.command.createBroadcast
+import org.anvilpowered.anvil.createVelocity
+import org.anvilpowered.catalyst.agent.command.nickname.NicknameCommand
+import org.anvilpowered.catalyst.domain.service.CatalystUserScope
 
 @Plugin(
     id = "catalyst",
     name = "Catalyst",
     version = "0.4.0-SNAPSHOT",
     authors = ["AnvilPowered"],
-    dependencies = [Dependency(id = "anvil"), Dependency(id = "luckperms")],
+//    dependencies = [Dependency(id = "luckperms")],
 )
 class CatalystVelocity @Inject constructor(
     injector: Injector,
     private val proxyServer: ProxyServer,
 ) {
-    context(BroadcastScope)
-    fun foo() {
+
+    @Subscribe
+    fun onInit(event: ProxyInitializeEvent) {
+        with(ApiBindings.createVelocity(proxyServer)) {
+            initApi()
+        }
+    }
+
+    context(GameApiBindings)
+    private fun initApi() {
+
+    }
+
+    context(GameApiBindings, CatalystUserScope.All)
+    private fun registerCommands() {
         proxyServer.commandManager.register(
-            BrigadierCommand(CatalystCommand.createBroadcast().toVelocity()),
+            BrigadierCommand(NicknameCommand.create().toVelocity()),
         )
     }
 }

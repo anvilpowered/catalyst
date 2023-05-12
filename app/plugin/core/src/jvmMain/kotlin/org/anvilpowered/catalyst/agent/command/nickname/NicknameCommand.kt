@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.agent.command.nickname
 
 import org.anvilpowered.anvil.domain.command.CommandSource
 import org.anvilpowered.anvil.domain.command.GameUserCommandScope
-import org.anvilpowered.catalyst.service.CatalystUserScope
+import org.anvilpowered.catalyst.domain.service.CatalystUserScope
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
