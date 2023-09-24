@@ -19,5 +19,5 @@ extensions.getByType<JavaPluginExtension>().apply {
 }
 
 dependencies {
-    "jvmMainImplementation"(kotlin("reflect"))
+    "implementation"(kotlin("reflect"))
 }

@@ -16,22 +16,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.domain.service
+package org.anvilpowered.anvil.user
 
-import org.anvilpowered.catalyst.domain.entity.CatalystUser
-import org.sourcegrade.kontour.DomainEntity
-import org.sourcegrade.kontour.UUID
-import org.sourcegrade.kontour.scope.CrudScope
+import org.anvilpowered.catalyst.user.GameUser
+import org.sourcegrade.kontour.Repository
+import org.sourcegrade.kontour.SizedIterable
 
-interface CatalystUserScope : CrudScope<CatalystUser, CatalystUser.CreateDto> {
+interface GameUserRepository : Repository<GameUser, GameUser> {
 
-    interface Nickname {
-        suspend fun DomainEntity.Repository<CatalystUser>.getNickname(id: UUID): String?
+    suspend fun getAllUserNames(startWith: String = ""): SizedIterable<String>
 
-        suspend fun DomainEntity.Repository<CatalystUser>.updateNickname(id: UUID, nickname: String): Boolean
-
-        suspend fun DomainEntity.Repository<CatalystUser>.deleteNickname(id: UUID): Boolean
-    }
-
-    interface All : CatalystUserScope, Nickname
+    suspend fun findByUsername(username: String): GameUser?
 }

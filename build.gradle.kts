@@ -1,13 +1,12 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktlint)
-    id("kotlin-jvm.base-conventions")
 }
 
 val projectVersion = file("version").readLines().first()
 
 allprojects {
-    apply(plugin = "org.jetbrains.kotlin.multiplatform")
+    apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     group = "org.anvilpowered"
     version = projectVersion

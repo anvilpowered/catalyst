@@ -23,10 +23,7 @@ sequenceOf(
     "app-plugin",
     "app-plugin-core",
     "app-plugin-velocity",
-    "domain",
-    "infrastructure",
-    "infrastructure-db",
-    "infrastructure-game-velocity",
+    "core",
 ).forEach {
     val project = ":catalyst-$it"
     include(project)

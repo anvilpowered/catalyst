@@ -7,8 +7,7 @@ log4j = "2.20.0"
 
 [libraries]
 adventure-bom = "net.kyori:adventure-bom:4.13.0"
-anvil-api = "org.anvilpowered:anvil-api-game:0.4.0-SNAPSHOT"
-anvil-domain = "org.anvilpowered:anvil-domain:0.4.0-SNAPSHOT"
+anvil-core = "org.anvilpowered:anvil-core:0.4.0-SNAPSHOT"
 anvil-velocity = "org.anvilpowered:anvil-infrastructure-game-velocity:0.4.0-SNAPSHOT"
 annotations = "org.jetbrains:annotations:24.0.0"
 brigadier = "com.mojang:brigadier:1.0.18"
@@ -46,7 +45,7 @@ ktor-server = ["ktor-server-auth", "ktor-server-content-negotiation", "ktor-serv
 
 [plugins]
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = "org.jlleitschuh.gradle.ktlint:11.3.1"
 shadow = "com.github.johnrengelman.shadow:8.1.0"
