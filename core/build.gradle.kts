@@ -1,3 +1,3 @@
 dependencies {
-    implementation(libs.anvil.core)
+    api(libs.anvil.core)
 }

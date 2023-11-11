@@ -20,10 +20,9 @@ pluginManagement {
 rootProject.name = "catalyst"
 
 sequenceOf(
-    "app-plugin",
-    "app-plugin-core",
-    "app-plugin-velocity",
+    "api",
     "core",
+    "velocity"
 ).forEach {
     val project = ":catalyst-$it"
     include(project)
