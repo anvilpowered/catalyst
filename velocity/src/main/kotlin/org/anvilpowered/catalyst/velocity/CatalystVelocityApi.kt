@@ -24,7 +24,6 @@ import org.anvilpowered.anvil.velocity.AnvilVelocityApi
 import org.anvilpowered.anvil.velocity.createVelocity
 import org.anvilpowered.catalyst.core.CatalystApi
 import org.anvilpowered.catalyst.core.db.RepositoryScope
-import org.anvilpowered.catalyst.core.db.RepositoryScopeImpl
 
 interface CatalystVelocityApi : CatalystApi {
 
@@ -32,7 +31,7 @@ interface CatalystVelocityApi : CatalystApi {
 }
 
 fun CatalystApi.Companion.createVelocity(proxyServer: ProxyServer): CatalystVelocityApi {
-    return object : CatalystVelocityApi, RepositoryScope by RepositoryScopeImpl {
+    return object : CatalystVelocityApi, RepositoryScope by RepositoryScope.create() {
         override val anvil = AnvilApi.createVelocity(proxyServer)
     }
 }

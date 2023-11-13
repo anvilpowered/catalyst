@@ -18,7 +18,6 @@
 
 package org.anvilpowered.catalyst.api
 
-import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.builder.ChatMessageBuilderImpl
 import org.anvilpowered.catalyst.api.registry.ChatChannel
 import java.util.UUID
@@ -27,20 +26,20 @@ import kotlin.experimental.ExperimentalTypeInference
 // Utility class to construct a chat message and format it
 class ChatMessage(
     val uuid: UUID,
-    val component: Component
+    val component: net.kyori.adventure.text.Component
 ) {
 
     interface Builder {
-        fun uuid(_uuid: UUID): Builder
-        fun message(_message: String): Builder
-        fun prefix(_prefix: String): Builder
-        fun suffix(_suffix: String): Builder
-        fun color(_color: String): Builder
-        fun nameColor(_nameColor: String): Builder
-        fun userName(_userName: String): Builder
-        fun server(_server: String): Builder
-        fun channel(_channel: ChatChannel): Builder
-        fun hasColorPermission(_hasPermission: Boolean): Builder
+        fun uuid(uuid: UUID): Builder
+        fun message(message: String): Builder
+        fun prefix(prefix: String): Builder
+        fun suffix(suffix: String): Builder
+        fun color(color: String): Builder
+        fun nameColor(nameColor: String): Builder
+        fun userName(userName: String): Builder
+        fun server(server: String): Builder
+        fun channel(channel: ChatChannel): Builder
+        fun hasColorPermission(hasPermission: Boolean): Builder
         fun build(): ChatMessage
     }
 

@@ -65,54 +65,54 @@ internal class ChatMessageBuilderImpl<TPlayer> : ChatMessage.Builder {
     var channel: ChatChannel? = null
     var hasColorPermission: Boolean = false
 
-    override fun message(_message: String): ChatMessage.Builder {
-        this.message = _message
+    override fun message(message: String): ChatMessage.Builder {
+        this.message = message
         return this
     }
 
-    override fun prefix(_prefix: String): ChatMessage.Builder {
-        this.prefix = _prefix
+    override fun prefix(prefix: String): ChatMessage.Builder {
+        this.prefix = prefix
         return this
     }
 
-    override fun suffix(_suffix: String): ChatMessage.Builder {
-        this.suffix = _suffix
+    override fun suffix(suffix: String): ChatMessage.Builder {
+        this.suffix = suffix
         return this
     }
 
-    override fun color(_color: String): ChatMessage.Builder {
-        this.color = _color
+    override fun color(color: String): ChatMessage.Builder {
+        this.color = color
         return this
     }
 
-    override fun nameColor(_nameColor: String): ChatMessage.Builder {
-        this.nameColor = _nameColor
+    override fun nameColor(nameColor: String): ChatMessage.Builder {
+        this.nameColor = nameColor
         return this
     }
 
-    override fun userName(_userName: String): ChatMessage.Builder {
-        this.userName = _userName
+    override fun userName(userName: String): ChatMessage.Builder {
+        this.userName = userName
         return this
     }
 
-    override fun server(_server: String): ChatMessage.Builder {
-        this.server = _server
+    override fun server(server: String): ChatMessage.Builder {
+        this.server = server
         return this
     }
 
-    override fun uuid(_uuid: UUID): ChatMessage.Builder {
-        this.uuid = _uuid
-        this.player = userService.getPlayer(_uuid)
+    override fun uuid(uuid: UUID): ChatMessage.Builder {
+        this.uuid = uuid
+        this.player = userService.getPlayer(uuid)
         return this
     }
 
-    override fun channel(_channel: ChatChannel): ChatMessage.Builder {
-        this.channel = _channel
+    override fun channel(channel: ChatChannel): ChatMessage.Builder {
+        this.channel = channel
         return this
     }
 
-    override fun hasColorPermission(_hasPermission: Boolean): ChatMessage.Builder {
-        this.hasColorPermission = _hasPermission
+    override fun hasColorPermission(hasPermission: Boolean): ChatMessage.Builder {
+        this.hasColorPermission = hasPermission
         return this
     }
 
