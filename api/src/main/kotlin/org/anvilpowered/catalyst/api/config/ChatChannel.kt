@@ -16,7 +16,7 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.registry
+package org.anvilpowered.catalyst.api.config
 
 import org.anvilpowered.catalyst.api.builder.ChatChannelBuilderImpl
 import kotlin.experimental.ExperimentalTypeInference
@@ -34,23 +34,23 @@ class ChatChannel(
 
     interface Builder {
 
-        fun id(_id: String): Builder
+        fun id(id: String): Builder
 
-        fun format(_format: String): Builder
+        fun format(format: String): Builder
 
-        fun hoverMessage(_hoverMessage: String): Builder
+        fun hoverMessage(hoverMessage: String): Builder
 
-        fun click(_click: String): Builder
+        fun click(click: String): Builder
 
-        fun servers(_servers: List<String>): Builder
+        fun servers(servers: List<String>): Builder
 
-        fun addServer(_server: String): Builder
+        fun addServer(server: String): Builder
 
-        fun alwaysVisible(_visible: Boolean): Builder
+        fun alwaysVisible(visible: Boolean): Builder
 
-        fun passthrough(_passthrough: Boolean): Builder
+        fun passThrough(passThrough: Boolean): Builder
 
-        fun discordChannel(_discordChannel: String): Builder
+        fun discordChannel(discordChannel: String): Builder
 
         fun build(): ChatChannel
     }

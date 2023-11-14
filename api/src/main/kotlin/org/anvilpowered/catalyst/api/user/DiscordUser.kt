@@ -16,39 +16,13 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.core.user
+package org.anvilpowered.catalyst.api.user
 
 import org.anvilpowered.anvil.core.db.Creates
 import org.anvilpowered.anvil.core.db.DomainEntity
-import org.anvilpowered.anvil.core.db.DomainFacet
-import org.anvilpowered.anvil.core.user.Player
 import java.util.UUID
 
-/**
- * A user of the Anvil platform.
- *
- * Represents a single universal user across all games and platforms.
- */
-data class User(
+data class DiscordUser(
     override val id: UUID,
-    val username: String,
-    val email: String? = null,
-) : DomainEntity, DomainFacet<User> {
-
-    data class CreateDto(
-        val username: String,
-        val email: String? = null,
-    ) : Creates<User>
-
-    /**
-     * Operations scoped within a platform context.
-     */
-    interface PlatformScope {
-
-        val User.gameUser: GameUser
-
-        val User.player: Player?
-    }
-
-    override suspend fun getOriginal(): User = this
-}
+    val discordId: String,
+) : DomainEntity, Creates<DiscordUser>

@@ -18,20 +18,15 @@
 
 package org.anvilpowered.catalyst.api.builder
 
-import com.google.inject.Inject
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.anvilpowered.anvil.api.misc.sendTo
-import org.anvilpowered.anvil.api.server.LocationService
-import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.ChatMessage
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
-import org.anvilpowered.catalyst.api.registry.ChatChannel
-import org.anvilpowered.catalyst.api.service.ChannelService
+import org.anvilpowered.catalyst.api.config.ChatChannel
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import java.lang.IllegalStateException
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
@@ -46,9 +41,6 @@ internal class ChatMessageBuilderImpl<TPlayer> : ChatMessage.Builder {
 
     @Inject
     private lateinit var memberManager: MemberManager
-
-    @Inject
-    private lateinit var userService: UserService<TPlayer, TPlayer>
 
     @Inject
     private lateinit var pluginMessages: PluginMessages

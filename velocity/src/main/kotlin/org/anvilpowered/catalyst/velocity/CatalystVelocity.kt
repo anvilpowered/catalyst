@@ -26,7 +26,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.velocity.command.toVelocity
-import org.anvilpowered.catalyst.agent.command.nickname.NicknameCommand
+import org.anvilpowered.catalyst.core.command.nickname.NicknameCommand
 import org.anvilpowered.catalyst.core.CatalystApi
 
 @Plugin(
@@ -36,13 +36,13 @@ import org.anvilpowered.catalyst.core.CatalystApi
     authors = ["AnvilPowered"],
 )
 class CatalystVelocity @Inject constructor(
-    injector: Injector,
+    private val injector: Injector,
     private val proxyServer: ProxyServer,
 ) {
 
     @Subscribe
     fun onInit(event: ProxyInitializeEvent) {
-        with(CatalystApi.createVelocity(proxyServer)) {
+        with(CatalystApi.createVelocity(injector)) {
             initApi()
         }
     }

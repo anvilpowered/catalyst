@@ -44,10 +44,10 @@ import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
-import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.BroadcastService
-import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.catalyst.api.service.ChatService
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.chat.BroadcastService
+import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.api.chat.ChatService
 import org.anvilpowered.catalyst.api.service.EventService
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
 import org.anvilpowered.anvil.api.registry.Registry

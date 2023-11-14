@@ -19,7 +19,7 @@
 package org.anvilpowered.catalyst.api
 
 import org.anvilpowered.catalyst.api.builder.ChatMessageBuilderImpl
-import org.anvilpowered.catalyst.api.registry.ChatChannel
+import org.anvilpowered.catalyst.api.config.ChatChannel
 import java.util.UUID
 import kotlin.experimental.ExperimentalTypeInference
 

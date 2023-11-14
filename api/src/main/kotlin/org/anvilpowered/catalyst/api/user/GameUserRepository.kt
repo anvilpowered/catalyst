@@ -16,11 +16,23 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.core.user
+package org.anvilpowered.catalyst.api.user
 
-interface UserFacet {
+import org.anvilpowered.anvil.core.db.MutableRepository
+import org.jetbrains.exposed.sql.SizedIterable
+import java.util.UUID
 
-    suspend fun getUserOrNull(): User?
+interface GameUserRepository : MutableRepository<GameUser, GameUser> {
 
-    suspend fun getUser(): User = getUserOrNull() ?: throw IllegalStateException("User not found")
+    suspend fun getOneOrCreate(id: UUID, userId: UUID, username: String, ipAddress: String): GameUser
+
+    suspend fun getNickname(id: UUID): String?
+
+    suspend fun updateNickname(id: UUID, nickname: String): Boolean
+
+    suspend fun deleteNickname(id: UUID): Boolean
+
+    suspend fun getAllUserNames(startWith: String = ""): SizedIterable<String>
+
+    suspend fun findByUsername(username: String): GameUser?
 }

@@ -16,15 +16,11 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.discord;
+package org.anvilpowered.catalyst.api.chat
 
-import net.dv8tion.jda.api.JDA;
+import net.kyori.adventure.text.Component
 
-public interface JDAService {
+interface BroadcastService {
 
-  void enableDiscordBot();
-
-  Runnable updateTopic();
-
-  JDA getJDA();
+    fun broadcast(message: Component)
 }

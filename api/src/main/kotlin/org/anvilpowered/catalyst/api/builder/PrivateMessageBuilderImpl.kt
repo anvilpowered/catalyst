@@ -23,7 +23,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.api.registry.Registry
-import org.anvilpowered.catalyst.api.registry.CatalystKeys
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.service.PrivateMessageService
 
 internal class PrivateMessageBuilderImpl : PrivateMessageService.Message.Builder {

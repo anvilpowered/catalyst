@@ -18,8 +18,8 @@
 
 package org.anvilpowered.catalyst.core.db.user
 
-import org.anvilpowered.catalyst.core.user.DiscordUser
-import org.anvilpowered.catalyst.core.user.DiscordUserRepository
+import org.anvilpowered.catalyst.api.user.DiscordUser
+import org.anvilpowered.catalyst.api.user.DiscordUserRepository
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction

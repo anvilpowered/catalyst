@@ -18,7 +18,7 @@
 
 package org.anvilpowered.catalyst.velocity
 
-import com.velocitypowered.api.proxy.ProxyServer
+import com.google.inject.Injector
 import org.anvilpowered.anvil.core.AnvilApi
 import org.anvilpowered.anvil.velocity.AnvilVelocityApi
 import org.anvilpowered.anvil.velocity.createVelocity
@@ -30,8 +30,8 @@ interface CatalystVelocityApi : CatalystApi {
     override val anvil: AnvilVelocityApi
 }
 
-fun CatalystApi.Companion.createVelocity(proxyServer: ProxyServer): CatalystVelocityApi {
+fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
     return object : CatalystVelocityApi, RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(proxyServer)
+        override val anvil = AnvilApi.createVelocity(injector)
     }
 }

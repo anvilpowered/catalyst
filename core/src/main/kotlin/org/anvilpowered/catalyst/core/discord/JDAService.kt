@@ -15,38 +15,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
-package org.anvilpowered.catalyst.common.discord
+package org.anvilpowered.catalyst.core.discord
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.utils.Compression
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.discord.JDAService
-import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.ChannelService
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.security.auth.login.LoginException
 
-@Singleton
-class CommonJDAService<TPlayer> @Inject constructor(
+internal class JDAService<TPlayer> constructor(
     private val registry: Registry,
     private val userService: UserService<TPlayer, TPlayer>,
     private val logger: Logger,
     private val discordListener: CommonDiscordListener<TPlayer>,
     private val channelService: ChannelService<TPlayer>
-) : JDAService {
+) {
 
     private var isLoaded = false
     private var jda: JDA? = null
 
-    override fun enableDiscordBot() {
+    fun enableDiscordBot() {
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
             logger.warn("The discord bot is disabled! Chat will not be transmitted from in-game to discord.")
             return
@@ -85,7 +81,7 @@ class CommonJDAService<TPlayer> @Inject constructor(
         }
     }
 
-    override fun updateTopic(): Runnable {
+    fun updateTopic(): Runnable {
         val channelId = registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL)
         if (channelId.isEmpty()) {
             throw IllegalStateException("Default chat channel must not be empty!")
@@ -109,10 +105,6 @@ class CommonJDAService<TPlayer> @Inject constructor(
                 ).queue()
             }
         }
-    }
-
-    override fun getJDA(): JDA {
-        return jda!!
     }
 
     init {

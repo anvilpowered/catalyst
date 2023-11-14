@@ -18,11 +18,8 @@
 
 package org.anvilpowered.catalyst.core.db.user
 
-import org.anvilpowered.anvil.db.user.UserEntity
-import org.anvilpowered.anvil.db.user.UserTable
-import org.anvilpowered.anvil.db.user.toUser
-import org.anvilpowered.catalyst.core.user.UserRepository
-import org.anvilpowered.catalyst.core.user.User
+import org.anvilpowered.catalyst.api.user.UserRepository
+import org.anvilpowered.catalyst.api.user.User
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select

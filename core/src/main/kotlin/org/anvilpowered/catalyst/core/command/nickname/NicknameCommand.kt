@@ -16,17 +16,17 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.agent.command.nickname
+package org.anvilpowered.catalyst.core.command.nickname
 
-import org.anvilpowered.anvil.domain.command.CommandSource
-import org.anvilpowered.anvil.domain.command.GameUserCommandScope
-import org.anvilpowered.catalyst.domain.service.CatalystUserScope
+import org.anvilpowered.anvil.core.command.CommandSource
+import org.anvilpowered.catalyst.core.CatalystApi
+import org.anvilpowered.catalyst.core.command.GameUserCommandScope
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
 object NicknameCommand {
 
-    context(CatalystUserScope.Nickname, GameUserCommandScope)
+    context(CatalystApi, GameUserCommandScope)
     fun create(): LiteralCommandNode<CommandSource> {
         return ArgumentBuilder.literal<CommandSource>("nickname")
             .then(createSet())

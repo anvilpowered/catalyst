@@ -18,7 +18,7 @@
 
 package org.anvilpowered.catalyst.api.builder
 
-import org.anvilpowered.catalyst.api.registry.ChatChannel
+import org.anvilpowered.catalyst.api.config.ChatChannel
 
 internal class ChatChannelBuilderImpl: ChatChannel.Builder {
     private var id: String = ""
@@ -30,48 +30,48 @@ internal class ChatChannelBuilderImpl: ChatChannel.Builder {
     private var passthrough: Boolean = false
     private var discordChannel: String = ""
 
-    override fun id(_id: String): ChatChannel.Builder {
-        this.id = _id
+    override fun id(id: String): ChatChannel.Builder {
+        this.id = id
         return this
     }
 
-    override fun format(_format: String): ChatChannel.Builder {
-        this.format = _format
+    override fun format(format: String): ChatChannel.Builder {
+        this.format = format
         return this
     }
 
-    override fun hoverMessage(_hoverMessage: String): ChatChannel.Builder {
-        this.hoverMessage = _hoverMessage
+    override fun hoverMessage(hoverMessage: String): ChatChannel.Builder {
+        this.hoverMessage = hoverMessage
         return this
     }
 
-    override fun click(_click: String): ChatChannel.Builder {
-        this.click = _click
+    override fun click(click: String): ChatChannel.Builder {
+        this.click = click
         return this
     }
 
-    override fun servers(_servers: List<String>): ChatChannel.Builder {
-        this.servers = _servers
+    override fun servers(servers: List<String>): ChatChannel.Builder {
+        this.servers = servers
         return this
     }
 
-    override fun addServer(_server: String): ChatChannel.Builder {
-        this.servers = this.servers.plus(_server)
+    override fun addServer(server: String): ChatChannel.Builder {
+        this.servers = this.servers.plus(server)
         return this
     }
 
-    override fun alwaysVisible(_visible: Boolean): ChatChannel.Builder {
-        this.alwaysVisible = _visible
+    override fun alwaysVisible(visible: Boolean): ChatChannel.Builder {
+        this.alwaysVisible = visible
         return this
     }
 
-    override fun passthrough(_passthrough: Boolean): ChatChannel.Builder {
-        this.passthrough = _passthrough
+    override fun passThrough(passThrough: Boolean): ChatChannel.Builder {
+        this.passthrough = passThrough
         return this
     }
 
-    override fun discordChannel(_discordChannel: String): ChatChannel.Builder {
-        this.discordChannel = _discordChannel
+    override fun discordChannel(discordChannel: String): ChatChannel.Builder {
+        this.discordChannel = discordChannel
         return this
     }
 

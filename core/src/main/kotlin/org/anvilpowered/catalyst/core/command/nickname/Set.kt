@@ -16,18 +16,17 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.agent.command.nickname
+package org.anvilpowered.catalyst.core.command.nickname
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
-import org.anvilpowered.anvil.domain.command.CommandSource
-import org.anvilpowered.anvil.domain.command.GameUserCommandScope
-import org.anvilpowered.anvil.domain.user.hasPermissionSet
+import org.anvilpowered.anvil.core.command.CommandSource
+import org.anvilpowered.anvil.core.user.hasPermissionSet
+import org.anvilpowered.catalyst.core.CatalystApi
 import org.anvilpowered.catalyst.core.PluginMessages
+import org.anvilpowered.catalyst.core.command.GameUserCommandScope
 import org.anvilpowered.catalyst.core.command.common.addHelpChild
-import org.anvilpowered.catalyst.domain.entity.CatalystUser
-import org.anvilpowered.catalyst.domain.service.CatalystUserScope
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
@@ -35,7 +34,7 @@ import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.context.get
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-context(CatalystUserScope.Nickname, GameUserCommandScope)
+context(CatalystApi, GameUserCommandScope)
 fun NicknameCommand.createSet(): LiteralCommandNode<CommandSource> =
     ArgumentBuilder.literal<CommandSource>("set")
         .addHelpChild("nickname set <nickname> [<player>]")
@@ -48,7 +47,11 @@ fun NicknameCommand.createSet(): LiteralCommandNode<CommandSource> =
                                 PluginMessages.pluginPrefix
                                     .append(Component.text("You don't have permission to set your nickname!", NamedTextColor.RED)),
                             )
-                        } else if (org.anvilpowered.catalyst.domain.entity.CatalystUser.updateNickname(player.user.id, context["nickname"])) {
+                        } else if (gameUserRepository.updateNickname(
+                                player.id,
+                                context["nickname"],
+                            )
+                        ) {
                             player.sendMessage(
                                 PluginMessages.pluginPrefix
                                     .append(Component.text("Your nickname has been set to '", NamedTextColor.GRAY))
@@ -73,19 +76,19 @@ fun NicknameCommand.createSet(): LiteralCommandNode<CommandSource> =
         )
         .then(
             ArgumentBuilder.gameUser { context, gameUser ->
-                if (!context.source.permissionSubject.hasPermissionSet("catalyst.nickname.set.other")) {
+                if (!context.source.subject.hasPermissionSet("catalyst.nickname.set.other")) {
                     context.source.audience.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("You don't have permission to set other players' nicknames!", NamedTextColor.RED)),
                     )
                     0
-                } else if (org.anvilpowered.catalyst.domain.entity.CatalystUser.updateNickname(gameUser.id, context["nickname"])) {
+                } else if (gameUserRepository.updateNickname(gameUser.id, context["nickname"])) {
                     context.source.audience.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of '", NamedTextColor.GRAY))
                             .append(Component.text(gameUser.username, NamedTextColor.GOLD))
                             .append(Component.text("' has been set from '", NamedTextColor.GRAY))
-                            .append(MiniMessage.miniMessage().deserialize(gameUser.nickname))
+                            .append(MiniMessage.miniMessage().deserialize(gameUser.nickname ?: "[none]"))
                             .append(Component.text("' to '", NamedTextColor.GRAY))
                             .append(MiniMessage.miniMessage().deserialize(context["nickname"]))
                             .append(Component.text("'!", NamedTextColor.GRAY)),

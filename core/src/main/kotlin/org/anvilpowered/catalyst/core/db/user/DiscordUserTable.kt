@@ -18,7 +18,6 @@
 
 package org.anvilpowered.catalyst.core.db.user
 
-import org.anvilpowered.anvil.db.user.UserEntity
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

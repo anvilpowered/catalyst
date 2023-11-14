@@ -26,7 +26,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.player.TabList
 import com.velocitypowered.api.proxy.player.TabListEntry
 import com.velocitypowered.api.util.GameProfile
-import org.anvilpowered.catalyst.api.registry.CatalystKeys
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.service.TabService
 import org.anvilpowered.anvil.api.registry.Registry
 import java.util.UUID

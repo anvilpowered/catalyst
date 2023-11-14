@@ -24,20 +24,18 @@ import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.api.misc.bind
 import org.anvilpowered.anvil.api.misc.to
 import org.anvilpowered.catalyst.api.discord.DiscordCommandService
-import org.anvilpowered.catalyst.api.discord.JDAService
 import org.anvilpowered.catalyst.api.discord.WebhookSender
 import org.anvilpowered.catalyst.api.member.MemberManager
-import org.anvilpowered.catalyst.api.service.BroadcastService
-import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.catalyst.api.service.ChatService
+import org.anvilpowered.catalyst.api.chat.BroadcastService
+import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.api.chat.ChatService
 import org.anvilpowered.catalyst.api.service.EventRegistrationService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.api.service.PrivateMessageService
 import org.anvilpowered.catalyst.api.service.StaffListService
 import org.anvilpowered.catalyst.api.service.TabService
-import org.anvilpowered.catalyst.common.command.CommonCommandNode
-import org.anvilpowered.catalyst.common.discord.CommonJDAService
-import org.anvilpowered.catalyst.common.discord.CommonWebhookSender
+import org.anvilpowered.catalyst.core.discord.JDAService
+import org.anvilpowered.catalyst.core.discord.CommonWebhookSender
 import org.anvilpowered.catalyst.common.member.CommonMemberManager
 import org.anvilpowered.catalyst.common.module.CommonModule
 import org.anvilpowered.catalyst.common.service.CommonChannelService
@@ -63,7 +61,7 @@ class VelocityModule : CommonModule("plugins") {
             bind<StaffListService>().to<CommonStaffListService<Player>>()
             bind<TabService<Player>>().to<CommonTabService<Player>>()
             bind<LuckpermsService>().to<CommonLuckpermsService<Player>>()
-            bind<JDAService>().to<CommonJDAService<Player>>()
+            bind<JDAService>().to<JDAService<Player>>()
             bind<WebhookSender>().to<CommonWebhookSender<Player>>()
             bind<EventRegistrationService>().to<CommonEventRegistrationService<Player, CommandSource>>()
         }

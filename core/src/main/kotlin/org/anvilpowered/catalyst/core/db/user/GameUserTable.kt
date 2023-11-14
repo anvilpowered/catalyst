@@ -18,14 +18,13 @@
 
 package org.anvilpowered.catalyst.core.db.user
 
-import org.anvilpowered.anvil.db.user.UserEntity
-import org.anvilpowered.anvil.db.user.UserTable
-import org.anvilpowered.catalyst.core.user.GameUser
+import org.anvilpowered.catalyst.api.user.GameUser
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ResultRow
+import java.util.UUID
 
 internal object GameUserTable : UUIDTable("game_users") {
     val userId = reference("user_id", UserTable)

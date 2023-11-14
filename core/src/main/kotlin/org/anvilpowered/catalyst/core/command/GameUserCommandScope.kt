@@ -19,7 +19,7 @@
 package org.anvilpowered.catalyst.core.command
 
 import org.anvilpowered.anvil.core.command.CommandSource
-import org.anvilpowered.catalyst.core.user.GameUser
+import org.anvilpowered.catalyst.api.user.GameUser
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.RequiredArgumentBuilder
 import org.anvilpowered.kbrig.context.CommandContext

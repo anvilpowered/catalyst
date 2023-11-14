@@ -15,9 +15,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
-package org.anvilpowered.catalyst.common.discord
 
-import com.google.inject.Inject
+package org.anvilpowered.catalyst.core.discord
+
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -26,21 +26,16 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.api.misc.sendTo
-import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.discord.DiscordCommandService
-import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.registry.ChatChannel
-import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.anvil.api.registry.Registry
-import org.slf4j.Logger
+import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.config.ChatChannel
+import org.anvilpowered.catalyst.core.CatalystApi
 import java.util.stream.Collectors
 
-class CommonDiscordListener<TPlayer> @Inject constructor(
-    private val registry: Registry,
-    private val userService: UserService<TPlayer, TPlayer>,
+context(CatalystApi)
+class CommonDiscordListener(
     private val discordCommandService: DiscordCommandService,
-    private val logger: Logger,
-    private val channelService: ChannelService<TPlayer>
+    private val channelService: ChannelService,
 ) : ListenerAdapter() {
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
@@ -97,13 +92,19 @@ class CommonDiscordListener<TPlayer> @Inject constructor(
             }
         }
         val finalMessage = Component.text()
-            .append(LegacyComponentSerializer.legacyAmpersand().deserialize(
-                registry.getOrDefault(CatalystKeys.DISCORD_CHAT_FORMAT)
-                    .replace("%name%", userName)
-                    .replace("%message%", message)
-            ))
+            .append(
+                LegacyComponentSerializer.legacyAmpersand().deserialize(
+                    registry.getOrDefault(CatalystKeys.DISCORD_CHAT_FORMAT)
+                        .replace("%name%", userName)
+                        .replace("%message%", message),
+                ),
+            )
             .clickEvent(ClickEvent.openUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL)))
-            .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE))))
+            .hoverEvent(
+                HoverEvent.showText(
+                    LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)),
+                ),
+            )
             .build()
         for (player in channelService.usersInChannel(targetChannel.id)) {
             finalMessage.sendTo(player)

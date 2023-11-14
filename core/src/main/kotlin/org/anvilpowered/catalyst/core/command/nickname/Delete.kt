@@ -22,7 +22,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.anvil.core.user.hasPermissionSet
-import org.anvilpowered.catalyst.agent.command.nickname.NicknameCommand
 import org.anvilpowered.catalyst.core.CatalystApi
 import org.anvilpowered.catalyst.core.PluginMessages
 import org.anvilpowered.catalyst.core.command.GameUserCommandScope

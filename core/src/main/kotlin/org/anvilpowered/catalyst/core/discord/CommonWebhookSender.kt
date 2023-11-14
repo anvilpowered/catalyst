@@ -15,7 +15,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
-package org.anvilpowered.catalyst.common.discord
+package org.anvilpowered.catalyst.core.discord
 
 import com.google.inject.Inject
 import com.mashape.unirest.http.Unirest
@@ -23,9 +23,7 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Webhook
 import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.discord.JDAService
-import org.anvilpowered.catalyst.api.discord.WebhookSender
-import org.anvilpowered.catalyst.api.registry.CatalystKeys
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.common.command.withoutColor
 import org.json.JSONObject
 

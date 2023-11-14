@@ -16,17 +16,16 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.anvil.db.user
+package org.anvilpowered.catalyst.core.db.user
 
-import org.anvilpowered.catalyst.core.db.user.GameUserEntity
-import org.anvilpowered.catalyst.core.db.user.GameUserTable
+import org.anvilpowered.catalyst.api.user.User
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SizedIterable
-import org.sourcegrade.kontour.UUID
+import java.util.UUID
 
 internal object UserTable : UUIDTable("users") {
     val username = varchar("username", 255).uniqueIndex()

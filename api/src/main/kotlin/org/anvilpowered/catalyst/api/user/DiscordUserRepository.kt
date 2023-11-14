@@ -16,32 +16,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.core.user
+package org.anvilpowered.catalyst.api.user
 
-import org.anvilpowered.anvil.core.db.Creates
-import org.anvilpowered.anvil.core.db.DomainEntity
-import org.anvilpowered.anvil.core.user.Player
-import org.anvilpowered.anvil.core.user.Subject
-import java.util.UUID
+import org.anvilpowered.anvil.core.db.MutableRepository
 
-
-/**
- * A user of a game of the Anvil platform.
- *
- * Represents a single user of a game.
- */
-data class GameUser(
-    override val id: UUID,
-    val userId: UUID,
-    val username: String,
-    val gameType: String,
-    val nickname: String? = null,
-) : DomainEntity, Creates<GameUser> {
-
-    interface GamePlatformScope { // TODO: Maybe just GameScope?
-
-        val GameUser.subject: Subject?
-
-        val GameUser.player: Player?
-    }
-}
+interface DiscordUserRepository : MutableRepository<DiscordUser, DiscordUser>

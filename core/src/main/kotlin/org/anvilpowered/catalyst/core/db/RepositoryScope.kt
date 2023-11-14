@@ -18,12 +18,12 @@
 
 package org.anvilpowered.catalyst.core.db
 
-import org.anvilpowered.anvil.db.user.GameUserRepositoryImpl
+import org.anvilpowered.catalyst.api.user.DiscordUserRepository
+import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.UserRepository
 import org.anvilpowered.catalyst.core.db.user.DiscordUserRepositoryImpl
+import org.anvilpowered.catalyst.core.db.user.GameUserRepositoryImpl
 import org.anvilpowered.catalyst.core.db.user.UserRepositoryImpl
-import org.anvilpowered.catalyst.core.user.DiscordUserRepository
-import org.anvilpowered.catalyst.core.user.GameUserRepository
-import org.anvilpowered.catalyst.core.user.UserRepository
 
 interface RepositoryScope {
     val discordUserRepository: DiscordUserRepository
