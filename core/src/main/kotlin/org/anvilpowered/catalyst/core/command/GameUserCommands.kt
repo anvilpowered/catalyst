@@ -21,8 +21,8 @@ package org.anvilpowered.catalyst.core.command
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.core.command.CommandSource
-import org.anvilpowered.catalyst.core.CatalystApi
 import org.anvilpowered.catalyst.api.user.GameUser
+import org.anvilpowered.catalyst.core.db.RepositoryScope
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.RequiredArgumentBuilder
@@ -30,19 +30,19 @@ import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.context.CommandContext
 import org.anvilpowered.kbrig.context.get
 
-context(CatalystApi)
+context(RepositoryScope)
 fun ArgumentBuilder.Companion.gameUser(
-    name: String,
+    argumentName: String = "gameUser",
     command: suspend (context: CommandContext<CommandSource>, gameUser: GameUser) -> Int,
 ): RequiredArgumentBuilder<CommandSource, String> =
-    required<CommandSource, String>(name, StringArgumentType.SingleWord)
+    required<CommandSource, String>(argumentName, StringArgumentType.SingleWord)
         .suggests { _, builder ->
-            gameUserRepository.getAllUserNames(startWith = builder.input).forEach { name -> builder.suggest(name) }
+            gameUserRepository.getAllUsernames(startWith = builder.input).forEach { name -> builder.suggest(name) }
             builder.build()
         }
         .executesSuspending { context ->
-            val gameUserName = context.get<String>(name)
-            gameUserRepository.findByUsername(gameUserName)?.let { gameUser ->
+            val gameUserName = context.get<String>(argumentName)
+            gameUserRepository.getByUsername(gameUserName)?.let { gameUser ->
                 command(context, gameUser)
             } ?: run {
                 context.source.audience.sendMessage(

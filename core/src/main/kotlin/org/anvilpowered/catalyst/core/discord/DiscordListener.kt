@@ -18,6 +18,7 @@
 
 package org.anvilpowered.catalyst.core.discord
 
+import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -25,18 +26,17 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.anvilpowered.anvil.api.misc.sendTo
+import org.anvilpowered.anvil.core.LoggerScope
+import org.anvilpowered.anvil.core.command.CommandExecutor
+import org.anvilpowered.anvil.core.user.PlayerService
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.core.CatalystApi
-import java.util.stream.Collectors
 
-context(CatalystApi)
-class CommonDiscordListener(
-    private val discordCommandService: DiscordCommandService,
-    private val channelService: ChannelService,
-) : ListenerAdapter() {
+context(CatalystApi, CommandExecutor.Scope, LoggerScope, ChannelService.Scope, PlayerService.Scope)
+internal class DiscordListener : ListenerAdapter() {
+
+    private val loggingCommandExecutor = CommandExecutor.withLogging("discord")
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
         if (event.isWebhookMessage || event.author.isBot) {
@@ -48,21 +48,24 @@ class CommonDiscordListener(
             && messageRaw.contains("!cmd")
         ) {
             val command = event.message.contentRaw.replace("!cmd ", "")
-            discordCommandService.channelId = event.channel.id
-            discordCommandService.executeDiscordCommand(command)
+            // TODO: Use coroutines properly
+            runBlocking {
+                loggingCommandExecutor.executeAsConsole(command)
+            }
             return
         } else if (messageRaw.contains("!players")
             || messageRaw.contains("!online")
             || messageRaw.contains("!list")
         ) {
-            val onlinePlayers = userService.onlinePlayers()
+            val onlinePlayers = playerService.getAll().toList()
             val playerNames: String = if (onlinePlayers.isEmpty()) {
                 "```There are currently no players online!```"
             } else {
-                ("**Online Players:**```"
-                    + userService.onlinePlayers().stream()
-                    .map { userService.getUserName(it) }
-                    .collect(Collectors.joining(", ")) + "```")
+                onlinePlayers.joinToString(
+                    separator = ", ",
+                    prefix = "**Online Players:**```",
+                    postfix = "```",
+                ) { it.username }
             }
             event.channel.sendMessage(playerNames).queue()
             return
@@ -72,42 +75,31 @@ class CommonDiscordListener(
     }
 
     private fun sendMessage(channelId: String, message: String, userName: String) {
-        val channels = registry.getOrDefault(CatalystKeys.CHAT_CHANNELS)
-        var targetChannel: ChatChannel? = null
-        for (channel in channels) {
-            if (channel.discordChannel == null) {
-                continue
-            }
-            if (channel.discordChannel == channelId) {
-                targetChannel = channel
-            }
-        }
-        if (targetChannel == null) {
-            val mainChannel = channelService.defaultChannel()
-            targetChannel = if (mainChannel != null) {
-                mainChannel
-            } else {
-                logger.error("Could not find a channel to fall back to! Please ensure you have properly setup discord channels in your config.")
-                return
-            }
-        }
+        val targetChannel = registry[CatalystKeys.CHAT_CHANNELS].values.firstOrNull { it.discordChannel == channelId }
+            ?: channelService.defaultChannel
+
         val finalMessage = Component.text()
             .append(
                 LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    registry.getOrDefault(CatalystKeys.DISCORD_CHAT_FORMAT)
+                    registry[CatalystKeys.DISCORD_CHAT_FORMAT]
                         .replace("%name%", userName)
                         .replace("%message%", message),
                 ),
             )
-            .clickEvent(ClickEvent.openUrl(registry.getOrDefault(CatalystKeys.DISCORD_URL)))
+            .clickEvent(ClickEvent.openUrl(registry[CatalystKeys.DISCORD_URL]))
             .hoverEvent(
                 HoverEvent.showText(
-                    LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.DISCORD_HOVER_MESSAGE)),
+                    LegacyComponentSerializer.legacyAmpersand().deserialize(registry[CatalystKeys.DISCORD_HOVER_MESSAGE]),
                 ),
             )
             .build()
-        for (player in channelService.usersInChannel(targetChannel.id)) {
-            finalMessage.sendTo(player)
+
+        for (player in channelService.getPlayers(targetChannel.id)) {
+            player.sendMessage(finalMessage)
         }
+    }
+
+    interface Scope {
+        val discordListener: DiscordListener
     }
 }

@@ -20,13 +20,12 @@ package org.anvilpowered.catalyst.core.command.nickname
 
 import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.catalyst.core.CatalystApi
-import org.anvilpowered.catalyst.core.command.GameUserCommandScope
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
 object NicknameCommand {
 
-    context(CatalystApi, GameUserCommandScope)
+    context(CatalystApi)
     fun create(): LiteralCommandNode<CommandSource> {
         return ArgumentBuilder.literal<CommandSource>("nickname")
             .then(createSet())

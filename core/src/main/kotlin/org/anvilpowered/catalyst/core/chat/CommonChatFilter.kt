@@ -16,20 +16,17 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.common.service
+package org.anvilpowered.catalyst.core.chat
 
-import com.google.inject.Inject
-import org.anvilpowered.catalyst.api.registry.CatalystKeys.CHAT_FILTER_EXCEPTIONS
-import org.anvilpowered.catalyst.api.registry.CatalystKeys.CHAT_FILTER_SWEARS
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChatFilter
-import org.anvilpowered.anvil.api.registry.Registry
 import java.util.Collections
 import java.util.Locale
 import java.util.stream.Collectors
 
-class CommonChatFilter @Inject constructor(
-    private val registry: Registry
-) : ChatFilter {
+context(Registry.Scope)
+class CommonChatFilter : ChatFilter {
 
     override fun stripMessage(checkMessage: String): String {
         return checkMessage.lowercase(Locale.getDefault())
@@ -53,8 +50,8 @@ class CommonChatFilter @Inject constructor(
 
     override fun findSwears(message: String, spacePositions: List<Int>): List<IntArray> {
         val swearList: MutableList<IntArray> = ArrayList()
-        val exceptions = registry.getOrDefault(CHAT_FILTER_EXCEPTIONS).stream().map { it.lowercase(Locale.getDefault()) }.collect(Collectors.toList())
-        for (bannedWord in registry.getOrDefault(CHAT_FILTER_SWEARS)) {
+        val exceptions = registry[CatalystKeys.CHAT_FILTER_EXCEPTIONS].stream().map { it.lowercase(Locale.getDefault()) }.collect(Collectors.toList())
+        for (bannedWord in registry[CatalystKeys.CHAT_FILTER_SWEARS]) {
             if (message.contains(bannedWord) && !exceptions.contains(bannedWord)) {
                 var startIndex = message.indexOf(bannedWord)
                 while (startIndex != -1) {

@@ -26,15 +26,17 @@ import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.ConsoleCommandSource
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.core.CatalystApi
 
-@Singleton
+context(CatalystApi)
 class VelocityCommandNode @Inject constructor(
     registry: Registry,
-    private val proxyServer: ProxyServer
+    private val proxyServer: ProxyServer,
 ) : CommonCommandNode<Player, CommandSource>(
     registry,
     Player::class.java,
-    ConsoleCommandSource::class.java
+    ConsoleCommandSource::class.java,
 ) {
 
     public override fun loadCommands() {

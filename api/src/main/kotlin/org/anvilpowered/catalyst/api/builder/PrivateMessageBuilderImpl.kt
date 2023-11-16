@@ -35,18 +35,18 @@ internal class PrivateMessageBuilderImpl : PrivateMessageService.Message.Builder
     var recipient: String = ""
     var rawMessage: String = ""
 
-    override fun source(_source: String): PrivateMessageService.Message.Builder {
-        this.source = _source
+    override fun source(source: String): PrivateMessageService.Message.Builder {
+        this.source = source
         return this
     }
 
-    override fun recipient(_recipient: String): PrivateMessageService.Message.Builder {
-        this.recipient = _recipient
+    override fun recipient(recipient: String): PrivateMessageService.Message.Builder {
+        this.recipient = recipient
         return this
     }
 
-    override fun rawMessage(_rawMessage: String): PrivateMessageService.Message.Builder {
-        this.rawMessage = _rawMessage
+    override fun rawMessage(rawMessage: String): PrivateMessageService.Message.Builder {
+        this.rawMessage = rawMessage
         return this
     }
 

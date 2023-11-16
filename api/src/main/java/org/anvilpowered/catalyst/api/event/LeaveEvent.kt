@@ -15,23 +15,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
+package org.anvilpowered.catalyst.api.event
 
-package org.anvilpowered.catalyst.api.model
+import org.anvilpowered.anvil.core.user.Player
 
-import org.anvilpowered.anvil.api.model.ObjectWithId
-import java.time.Instant
-import java.util.UUID
-
-interface Member<TKey> : ObjectWithId<TKey> {
-    var userUUID: UUID
-    var userName: String
-    var ipAddress: String
-    var lastJoinedUtc: Instant
-    var nickName: String
-    var isBanned: Boolean
-    var isMuted: Boolean
-    var banEndUtc: Instant
-    var muteEndUtc: Instant
-    var banReason: String
-    var muteReason: String
-}
+class LeaveEvent(val player: Player)

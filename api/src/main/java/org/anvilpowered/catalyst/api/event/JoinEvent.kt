@@ -15,32 +15,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
+package org.anvilpowered.catalyst.api.event
 
-package org.anvilpowered.catalyst.api.event;
+import org.anvilpowered.anvil.core.user.Player
 
-import java.util.UUID;
-
-public final class JoinEvent<TPlayer> {
-
-  private final TPlayer player;
-  private final String hostString;
-  private final UUID playerUUID;
-
-  public JoinEvent(TPlayer player, String hostString, UUID playerUUID) {
-    this.player = player;
-    this.hostString = hostString;
-    this.playerUUID = playerUUID;
-  }
-
-  public TPlayer getPlayer() {
-    return player;
-  }
-
-  public String getHostString() {
-    return hostString;
-  }
-
-  public UUID getPlayerUUID() {
-    return playerUUID;
-  }
-}
+class JoinEvent(val player: Player, val hostString: String)

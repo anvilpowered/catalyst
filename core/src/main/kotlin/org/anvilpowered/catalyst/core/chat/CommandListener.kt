@@ -15,24 +15,24 @@
  *     You should have received a copy of the GNU Affero General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+package org.anvilpowered.catalyst.core.chat
 
-package org.anvilpowered.catalyst.core.discord;
+import com.google.common.eventbus.Subscribe
+import org.anvilpowered.anvil.core.LoggerScope
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.event.CommandEvent
 
-public class Webhook {
+context(LoggerScope, Registry.Scope)
+class CommandListener {
 
-  public String avatarURL;
-
-  public String name;
-
-  public String message;
-
-  public Webhook(String avatarURL, String name, String message) {
-    this.avatarURL = avatarURL;
-    this.name = name;
-    this.message = message;
-  }
-
-  public static Webhook of(String avatarURL, String name, String message) {
-    return new Webhook(avatarURL, name, message);
-  }
+    @Subscribe
+    fun onCommandExecution(event: CommandEvent) {
+        if (registry[CatalystKeys.COMMAND_LOGGING_ENABLED]) {
+            val commandList = registry[CatalystKeys.COMMAND_LOGGING_FILTER]
+            if (commandList.size == 1 && commandList[0] == "*" || commandList.contains(event.command)) {
+                logger.info(event.sourceName + " executed command : " + event.command)
+            }
+        }
+    }
 }

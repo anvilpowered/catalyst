@@ -38,30 +38,30 @@ import com.velocitypowered.api.util.ModInfo
 import net.kyori.adventure.identity.Identity
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.chat.BroadcastService
+import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.api.chat.ChatService
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.event.CommandEvent
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
-import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.chat.BroadcastService
-import org.anvilpowered.catalyst.api.chat.ChannelService
-import org.anvilpowered.catalyst.api.chat.ChatService
 import org.anvilpowered.catalyst.api.service.EventService
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
-import org.anvilpowered.anvil.api.registry.Registry
 import java.util.UUID
 
 class VelocityListener @Inject constructor(
-    private val channelService: ChannelService<Player>,
+    private val channelService: ChannelService,
     private val chatService: ChatService<Player, CommandSource>,
     private val proxyServer: ProxyServer,
     private val registry: Registry,
     private val eventService: EventService,
     private val pluginMessages: PluginMessages,
     private val broadcastService: BroadcastService,
-    private val memberManager: MemberManager
+    private val memberManager: MemberManager,
 ) {
 
     @Subscribe
@@ -99,7 +99,7 @@ class VelocityListener @Inject constructor(
                 player.uniqueId,
                 player.username,
                 player.remoteAddress.hostString,
-                flags
+                flags,
             ).thenAcceptAsync { member ->
                 if (member == null) {
                     return@thenAcceptAsync
@@ -110,8 +110,8 @@ class VelocityListener @Inject constructor(
                 if (flags[0] && registry.getOrDefault(CatalystKeys.JOIN_LISTENER_ENABLED)) {
                     broadcastService.broadcast(
                         LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            registry.getOrDefault(CatalystKeys.FIRST_JOIN).replace("%player%", player.username)
-                        )
+                            registry.getOrDefault(CatalystKeys.FIRST_JOIN).replace("%player%", player.username),
+                        ),
                     )
                 }
             }.join()
@@ -146,15 +146,9 @@ class VelocityListener @Inject constructor(
     @Subscribe
     fun onCommand(e: CommandExecuteEvent) {
         val sourceName: String = when (e.commandSource) {
-            is ConsoleCommandSource -> {
-                "Console"
-            }
-            is DiscordCommandSource -> {
-                "Discord"
-            }
-            else -> {
-                (e.commandSource as Player).username
-            }
+            is ConsoleCommandSource -> "Console"
+            is DiscordCommandSource -> "Discord"
+            else -> (e.commandSource as Player).username
         }
         eventService.post(CommandEvent(e.commandSource, sourceName, e.command, e.result.isAllowed))
     }

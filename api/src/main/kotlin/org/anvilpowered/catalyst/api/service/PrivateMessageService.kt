@@ -39,9 +39,9 @@ interface PrivateMessageService {
         ) {
 
         interface Builder {
-            fun source(_source: String): Builder
-            fun recipient(_recipient: String): Builder
-            fun rawMessage(_rawMessage: String): Builder
+            fun source(source: String): Builder
+            fun recipient(recipient: String): Builder
+            fun rawMessage(rawMessage: String): Builder
             fun build(): Message
         }
 

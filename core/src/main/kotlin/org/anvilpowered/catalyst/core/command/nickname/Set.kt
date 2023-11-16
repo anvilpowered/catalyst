@@ -25,8 +25,8 @@ import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.anvil.core.user.hasPermissionSet
 import org.anvilpowered.catalyst.core.CatalystApi
 import org.anvilpowered.catalyst.core.PluginMessages
-import org.anvilpowered.catalyst.core.command.GameUserCommandScope
 import org.anvilpowered.catalyst.core.command.common.addHelpChild
+import org.anvilpowered.catalyst.core.command.gameUser
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
@@ -34,7 +34,7 @@ import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.context.get
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-context(CatalystApi, GameUserCommandScope)
+context(CatalystApi)
 fun NicknameCommand.createSet(): LiteralCommandNode<CommandSource> =
     ArgumentBuilder.literal<CommandSource>("set")
         .addHelpChild("nickname set <nickname> [<player>]")
@@ -47,11 +47,7 @@ fun NicknameCommand.createSet(): LiteralCommandNode<CommandSource> =
                                 PluginMessages.pluginPrefix
                                     .append(Component.text("You don't have permission to set your nickname!", NamedTextColor.RED)),
                             )
-                        } else if (gameUserRepository.updateNickname(
-                                player.id,
-                                context["nickname"],
-                            )
-                        ) {
+                        } else if (gameUserRepository.updateNickname(player.id, context["nickname"])) {
                             player.sendMessage(
                                 PluginMessages.pluginPrefix
                                     .append(Component.text("Your nickname has been set to '", NamedTextColor.GRAY))

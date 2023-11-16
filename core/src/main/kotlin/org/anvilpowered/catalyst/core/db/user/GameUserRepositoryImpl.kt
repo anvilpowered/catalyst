@@ -65,11 +65,11 @@ object GameUserRepositoryImpl : GameUserRepository {
         } > 0
     }
 
-    override suspend fun getAllUserNames(startWith: String): SizedIterable<String> = newSuspendedTransaction {
+    override suspend fun getAllUsernames(startWith: String): SizedIterable<String> = newSuspendedTransaction {
         GameUserEntity.find { GameUserTable.username like "$startWith%" }.mapLazy { it.username }
     }
 
-    override suspend fun findByUsername(username: String): GameUser? = newSuspendedTransaction {
+    override suspend fun getByUsername(username: String): GameUser? = newSuspendedTransaction {
         GameUserTable.select { GameUserTable.username eq username }
             .firstOrNull()
             ?.toGameUser()

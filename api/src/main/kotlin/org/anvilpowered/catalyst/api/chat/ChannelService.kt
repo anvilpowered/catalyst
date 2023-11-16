@@ -18,22 +18,25 @@
 
 package org.anvilpowered.catalyst.api.chat
 
+import org.anvilpowered.anvil.core.user.Player
 import org.anvilpowered.catalyst.api.config.ChatChannel
-import org.anvilpowered.catalyst.api.user.GameUser
 import java.util.UUID
-import java.util.concurrent.CompletableFuture
 
 interface ChannelService {
 
+    val defaultChannel: ChatChannel
+
+    fun get(channelId: String): ChatChannel?
+
+    fun getForPlayer(playerId: UUID): ChatChannel
+
+    fun getPlayers(channelId: String): Sequence<Player>
+
     fun switch(userUUID: UUID, channelId: String)
 
-    fun defaultChannel(): ChatChannel?
+    fun moveUsersToChannel(sourceChannel: String, targetChannel: String)
 
-    fun fromId(channelId: String): ChatChannel?
-
-    fun fromUUID(userUUID: UUID): ChatChannel
-
-    fun usersInChannel(channelId: String): List<GameUser>
-
-    fun moveUsersToChannel(sourceChannel: String, targetChannel: String): CompletableFuture<Boolean>
+    interface Scope {
+        val channelService: ChannelService
+    }
 }

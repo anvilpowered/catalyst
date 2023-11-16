@@ -24,29 +24,26 @@ import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.api.misc.bind
 import org.anvilpowered.anvil.api.misc.to
 import org.anvilpowered.catalyst.api.discord.DiscordCommandService
-import org.anvilpowered.catalyst.api.discord.WebhookSender
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.chat.BroadcastService
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.ChatService
-import org.anvilpowered.catalyst.api.service.EventRegistrationService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.api.service.PrivateMessageService
 import org.anvilpowered.catalyst.api.service.StaffListService
 import org.anvilpowered.catalyst.api.service.TabService
 import org.anvilpowered.catalyst.core.discord.JDAService
-import org.anvilpowered.catalyst.core.discord.CommonWebhookSender
+import org.anvilpowered.catalyst.core.discord.WebhookSender
 import org.anvilpowered.catalyst.common.member.CommonMemberManager
 import org.anvilpowered.catalyst.common.module.CommonModule
-import org.anvilpowered.catalyst.common.service.CommonChannelService
-import org.anvilpowered.catalyst.common.service.CommonChatService
+import org.anvilpowered.catalyst.core.chat.CommonChannelService
+import org.anvilpowered.catalyst.core.chat.CommonChatService
 import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
 import org.anvilpowered.catalyst.common.service.CommonLuckpermsService
 import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService
 import org.anvilpowered.catalyst.common.service.CommonStaffListService
 import org.anvilpowered.catalyst.common.service.CommonTabService
 import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService
-import org.anvilpowered.catalyst.velocity.service.VelocityDiscordCommandService
 
 @Singleton
 class VelocityModule : CommonModule("plugins") {
@@ -62,7 +59,7 @@ class VelocityModule : CommonModule("plugins") {
             bind<TabService<Player>>().to<CommonTabService<Player>>()
             bind<LuckpermsService>().to<CommonLuckpermsService<Player>>()
             bind<JDAService>().to<JDAService<Player>>()
-            bind<WebhookSender>().to<CommonWebhookSender<Player>>()
+            bind<WebhookSender>().to<WebhookSender<Player>>()
             bind<EventRegistrationService>().to<CommonEventRegistrationService<Player, CommandSource>>()
         }
         super.configure()

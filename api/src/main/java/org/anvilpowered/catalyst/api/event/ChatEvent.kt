@@ -15,18 +15,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
+package org.anvilpowered.catalyst.api.event
 
-package org.anvilpowered.catalyst.api.event;
+import net.kyori.adventure.text.Component
+import org.anvilpowered.anvil.core.command.CommandSource
 
-public final class LeaveEvent<TPlayer> {
-
-  private final TPlayer player;
-
-  public LeaveEvent(TPlayer player) {
-    this.player = player;
-  }
-
-  public TPlayer getPlayer() {
-    return this.player;
-  }
-}
+class ChatEvent(val player: CommandSource, var rawMessage: String, val message: Component)

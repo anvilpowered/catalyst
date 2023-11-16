@@ -16,7 +16,7 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.common.service
+package org.anvilpowered.catalyst.core.chat
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -30,6 +30,7 @@ import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.SendTextService
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.ChatMessage
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.ChatService
@@ -53,7 +54,7 @@ class CommonChatService<TPlayer, TCommandSource> @Inject constructor(
     override fun sendMessageToChannel(channelId: String, message: Component, senderUUID: UUID): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
             userService.onlinePlayers().forEach {
-                if (permissionService.hasPermission(it, registry.getOrDefault(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
+                if (permissionService.hasPermission(it, registry.get(CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION))
                     || channelService.fromUUID(userService.getUUID(it)).id == channelId
                 ) {
                     if (senderUUID != userService.getUUID(it)) {

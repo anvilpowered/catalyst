@@ -15,7 +15,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
-package org.anvilpowered.catalyst.common.listener
+package org.anvilpowered.catalyst.core.chat
 
 import com.google.common.eventbus.Subscribe
 import com.google.inject.Inject
@@ -43,13 +43,13 @@ class ChatListener<TPlayer, TCommandSource> @Inject constructor(
 ) {
 
     @Subscribe
-    fun onPlayerChat(event: ChatEvent<TPlayer>) {
+    fun onPlayerChat(event: ChatEvent) {
         val playerUUID = userService.getUUID(event.player)
         val player = userService.getPlayer(playerUUID!!) ?: return
         var message = event.rawMessage
         message = chatService.checkPlayerName(player, message)
         if (!permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))
-            && registry.getOrDefault(CatalystKeys.CHAT_FILTER_ENABLED)
+            && registry.get(CatalystKeys.CHAT_FILTER_ENABLED)
         ) {
             event.rawMessage = chatFilter.replaceSwears(message)
         }

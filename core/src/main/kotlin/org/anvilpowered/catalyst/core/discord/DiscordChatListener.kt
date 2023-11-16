@@ -1,29 +1,29 @@
 /*
- *   Catalyst - AnvilPowered
- *   Copyright (C) 2021
+ *   Catalyst - AnvilPowered.org
+ *   Copyright (C) 2020-2023 Contributors
  *
  *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU Affero General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU Affero General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this program.  If not, see https://www.gnu.org/licenses/.
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package org.anvilpowered.catalyst.common.listener
+package org.anvilpowered.catalyst.core.discord
 
-import com.google.common.eventbus.Subscribe
-import com.google.inject.Inject
 import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.discord.WebhookSender
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
@@ -32,14 +32,11 @@ import org.anvilpowered.catalyst.api.service.ChannelService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.common.command.withoutColor
 
+context(Registry.Scope, ChannelService.Scope, PlayerService)
 class DiscordChatListener<TPlayer> @Inject constructor(
-    private val registry: Registry,
     private val luckPermsService: LuckpermsService,
     private val webHookSender: WebhookSender,
-    private val userService: UserService<TPlayer, TPlayer>,
-    private val channelService: ChannelService<TPlayer>,
     private val locationService: LocationService,
-    private val permissionService: PermissionService
 ) {
 
     @Subscribe

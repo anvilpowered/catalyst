@@ -19,10 +19,12 @@
 package org.anvilpowered.catalyst.core
 
 import org.anvilpowered.anvil.core.AnvilApi
+import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.core.db.RepositoryScope
-import org.slf4j.Logger
 
 interface CatalystApi : RepositoryScope {
+
+    val registry: Registry
 
     val anvil: AnvilApi
 

@@ -2,7 +2,7 @@
 //    compileOnlyApi("com.google.inject:guice:5.0.1")
 //    compileOnlyApi("org.anvilpowered:anvil-api:0.4-SNAPSHOT")
 //    api("net.dv8tion:JDA:$jdaVersion")
-//    compileOnlyApi("net.luckperms:api:$luckpermsVersion")
+//
 //    api("org.apache.httpcomponents:httpasyncclient:$apacheAsyncVersion")
 //    api("org.apache.httpcomponents:httpclient:$apacheClientVersion")
 //    api("org.apache.httpcomponents:httpcore:$apacheCoreVersion")
@@ -25,5 +25,6 @@
 //}
 
 dependencies {
+    compileOnlyApi(libs.luckperms)
     api(libs.anvil.core)
 }

@@ -21,7 +21,7 @@ package org.anvilpowered.catalyst.api.config
 import org.anvilpowered.catalyst.api.builder.ChatChannelBuilderImpl
 import kotlin.experimental.ExperimentalTypeInference
 
-class ChatChannel(
+data class ChatChannel(
     var id: String,
     var format: String,
     var hoverMessage: String,

@@ -32,7 +32,7 @@ interface GameUserRepository : MutableRepository<GameUser, GameUser> {
 
     suspend fun deleteNickname(id: UUID): Boolean
 
-    suspend fun getAllUserNames(startWith: String = ""): SizedIterable<String>
+    suspend fun getAllUsernames(startWith: String = ""): SizedIterable<String>
 
-    suspend fun findByUsername(username: String): GameUser?
+    suspend fun getByUsername(username: String): GameUser?
 }

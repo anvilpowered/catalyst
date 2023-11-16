@@ -22,28 +22,27 @@ import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.utils.Compression
 import net.dv8tion.jda.api.utils.cache.CacheFlag
-import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.anvil.core.LoggerScope
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.anvil.core.user.PlayerService
 import org.anvilpowered.catalyst.api.chat.ChannelService
-import org.anvilpowered.anvil.api.registry.Registry
-import org.slf4j.Logger
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.security.auth.login.LoginException
 
-internal class JDAService<TPlayer> constructor(
-    private val registry: Registry,
-    private val userService: UserService<TPlayer, TPlayer>,
-    private val logger: Logger,
-    private val discordListener: CommonDiscordListener<TPlayer>,
-    private val channelService: ChannelService<TPlayer>
-) {
+context(Registry.Scope, PlayerService.Scope, LoggerScope, ChannelService.Scope, DiscordListener.Scope)
+internal class JDAService {
 
     private var isLoaded = false
-    private var jda: JDA? = null
+    var jda: JDA? = null
 
-    fun enableDiscordBot() {
-        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
+    init {
+        enableDiscordBot()
+    }
+
+    private fun enableDiscordBot() {
+        if (!registry[CatalystKeys.DISCORD_ENABLE]) {
             logger.warn("The discord bot is disabled! Chat will not be transmitted from in-game to discord.")
             return
         }
@@ -51,7 +50,7 @@ internal class JDAService<TPlayer> constructor(
             jda?.shutdownNow()
         }
         try {
-            val builder = JDABuilder.createDefault(registry.getOrDefault(CatalystKeys.BOT_TOKEN))
+            val builder = JDABuilder.createDefault(registry[CatalystKeys.BOT_TOKEN])
             builder.setCompression(Compression.NONE)
             builder.setBulkDeleteSplittingEnabled(false)
             builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
@@ -59,19 +58,22 @@ internal class JDAService<TPlayer> constructor(
         } catch (e: LoginException) {
             e.printStackTrace()
         }
-        var playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS)
-        val nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE)
-        if (userService.onlinePlayers().isNotEmpty()) {
-            playerCount = userService.onlinePlayers().size.toString()
+        val nowPlaying = registry[CatalystKeys.NOW_PLAYING_MESSAGE]
+        val playerCount = playerService.getAll().count().let { count ->
+            if (count == 0) {
+                registry[CatalystKeys.TOPIC_NO_ONLINE_PLAYERS]
+            } else {
+                count.toString()
+            }
         }
         jda!!.presence.activity = Activity.playing(nowPlaying.replace("%players%".toRegex(), playerCount))
         jda!!.addEventListener(discordListener)
         isLoaded = true
-        if (registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_ENABLED)) {
+        if (registry[CatalystKeys.TOPIC_UPDATE_ENABLED]) {
             Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
                 updateTopic(),
                 1,
-                registry.getOrDefault(CatalystKeys.TOPIC_UPDATE_DELAY).toLong(), TimeUnit.MINUTES
+                registry[CatalystKeys.TOPIC_UPDATE_DELAY].toLong(), TimeUnit.MINUTES,
             )
         }
         try {
@@ -81,17 +83,21 @@ internal class JDAService<TPlayer> constructor(
         }
     }
 
-    fun updateTopic(): Runnable {
-        val channelId = registry.getOrDefault(CatalystKeys.CHAT_DEFAULT_CHANNEL)
+    private fun updateTopic(): Runnable {
+        val channelId = registry[CatalystKeys.CHAT_DEFAULT_CHANNEL]
         if (channelId.isEmpty()) {
             throw IllegalStateException("Default chat channel must not be empty!")
         }
+        // TODO: Clean up the entire class
         return Runnable {
-            val channel = jda!!.getTextChannelById(channelService.fromId(channelId)?.discordChannel ?: "")
-            var playerCount = registry.getOrDefault(CatalystKeys.TOPIC_NO_ONLINE_PLAYERS)
-            val nowPlaying = registry.getOrDefault(CatalystKeys.NOW_PLAYING_MESSAGE)
-            if (userService.onlinePlayers().isNotEmpty()) {
-                playerCount = userService.onlinePlayers().size.toString()
+            val channel = jda!!.getTextChannelById(channelService.get(channelId)?.discordChannel ?: "")
+            val nowPlaying = registry[CatalystKeys.NOW_PLAYING_MESSAGE]
+            val playerCount = playerService.getAll().count().let { count ->
+                if (count == 0) {
+                    registry[CatalystKeys.TOPIC_NO_ONLINE_PLAYERS]
+                } else {
+                    count.toString()
+                }
             }
             if (nowPlaying.contains("%players%")) {
                 jda!!.presence.activity = Activity.playing(nowPlaying.replace("%players%".toRegex(), playerCount))
@@ -100,14 +106,14 @@ internal class JDAService<TPlayer> constructor(
                 logger.error("Could not update the main channel topic!")
             } else {
                 channel.manager.setTopic(
-                    registry.getOrDefault(CatalystKeys.TOPIC_FORMAT)
-                        .replace("%players%", playerCount)
+                    registry[CatalystKeys.TOPIC_FORMAT]
+                        .replace("%players%", playerCount),
                 ).queue()
             }
         }
     }
 
-    init {
-        registry.whenLoaded { enableDiscordBot() }.register()
+    interface Scope {
+        val jdaService: JDAService
     }
 }
