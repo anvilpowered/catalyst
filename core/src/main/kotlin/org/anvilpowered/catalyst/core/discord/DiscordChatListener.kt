@@ -27,7 +27,6 @@ import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.common.command.withoutColor
 
 context(Registry.Scope, ChannelService.Scope, PlayerService)

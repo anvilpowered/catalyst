@@ -16,43 +16,35 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.common.service
+package org.anvilpowered.catalyst.core.chat
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.cacheddata.CachedMetaData
 import net.luckperms.api.context.ContextManager
 import net.luckperms.api.model.user.User
 import net.luckperms.api.model.user.UserManager
 import net.luckperms.api.query.QueryOptions
-import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.service.LuckpermsService
+import org.anvilpowered.anvil.core.user.PlayerService
+import java.util.UUID
 
-@Singleton
-class CommonLuckpermsService<TPlayer> @Inject constructor(
-    private val userService: UserService<TPlayer, TPlayer>
-) : LuckpermsService {
+context(PlayerService.Scope)
+class LuckpermsService {
 
     private val userManager: UserManager = LuckPermsProvider.get().userManager
     private val contextManager: ContextManager = LuckPermsProvider.get().contextManager
 
-    override fun cachedPlayerData(player: Any): CachedMetaData? {
-        val user = userManager.getUser(userService.getUUID(player as TPlayer)!!)
+    private fun cachedPlayerData(userId: UUID): CachedMetaData? {
+        val user = userManager.getUser(userId)
         return user?.cachedData?.getMetaData(queryOptions(user))
     }
 
-    override fun queryOptions(user: User): QueryOptions {
+    private fun queryOptions(user: User): QueryOptions {
         return contextManager.getQueryOptions(user).orElseGet { contextManager.staticQueryOptions }
     }
 
-    override fun prefix(player: Any): String = cachedPlayerData(player)?.prefix ?: ""
-    override fun suffix(player: Any): String = cachedPlayerData(player)?.suffix ?: ""
-    override fun chatColor(player: Any): String = cachedPlayerData(player)?.getMetaValue("chat-color") ?: ""
-    override fun nameColor(player: Any): String = cachedPlayerData(player)?.getMetaValue("name-color") ?: ""
-
-    override fun groupName(player: Any): String {
-        return userManager.getUser(userService.getUserName(player as TPlayer))?.primaryGroup ?: ""
-    }
+    fun prefix(userId: UUID): String = cachedPlayerData(userId)?.prefix ?: ""
+    fun suffix(userId: UUID): String = cachedPlayerData(userId)?.suffix ?: ""
+    fun chatColor(userId: UUID): String = cachedPlayerData(userId)?.getMetaValue("chat-color") ?: ""
+    fun nameColor(userId: UUID): String = cachedPlayerData(userId)?.getMetaValue("name-color") ?: ""
+    fun groupName(userId: UUID): String = userManager.getUser(userId)?.primaryGroup ?: ""
 }
-

@@ -28,8 +28,8 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FOOTER
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FORMAT
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_HEADER
-import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.api.service.TabService
+import org.anvilpowered.catalyst.core.chat.LuckpermsService
 
 @Singleton
 class CommonTabService<TPlayer> @Inject constructor(

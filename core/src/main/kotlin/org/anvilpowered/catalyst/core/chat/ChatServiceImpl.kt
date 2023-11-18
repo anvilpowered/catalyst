@@ -26,7 +26,6 @@ import org.anvilpowered.anvil.core.user.Player
 import org.anvilpowered.anvil.core.user.PlayerService
 import org.anvilpowered.anvil.core.user.hasPermissionSet
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.service.LuckpermsService
 import java.util.UUID
 
 context(ChannelService.Scope, LuckpermsService.Scope, Registry.Scope, PlayerService.Scope, Server.Scope)
