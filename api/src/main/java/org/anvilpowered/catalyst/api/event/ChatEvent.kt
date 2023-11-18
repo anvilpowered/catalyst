@@ -18,6 +18,6 @@
 package org.anvilpowered.catalyst.api.event
 
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.command.CommandSource
+import org.anvilpowered.anvil.core.user.Player
 
-class ChatEvent(val player: CommandSource, var rawMessage: String, val message: Component)
+class ChatEvent(val player: Player, val message: Component)

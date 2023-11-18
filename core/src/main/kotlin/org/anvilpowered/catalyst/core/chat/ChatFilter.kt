@@ -18,24 +18,21 @@
 
 package org.anvilpowered.catalyst.core.chat
 
+import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.service.ChatFilter
-import java.util.Collections
 import java.util.Locale
-import java.util.stream.Collectors
 
 context(Registry.Scope)
-class CommonChatFilter : ChatFilter {
+class ChatFilter {
 
-    override fun stripMessage(checkMessage: String): String {
+    private fun stripMessage(checkMessage: String): String {
         return checkMessage.lowercase(Locale.getDefault())
             .replace("[*()/.,;'#~^+\\-]".toRegex(), " ").replace("[0@]".toRegex(), "o")
             .replace("1".toRegex(), "i").replace("\\$".toRegex(), "s")
     }
 
-
-    override fun findSpacePositions(message: String, noSpaces: String): List<Int> {
+    private fun findSpacePositions(message: String, noSpaces: String): List<Int> {
         val spacePositions: MutableList<Int> = ArrayList()
         var regularIndex = 0
         for (noSpacesIndex in noSpaces.indices) {
@@ -48,9 +45,9 @@ class CommonChatFilter : ChatFilter {
         return spacePositions
     }
 
-    override fun findSwears(message: String, spacePositions: List<Int>): List<IntArray> {
-        val swearList: MutableList<IntArray> = ArrayList()
-        val exceptions = registry[CatalystKeys.CHAT_FILTER_EXCEPTIONS].stream().map { it.lowercase(Locale.getDefault()) }.collect(Collectors.toList())
+    private fun findSwears(message: String, spacePositions: List<Int>): List<Pair<Int, Int>> {
+        val swearList: MutableList<Pair<Int, Int>> = ArrayList()
+        val exceptions = registry[CatalystKeys.CHAT_FILTER_EXCEPTIONS].map { it.lowercase(Locale.getDefault()) }
         for (bannedWord in registry[CatalystKeys.CHAT_FILTER_SWEARS]) {
             if (message.contains(bannedWord) && !exceptions.contains(bannedWord)) {
                 var startIndex = message.indexOf(bannedWord)
@@ -59,16 +56,14 @@ class CommonChatFilter : ChatFilter {
                     val extraStartSpace = spacePositions.indexOf(startIndex - 1) + 1
                     var extraEndSpace = spacePositions.indexOf(endIndex)
                     if (spacePositions.containsAll(listOf(startIndex - 1, endIndex))) {
-                        val wordLocation = intArrayOf(startIndex + extraStartSpace, endIndex + extraEndSpace + 1)
-                        swearList.add(wordLocation)
+                        swearList.add(startIndex + extraStartSpace to endIndex + extraEndSpace + 1)
                     } else if ((spacePositions.contains(startIndex - 1) || startIndex == 0) &&
                         (endIndex == message.length - 1 || spacePositions.contains(endIndex))
                     ) {
                         if (endIndex == message.length - 1) {
                             extraEndSpace = spacePositions.size
                         }
-                        val wordLocation = intArrayOf(startIndex + extraStartSpace, endIndex + extraEndSpace + 1)
-                        swearList.add(wordLocation)
+                        swearList.add(startIndex + extraStartSpace to endIndex + extraEndSpace + 1)
                     }
                     startIndex = message.indexOf(bannedWord, startIndex + 1)
                 }
@@ -77,23 +72,25 @@ class CommonChatFilter : ChatFilter {
         return swearList
     }
 
-    override fun replaceSwears(message: String): String {
-        var message = message
-        val strippedMessage = stripMessage(message)
-        val noSpacesMessage = strippedMessage.replace(" ".toRegex(), "")
-        val spacePositions = findSpacePositions(strippedMessage, noSpacesMessage)
-        val swearPositions = findSwears(noSpacesMessage, spacePositions)
-        for (swearPosition in swearPositions) {
-            val swearStart = swearPosition[0]
-            val swearEnd = swearPosition[1]
-            val swearLength = swearEnd - swearStart
-            message = if (swearEnd >= message.length) {
-                message.substring(0, swearStart) + java.lang.String.join("", Collections.nCopies(swearLength, "*"))
-            } else {
-                (message.substring(0, swearStart)
-                    + java.lang.String.join("", Collections.nCopies(swearLength, "*")) + message.substring(swearEnd))
+    fun replaceSwears(message: Component): Component {
+        // TODO: Exceptions
+//        val rawMessage = PlainTextComponentSerializer.plainText().serialize(message)
+//        val strippedMessage = stripMessage(rawMessage)
+//        val noSpacesMessage = strippedMessage.replace(" ".toRegex(), "")
+//        val spacePositions = findSpacePositions(strippedMessage, noSpacesMessage)
+//        val swearPositions = findSwears(noSpacesMessage, spacePositions)
+
+        message.replaceText {
+            it.match(registry[CatalystKeys.CHAT_FILTER_SWEARS].joinToString("|"))
+            it.replacement { matchResult, builder ->
+                builder.append(Component.text("*".repeat(matchResult.end() - matchResult.start())))
+                builder.build()
             }
         }
         return message
+    }
+
+    interface Scope {
+        val chatFilter: ChatFilter
     }
 }

@@ -21,7 +21,7 @@ package org.anvilpowered.catalyst.core.chat.builder
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.user.Player
 import org.anvilpowered.anvil.core.user.PlayerService
 import org.anvilpowered.catalyst.api.config.ChatChannel
@@ -35,14 +35,13 @@ internal class ChatMessageBuilderImpl : ChatMessage.Builder {
 
     private var user: GameUser? = null
     private var player: Player? = null
-    private var message: String = ""
-    private var prefix: String = ""
-    private var suffix: String = ""
-    private var messageColor: String = ""
-    private var nameColor: String = ""
-    private var server: String = ""
     private var channel: ChatChannel? = null
-    private var hasColorPermission: Boolean = false
+    private var message: Component? = null
+    private var prefix: Component? = null
+    private var suffix: Component? = null
+    private var messageFormatOverride: Component? = null
+    private var nameFormatOverride: Component? = null
+    private var serverName: String = ""
 
     override fun user(user: GameUser): ChatMessage.Builder {
         player = requireNotNull(playerService[user.id]) { "User ${user.username} with id ${user.id} is not on the server!" }
@@ -55,168 +54,110 @@ internal class ChatMessageBuilderImpl : ChatMessage.Builder {
         return this
     }
 
-    override fun message(message: String): ChatMessage.Builder {
+    override fun message(message: Component): ChatMessage.Builder {
         this.message = message
         return this
     }
 
-    override fun prefix(prefix: String): ChatMessage.Builder {
+    override fun prefix(prefix: Component): ChatMessage.Builder {
         this.prefix = prefix
         return this
     }
 
-    override fun suffix(suffix: String): ChatMessage.Builder {
+    override fun suffix(suffix: Component): ChatMessage.Builder {
         this.suffix = suffix
         return this
     }
 
-    override fun messageColor(color: String): ChatMessage.Builder {
-        this.messageColor = color
+    override fun messageFormatOverride(format: Component?): ChatMessage.Builder {
+        this.messageFormatOverride = format
         return this
     }
 
-    override fun nameColor(nameColor: String): ChatMessage.Builder {
-        this.nameColor = nameColor
+    override fun nameFormatOverride(format: Component?): ChatMessage.Builder {
+        this.nameFormatOverride = format
         return this
     }
 
     override fun server(server: String): ChatMessage.Builder {
-        this.server = server
-        return this
-    }
-
-    override fun hasColorPermission(hasPermission: Boolean): ChatMessage.Builder {
-        this.hasColorPermission = hasPermission
+        this.serverName = server
         return this
     }
 
     private fun formatMessage(): Component? {
         val user = requireNotNull(user) { "User is null" }
+        val player = requireNotNull(player) { "Player is null" }
         val channel = requireNotNull(channel) { "Channel is null" }
-
-        val format = channel.format
-        val hover = channel.hoverMessage
-        val click = channel.click
+        val message = requireNotNull(message) { "Message is null" }
+        val prefix = requireNotNull(prefix) { "Prefix is null" }
+        val suffix = requireNotNull(suffix) { "Prefix is null" }
 
         // TODO: Check muted
         if (false) {
             return null
         }
 
-        val finalName = if (user.nickname.isNullOrEmpty()) {
-            "$nameColor${user.username}&r"
-        } else {
-            user.nickname + "&r"
+        val processedDisplayName: Component = channel.nameFormat.replaceText {
+            it.matchLiteral("%name%")
+            val nickname = user.nickname
+            if (nickname.isNullOrEmpty()) {
+                it.replacement(player.displayname)
+            } else {
+                it.replacement(nickname)
+            }
         }
 
-        // TODO: Clean this up
-        return if (hasColorPermission) {
-            Component.text()
-                .append(
-                    LegacyComponentSerializer.legacyAmpersand().deserialize(
-                        replacePlaceholders(
-                            message,
-                            prefix,
-                            user.username,
-                            finalName,
-                            suffix,
-                            server,
-                            format,
-                        ),
-                    ),
-                )
-                .hoverEvent(
-                    HoverEvent.showText(
-                        LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            replacePlaceholders(
-                                message,
-                                prefix,
-                                user.username,
-                                finalName,
-                                suffix,
-                                server,
-                                hover,
-                            ),
-                        ),
-                    ),
-                )
-                .clickEvent(
-                    ClickEvent.suggestCommand(
-                        replacePlaceholders(
-                            message,
-                            prefix,
-                            user.username,
-                            finalName,
-                            suffix,
-                            finalName,
-                            click,
-                        ),
-                    ),
-                )
-                .build()
-        } else {
-            Component.text()
-                .append(
-                    Component.text(
-                        replacePlaceholders(
-                            message,
-                            prefix,
-                            user.username,
-                            finalName,
-                            suffix,
-                            server,
-                            format,
-                        ),
-                    ),
-                )
-                .hoverEvent(
-                    HoverEvent.showText(
-                        Component.text(
-                            replacePlaceholders(
-                                message,
-                                prefix,
-                                user.username,
-                                finalName,
-                                suffix,
-                                server,
-                                hover,
-                            ),
-                        ),
-                    ),
-                )
-                .clickEvent(
-                    ClickEvent.suggestCommand(
-                        replacePlaceholders(
-                            message,
-                            prefix,
-                            user.username,
-                            finalName,
-                            suffix,
-                            finalName,
-                            click,
-                        ),
-                    ),
-                )
-                .build()
+        return Component.text()
+            .append(channel.messageFormat.replacePlaceholders(message, prefix, suffix, processedDisplayName, serverName))
+            .hoverEvent(
+                HoverEvent.showText(channel.hoverFormat.replacePlaceholders(message, prefix, suffix, processedDisplayName, serverName)),
+            ).clickEvent(
+                ClickEvent.suggestCommand(
+                    channel.clickFormat.replacePlaceholders(message, prefix, suffix, processedDisplayName, serverName),
+                ),
+            )
+            .build()
+    }
+
+    private fun Component.replacePlaceholders(
+        message: Component,
+        prefix: Component,
+        suffix: Component,
+        displayName: Component,
+        serverName: String,
+    ): Component {
+        return replaceText {
+            it.matchLiteral("%server%")
+            it.replacement(serverName)
+        }.replaceText {
+            it.matchLiteral("%prefix%")
+            it.replacement(prefix)
+        }.replaceText {
+            it.matchLiteral("%suffix%")
+            it.replacement(suffix)
+        }.replaceText {
+            it.matchLiteral("%user%")
+            it.replacement(displayName)
+        }.replaceText {
+            it.matchLiteral("%message%")
+            it.replacement(message)
         }
     }
 
-    private fun replacePlaceholders(
-        rawMessage: String,
-        prefix: String,
-        rawUserName: String,
-        userName: String,
-        suffix: String,
-        server: String,
-        format: String,
+    private fun String.replacePlaceholders(
+        message: Component,
+        prefix: Component,
+        suffix: Component,
+        displayName: Component,
+        serverName: String,
     ): String {
-        // TODO: rawUserName?
-        return format
-            .replace("%server%", server)
-            .replace("%prefix%", prefix)
-            .replace("%player%", userName)
-            .replace("%suffix%", suffix)
-            .replace("%message%", rawMessage)
+        // TODO: Keep colors?
+        fun Component.toPlain(): String = PlainTextComponentSerializer.plainText().serialize(this)
+        return replace("%server%", serverName)
+            .replace("%prefix%", prefix.toPlain())
+            .replace("%suffix%", suffix.toPlain())
+            .replace("%user%", displayName.toPlain())
+            .replace("%message%", message.toPlain())
     }
 
     override fun build(): ChatMessage {

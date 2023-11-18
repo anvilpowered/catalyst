@@ -18,6 +18,7 @@
 
 package org.anvilpowered.catalyst.velocity.listener
 
+import com.google.common.eventbus.EventBus
 import com.google.inject.Inject
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.event.ResultedEvent
@@ -49,7 +50,6 @@ import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
 import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.api.plugin.PluginMessages
-import org.anvilpowered.catalyst.api.service.EventService
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
 import java.util.UUID
 
@@ -58,7 +58,7 @@ class VelocityListener @Inject constructor(
     private val chatService: ChatService<Player, CommandSource>,
     private val proxyServer: ProxyServer,
     private val registry: Registry,
-    private val eventService: EventService,
+    private val eventBus: EventBus,
     private val pluginMessages: PluginMessages,
     private val broadcastService: BroadcastService,
     private val memberManager: MemberManager,
@@ -69,7 +69,7 @@ class VelocityListener @Inject constructor(
         if (event.loginStatus == DisconnectEvent.LoginStatus.PRE_SERVER_JOIN) {
             return
         }
-        eventService.post(LeaveEvent(event.player))
+        eventBus.post(LeaveEvent(event.player))
     }
 
     @Subscribe
@@ -83,7 +83,7 @@ class VelocityListener @Inject constructor(
                     } else {
                         val virtualHost = player.virtualHost
                         if (virtualHost.isPresent) {
-                            eventService.post(JoinEvent(player, virtualHost.get().hostName, player.uniqueId))
+                            eventBus.post(JoinEvent(player, virtualHost.get().hostName, player.uniqueId))
                         }
                     }
                 }.join()
@@ -136,7 +136,7 @@ class VelocityListener @Inject constructor(
                         if (memberManager.primaryComponent.checkMuted(member)) {
                             player.sendMessage(Identity.nil(), pluginMessages.getMuteMessage(member.muteReason, member.muteEndUtc))
                         } else {
-                            eventService.post(ChatEvent(player, e.message, Component.text(e.message), player.uniqueId))
+                            eventBus.post(ChatEvent(player, e.message, Component.text(e.message), player.uniqueId))
                         }
                     }
             }
@@ -150,7 +150,7 @@ class VelocityListener @Inject constructor(
             is DiscordCommandSource -> "Discord"
             else -> (e.commandSource as Player).username
         }
-        eventService.post(CommandEvent(e.commandSource, sourceName, e.command, e.result.isAllowed))
+        eventBus.post(CommandEvent(e.commandSource, sourceName, e.command, e.result.isAllowed))
     }
 
     @Subscribe

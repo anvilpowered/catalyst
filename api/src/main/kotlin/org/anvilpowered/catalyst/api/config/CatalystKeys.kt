@@ -20,6 +20,7 @@
 
 package org.anvilpowered.catalyst.api.config
 
+import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.config.Key
 import org.anvilpowered.anvil.core.config.KeyNamespace
 
@@ -30,11 +31,11 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val CHAT_FILTER_SWEARS by Key.building {
-        fallback(mutableListOf("fuck", "shit", "ass"))
+        fallback(listOf("fuck", "shit", "ass"))
     }
 
     val CHAT_FILTER_EXCEPTIONS by Key.building {
-        fallback(mutableListOf("assassin", "jkass"))
+        fallback(listOf("assassin", "jkass"))
     }
 
     val FIRST_JOIN by Key.building {
@@ -333,22 +334,20 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
                 "global" to ChatChannel.build {
                     id("global")
                     alwaysVisible(true)
-                    click("/msg %player%")
+                    clickFormat("/msg %player%")
                     discordChannel("123456789")
-                    format("[Global] %player% : %message%")
-                    hoverMessage("Click here to message %player%")
+                    messageFormat(Component.text("[Global] %player% : %message%"))
+                    hoverFormat(Component.text("Click to message %player%"))
                     passThrough(false)
-                    servers(mutableListOf("lobby", "minigames"))
                 },
                 "admin" to ChatChannel.build {
                     id("admin")
                     alwaysVisible(true)
-                    click("/msg %player%")
+                    clickFormat("/msg %player%")
                     discordChannel("123456789")
-                    format("[Admin Chat] %player% : %message%")
-                    hoverMessage("Click here to message %player%")
+                    messageFormat(Component.text("[Admin Chat] %player% : %message%"))
+                    hoverFormat(Component.text("Click to message %player%"))
                     passThrough(false)
-                    servers(mutableListOf("lobby", "minigames"))
                 },
             ),
         )

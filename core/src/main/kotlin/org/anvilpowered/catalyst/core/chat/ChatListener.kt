@@ -18,48 +18,40 @@
 package org.anvilpowered.catalyst.core.chat
 
 import com.google.common.eventbus.Subscribe
-import com.google.inject.Inject
-import org.anvilpowered.anvil.api.registry.Registry
-import org.anvilpowered.anvil.api.server.LocationService
-import org.anvilpowered.anvil.api.util.PermissionService
-import org.anvilpowered.anvil.api.util.UserService
+import kotlinx.coroutines.runBlocking
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.anvil.core.user.hasPermissionNotSet
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.event.ChatEvent
-import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.ChatFilter
+import org.anvilpowered.catalyst.core.db.RepositoryScope
+import org.anvilpowered.catalyst.core.user.LocationScope
 
-class ChatListener<TPlayer, TCommandSource> @Inject constructor(
-    private val chatService: ChatService<TPlayer, TCommandSource>,
-    private val permissionService: PermissionService,
-    private val chatFilter: ChatFilter,
-    private val registry: Registry,
-    private val userService: UserService<TPlayer, TPlayer>,
-    private val channelService: ChannelService<TPlayer>,
-    private val luckpermsService: LuckpermsService,
-    private val locationService: LocationService,
-) {
+context(ChatService.Scope, Registry.Scope, PlayerService.Scope, ChannelService.Scope, LuckpermsService.Scope, ChatFilter.Scope,
+RepositoryScope, LocationScope)
+class ChatListener {
 
     @Subscribe
-    fun onPlayerChat(event: ChatEvent) {
-        val playerUUID = userService.getUUID(event.player)
-        val player = userService.getPlayer(playerUUID!!) ?: return
-        var message = event.rawMessage
-        message = chatService.checkPlayerName(player, message)
-        if (!permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))
-            && registry.get(CatalystKeys.CHAT_FILTER_ENABLED)
+    fun onPlayerChat(event: ChatEvent) = runBlocking {
+        val player = event.player
+        var message = chatService.highlightPlayerNames(player, event.message)
+        if (player.hasPermissionNotSet(registry[CatalystKeys.LANGUAGE_ADMIN_PERMISSION])
+            && registry[CatalystKeys.CHAT_FILTER_ENABLED]
         ) {
-            event.rawMessage = chatFilter.replaceSwears(message)
+            message = chatFilter.replaceSwears(message)
         }
-        val chatMessage = ChatMessage.builder<TPlayer>()
-            .userId(userService.getUUID(player)!!)
-            .message(event.rawMessage)
-            .prefix(luckpermsService.prefix(player))
-            .suffix(luckpermsService.suffix(player))
-            .messageColor(luckpermsService.chatColor(player))
-            .nameColor(luckpermsService.nameColor(player))
-            .userName(userService.getUserName(player))
-            .server(locationService.getServer(playerUUID)?.name ?: "null")
-            .channel(channelService.fromUUID(playerUUID))
-            .hasColorPermission(permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.CHAT_COLOR_PERMISSION)))
+
+        val channel = channelService.getForPlayer(player.id)
+
+        val chatMessage = ChatMessage.builder()
+            .userId(player.id)
+            .message(message)
+            .prefix(luckpermsService.prefix(player.id))
+            .suffix(luckpermsService.suffix(player.id))
+            .messageFormatOverride(luckpermsService.messageFormat(player.id, channel.id))
+            .nameFormatOverride(luckpermsService.nameFormat(player.id, channel.id))
+            .server(player.serverName)
+            .channel(channel)
             .build()
         chatService.sendChatMessage(chatMessage)
     }

@@ -19,6 +19,9 @@
 package org.anvilpowered.catalyst.core.chat
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import org.anvilpowered.anvil.core.user.PlayerService
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.GameUser
@@ -42,13 +45,18 @@ class ChatMessage(
          * Use [Builder.channelId] if you only have a channelId.
          */
         fun channel(channel: ChatChannel): Builder
-        fun message(message: String): Builder
-        fun prefix(prefix: String): Builder
-        fun suffix(suffix: String): Builder
-        fun messageColor(color: String): Builder
-        fun nameColor(nameColor: String): Builder
+
+        fun message(message: Component): Builder
+        fun prefix(prefix: Component): Builder
+        fun suffix(suffix: Component): Builder
+
+        /**
+         * Override channel-specific message format.
+         */
+        fun messageFormatOverride(format: Component?): Builder
+        fun nameFormatOverride(format: Component?): Builder
+
         fun server(server: String): Builder
-        fun hasColorPermission(hasPermission: Boolean): Builder
         fun build(): ChatMessage
     }
 

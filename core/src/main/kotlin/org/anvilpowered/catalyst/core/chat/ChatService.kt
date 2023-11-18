@@ -32,4 +32,8 @@ interface ChatService {
     fun highlightPlayerNames(sender: Player, message: Component): Component
     fun toggleChatForPlayer(player: Player)
     fun isDisabledForPlayer(player: Player): Boolean
+
+    interface Scope {
+        val chatService: ChatService
+    }
 }

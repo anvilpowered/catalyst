@@ -16,16 +16,17 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.core.chat.builder
+package org.anvilpowered.catalyst.api.chat.builder
 
+import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.config.ChatChannel
 
 internal class ChatChannelBuilderImpl: ChatChannel.Builder {
     private var id: String = ""
-    private var format: String = ""
-    private var hoverMessage: String = ""
-    private var click: String = ""
-    private var servers: List<String> = listOf()
+    private var nameFormat: Component = Component.text("%name%")
+    private var messageFormat: Component = Component.text("%message%")
+    private var hoverFormat: Component = Component.text("%message%")
+    private var clickFormat: String = ""
     private var alwaysVisible: Boolean = false
     private var passthrough: Boolean = false
     private var discordChannel: String = ""
@@ -35,28 +36,23 @@ internal class ChatChannelBuilderImpl: ChatChannel.Builder {
         return this
     }
 
-    override fun format(format: String): ChatChannel.Builder {
-        this.format = format
+    override fun nameFormat(nameFormat: Component): ChatChannel.Builder {
+        this.nameFormat = nameFormat
         return this
     }
 
-    override fun hoverMessage(hoverMessage: String): ChatChannel.Builder {
-        this.hoverMessage = hoverMessage
+    override fun messageFormat(messageFormat: Component): ChatChannel.Builder {
+        this.messageFormat = messageFormat
         return this
     }
 
-    override fun click(click: String): ChatChannel.Builder {
-        this.click = click
+    override fun hoverFormat(hoverFormat: Component): ChatChannel.Builder {
+        this.hoverFormat = hoverFormat
         return this
     }
 
-    override fun servers(servers: List<String>): ChatChannel.Builder {
-        this.servers = servers
-        return this
-    }
-
-    override fun addServer(server: String): ChatChannel.Builder {
-        this.servers = this.servers.plus(server)
+    override fun clickFormat(clickFormat: String): ChatChannel.Builder {
+        this.clickFormat = clickFormat
         return this
     }
 
@@ -75,7 +71,6 @@ internal class ChatChannelBuilderImpl: ChatChannel.Builder {
         return this
     }
 
-    override fun build(): ChatChannel {
-        return ChatChannel(id, format, hoverMessage, click, servers, alwaysVisible, passthrough, discordChannel)
-    }
+    override fun build(): ChatChannel =
+        ChatChannel(id, nameFormat, messageFormat, hoverFormat, clickFormat, alwaysVisible, passthrough, discordChannel)
 }

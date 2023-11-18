@@ -18,33 +18,31 @@
 
 package org.anvilpowered.catalyst.api.config
 
-import org.anvilpowered.catalyst.api.builder.ChatChannelBuilderImpl
-import kotlin.experimental.ExperimentalTypeInference
+import net.kyori.adventure.text.Component
+import org.anvilpowered.catalyst.api.chat.builder.ChatChannelBuilderImpl
 
 data class ChatChannel(
-    var id: String,
-    var format: String,
-    var hoverMessage: String,
-    var click: String,
-    var servers: List<String>,
-    var alwaysVisible: Boolean,
-    var passthrough: Boolean,
-    var discordChannel: String
+    val id: String,
+    val nameFormat: Component,
+    val messageFormat: Component,
+    val hoverFormat: Component,
+    val clickFormat: String,
+    val alwaysVisible: Boolean,
+    val passthrough: Boolean,
+    val discordChannel: String,
 ) {
 
     interface Builder {
 
         fun id(id: String): Builder
 
-        fun format(format: String): Builder
+        fun nameFormat(nameFormat: Component): Builder
 
-        fun hoverMessage(hoverMessage: String): Builder
+        fun messageFormat(messageFormat: Component): Builder
 
-        fun click(click: String): Builder
+        fun hoverFormat(hoverFormat: Component): Builder
 
-        fun servers(servers: List<String>): Builder
-
-        fun addServer(server: String): Builder
+        fun clickFormat(clickFormat: String): Builder
 
         fun alwaysVisible(visible: Boolean): Builder
 
@@ -56,13 +54,7 @@ data class ChatChannel(
     }
 
     companion object {
-        fun builder(): Builder {
-            return ChatChannelBuilderImpl()
-        }
-
-        @OptIn(ExperimentalTypeInference::class)
-        inline fun build(@BuilderInference block: Builder.() -> Unit): ChatChannel {
-            return builder().apply(block).build()
-        }
+        fun builder(): Builder = ChatChannelBuilderImpl()
+        inline fun build(block: Builder.() -> Unit): ChatChannel = builder().apply(block).build()
     }
 }

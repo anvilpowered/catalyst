@@ -18,6 +18,8 @@
 
 package org.anvilpowered.catalyst.core.chat
 
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.cacheddata.CachedMetaData
 import net.luckperms.api.context.ContextManager
@@ -30,6 +32,8 @@ import java.util.UUID
 context(PlayerService.Scope)
 class LuckpermsService {
 
+    private fun String.toMiniComponent(): Component = MiniMessage.miniMessage().deserialize(this)
+
     private val userManager: UserManager = LuckPermsProvider.get().userManager
     private val contextManager: ContextManager = LuckPermsProvider.get().contextManager
 
@@ -38,13 +42,22 @@ class LuckpermsService {
         return user?.cachedData?.getMetaData(queryOptions(user))
     }
 
-    private fun queryOptions(user: User): QueryOptions {
-        return contextManager.getQueryOptions(user).orElseGet { contextManager.staticQueryOptions }
-    }
+    private fun queryOptions(user: User): QueryOptions =
+        contextManager.getQueryOptions(user).orElseGet { contextManager.staticQueryOptions }
 
-    fun prefix(userId: UUID): String = cachedPlayerData(userId)?.prefix ?: ""
-    fun suffix(userId: UUID): String = cachedPlayerData(userId)?.suffix ?: ""
-    fun chatColor(userId: UUID): String = cachedPlayerData(userId)?.getMetaValue("chat-color") ?: ""
-    fun nameColor(userId: UUID): String = cachedPlayerData(userId)?.getMetaValue("name-color") ?: ""
-    fun groupName(userId: UUID): String = userManager.getUser(userId)?.primaryGroup ?: ""
+    fun prefix(userId: UUID): Component = cachedPlayerData(userId)?.prefix?.toMiniComponent() ?: Component.empty()
+    fun suffix(userId: UUID): Component = cachedPlayerData(userId)?.suffix?.toMiniComponent() ?: Component.empty()
+    fun group(userId: UUID): Component = cachedPlayerData(userId)?.primaryGroup?.toMiniComponent() ?: Component.empty()
+
+    fun messageFormat(userId: UUID, channelId: String): Component? =
+        cachedPlayerData(userId)?.getMetaValue("channel.$channelId.message-format")
+            ?.let { MiniMessage.miniMessage().deserialize(it) }
+
+    fun nameFormat(userId: UUID, channelId: String): Component? =
+        cachedPlayerData(userId)?.getMetaValue("channel.$channelId.name-format")
+            ?.let { MiniMessage.miniMessage().deserialize(it) }
+
+    interface Scope {
+        val luckpermsService: LuckpermsService
+    }
 }
