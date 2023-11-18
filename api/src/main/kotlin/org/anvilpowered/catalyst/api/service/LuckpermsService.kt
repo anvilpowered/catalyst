@@ -21,6 +21,7 @@ package org.anvilpowered.catalyst.api.service
 import net.luckperms.api.cacheddata.CachedMetaData
 import net.luckperms.api.model.user.User
 import net.luckperms.api.query.QueryOptions
+import org.anvilpowered.anvil.core.user.Player
 
 interface LuckpermsService {
 
@@ -28,13 +29,17 @@ interface LuckpermsService {
 
     fun queryOptions(user: User): QueryOptions
 
-    fun prefix(player: Any): String
+    fun prefix(player: Player): String
 
-    fun suffix(player: Any): String
+    fun suffix(player: Player): String
 
-    fun chatColor(player: Any): String
+    fun chatColor(player: Player): String
 
-    fun nameColor(player: Any): String
+    fun nameColor(player: Player): String
 
-    fun groupName(player: Any): String
+    fun groupName(player: Player): String
+
+    interface Scope {
+        val luckpermsService: LuckpermsService
+    }
 }

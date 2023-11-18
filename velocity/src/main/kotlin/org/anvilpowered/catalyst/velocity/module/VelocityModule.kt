@@ -25,9 +25,9 @@ import org.anvilpowered.anvil.api.misc.bind
 import org.anvilpowered.anvil.api.misc.to
 import org.anvilpowered.catalyst.api.discord.DiscordCommandService
 import org.anvilpowered.catalyst.api.member.MemberManager
-import org.anvilpowered.catalyst.api.chat.BroadcastService
-import org.anvilpowered.catalyst.api.chat.ChannelService
-import org.anvilpowered.catalyst.api.chat.ChatService
+import org.anvilpowered.catalyst.core.chat.BroadcastService
+import org.anvilpowered.catalyst.core.chat.ChannelService
+import org.anvilpowered.catalyst.core.chat.ChatService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
 import org.anvilpowered.catalyst.core.chat.PrivateMessageService
 import org.anvilpowered.catalyst.api.service.StaffListService
@@ -36,8 +36,8 @@ import org.anvilpowered.catalyst.core.discord.JDAService
 import org.anvilpowered.catalyst.core.discord.WebhookSender
 import org.anvilpowered.catalyst.common.member.CommonMemberManager
 import org.anvilpowered.catalyst.common.module.CommonModule
-import org.anvilpowered.catalyst.core.chat.CommonChannelService
-import org.anvilpowered.catalyst.core.chat.CommonChatService
+import org.anvilpowered.catalyst.core.chat.ChannelServiceImpl
+import org.anvilpowered.catalyst.core.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
 import org.anvilpowered.catalyst.common.service.CommonLuckpermsService
 import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService
@@ -52,8 +52,8 @@ class VelocityModule : CommonModule("plugins") {
             bind<BroadcastService>().to<VelocityBroadcastService>()
             bind<DiscordCommandService>().to<VelocityDiscordCommandService>()
             bind<MemberManager>().to<CommonMemberManager<Player>>()
-            bind<ChannelService<Player>>().to<CommonChannelService<Player>>()
-            bind<ChatService<Player, CommandSource>>().to<CommonChatService<Player, CommandSource>>()
+            bind<ChannelService<Player>>().to<ChannelServiceImpl<Player>>()
+            bind<ChatService<Player, CommandSource>>().to<ChatServiceImpl<Player, CommandSource>>()
             bind<PrivateMessageService>().to<CommonPrivateMessageService<Player>>()
             bind<StaffListService>().to<CommonStaffListService<Player>>()
             bind<TabService<Player>>().to<CommonTabService<Player>>()

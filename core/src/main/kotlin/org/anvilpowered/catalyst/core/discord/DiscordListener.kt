@@ -29,7 +29,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.command.CommandExecutor
 import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.core.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.core.CatalystApi
 

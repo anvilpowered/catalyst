@@ -20,7 +20,6 @@ package org.anvilpowered.catalyst.core.chat
 
 import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.GameUser
 import org.anvilpowered.catalyst.core.chat.builder.ChatMessageBuilderImpl
@@ -29,7 +28,7 @@ import java.util.UUID
 
 // Utility class to construct a chat message and format it
 class ChatMessage(
-    val uuid: UUID,
+    val userId: UUID,
     val component: Component,
 ) {
 

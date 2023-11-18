@@ -39,9 +39,9 @@ import net.kyori.adventure.identity.Identity
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.catalyst.api.chat.BroadcastService
-import org.anvilpowered.catalyst.api.chat.ChannelService
-import org.anvilpowered.catalyst.api.chat.ChatService
+import org.anvilpowered.catalyst.core.chat.BroadcastService
+import org.anvilpowered.catalyst.core.chat.ChannelService
+import org.anvilpowered.catalyst.core.chat.ChatService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.event.CommandEvent

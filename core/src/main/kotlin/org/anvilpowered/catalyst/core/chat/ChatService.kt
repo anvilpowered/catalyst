@@ -16,27 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.chat
+package org.anvilpowered.catalyst.core.chat
 
+import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.user.Player
-import org.anvilpowered.catalyst.api.config.ChatChannel
 import java.util.UUID
 
-interface ChannelService {
+interface ChatService {
 
-    val defaultChannel: ChatChannel
-
-    fun get(channelId: String): ChatChannel?
-
-    fun getForPlayer(playerId: UUID): ChatChannel
-
-    fun getPlayers(channelId: String): Sequence<Player>
-
-    fun switch(userUUID: UUID, channelId: String)
-
-    fun moveUsersToChannel(sourceChannel: String, targetChannel: String)
-
-    interface Scope {
-        val channelService: ChannelService
-    }
+    suspend fun sendMessageToChannel(channelId: String, message: Component, userId: UUID)
+    suspend fun sendChatMessage(message: ChatMessage)
+    fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component
+    fun unIgnore(playerUUID: UUID, targetPlayerUUID: UUID): Component
+    fun isIgnored(playerUUID: UUID, targetPlayerUUID: UUID): Boolean
+    fun highlightPlayerNames(sender: Player, message: Component): Component
+    fun toggleChatForPlayer(player: Player)
+    fun isDisabledForPlayer(player: Player): Boolean
 }

@@ -21,13 +21,12 @@ package org.anvilpowered.catalyst.core.chat
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.user.Player
 import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import java.util.UUID
 
 context(Registry.Scope, PlayerService.Scope)
-class CommonChannelService : ChannelService {
+class ChannelServiceImpl : ChannelService {
     private var playerChannelMapping = mutableMapOf<UUID, String>()
 
     private var defaultChannelId = registry[CatalystKeys.CHAT_DEFAULT_CHANNEL]

@@ -19,11 +19,9 @@ package org.anvilpowered.catalyst.core.discord
 
 import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.server.LocationService
-import org.anvilpowered.anvil.api.util.PermissionService
-import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.core.chat.ChannelService
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent

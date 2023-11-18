@@ -16,27 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.chat
+package org.anvilpowered.catalyst.core.chat
 
-import net.kyori.adventure.text.Component
-import org.anvilpowered.catalyst.api.ChatMessage
-import org.anvilpowered.catalyst.api.user.GameUser
+import org.anvilpowered.anvil.core.user.Player
+import org.anvilpowered.catalyst.api.config.ChatChannel
 import java.util.UUID
-import java.util.concurrent.CompletableFuture
 
-interface ChatService {
+interface ChannelService {
 
-    fun sendMessageToChannel(
-        channelId: String,
-        message: Component,
-        userUUID: UUID,
-    ): CompletableFuture<Void>
+    val defaultChannel: ChatChannel
 
-    fun sendChatMessage(message: ChatMessage)
-    fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component
-    fun unIgnore(playerUUID: UUID, targetPlayerUUID: UUID): Component
-    fun isIgnored(playerUUID: UUID, targetPlayerUUID: UUID): Boolean
-    fun checkPlayerName(sender: GameUser, message: String): String
-    fun toggleChatForUser(player: GameUser)
-    fun isDisabledForUser(player: GameUser): Boolean
+    fun get(channelId: String): ChatChannel?
+
+    fun getForPlayer(playerId: UUID): ChatChannel
+
+    fun getPlayers(channelId: String): Sequence<Player>
+
+    fun switch(userUUID: UUID, channelId: String)
+
+    fun moveUsersToChannel(sourceChannel: String, targetChannel: String)
+
+    interface Scope {
+        val channelService: ChannelService
+    }
 }

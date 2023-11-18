@@ -22,7 +22,7 @@ import com.google.inject.Inject
 import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.identity.Identity
 import net.kyori.adventure.text.Component
-import org.anvilpowered.catalyst.api.chat.BroadcastService
+import org.anvilpowered.catalyst.core.chat.BroadcastService
 
 class VelocityBroadcastService @Inject constructor(
   private val proxyServer: ProxyServer

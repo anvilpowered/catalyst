@@ -25,7 +25,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.core.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

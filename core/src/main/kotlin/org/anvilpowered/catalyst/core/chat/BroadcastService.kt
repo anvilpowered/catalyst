@@ -16,7 +16,7 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.chat
+package org.anvilpowered.catalyst.core.chat
 
 import net.kyori.adventure.text.Component
 
