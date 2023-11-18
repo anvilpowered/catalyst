@@ -29,7 +29,7 @@ import org.anvilpowered.catalyst.api.chat.BroadcastService
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.ChatService
 import org.anvilpowered.catalyst.api.service.LuckpermsService
-import org.anvilpowered.catalyst.api.service.PrivateMessageService
+import org.anvilpowered.catalyst.core.chat.PrivateMessageService
 import org.anvilpowered.catalyst.api.service.StaffListService
 import org.anvilpowered.catalyst.api.service.TabService
 import org.anvilpowered.catalyst.core.discord.JDAService

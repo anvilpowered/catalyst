@@ -26,7 +26,7 @@ import org.anvilpowered.anvil.api.misc.sendTo
 import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.registry.CatalystKeys.PRIVATE_MESSAGE_FORMAT
-import org.anvilpowered.catalyst.api.service.PrivateMessageService
+import org.anvilpowered.catalyst.core.chat.PrivateMessageService
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 

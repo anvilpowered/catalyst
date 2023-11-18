@@ -16,10 +16,11 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.service
+package org.anvilpowered.catalyst.core.chat
 
 import net.kyori.adventure.text.Component
-import org.anvilpowered.catalyst.api.builder.PrivateMessageBuilderImpl
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.core.chat.builder.PrivateMessageBuilderImpl
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
@@ -35,8 +36,8 @@ interface PrivateMessageService {
     class Message(
         val sourceMessage: Component,
         val recipientMessage: Component,
-        val socialSpyMessage: Component
-        ) {
+        val socialSpyMessage: Component,
+    ) {
 
         interface Builder {
             fun source(source: String): Builder
@@ -46,9 +47,8 @@ interface PrivateMessageService {
         }
 
         companion object {
-            fun builder(): Builder {
-                return PrivateMessageBuilderImpl()
-            }
+            context(Registry.Scope)
+            fun builder(): Builder = PrivateMessageBuilderImpl()
         }
     }
 }

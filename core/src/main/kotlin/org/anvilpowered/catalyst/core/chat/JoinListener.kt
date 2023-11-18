@@ -26,7 +26,7 @@ import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.BroadcastService
-import org.anvilpowered.catalyst.api.service.PrivateMessageService
+import org.anvilpowered.catalyst.core.chat.PrivateMessageService
 import org.anvilpowered.catalyst.api.service.StaffListService
 import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger

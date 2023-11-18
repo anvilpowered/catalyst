@@ -16,7 +16,7 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.builder
+package org.anvilpowered.catalyst.core.chat.builder
 
 import org.anvilpowered.catalyst.api.config.ChatChannel
 

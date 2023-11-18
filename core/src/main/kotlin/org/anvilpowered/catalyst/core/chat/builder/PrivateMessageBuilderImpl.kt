@@ -16,24 +16,21 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.api.builder
+package org.anvilpowered.catalyst.core.chat.builder
 
-import com.google.inject.Inject
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.anvilpowered.anvil.api.registry.Registry
+import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.service.PrivateMessageService
+import org.anvilpowered.catalyst.core.chat.PrivateMessageService
 
+context(Registry.Scope)
 internal class PrivateMessageBuilderImpl : PrivateMessageService.Message.Builder {
 
-    @Inject
-    private lateinit var registry: Registry
-
-    var source: String = ""
-    var recipient: String = ""
-    var rawMessage: String = ""
+    private var source: String = ""
+    private var recipient: String = ""
+    private var rawMessage: String = ""
 
     override fun source(source: String): PrivateMessageService.Message.Builder {
         this.source = source
@@ -52,10 +49,10 @@ internal class PrivateMessageBuilderImpl : PrivateMessageService.Message.Builder
 
     private fun formatMessage(source: String, recipient: String, rawMessage: String): Component {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(
-            registry.getOrDefault(CatalystKeys.PRIVATE_MESSAGE_FORMAT)
+            registry[CatalystKeys.PRIVATE_MESSAGE_FORMAT]
                 .replace("%sender%", source)
                 .replace("%recipient%", recipient)
-                .replace("%message%", rawMessage.trim { it <= ' ' })
+                .replace("%message%", rawMessage.trim { it <= ' ' }),
         )
     }
 
@@ -75,7 +72,7 @@ internal class PrivateMessageBuilderImpl : PrivateMessageService.Message.Builder
         return PrivateMessageService.Message(
             formatMessage("Me", recipient, rawMessage),
             formatMessage(source, "Me", rawMessage),
-            formatSocialSpy(source, recipient, rawMessage)
+            formatSocialSpy(source, recipient, rawMessage),
         )
     }
 }
