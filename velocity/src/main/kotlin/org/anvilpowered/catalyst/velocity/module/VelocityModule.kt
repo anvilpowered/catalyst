@@ -28,7 +28,6 @@ import org.anvilpowered.catalyst.api.member.MemberManager
 import org.anvilpowered.catalyst.core.chat.BroadcastService
 import org.anvilpowered.catalyst.core.chat.ChannelService
 import org.anvilpowered.catalyst.core.chat.ChatService
-import org.anvilpowered.catalyst.core.chat.PrivateMessageService
 import org.anvilpowered.catalyst.api.service.StaffListService
 import org.anvilpowered.catalyst.api.service.TabService
 import org.anvilpowered.catalyst.core.discord.JDAService
@@ -39,7 +38,7 @@ import org.anvilpowered.catalyst.core.chat.ChannelServiceImpl
 import org.anvilpowered.catalyst.core.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
 import org.anvilpowered.catalyst.core.chat.LuckpermsService
-import org.anvilpowered.catalyst.common.service.CommonPrivateMessageService
+import org.anvilpowered.catalyst.core.chat.pm.PrivateMessageService
 import org.anvilpowered.catalyst.common.service.CommonStaffListService
 import org.anvilpowered.catalyst.common.service.CommonTabService
 import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService
@@ -53,7 +52,7 @@ class VelocityModule : CommonModule("plugins") {
             bind<MemberManager>().to<CommonMemberManager<Player>>()
             bind<ChannelService<Player>>().to<ChannelServiceImpl<Player>>()
             bind<ChatService<Player, CommandSource>>().to<ChatServiceImpl<Player, CommandSource>>()
-            bind<PrivateMessageService>().to<CommonPrivateMessageService<Player>>()
+            bind<PrivateMessageService>().to<PrivateMessageService<Player>>()
             bind<StaffListService>().to<CommonStaffListService<Player>>()
             bind<TabService<Player>>().to<CommonTabService<Player>>()
             bind<LuckpermsService>().to<LuckpermsService<Player>>()

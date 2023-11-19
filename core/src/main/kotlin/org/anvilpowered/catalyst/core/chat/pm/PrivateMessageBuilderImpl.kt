@@ -16,43 +16,43 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.core.chat.builder
+package org.anvilpowered.catalyst.core.chat.pm
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.anvil.core.user.Player
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.core.chat.PrivateMessageService
 
 context(Registry.Scope)
-internal class PrivateMessageBuilderImpl : PrivateMessageService.Message.Builder {
+internal class PrivateMessageBuilderImpl : PrivateMessage.Builder {
 
-    private var source: String = ""
-    private var recipient: String = ""
-    private var rawMessage: String = ""
+    private var source: Player? = null
+    private var recipient: Player? = null
+    private var message: Component? = null
 
-    override fun source(source: String): PrivateMessageService.Message.Builder {
+    override fun source(source: Player): PrivateMessage.Builder {
         this.source = source
         return this
     }
 
-    override fun recipient(recipient: String): PrivateMessageService.Message.Builder {
+    override fun recipient(recipient: Player): PrivateMessage.Builder {
         this.recipient = recipient
         return this
     }
 
-    override fun rawMessage(rawMessage: String): PrivateMessageService.Message.Builder {
-        this.rawMessage = rawMessage
+    override fun message(message: Component): PrivateMessage.Builder {
+        this.message = message
         return this
     }
 
-    private fun formatMessage(source: String, recipient: String, rawMessage: String): Component {
+    private fun formatMessage(source: Player, recipient: Player, message: Component): Component {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(
             registry[CatalystKeys.PRIVATE_MESSAGE_FORMAT]
                 .replace("%sender%", source)
                 .replace("%recipient%", recipient)
-                .replace("%message%", rawMessage.trim { it <= ' ' }),
+                .replace("%message%", message.trim { it <= ' ' }),
         )
     }
 
@@ -68,11 +68,11 @@ internal class PrivateMessageBuilderImpl : PrivateMessageService.Message.Builder
             .build()
     }
 
-    override fun build(): PrivateMessageService.Message {
-        return PrivateMessageService.Message(
-            formatMessage("Me", recipient, rawMessage),
-            formatMessage(source, "Me", rawMessage),
-            formatSocialSpy(source, recipient, rawMessage),
+    override fun build(): PrivateMessage {
+        return PrivateMessage(
+            formatMessage("Me", recipient, message),
+            formatMessage(source, "Me", message),
+            formatSocialSpy(source, recipient, message),
         )
     }
 }

@@ -22,7 +22,7 @@ rootProject.name = "catalyst"
 sequenceOf(
     "api",
     "core",
-    "velocity"
+    "velocity",
 ).forEach {
     val project = ":catalyst-$it"
     include(project)

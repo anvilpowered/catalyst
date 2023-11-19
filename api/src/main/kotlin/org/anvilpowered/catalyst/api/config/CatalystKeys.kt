@@ -21,10 +21,26 @@
 package org.anvilpowered.catalyst.api.config
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.anvilpowered.anvil.core.config.Key
+import org.anvilpowered.anvil.core.config.KeyBuilder
+import org.anvilpowered.anvil.core.config.KeyBuilderDsl
 import org.anvilpowered.anvil.core.config.KeyNamespace
 
 object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
+
+    @KeyBuilderDsl
+    private fun KeyBuilder<Component>.miniMessageFallback(fallbackValue: Component) {
+        fallback(fallbackValue)
+        parser { MiniMessage.miniMessage().deserialize(it) }
+        printer { MiniMessage.miniMessage().serialize(it) }
+    }
+
+    @KeyBuilderDsl
+    private fun KeyBuilder<List<Component>>.miniMessageListFallback(fallbackValue: List<Component>) {
+        fallback(fallbackValue)
+    }
 
     val CHAT_FILTER_ENABLED by Key.building {
         fallback(false)
@@ -63,7 +79,16 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val PRIVATE_MESSAGE_FORMAT by Key.building {
-        fallback("&8[&9%sender%&6 -> &9%recipient%&8] &7%message%")
+        miniMessageFallback(
+            Component.text()
+                .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text("%sender%").color(NamedTextColor.BLUE))
+                .append(Component.text(" -> ").color(NamedTextColor.GOLD))
+                .append(Component.text("%recipient%").color(NamedTextColor.BLUE))
+                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text("%message%").color(NamedTextColor.GRAY))
+                .build(),
+        )
     }
 
     val TAB_ENABLED by Key.building {
