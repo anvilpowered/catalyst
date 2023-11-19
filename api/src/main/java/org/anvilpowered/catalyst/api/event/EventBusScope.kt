@@ -16,28 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.user
+package org.anvilpowered.catalyst.api.event
 
-import org.anvilpowered.anvil.core.db.MutableRepository
-import org.jetbrains.exposed.sql.SizedIterable
-import java.util.UUID
+import com.google.common.eventbus.EventBus
 
-interface GameUserRepository : MutableRepository<GameUser, GameUser> {
-
-    data class InitializeResult(
-        val gameUser: GameUser,
-        val firstJoin: Boolean,
-    )
-
-    suspend fun initialize(id: UUID, userId: UUID, username: String, ipAddress: String): InitializeResult
-
-    suspend fun getNickname(id: UUID): String?
-
-    suspend fun updateNickname(id: UUID, nickname: String): Boolean
-
-    suspend fun deleteNickname(id: UUID): Boolean
-
-    suspend fun getAllUsernames(startWith: String = ""): SizedIterable<String>
-
-    suspend fun getByUsername(username: String): GameUser?
+interface EventBusScope {
+    val eventBus: EventBus
 }

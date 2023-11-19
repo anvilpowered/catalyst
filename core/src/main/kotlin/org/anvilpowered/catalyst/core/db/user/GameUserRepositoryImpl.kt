@@ -30,21 +30,19 @@ import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
 object GameUserRepositoryImpl : GameUserRepository {
-    override suspend fun getOneOrCreate(
+    override suspend fun initialize(
         id: UUID,
         userId: UUID,
         username: String,
         ipAddress: String,
-    ): GameUser = newSuspendedTransaction {
-        getById(id) ?: create(
-            GameUser(
-                id,
-                userId,
-                username,
-                "minecraft",
-                null,
-            ),
-        )
+    ): GameUserRepository.InitializeResult = newSuspendedTransaction {
+        val existing = getById(id)
+        if (existing == null) {
+            val newUser = create(GameUser(id, userId, username, "minecraft", null))
+            GameUserRepository.InitializeResult(newUser, firstJoin = true)
+        } else {
+            GameUserRepository.InitializeResult(existing, firstJoin = false)
+        }
     }
 
     override suspend fun getNickname(id: UUID): String? = newSuspendedTransaction {

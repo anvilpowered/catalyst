@@ -56,7 +56,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val FIRST_JOIN by Key.buildingSimple {
-        fallback("Welcome to the server, %player%")
+        miniMessageFallback(Component.text("Welcome to the server, %player%").color(NamedTextColor.GOLD))
     }
 
     val JOIN_MESSAGE by Key.buildingSimple {
@@ -359,7 +359,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val MOTD by Key.buildingSimple {
-        fallback("A Velocity Proxy!")
+        miniMessageFallback(Component.text("A Velocity Proxy!").color(NamedTextColor.DARK_AQUA))
     }
 
     val MOTD_ENABLED by Key.buildingSimple {

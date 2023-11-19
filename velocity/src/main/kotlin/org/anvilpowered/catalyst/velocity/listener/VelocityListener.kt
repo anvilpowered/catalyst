@@ -18,10 +18,6 @@
 
 package org.anvilpowered.catalyst.velocity.listener
 
-import com.google.common.eventbus.EventBus
-import com.google.inject.Inject
-import com.velocitypowered.api.command.CommandSource
-import com.velocitypowered.api.event.ResultedEvent
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.event.connection.DisconnectEvent
@@ -31,45 +27,39 @@ import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import com.velocitypowered.api.event.proxy.ProxyPingEvent
 import com.velocitypowered.api.proxy.ConsoleCommandSource
 import com.velocitypowered.api.proxy.Player
-import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import com.velocitypowered.api.proxy.server.ServerPing.SamplePlayer
 import com.velocitypowered.api.util.ModInfo
-import net.kyori.adventure.identity.Identity
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.catalyst.core.chat.BroadcastService
-import org.anvilpowered.catalyst.core.chat.ChannelService
-import org.anvilpowered.catalyst.core.chat.ChatService
+import org.anvilpowered.anvil.core.platform.Server
+import org.anvilpowered.anvil.core.user.hasPermissionSet
+import org.anvilpowered.anvil.velocity.ProxyServerScope
+import org.anvilpowered.anvil.velocity.user.toAnvilPlayer
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.api.event.CommandEvent
+import org.anvilpowered.catalyst.api.event.EventBusScope
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
-import org.anvilpowered.catalyst.api.member.MemberManager
-import org.anvilpowered.catalyst.api.plugin.PluginMessages
+import org.anvilpowered.catalyst.core.chat.ChannelService
+import org.anvilpowered.catalyst.core.chat.ChatService
+import org.anvilpowered.catalyst.core.db.RepositoryScope
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
 import java.util.UUID
 
-class VelocityListener @Inject constructor(
-    private val channelService: ChannelService,
-    private val chatService: ChatService<Player, CommandSource>,
-    private val proxyServer: ProxyServer,
-    private val registry: Registry,
-    private val eventBus: EventBus,
-    private val pluginMessages: PluginMessages,
-    private val broadcastService: BroadcastService,
-    private val memberManager: MemberManager,
-) {
+context(ChannelService.Scope, ChatService.Scope, ProxyServerScope, Registry.Scope, Server.Scope, EventBusScope, RepositoryScope)
+class VelocityListener {
 
     @Subscribe
     fun onPlayerLeave(event: DisconnectEvent) {
         if (event.loginStatus == DisconnectEvent.LoginStatus.PRE_SERVER_JOIN) {
             return
         }
-        eventBus.post(LeaveEvent(event.player))
+        eventBus.post(LeaveEvent(event.player.toAnvilPlayer()))
     }
 
     @Subscribe
@@ -83,7 +73,7 @@ class VelocityListener @Inject constructor(
                     } else {
                         val virtualHost = player.virtualHost
                         if (virtualHost.isPresent) {
-                            eventBus.post(JoinEvent(player, virtualHost.get().hostName, player.uniqueId))
+                            eventBus.post(JoinEvent(player.toAnvilPlayer(), virtualHost.get().hostName))
                         }
                     }
                 }.join()
@@ -91,54 +81,37 @@ class VelocityListener @Inject constructor(
     }
 
     @Subscribe
-    fun onPlayerJoin(event: LoginEvent) {
+    fun onPlayerJoin(event: LoginEvent) = runBlocking {
         val player = event.player
-        val flags = BooleanArray(8)
-        memberManager.primaryComponent
-            .getOneOrGenerateForUser(
-                player.uniqueId,
-                player.username,
-                player.remoteAddress.hostString,
-                flags,
-            ).thenAcceptAsync { member ->
-                if (member == null) {
-                    return@thenAcceptAsync
-                }
-                if (memberManager.primaryComponent.checkBanned(member)) {
-                    event.result = ResultedEvent.ComponentResult.denied(pluginMessages.getBanMessage(member.banReason, member.banEndUtc))
-                }
-                if (flags[0] && registry.getOrDefault(CatalystKeys.JOIN_LISTENER_ENABLED)) {
-                    broadcastService.broadcast(
-                        LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            registry.getOrDefault(CatalystKeys.FIRST_JOIN).replace("%player%", player.username),
-                        ),
-                    )
-                }
-            }.join()
+        val user = userRepository.initializeFromGameUser(player.uniqueId, player.username)
+        val result = gameUserRepository.initialize(player.uniqueId, user.id, player.username, player.remoteAddress.hostString)
+
+        if (result.firstJoin && registry[CatalystKeys.JOIN_LISTENER_ENABLED]) {
+            server.broadcastAudience.sendMessage(
+                registry[CatalystKeys.FIRST_JOIN].replaceText {
+                    // TODO: Make a dedicated service for replacements with appropriate context
+                    it.match("%player%")
+                    it.replacement(player.username)
+                },
+            )
+        }
     }
 
     @Subscribe
-    fun onChat(e: PlayerChatEvent) {
-        if (registry.getOrDefault(CatalystKeys.PROXY_CHAT_ENABLED)) {
-            val player = e.player
-            if (chatService.isDisabledForUser(player)
-                || channelService.fromUUID(player.uniqueId)?.passthrough == true
-            ) {
+    fun onChat(event: PlayerChatEvent) {
+        val anvilPlayer = event.player.toAnvilPlayer()
+        if (registry[CatalystKeys.PROXY_CHAT_ENABLED]) {
+            val player = event.player
+            if (chatService.isDisabledForPlayer(anvilPlayer) || channelService.getForPlayer(player.uniqueId).passthrough) {
                 return
             } else {
-                e.result = PlayerChatEvent.ChatResult.denied()
-                memberManager.primaryComponent
-                    .getOneForUser(player.uniqueId)
-                    .thenAcceptAsync { member ->
-                        if (member == null) {
-                            return@thenAcceptAsync
-                        }
-                        if (memberManager.primaryComponent.checkMuted(member)) {
-                            player.sendMessage(Identity.nil(), pluginMessages.getMuteMessage(member.muteReason, member.muteEndUtc))
-                        } else {
-                            eventBus.post(ChatEvent(player, e.message, Component.text(e.message), player.uniqueId))
-                        }
-                    }
+                event.result = PlayerChatEvent.ChatResult.denied()
+                val message = if (anvilPlayer.hasPermissionSet(registry[CatalystKeys.CHAT_COLOR_PERMISSION])) {
+                    MiniMessage.miniMessage().deserialize(event.message)
+                } else {
+                    Component.text(event.message)
+                }
+                eventBus.post(ChatEvent(anvilPlayer, message))
             }
         }
     }
@@ -158,9 +131,8 @@ class VelocityListener @Inject constructor(
         val serverPing = proxyPingEvent.ping
         val builder = ServerPing.builder()
         var modInfo: ModInfo? = null
-        if (registry.getOrDefault(CatalystKeys.MOTD_ENABLED)) {
-            val withColorCodes = LegacyComponentSerializer.legacyAmpersand().deserialize(registry.getOrDefault(CatalystKeys.MOTD))
-            builder.description(withColorCodes.asComponent())
+        if (registry[CatalystKeys.MOTD_ENABLED]) {
+            builder.description(registry[CatalystKeys.MOTD])
         } else {
             return
         }
@@ -182,7 +154,7 @@ class VelocityListener @Inject constructor(
         if (modInfo != null) {
             builder.mods(modInfo)
         }
-        if (registry.getOrDefault(CatalystKeys.SERVER_PING).equals("players", ignoreCase = true)) {
+        if (registry[CatalystKeys.SERVER_PING].equals("players", ignoreCase = true)) {
             if (proxyServer.playerCount > 0) {
                 val samplePlayers = arrayOfNulls<SamplePlayer>(proxyServer.playerCount)
                 val proxiedPlayers: List<Player> = ArrayList(proxyServer.allPlayers)
@@ -191,8 +163,8 @@ class VelocityListener @Inject constructor(
                 }
                 builder.samplePlayers(*samplePlayers)
             }
-        } else if (registry.getOrDefault(CatalystKeys.SERVER_PING).equals("MESSAGE", ignoreCase = true)) {
-            builder.samplePlayers(SamplePlayer(registry.getOrDefault(CatalystKeys.SERVER_PING_MESSAGE), UUID.randomUUID()))
+        } else if (registry[CatalystKeys.SERVER_PING].equals("MESSAGE", ignoreCase = true)) {
+            builder.samplePlayers(SamplePlayer(registry[CatalystKeys.SERVER_PING_MESSAGE], UUID.randomUUID()))
         }
         if (serverPing.favicon.isPresent) {
             builder.favicon(serverPing.favicon.get())
