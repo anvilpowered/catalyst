@@ -19,11 +19,13 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.ComponentLike
 
 typealias Placeholder = String
 
-interface MessageFormat : ComponentLike {
+interface MessageFormat {
+
+    val format: Component
+
     interface Builder<P, M : MessageFormat> {
         fun build(block: P.() -> Component): M
     }

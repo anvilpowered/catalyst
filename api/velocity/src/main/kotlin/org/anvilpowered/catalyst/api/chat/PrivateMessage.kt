@@ -21,7 +21,7 @@ package org.anvilpowered.catalyst.api.chat
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 
-class ChatMessage(
+class PrivateMessage(
     val source: Player,
     val recipient: Player,
     val content: Component,

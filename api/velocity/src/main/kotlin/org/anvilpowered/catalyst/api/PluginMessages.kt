@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity
+package org.anvilpowered.catalyst.api
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

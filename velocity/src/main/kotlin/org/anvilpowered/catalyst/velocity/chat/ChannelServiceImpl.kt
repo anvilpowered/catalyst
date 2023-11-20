@@ -18,15 +18,16 @@
 
 package org.anvilpowered.catalyst.velocity.chat
 
+import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.core.user.Player
-import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.anvil.velocity.ProxyServerScope
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import java.util.UUID
 
-context(Registry.Scope, PlayerService.Scope)
-class ChannelServiceImpl : org.anvilpowered.catalyst.velocity.chat.ChannelService {
+context(Registry.Scope, ProxyServerScope)
+class ChannelServiceImpl : ChannelService {
     private var playerChannelMapping = mutableMapOf<UUID, String>()
 
     private var defaultChannelId = registry[CatalystKeys.CHAT_DEFAULT_CHANNEL]
@@ -35,7 +36,7 @@ class ChannelServiceImpl : org.anvilpowered.catalyst.velocity.chat.ChannelServic
     override fun get(channelId: String): ChatChannel? = registry[CatalystKeys.CHAT_CHANNELS][channelId]
     override fun getForPlayer(playerId: UUID): ChatChannel = playerChannelMapping[playerId]?.let { get(it) } ?: defaultChannel
     override fun getPlayers(channelId: String): Sequence<Player> =
-        playerService.getAll().filter { player -> getForPlayer(player.id).id == channelId }
+        proxyServer.allPlayers.asSequence().filter { player -> getForPlayer(player.uniqueId).id == channelId }
 
     override fun switch(userUUID: UUID, channelId: String) {
         playerChannelMapping[userUUID] = channelId
@@ -43,7 +44,7 @@ class ChannelServiceImpl : org.anvilpowered.catalyst.velocity.chat.ChannelServic
 
     override fun moveUsersToChannel(sourceChannel: String, targetChannel: String) {
         for (player in getPlayers(sourceChannel)) {
-            switch(player.id, targetChannel)
+            switch(player.uniqueId, targetChannel)
         }
     }
 }

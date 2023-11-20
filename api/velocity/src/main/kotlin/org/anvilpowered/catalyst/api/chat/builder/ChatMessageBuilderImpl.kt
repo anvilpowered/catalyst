@@ -16,22 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.chat.builder
+package org.anvilpowered.catalyst.api.chat.builder
 
+import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import org.anvilpowered.anvil.core.user.Player
-import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.anvil.velocity.ProxyServerScope
+import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.GameUser
-import org.anvilpowered.catalyst.velocity.PluginMessages
-import org.anvilpowered.catalyst.core.chat.ChatMessage
-import java.util.UUID
 
-context(PlayerService.Scope)
-internal class ChatMessageBuilderImpl : ChatMessage.Builder {
+context(ProxyServerScope)
+internal class ChatMessageBuilderImpl : ChannelMessage.Builder {
 
     private var user: GameUser? = null
     private var player: Player? = null
@@ -43,48 +41,49 @@ internal class ChatMessageBuilderImpl : ChatMessage.Builder {
     private var nameFormatOverride: Component? = null
     private var serverName: String = ""
 
-    override fun user(user: GameUser): ChatMessage.Builder {
-        player = requireNotNull(playerService[user.id]) { "User ${user.username} with id ${user.id} is not on the server!" }
+    override fun user(user: GameUser): ChannelMessage.Builder {
+        player = proxyServer.getPlayer(user.id)
+            .orElseThrow { IllegalStateException("User ${user.username} with id ${user.id} is not on the server!") }
         this.user = user
         return this
     }
 
-    override fun channel(channel: ChatChannel): ChatMessage.Builder {
+    override fun channel(channel: ChatChannel): ChannelMessage.Builder {
         this.channel = channel
         return this
     }
 
-    override fun message(message: Component): ChatMessage.Builder {
+    override fun message(message: Component): ChannelMessage.Builder {
         this.message = message
         return this
     }
 
-    override fun prefix(prefix: Component): ChatMessage.Builder {
+    override fun prefix(prefix: Component): ChannelMessage.Builder {
         this.prefix = prefix
         return this
     }
 
-    override fun suffix(suffix: Component): ChatMessage.Builder {
+    override fun suffix(suffix: Component): ChannelMessage.Builder {
         this.suffix = suffix
         return this
     }
 
-    override fun messageFormatOverride(format: Component?): ChatMessage.Builder {
+    override fun messageFormatOverride(format: Component?): ChannelMessage.Builder {
         this.messageFormatOverride = format
         return this
     }
 
-    override fun nameFormatOverride(format: Component?): ChatMessage.Builder {
+    override fun nameFormatOverride(format: Component?): ChannelMessage.Builder {
         this.nameFormatOverride = format
         return this
     }
 
-    override fun server(server: String): ChatMessage.Builder {
+    override fun server(server: String): ChannelMessage.Builder {
         this.serverName = server
         return this
     }
 
-    private fun formatMessage(): Component? {
+    private fun formatMessage(): Component {
         val user = requireNotNull(user) { "User is null" }
         val player = requireNotNull(player) { "Player is null" }
         val channel = requireNotNull(channel) { "Channel is null" }
@@ -92,16 +91,11 @@ internal class ChatMessageBuilderImpl : ChatMessage.Builder {
         val prefix = requireNotNull(prefix) { "Prefix is null" }
         val suffix = requireNotNull(suffix) { "Prefix is null" }
 
-        // TODO: Check muted
-        if (false) {
-            return null
-        }
-
         val processedDisplayName: Component = channel.nameFormat.replaceText {
             it.matchLiteral("%name%")
             val nickname = user.nickname
             if (nickname.isNullOrEmpty()) {
-                it.replacement(player.displayname)
+                it.replacement(player.username)
             } else {
                 it.replacement(nickname)
             }
@@ -160,16 +154,11 @@ internal class ChatMessageBuilderImpl : ChatMessage.Builder {
             .replace("%message%", message.toPlain())
     }
 
-    override fun build(): ChatMessage {
-        val user = requireNotNull(user) { "User is null" }
+    override fun build(): ChannelMessage {
         val player = requireNotNull(player) { "Player is null" }
         val message = formatMessage()
+        val channel = requireNotNull(channel) { "Channel is null" }
 
-        return if (message == null) {
-            player.sendMessage(PluginMessages.muted)
-            ChatMessage(UUID.randomUUID(), Component.text(""))
-        } else {
-            ChatMessage(user.id, message)
-        }
+        return ChannelMessage(player, message, channel)
     }
 }

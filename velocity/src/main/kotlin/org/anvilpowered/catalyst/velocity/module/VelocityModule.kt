@@ -25,15 +25,12 @@ import org.anvilpowered.anvil.api.misc.bind
 import org.anvilpowered.anvil.api.misc.to
 import org.anvilpowered.catalyst.api.discord.DiscordCommandService
 import org.anvilpowered.catalyst.api.member.MemberManager
-import org.anvilpowered.catalyst.api.service.StaffListService
 import org.anvilpowered.catalyst.api.service.TabService
 import org.anvilpowered.catalyst.common.member.CommonMemberManager
 import org.anvilpowered.catalyst.common.module.CommonModule
 import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
-import org.anvilpowered.catalyst.common.service.CommonStaffListService
-import org.anvilpowered.catalyst.velocity.chat.BroadcastService
-import org.anvilpowered.catalyst.velocity.chat.ChannelService
-import org.anvilpowered.catalyst.velocity.chat.ChannelServiceImpl
+import org.anvilpowered.catalyst.velocity.chat.StaffListService
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.core.chat.ChatService
 import org.anvilpowered.catalyst.core.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.core.chat.CommonTabService
@@ -50,10 +47,10 @@ class VelocityModule : CommonModule("plugins") {
             bind<org.anvilpowered.catalyst.velocity.chat.BroadcastService>().to<VelocityBroadcastService>()
             bind<DiscordCommandService>().to<VelocityDiscordCommandService>()
             bind<MemberManager>().to<CommonMemberManager<Player>>()
-            bind<org.anvilpowered.catalyst.velocity.chat.ChannelService<Player>>().to<org.anvilpowered.catalyst.velocity.chat.ChannelServiceImpl<Player>>()
+            bind<ChannelService<Player>>().to<org.anvilpowered.catalyst.velocity.chat.ChannelServiceImpl<Player>>()
             bind<ChatService<Player, CommandSource>>().to<ChatServiceImpl<Player, CommandSource>>()
             bind<PrivateMessageService>().to<PrivateMessageService<Player>>()
-            bind<StaffListService>().to<CommonStaffListService<Player>>()
+            bind<StaffListService>().to<StaffListService<Player>>()
             bind<TabService<Player>>().to<CommonTabService<Player>>()
             bind<LuckpermsService>().to<LuckpermsService<Player>>()
             bind<JDAService>().to<JDAService<Player>>()

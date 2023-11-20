@@ -23,6 +23,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.anvil.core.user.hasPermissionSet
+import org.anvilpowered.catalyst.api.PluginMessages
 import org.anvilpowered.catalyst.velocity.CatalystApi
 import org.anvilpowered.catalyst.core.command.common.addHelpChild
 import org.anvilpowered.catalyst.core.command.gameUser
@@ -43,25 +44,25 @@ fun NicknameCommand.createSet(): LiteralCommandNode<CommandSource> =
                     context.source.player?.let { player ->
                         if (!player.hasPermissionSet("catalyst.nickname.set.base")) {
                             player.sendMessage(
-                                org.anvilpowered.catalyst.velocity.PluginMessages.pluginPrefix
+                                PluginMessages.pluginPrefix
                                     .append(Component.text("You don't have permission to set your nickname!", NamedTextColor.RED)),
                             )
                         } else if (gameUserRepository.updateNickname(player.id, context["nickname"])) {
                             player.sendMessage(
-                                org.anvilpowered.catalyst.velocity.PluginMessages.pluginPrefix
+                                PluginMessages.pluginPrefix
                                     .append(Component.text("Your nickname has been set to '", NamedTextColor.GRAY))
                                     .append(MiniMessage.miniMessage().deserialize(context["nickname"]))
                                     .append(Component.text("'!", NamedTextColor.GRAY)),
                             )
                         } else {
                             player.sendMessage(
-                                org.anvilpowered.catalyst.velocity.PluginMessages.pluginPrefix
+                                PluginMessages.pluginPrefix
                                     .append(Component.text("Your nickname could not be set!", NamedTextColor.RED)),
                             )
                         }
                     } ?: run {
                         context.source.audience.sendMessage(
-                            org.anvilpowered.catalyst.velocity.PluginMessages.pluginPrefix
+                            PluginMessages.pluginPrefix
                                 .append(Component.text("You must be a player to use this command without arguments!", NamedTextColor.RED)),
                         )
                         0
@@ -73,13 +74,13 @@ fun NicknameCommand.createSet(): LiteralCommandNode<CommandSource> =
             ArgumentBuilder.gameUser { context, gameUser ->
                 if (!context.source.subject.hasPermissionSet("catalyst.nickname.set.other")) {
                     context.source.audience.sendMessage(
-                        org.anvilpowered.catalyst.velocity.PluginMessages.pluginPrefix
+                        PluginMessages.pluginPrefix
                             .append(Component.text("You don't have permission to set other players' nicknames!", NamedTextColor.RED)),
                     )
                     0
                 } else if (gameUserRepository.updateNickname(gameUser.id, context["nickname"])) {
                     context.source.audience.sendMessage(
-                        org.anvilpowered.catalyst.velocity.PluginMessages.pluginPrefix
+                        PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of '", NamedTextColor.GRAY))
                             .append(Component.text(gameUser.username, NamedTextColor.GOLD))
                             .append(Component.text("' has been set from '", NamedTextColor.GRAY))
@@ -91,7 +92,7 @@ fun NicknameCommand.createSet(): LiteralCommandNode<CommandSource> =
                     Command.SINGLE_SUCCESS
                 } else {
                     context.source.audience.sendMessage(
-                        org.anvilpowered.catalyst.velocity.PluginMessages.pluginPrefix
+                        PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of '", NamedTextColor.GRAY))
                             .append(Component.text(gameUser.username, NamedTextColor.GOLD))
                             .append(Component.text("' could not be set!", NamedTextColor.RED)),

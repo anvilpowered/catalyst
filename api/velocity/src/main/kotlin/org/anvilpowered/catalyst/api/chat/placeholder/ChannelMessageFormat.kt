@@ -1,6 +1,6 @@
 /*
  *   Catalyst - AnvilPowered.org
- *   Copyright (C) 2020-2023 Contributors
+ *   Copyright (C) 2020-2024 Contributors
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published by
@@ -21,42 +21,40 @@ package org.anvilpowered.catalyst.api.chat.placeholder
 import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.velocity.ProxyServerScope
-import org.anvilpowered.catalyst.api.chat.ChatMessage
+import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 
-class ChatMessageFormat(private val format: Component, private val placeholders: Placeholders) : MessageFormat {
+class ChannelMessageFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
     context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-    suspend fun resolvePlaceholders(message: ChatMessage): Component = resolvePlaceholders(format, placeholders, message)
+    suspend fun resolvePlaceholders(message: ChannelMessage): RecipientFormat = resolvePlaceholders(format, placeholders, message)
 
-    override fun asComponent(): Component = format
-
-    companion object : MessageFormat.Builder<Placeholders, ChatMessageFormat> {
+    companion object : MessageFormat.Builder<Placeholders, ChannelMessageFormat> {
 
         private val source = NestedFormat(PlayerFormat, Placeholders::source)
-        private val recipient = NestedFormat(PlayerFormat, Placeholders::recipient)
 
         context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-        suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, message: ChatMessage): Component {
-            return sequenceOf<suspend Component.() -> Component>(
+        suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, message: ChannelMessage): RecipientFormat {
+            val resultFormat = sequenceOf<suspend Component.() -> Component>(
                 { source.format.resolvePlaceholders(this, source.placeholderResolver(placeholders), message.source) },
-                { recipient.format.resolvePlaceholders(this, recipient.placeholderResolver(placeholders), message.recipient) },
                 { replaceText { it.match(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -> transform(acc) }
+            return RecipientFormat(resultFormat, RecipientFormat.Placeholders())
         }
 
-        override fun build(block: Placeholders.() -> Component): ChatMessageFormat {
+        override fun build(block: Placeholders.() -> Component): ChannelMessageFormat {
             val placeholders = Placeholders()
-            return ChatMessageFormat(block(placeholders), placeholders)
+            return ChannelMessageFormat(block(placeholders), placeholders)
         }
     }
 
-    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ChatMessageFormat> {
+    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ChannelMessageFormat> {
 
         private val prefix = path.joinToString { "$it." }
 
         val source = PlayerFormat.Placeholders(path + listOf("source"))
-        val recipient = PlayerFormat.Placeholders(path + listOf("recipient"))
+        val channel: Placeholder = "%${prefix}channel"
+
         val content: Placeholder = "%${prefix}content%"
     }
 }

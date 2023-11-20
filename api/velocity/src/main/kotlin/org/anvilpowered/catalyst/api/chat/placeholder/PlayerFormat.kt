@@ -24,12 +24,10 @@ import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 
-class PlayerFormat(private val format: Component, private val placeholders: Placeholders) : MessageFormat {
+class PlayerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
     context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
     suspend fun resolvePlaceholders(player: Player): Component = resolvePlaceholders(format, placeholders, player)
-
-    override fun asComponent(): Component = format
 
     companion object : MessageFormat.Builder<Placeholders, PlayerFormat> {
 
@@ -46,7 +44,7 @@ class PlayerFormat(private val format: Component, private val placeholders: Plac
                 { backendServer.format.resolvePlaceholders(this, backendServer.placeholderResolver(placeholders), server) },
                 { proxyServer.format.resolvePlaceholders(this, proxyServer.placeholderResolver(placeholders)) },
                 { replaceText { it.match(placeholders.latency).replacement(player.ping.toString()) } },
-                { replaceText { it.match(placeholders.name).replacement(player.username) } },
+                { replaceText { it.match(placeholders.username).replacement(player.username) } },
                 { replaceText { it.match(placeholders.id).replacement(player.uniqueId.toString()) } },
                 { replaceText { it.match(placeholders.prefix).replacement(luckpermsService.prefix(player.uniqueId)) } },
                 { replaceText { it.match(placeholders.suffix).replacement(luckpermsService.suffix(player.uniqueId)) } },
@@ -67,9 +65,8 @@ class PlayerFormat(private val format: Component, private val placeholders: Plac
         val proxyServer = ProxyServerFormat.Placeholders(path + listOf("proxyServer"))
 
         val latency: Placeholder = "%${pathPrefix}ping%"
-        val name: Placeholder = "%${pathPrefix}name%"
+        val username: Placeholder = "%${pathPrefix}username%"
         val id: Placeholder = "%${pathPrefix}id%"
-
         val prefix: Placeholder = "%${pathPrefix}prefix%"
         val suffix: Placeholder = "%${pathPrefix}suffix%"
     }

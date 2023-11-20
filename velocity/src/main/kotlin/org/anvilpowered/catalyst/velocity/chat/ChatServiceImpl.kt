@@ -18,29 +18,31 @@
 
 package org.anvilpowered.catalyst.velocity.chat
 
+import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.platform.Server
-import org.anvilpowered.anvil.core.user.Player
-import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.anvil.core.user.hasPermissionSet
+import org.anvilpowered.anvil.velocity.ProxyServerScope
+import org.anvilpowered.catalyst.api.chat.ChannelMessage
+import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.UUID
 
-context(org.anvilpowered.catalyst.velocity.chat.ChannelService.Scope, LuckpermsService.Scope, Registry.Scope, PlayerService.Scope, Server.Scope)
+context(ChannelService.Scope, LuckpermsService.Scope, Registry.Scope, ProxyServerScope, Server.Scope)
 class ChatServiceImpl : ChatService {
     private var ignoreMap = mutableMapOf<UUID, MutableList<UUID>>()
     private var disabledList = mutableListOf<UUID>()
 
     override suspend fun sendMessageToChannel(channelId: String, message: Component, userId: UUID) {
-        playerService.getAll().forEach { player ->
-            if (player.hasPermissionSet(registry[CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
-                channelService.getForPlayer(player.id).id == channelId
+        proxyServer.allPlayers.forEach { player ->
+            if (player.hasPermission(registry[CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
+                channelService.getForPlayer(player.uniqueId).id == channelId
             ) {
                 // TODO: This is icky
-                if (userId != player.id) {
-                    if (!isIgnored(player.id, userId)) {
+                if (userId != player.uniqueId) {
+                    if (!isIgnored(player.uniqueId, userId)) {
                         player.sendMessage(message)
                     }
                 } else {
@@ -50,16 +52,17 @@ class ChatServiceImpl : ChatService {
         }
     }
 
-    override suspend fun sendChatMessage(message: ChatMessage) {
-        if (message.component == Component.text("")) {
+    override suspend fun sendMessage(message: ChannelMessage) {
+        if (message.content == Component.text("")) {
             return
         }
-        server.systemSubject.sendMessage(message.component)
-        sendMessageToChannel(channelService.getForPlayer(message.userId).id, message.component, message.userId)
+        server.systemSubject.sendMessage(message.content)
+        sendMessageToChannel(channelService.getForPlayer(message.source.uniqueId).id, message.content, message.source.uniqueId)
     }
 
     override fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component {
-        val targetPlayer = playerService[targetPlayerUUID] ?: return Component.text("That user does not exist!").color(NamedTextColor.RED)
+        val targetPlayer = proxyServer.getPlayer(targetPlayerUUID).orElse(null)
+            ?: return Component.text("That user does not exist!").color(NamedTextColor.RED)
         var uuidList: MutableList<UUID> = ArrayList()
         if (ignoreMap[playerUUID] == null) {
             uuidList.add(targetPlayerUUID)
@@ -72,7 +75,7 @@ class ChatServiceImpl : ChatService {
         ignoreMap[playerUUID] = uuidList
         return Component.text()
             .append(Component.text("You are now ignoring ").color(NamedTextColor.GREEN))
-            .append(targetPlayer.displayname.color(NamedTextColor.GOLD))
+            .append(Component.text(targetPlayer.username).color(NamedTextColor.GOLD))
             .build()
     }
 
@@ -86,10 +89,8 @@ class ChatServiceImpl : ChatService {
         // TODO: What if the player leaves after being ignored?
         return Component.text("You are no longer ignoring")
             .append(
-                (
-                    playerService[targetPlayerUUID]?.displayname
-                        ?: Component.text(targetPlayerUUID.toString())
-                    ).color(NamedTextColor.GREEN),
+                Component.text(proxyServer.getPlayer(targetPlayerUUID).map { it.username }.orElse(targetPlayerUUID.toString()))
+                    .color(NamedTextColor.GREEN),
             )
     }
 
@@ -99,7 +100,7 @@ class ChatServiceImpl : ChatService {
     }
 
     override fun highlightPlayerNames(sender: Player, message: Component): Component {
-        return playerService.getAll().map { it.username }.fold(message) { msg, username ->
+        return proxyServer.allPlayers.map { it.username }.fold(message) { msg, username ->
             msg.replaceText {
                 it.match(username)
                 it.replacement(Component.text(username).color(NamedTextColor.AQUA))
@@ -109,14 +110,14 @@ class ChatServiceImpl : ChatService {
     }
 
     override fun toggleChatForPlayer(player: Player) {
-        if (!disabledList.contains(player.id)) {
-            disabledList.add(player.id)
+        if (!disabledList.contains(player.uniqueId)) {
+            disabledList.add(player.uniqueId)
             return
         }
-        disabledList.remove(player.id)
+        disabledList.remove(player.uniqueId)
     }
 
     override fun isDisabledForPlayer(player: Player): Boolean {
-        return disabledList.contains(player.id)
+        return disabledList.contains(player.uniqueId)
     }
 }

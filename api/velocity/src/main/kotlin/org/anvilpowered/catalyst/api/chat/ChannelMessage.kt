@@ -16,21 +16,18 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.chat
+package org.anvilpowered.catalyst.api.chat
 
+import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.config.ChatChannel
+import org.anvilpowered.catalyst.api.db.RepositoryScope
 import org.anvilpowered.catalyst.api.user.GameUser
-import org.anvilpowered.catalyst.core.chat.builder.ChatMessageBuilderImpl
-import org.anvilpowered.catalyst.velocity.db.RepositoryScope
 import java.util.UUID
 
 // Utility class to construct a chat message and format it
-class ChatMessage(
-    val userId: UUID,
-    val component: Component,
-) {
+class ChannelMessage(val source: Player, val content: Component, val channel: ChatChannel) {
 
     interface Builder {
         /**
@@ -54,24 +51,28 @@ class ChatMessage(
         fun nameFormatOverride(format: Component?): Builder
 
         fun server(server: String): Builder
-        fun build(): ChatMessage
+        fun build(): ChannelMessage
     }
 
-    companion object {
-        context(PlayerService.Scope)
-        fun builder(): Builder = ChatMessageBuilderImpl()
-
-        context(PlayerService.Scope)
-        inline fun build(block: Builder.() -> Unit): ChatMessage = builder().apply(block).build()
+    interface Scope {
+        context(ProxyServerScope)
+        fun Companion.builder(): Builder
     }
+
+    data class Event(val message: ChannelMessage)
+
+    companion object
 }
 
+context(ChannelMessage.Scope, ProxyServerScope)
+inline fun ChannelMessage.Companion.build(block: ChannelMessage.Builder.() -> Unit): ChannelMessage = builder().apply(block).build()
+
 context(RepositoryScope)
-suspend fun ChatMessage.Builder.userId(userId: UUID): ChatMessage.Builder = user(
+suspend fun ChannelMessage.Builder.userId(userId: UUID): ChannelMessage.Builder = user(
     requireNotNull(gameUserRepository.getById(userId)) { "Could not find user with id $userId" },
 )
 
-context(org.anvilpowered.catalyst.velocity.chat.ChannelService.Scope)
-fun ChatMessage.Builder.channelId(channelId: String): ChatMessage.Builder = channel(
+context(ChannelService.Scope)
+fun ChannelMessage.Builder.channelId(channelId: String): ChannelMessage.Builder = channel(
     requireNotNull(channelService.get(channelId)) { "Could not find channel with id $channelId" },
 )

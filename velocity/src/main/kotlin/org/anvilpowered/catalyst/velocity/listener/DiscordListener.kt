@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.discord
+package org.anvilpowered.catalyst.velocity.listener
 
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.Permission
@@ -29,7 +29,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.command.CommandExecutor
 import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.catalyst.velocity.chat.ChannelService
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.velocity.CatalystApi
 

@@ -21,12 +21,10 @@ package org.anvilpowered.catalyst.api.chat.placeholder
 import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.velocity.ProxyServerScope
 
-class ProxyServerFormat(private val format: Component, private val placeholders: Placeholders) : MessageFormat {
+class ProxyServerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
     context(ProxyServerScope)
     fun resolvePlaceholders(): Component = resolvePlaceholders(format, placeholders)
-
-    override fun asComponent(): Component = format
 
     companion object : MessageFormat.Builder<Placeholders, ProxyServerFormat> {
 

@@ -16,26 +16,21 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity
+package org.anvilpowered.catalyst.velocity.db
 
-import com.google.inject.Injector
-import org.anvilpowered.anvil.core.AnvilApi
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.AnvilVelocityApi
-import org.anvilpowered.anvil.velocity.createVelocity
 import org.anvilpowered.catalyst.api.db.RepositoryScope
+import org.anvilpowered.catalyst.api.user.DiscordUserRepository
+import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.UserRepository
+import org.anvilpowered.catalyst.velocity.db.user.DiscordUserRepositoryImpl
+import org.anvilpowered.catalyst.velocity.db.user.GameUserRepositoryImpl
+import org.anvilpowered.catalyst.velocity.db.user.UserRepositoryImpl
 
-interface CatalystVelocityApi : CatalystApi {
-
-    override val anvil: AnvilVelocityApi
-}
-
-fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object :
-        CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(injector)
-        override val registry: Registry
-            get() = TODO("Not yet implemented")
-    }
+internal object RepositoryScopeImpl : RepositoryScope {
+    override val discordUserRepository: DiscordUserRepository
+        get() = DiscordUserRepositoryImpl
+    override val gameUserRepository: GameUserRepository
+        get() = GameUserRepositoryImpl
+    override val userRepository: UserRepository
+        get() = UserRepositoryImpl
 }

@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.velocity
 
 import org.anvilpowered.anvil.core.AnvilApi
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.catalyst.velocity.db.RepositoryScope
+import org.anvilpowered.catalyst.api.db.RepositoryScope
 
 interface CatalystApi : RepositoryScope {
 

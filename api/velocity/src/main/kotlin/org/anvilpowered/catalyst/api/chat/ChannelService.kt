@@ -15,24 +15,28 @@
  *     You should have received a copy of the GNU Affero General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package org.anvilpowered.catalyst.velocity.chat
 
-import com.google.common.eventbus.Subscribe
-import org.anvilpowered.anvil.core.LoggerScope
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.event.CommandEvent
+package org.anvilpowered.catalyst.api.chat
 
-context(LoggerScope, Registry.Scope)
-class CommandListener {
+import com.velocitypowered.api.proxy.Player
+import org.anvilpowered.catalyst.api.config.ChatChannel
+import java.util.UUID
 
-    @Subscribe
-    fun onCommandExecution(event: CommandEvent) {
-        if (registry[CatalystKeys.COMMAND_LOGGING_ENABLED]) {
-            val commandList = registry[CatalystKeys.COMMAND_LOGGING_FILTER]
-            if (commandList.size == 1 && commandList[0] == "*" || commandList.contains(event.command)) {
-                logger.info(event.sourceName + " executed command : " + event.command)
-            }
-        }
+interface ChannelService {
+
+    val defaultChannel: ChatChannel
+
+    fun get(channelId: String): ChatChannel?
+
+    fun getForPlayer(playerId: UUID): ChatChannel
+
+    fun getPlayers(channelId: String): Sequence<Player>
+
+    fun switch(userUUID: UUID, channelId: String)
+
+    fun moveUsersToChannel(sourceChannel: String, targetChannel: String)
+
+    interface Scope {
+        val channelService: ChannelService
     }
 }

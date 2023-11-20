@@ -23,12 +23,10 @@ import kotlinx.coroutines.future.await
 import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.velocity.ProxyServerScope
 
-class BackendServerFormat(private val format: Component, private val placeholders: Placeholders) : MessageFormat {
+class BackendServerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
     context(ProxyServerScope)
     suspend fun resolvePlaceholders(server: RegisteredServer): Component = resolvePlaceholders(format, placeholders, server)
-
-    override fun asComponent(): Component = format
 
     companion object : MessageFormat.Builder<Placeholders, BackendServerFormat> {
 

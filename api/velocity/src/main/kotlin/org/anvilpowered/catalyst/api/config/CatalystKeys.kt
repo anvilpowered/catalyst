@@ -28,7 +28,7 @@ import org.anvilpowered.anvil.core.config.KeyBuilderDsl
 import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.ListKey
 import org.anvilpowered.anvil.core.config.SimpleKey
-import org.anvilpowered.catalyst.api.chat.placeholder.ChatMessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ProxyServerFormat
@@ -91,13 +91,13 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
 
     val FIRST_JOIN by Key.buildingSimple {
         miniMessageFallbackFormat(PlayerFormat) {
-            Component.text("Welcome to the server, $name").color(NamedTextColor.GOLD)
+            Component.text("Welcome to the server, $username").color(NamedTextColor.GOLD)
         }
     }
 
     val JOIN_MESSAGE by Key.buildingSimple {
         miniMessageFallbackFormat(PlayerFormat) {
-            Component.text("$name has joined the proxy")
+            Component.text("$username has joined the proxy")
         }
     }
 
@@ -107,7 +107,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
 
     val LEAVE_MESSAGE by Key.buildingSimple {
         miniMessageFallbackFormat(PlayerFormat) {
-            Component.text("$name has left the proxy")
+            Component.text("$username has left the proxy")
         }
     }
 
@@ -119,13 +119,40 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
         fallback(true)
     }
 
-    val PRIVATE_MESSAGE_FORMAT by Key.buildingSimple {
-        miniMessageFallbackFormat(ChatMessageFormat) {
+    val PRIVATE_MESSAGE_SOURCE_FORMAT by Key.buildingSimple {
+        miniMessageFallbackFormat(PrivateMessageFormat) {
             Component.text()
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text("${source.name}(${source.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("me(${source.backendServer.name})").color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
-                .append(Component.text("${recipient.name}(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("${recipient.username}(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(content).color(NamedTextColor.GRAY))
+                .build()
+        }
+    }
+
+    val PRIVATE_MESSAGE_RECIPIENT_FORMAT by Key.buildingSimple {
+        miniMessageFallbackFormat(PrivateMessageFormat) {
+            Component.text()
+                .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text("${source.username}(${source.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text(" -> ").color(NamedTextColor.GOLD))
+                .append(Component.text("me(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(content).color(NamedTextColor.GRAY))
+                .build()
+        }
+    }
+
+    val SOCIALSPY_MESSAGE_FORMAT by Key.buildingSimple {
+        miniMessageFallbackFormat(PrivateMessageFormat) {
+            Component.text()
+                .append(Component.text("[SocialSpy] ").color(NamedTextColor.GRAY))
+                .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(source.username).color(NamedTextColor.BLUE))
+                .append(Component.text(" -> ").color(NamedTextColor.GOLD))
+                .append(Component.text(recipient.username).color(NamedTextColor.BLUE))
                 .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
@@ -137,15 +164,21 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val TAB_HEADER by Key.buildingSimple {
-        fallback("Welcome to")
+        miniMessageFallbackFormat(PlayerFormat) {
+            Component.text("Welcome to")
+        }
     }
 
     val TAB_FOOTER by Key.buildingSimple {
-        fallback("A Velocity Server")
+        miniMessageFallbackFormat(PlayerFormat) {
+            Component.text("A Velocity Server")
+        }
     }
 
     val TAB_FORMAT by Key.buildingSimple {
-        miniMessageFallback(Component.text("%prefix% %player% %suffix%"))
+        miniMessageFallbackFormat(PlayerFormat) {
+            Component.text("$prefix $username $suffix")
+        }
     }
 
     val TAB_FORMAT_CUSTOM by Key.buildingList {

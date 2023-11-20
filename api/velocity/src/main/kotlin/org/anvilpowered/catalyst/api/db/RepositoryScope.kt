@@ -16,27 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.db
+package org.anvilpowered.catalyst.api.db
 
-import org.anvilpowered.catalyst.velocity.db.user.DiscordUserRepositoryImpl
-import org.anvilpowered.catalyst.velocity.db.user.GameUserRepositoryImpl
-import org.anvilpowered.catalyst.velocity.db.user.UserRepositoryImpl
+import org.anvilpowered.catalyst.api.user.DiscordUserRepository
+import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.UserRepository
 
 interface RepositoryScope {
     val discordUserRepository: DiscordUserRepository
     val gameUserRepository: GameUserRepository
     val userRepository: UserRepository
-
-    companion object {
-        fun create(): RepositoryScope = RepositoryScopeImpl
-    }
-}
-
-internal object RepositoryScopeImpl : RepositoryScope {
-    override val discordUserRepository: DiscordUserRepository
-        get() = DiscordUserRepositoryImpl
-    override val gameUserRepository: GameUserRepository
-        get() = GameUserRepositoryImpl
-    override val userRepository: UserRepository
-        get() = UserRepositoryImpl
 }

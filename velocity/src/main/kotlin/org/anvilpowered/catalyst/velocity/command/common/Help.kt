@@ -22,7 +22,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.anvilpowered.anvil.core.command.CommandSource
-import org.anvilpowered.catalyst.velocity.PluginMessages
+import org.anvilpowered.catalyst.api.PluginMessages
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 

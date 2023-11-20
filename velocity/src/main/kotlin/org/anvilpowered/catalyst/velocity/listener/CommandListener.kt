@@ -16,25 +16,24 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.chat
+package org.anvilpowered.catalyst.velocity.listener
 
+import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.proxy.Player
-import net.kyori.adventure.text.Component
-import org.anvilpowered.catalyst.api.chat.ChannelMessage
-import java.util.UUID
+import org.anvilpowered.anvil.core.LoggerScope
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 
-interface ChatService {
+context(LoggerScope, Registry.Scope)
+class CommandListener {
 
-    suspend fun sendMessageToChannel(channelId: String, message: Component, userId: UUID)
-    suspend fun sendMessage(message: ChannelMessage)
-    fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component
-    fun unIgnore(playerUUID: UUID, targetPlayerUUID: UUID): Component
-    fun isIgnored(playerUUID: UUID, targetPlayerUUID: UUID): Boolean
-    fun highlightPlayerNames(sender: Player, message: Component): Component
-    fun toggleChatForPlayer(player: Player)
-    fun isDisabledForPlayer(player: Player): Boolean
-
-    interface Scope {
-        val chatService: ChatService
+    @com.google.common.eventbus.Subscribe
+    fun onCommandExecution(event: CommandExecuteEvent) {
+        if (registry[CatalystKeys.COMMAND_LOGGING_ENABLED]) {
+            val commandList = registry[CatalystKeys.COMMAND_LOGGING_FILTER]
+            if (commandList.size == 1 && commandList[0] == "*" || commandList.contains(event.command)) {
+                logger.info((event.commandSource as? Player)?.username + " executed command : " + event.command)
+            }
+        }
     }
 }

@@ -17,36 +17,28 @@
  */
 package org.anvilpowered.catalyst.velocity.discord
 
-import org.anvilpowered.anvil.api.registry.Registry
-import org.anvilpowered.anvil.api.server.LocationService
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.LoginEvent
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.catalyst.velocity.chat.ChannelService
-import org.anvilpowered.catalyst.api.event.ChatEvent
-import org.anvilpowered.catalyst.api.event.JoinEvent
-import org.anvilpowered.catalyst.api.event.LeaveEvent
-import org.anvilpowered.catalyst.api.registry.CatalystKeys
-import org.anvilpowered.catalyst.api.service.ChannelService
-import org.anvilpowered.catalyst.common.command.withoutColor
+import org.anvilpowered.catalyst.api.chat.ChannelMessage
+import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 
-context(Registry.Scope, org.anvilpowered.catalyst.velocity.chat.ChannelService.Scope, PlayerService)
-class DiscordChatListener<TPlayer> @Inject constructor(
-    private val luckPermsService: LuckpermsService,
-    private val webHookSender: WebhookSender,
-    private val locationService: LocationService,
-) {
+context(Registry.Scope, PlayerService, LuckpermsService.Scope, WebhookSender.Scope)
+class DiscordChatListener {
 
     @Subscribe
-    fun onChatEvent(event: ChatEvent<TPlayer>) {
-        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
+    fun onChatEvent(message: ChannelMessage) {
+        if (!registry[CatalystKeys.DISCORD_ENABLE]) {
             return
         }
-        val channel = channelService.fromUUID(userService.getUUID(event.player)!!)
-        var message = event.rawMessage
-        if (!permissionService.hasPermission(event.player, registry.getOrDefault(CatalystKeys.LANGUAGE_ADMIN_PERMISSION))) {
+        val player = message.source
+//        val channel = channelService.getForPlayer(userService.getUUID(event.player)!!)
+        if (!player.hasPermission(registry[CatalystKeys.LANGUAGE_ADMIN_PERMISSION])) {
             message = message.replace("@".toRegex(), "")
         }
-        val server = locationService.getServer(userService.getUserName(event.player))?.name ?: "null"
+//        val server = locationService.getServer(userService.getUserName(event.player))?.name ?: "null"
         val name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
             .replace("%server%", server)
             .replace("%channel%", channel.id)
@@ -58,12 +50,12 @@ class DiscordChatListener<TPlayer> @Inject constructor(
             name.withoutColor(),
             message.withoutColor(),
             channel.discordChannel,
-            event.player
+            event.player,
         )
     }
 
     @Subscribe
-    fun onPlayerJoinEvent(event: JoinEvent<TPlayer>) {
+    fun onPlayerJoinEvent(event: LoginEvent) {
         if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
             return
         }
@@ -74,7 +66,7 @@ class DiscordChatListener<TPlayer> @Inject constructor(
             registry.getOrDefault(CatalystKeys.BOT_NAME),
             joinMessage.replace("%player%", userService.getUserName(event.player)).replace("%server%", server),
             channelService.defaultChannel()?.discordChannel,
-            event.player
+            event.player,
         )
     }
 
@@ -88,7 +80,7 @@ class DiscordChatListener<TPlayer> @Inject constructor(
                 .replace("%player%", userService.getUserName(event.player))
                 .replace("%server%", locationService.getServer(userService.getUserName(event.player))?.name ?: "null"),
             channelService.fromUUID(userService.getUUID(event.player)!!).discordChannel,
-            event.player
+            event.player,
         )
     }
 }

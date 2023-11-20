@@ -21,7 +21,7 @@ package org.anvilpowered.catalyst.velocity.command
 import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.anvil.core.user.requiresPermission
-import org.anvilpowered.catalyst.velocity.PluginMessages
+import org.anvilpowered.catalyst.api.PluginMessages
 import org.anvilpowered.catalyst.agent.command.CatalystCommand
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
@@ -29,7 +29,7 @@ import org.anvilpowered.kbrig.builder.executesSingleSuccess
 import org.anvilpowered.kbrig.context.get
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-context(org.anvilpowered.catalyst.velocity.chat.BroadcastScope)
+context(BroadcastScope)
 fun CatalystCommand.createBroadcast(): LiteralCommandNode<CommandSource> {
     return ArgumentBuilder.literal<CommandSource>("broadcast")
         .executes(CommandDefaults::notEnoughArgs)

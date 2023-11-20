@@ -29,12 +29,7 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 context(Registry.Scope, ProxyServerScope, AnvilApi)
-class GlobalTab constructor(
-//    private val registry: Registry,
-//    private val pluginContainer: PluginContainer,
-//    private val proxyServer: ProxyServer,
-//    private val tabService: TabService<Player>,
-) {
+class GlobalTab {
 
     private fun registryLoaded() {
         if (registry[CatalystKeys.TAB_ENABLED]) {
