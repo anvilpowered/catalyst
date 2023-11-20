@@ -23,6 +23,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.user.Player
 import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.catalyst.api.chat.ChatMessage
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.UUID
 
@@ -32,15 +33,15 @@ class PrivateMessageService {
     var replyMap: MutableMap<UUID, UUID> = HashMap()
 
     suspend fun sendMessage(source: Player, recipient: Player, message: Component) {
-        val message = PrivateMessage.builder()
+        val message = ChatMessage.builder()
             .source(source)
             .recipient(recipient)
             .message(rawMessage)
             .build()
         val sourcePlayer playerService[source]
-        message.sourceMessage.sendTo(userService[source])
-        message.recipientMessage.sendTo(userService[recipient])
-        socialSpy(source, recipient, message.socialSpyMessage)
+        message.source.sendTo(userService[source])
+        message.recipient.sendTo(userService[recipient])
+        socialSpy(source, recipient, message.message)
     }
 
     suspend fun sendMessageFromConsole(recipient: Player, message: Component) {

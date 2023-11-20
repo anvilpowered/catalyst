@@ -1,4 +1,4 @@
-package org.anvilpowered.catalyst.core.user
+package org.anvilpowered.catalyst.api.user
 
 import org.anvilpowered.anvil.core.user.Player
 

@@ -16,33 +16,34 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.core.chat.pm
+package org.anvilpowered.catalyst.api.chat.builder
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.user.Player
+import org.anvilpowered.catalyst.api.chat.ChatMessage
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 
 context(Registry.Scope)
-internal class PrivateMessageBuilderImpl : PrivateMessage.Builder {
+internal class PrivateMessageBuilderImpl : ChatMessage.Builder {
 
     private var source: Player? = null
     private var recipient: Player? = null
     private var message: Component? = null
 
-    override fun source(source: Player): PrivateMessage.Builder {
+    override fun source(source: Player): ChatMessage.Builder {
         this.source = source
         return this
     }
 
-    override fun recipient(recipient: Player): PrivateMessage.Builder {
+    override fun recipient(recipient: Player): ChatMessage.Builder {
         this.recipient = recipient
         return this
     }
 
-    override fun message(message: Component): PrivateMessage.Builder {
+    override fun message(message: Component): ChatMessage.Builder {
         this.message = message
         return this
     }
@@ -68,8 +69,8 @@ internal class PrivateMessageBuilderImpl : PrivateMessage.Builder {
             .build()
     }
 
-    override fun build(): PrivateMessage {
-        return PrivateMessage(
+    override fun build(): ChatMessage {
+        return ChatMessage(
             formatMessage("Me", recipient, message),
             formatMessage(source, "Me", message),
             formatSocialSpy(source, recipient, message),

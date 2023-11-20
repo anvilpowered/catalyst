@@ -28,19 +28,43 @@ import org.anvilpowered.anvil.core.config.KeyBuilderDsl
 import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.ListKey
 import org.anvilpowered.anvil.core.config.SimpleKey
+import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormatBuilder
 
 object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
 
     @KeyBuilderDsl
     private fun SimpleKey.BuilderFacet<Component, *>.miniMessageFallback(fallbackValue: Component) {
         fallback(fallbackValue)
-        serializer { MiniMessage.miniMessage().serialize(it) }
+        serializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
         deserializer { MiniMessage.miniMessage().deserialize(it) }
     }
 
     @KeyBuilderDsl
     private fun ListKey.BuilderFacet<Component, *>.miniMessageListFallback(fallbackValue: List<Component>) {
         fallback(fallbackValue)
+        elementSerializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
+        elementDeserializer { MiniMessage.miniMessage().deserialize(it) }
+    }
+
+    @KeyBuilderDsl
+    private fun <M : MessageFormat> SimpleKey.BuilderFacet<M, *>.miniMessageFallback(
+        fallbackValue: M,
+        builder: MessageFormatBuilder<*, M>,
+    ) {
+        fallback(fallbackValue)
+        serializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
+        deserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
+    }
+
+    @KeyBuilderDsl
+    private fun <M : MessageFormat> ListKey.BuilderFacet<M, *>.miniMessageListFallback(
+        fallbackValue: List<M>,
+        builder: MessageFormatBuilder<*, M>,
+    ) {
+        fallback(fallbackValue)
+        elementSerializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
+        elementDeserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
 
     val CHAT_FILTER_ENABLED by Key.buildingSimple {
@@ -56,7 +80,12 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val FIRST_JOIN by Key.buildingSimple {
-        miniMessageFallback(Component.text("Welcome to the server, %player%").color(NamedTextColor.GOLD))
+        miniMessageFallback(
+            MessageFormat.PlayerContext.build {
+                Component.text("Welcome to the server, $playerName").color(NamedTextColor.GOLD)
+            },
+            MessageFormat.PlayerContext,
+        )
     }
 
     val JOIN_MESSAGE by Key.buildingSimple {
@@ -81,14 +110,17 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
 
     val PRIVATE_MESSAGE_FORMAT by Key.buildingSimple {
         miniMessageFallback(
-            Component.text()
-                .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text("%sender%").color(NamedTextColor.BLUE))
-                .append(Component.text(" -> ").color(NamedTextColor.GOLD))
-                .append(Component.text("%recipient%").color(NamedTextColor.BLUE))
-                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text("%message%").color(NamedTextColor.GRAY))
-                .build(),
+            MessageFormat.ServerContext.build {
+                Component.text()
+                    .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
+                    .append(Component.text("%sender%").color(NamedTextColor.BLUE))
+                    .append(Component.text(" -> ").color(NamedTextColor.GOLD))
+                    .append(Component.text("%recipient%").color(NamedTextColor.BLUE))
+                    .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
+                    .append(Component.text("%message%").color(NamedTextColor.GRAY))
+                    .build()
+            },
+            MessageFormat.ServerContext,
         )
     }
 
@@ -105,28 +137,35 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val TAB_FORMAT by Key.buildingSimple {
-        fallback("%prefix% %player% %suffix%")
+        miniMessageFallback(Component.text("%prefix% %player% %suffix%"))
     }
 
     val TAB_FORMAT_CUSTOM by Key.buildingList {
         miniMessageListFallback(
             listOf(
-                Component.text()
-                    .append(Component.text("Your ping").color(NamedTextColor.DARK_AQUA))
-                    .append(Component.text(": ").color(NamedTextColor.GRAY))
-                    .append(Component.text("%ping%").color(NamedTextColor.YELLOW))
-                    .build(),
-                Component.text()
-                    .append(Component.text("Current Server").color(NamedTextColor.DARK_AQUA))
-                    .append(Component.text(": ").color(NamedTextColor.GRAY))
-                    .append(Component.text("%server%").color(NamedTextColor.YELLOW))
-                    .build(),
-                Component.text()
-                    .append(Component.text("Player Count").color(NamedTextColor.DARK_AQUA))
-                    .append(Component.text(": ").color(NamedTextColor.GRAY))
-                    .append(Component.text("%playercount%").color(NamedTextColor.YELLOW))
-                    .build(),
+                MessageFormat.ServerContext.build {
+                    Component.text()
+                        .append(Component.text("Your ping").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(": ").color(NamedTextColor.GRAY))
+                        .append(Component.text(ping).color(NamedTextColor.YELLOW))
+                        .build()
+                },
+                MessageFormat.ServerContext.build {
+                    Component.text()
+                        .append(Component.text("Current Server").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(": ").color(NamedTextColor.GRAY))
+                        .append(Component.text(server).color(NamedTextColor.YELLOW))
+                        .build()
+                },
+                MessageFormat.ServerContext.build {
+                    Component.text()
+                        .append(Component.text("Player Count").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(": ").color(NamedTextColor.GRAY))
+                        .append(Component.text(playerCount).color(NamedTextColor.YELLOW))
+                        .build()
+                },
             ),
+            MessageFormat.ServerContext,
         )
     }
 
@@ -407,7 +446,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
         fallback(false)
     }
 
-    //Keys for command toggling
+    // Keys for command toggling
     val BAN_COMMAND_ENABLED by Key.buildingSimple {
         fallback(true)
     }
@@ -422,8 +461,8 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
 
     val CHANNEL_COMMAND_ALIAS_ENABLED by Key.buildingSimple {
         fallback(false)
-
     }
+
     val NICKNAME_COMMAND_ENABLED by Key.buildingSimple {
         fallback(true)
     }
@@ -472,7 +511,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
         fallback("Catalyst")
     }
 
-    //Keys for root node comments
+    // Keys for root node comments
     val ADVANCED_ROOT by Key.buildingSimple {
         fallback("null")
     }

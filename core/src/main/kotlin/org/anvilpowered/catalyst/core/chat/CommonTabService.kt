@@ -16,35 +16,26 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.common.service
+package org.anvilpowered.catalyst.core.chat
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.anvilpowered.anvil.api.registry.Registry
-import org.anvilpowered.anvil.api.server.LocationService
-import org.anvilpowered.anvil.api.util.UserService
-import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FOOTER
-import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_FORMAT
-import org.anvilpowered.catalyst.api.registry.CatalystKeys.TAB_HEADER
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.anvil.core.user.Player
+import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.service.TabService
-import org.anvilpowered.catalyst.core.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.user.LocationScope
 
-@Singleton
-class CommonTabService<TPlayer> @Inject constructor(
-    private val registry: Registry,
-    private val locationService: LocationService,
-    private val userService: UserService<TPlayer, TPlayer>,
-    private val luckpermsService: LuckpermsService
-) : TabService<TPlayer> {
+context(Registry.Scope, org.anvilpowered.catalyst.api.user.LocationScope, PlayerService.Scope, LuckpermsService.Scope)
+class CommonTabService : TabService {
 
-    override fun format(player: TPlayer, ping: Int, playerCount: Int): Component {
+    override fun format(player: Player, ping: Int, playerCount: Int): Component {
         return LegacyComponentSerializer.legacyAmpersand()
-            .deserialize(replacePlaceholders(registry.getOrDefault(TAB_FORMAT), player, ping, playerCount))
+            .deserialize(replacePlaceholders(registry[CatalystKeys.TAB_FORMAT], player, ping, playerCount))
     }
 
-    override fun formatCustom(format: String, player: TPlayer, ping: Int, playerCount: Int): Component {
+    override fun formatCustom(format: Component, player: Player, ping: Int, playerCount: Int): Component {
         return LegacyComponentSerializer.legacyAmpersand()
             .deserialize(replacePlaceholders(format, player, ping, playerCount))
     }

@@ -21,7 +21,7 @@ package org.anvilpowered.catalyst.api.chat.builder
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.config.ChatChannel
 
-internal class ChatChannelBuilderImpl: ChatChannel.Builder {
+internal class ChatChannelBuilderImpl : ChatChannel.Builder {
     private var id: String = ""
     private var nameFormat: Component = Component.text("%name%")
     private var messageFormat: Component = Component.text("%message%")

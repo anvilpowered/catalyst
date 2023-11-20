@@ -16,31 +16,13 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.user
+package org.anvilpowered.catalyst.api.chat
 
-import org.anvilpowered.anvil.core.db.Creates
-import org.anvilpowered.anvil.core.db.DomainEntity
+import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.user.Player
-import org.anvilpowered.anvil.core.user.Subject
-import java.util.UUID
 
-/**
- * A user of a game of the Anvil platform.
- *
- * Represents a single user of a game.
- */
-data class GameUser(
-    override val id: UUID,
-    val userId: UUID,
-    val username: String,
-    val gameType: String,
-    val nickname: String? = null,
-) : DomainEntity, Creates<GameUser> {
-
-    interface GamePlatformScope { // TODO: Maybe just GameScope?
-
-        val GameUser.subject: Subject?
-
-        val GameUser.player: Player?
-    }
-}
+class ChatMessage(
+    val source: Player,
+    val recipient: Player,
+    val content: Component,
+)

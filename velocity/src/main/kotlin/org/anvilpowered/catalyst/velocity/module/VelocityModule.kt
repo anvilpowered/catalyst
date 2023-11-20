@@ -40,7 +40,7 @@ import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
 import org.anvilpowered.catalyst.core.chat.LuckpermsService
 import org.anvilpowered.catalyst.core.chat.pm.PrivateMessageService
 import org.anvilpowered.catalyst.common.service.CommonStaffListService
-import org.anvilpowered.catalyst.common.service.CommonTabService
+import org.anvilpowered.catalyst.core.chat.CommonTabService
 import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService
 
 @Singleton

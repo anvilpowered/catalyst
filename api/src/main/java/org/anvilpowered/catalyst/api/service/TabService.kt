@@ -15,18 +15,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
+package org.anvilpowered.catalyst.api.service
 
-package org.anvilpowered.catalyst.api.service;
+import net.kyori.adventure.text.Component
+import org.anvilpowered.anvil.core.user.Player
 
-import net.kyori.adventure.text.Component;
-
-public interface TabService<TPlayer> {
-
-  Component format(TPlayer player, int ping, int playerCount);
-
-  Component formatCustom(String format, TPlayer player, int ping, int playerCount);
-
-  Component formatHeader(TPlayer player, int ping, int playerCount);
-
-  Component formatFooter(TPlayer player, int ping, int playerCount);
+interface TabService {
+    fun format(player: Player, ping: Int, playerCount: Int): Component?
+    fun formatCustom(format: Component, player: Player, ping: Int, playerCount: Int): Component?
+    fun formatHeader(player: Player, ping: Int, playerCount: Int): Component?
+    fun formatFooter(player: Player, ping: Int, playerCount: Int): Component?
 }

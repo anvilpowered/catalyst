@@ -25,10 +25,10 @@ import org.anvilpowered.anvil.core.user.hasPermissionNotSet
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.event.ChatEvent
 import org.anvilpowered.catalyst.core.db.RepositoryScope
-import org.anvilpowered.catalyst.core.user.LocationScope
+import org.anvilpowered.catalyst.api.user.LocationScope
 
 context(ChatService.Scope, Registry.Scope, PlayerService.Scope, ChannelService.Scope, LuckpermsService.Scope, ChatFilter.Scope,
-RepositoryScope, LocationScope)
+RepositoryScope, org.anvilpowered.catalyst.api.user.LocationScope)
 class ChatListener {
 
     @Subscribe
