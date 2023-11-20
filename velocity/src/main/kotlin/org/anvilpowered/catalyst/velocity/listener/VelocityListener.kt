@@ -45,13 +45,12 @@ import org.anvilpowered.catalyst.api.event.CommandEvent
 import org.anvilpowered.catalyst.api.event.EventBusScope
 import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.event.LeaveEvent
-import org.anvilpowered.catalyst.core.chat.ChannelService
+import org.anvilpowered.catalyst.velocity.chat.ChannelService
 import org.anvilpowered.catalyst.core.chat.ChatService
-import org.anvilpowered.catalyst.core.db.RepositoryScope
 import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
 import java.util.UUID
 
-context(ChannelService.Scope, ChatService.Scope, ProxyServerScope, Registry.Scope, Server.Scope, EventBusScope, RepositoryScope)
+context(ChannelService.Scope, ChatService.Scope, ProxyServerScope, Registry.Scope, Server.Scope, EventBusScope, org.anvilpowered.catalyst.velocity.db.RepositoryScope)
 class VelocityListener {
 
     @Subscribe

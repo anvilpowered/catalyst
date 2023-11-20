@@ -15,27 +15,24 @@
  *     You should have received a copy of the GNU Affero General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+package org.anvilpowered.catalyst.velocity.chat
 
-package org.anvilpowered.catalyst.velocity
-
-import com.google.inject.Injector
-import org.anvilpowered.anvil.core.AnvilApi
+import com.google.common.eventbus.Subscribe
+import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.AnvilVelocityApi
-import org.anvilpowered.anvil.velocity.createVelocity
-import org.anvilpowered.catalyst.velocity.db.RepositoryScope
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.event.CommandEvent
 
-interface CatalystVelocityApi : CatalystApi {
+context(LoggerScope, Registry.Scope)
+class CommandListener {
 
-    override val anvil: AnvilVelocityApi
-}
-
-fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object :
-        CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(injector)
-        override val registry: Registry
-            get() = TODO("Not yet implemented")
+    @Subscribe
+    fun onCommandExecution(event: CommandEvent) {
+        if (registry[CatalystKeys.COMMAND_LOGGING_ENABLED]) {
+            val commandList = registry[CatalystKeys.COMMAND_LOGGING_FILTER]
+            if (commandList.size == 1 && commandList[0] == "*" || commandList.contains(event.command)) {
+                logger.info(event.sourceName + " executed command : " + event.command)
+            }
+        }
     }
 }

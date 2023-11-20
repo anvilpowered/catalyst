@@ -26,7 +26,6 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.velocity.command.toVelocity
-import org.anvilpowered.catalyst.core.CatalystApi
 import org.anvilpowered.catalyst.core.command.nickname.NicknameCommand
 
 @Plugin(

@@ -16,26 +16,21 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity
+package org.anvilpowered.catalyst.velocity.db.user
 
-import com.google.inject.Injector
-import org.anvilpowered.anvil.core.AnvilApi
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.AnvilVelocityApi
-import org.anvilpowered.anvil.velocity.createVelocity
-import org.anvilpowered.catalyst.velocity.db.RepositoryScope
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.UUIDTable
+import java.util.UUID
 
-interface CatalystVelocityApi : CatalystApi {
-
-    override val anvil: AnvilVelocityApi
+internal object DiscordUserTable : UUIDTable("discord_users") {
+    val discordId = ulong("discord_id").uniqueIndex()
 }
 
-fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object :
-        CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(injector)
-        override val registry: Registry
-            get() = TODO("Not yet implemented")
-    }
+internal class DiscordUserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+    var discordId by DiscordUserTable.discordId.transform({ it.toULong() }, { it.toString() })
+    val user: UserEntity by UserEntity referencedOn DiscordUserTable.id
+
+    companion object : UUIDEntityClass<DiscordUserEntity>(DiscordUserTable)
 }

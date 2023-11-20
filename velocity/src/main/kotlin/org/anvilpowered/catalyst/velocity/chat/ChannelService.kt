@@ -16,26 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity
+package org.anvilpowered.catalyst.velocity.chat
 
-import com.google.inject.Injector
-import org.anvilpowered.anvil.core.AnvilApi
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.AnvilVelocityApi
-import org.anvilpowered.anvil.velocity.createVelocity
-import org.anvilpowered.catalyst.velocity.db.RepositoryScope
+import org.anvilpowered.anvil.core.user.Player
+import org.anvilpowered.catalyst.api.config.ChatChannel
+import java.util.UUID
 
-interface CatalystVelocityApi : CatalystApi {
+interface ChannelService {
 
-    override val anvil: AnvilVelocityApi
-}
+    val defaultChannel: ChatChannel
 
-fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object :
-        CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(injector)
-        override val registry: Registry
-            get() = TODO("Not yet implemented")
+    fun get(channelId: String): ChatChannel?
+
+    fun getForPlayer(playerId: UUID): ChatChannel
+
+    fun getPlayers(channelId: String): Sequence<Player>
+
+    fun switch(userUUID: UUID, channelId: String)
+
+    fun moveUsersToChannel(sourceChannel: String, targetChannel: String)
+
+    interface Scope {
+        val channelService: org.anvilpowered.catalyst.velocity.chat.ChannelService
     }
 }

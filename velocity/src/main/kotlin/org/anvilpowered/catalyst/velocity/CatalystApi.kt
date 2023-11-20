@@ -18,24 +18,15 @@
 
 package org.anvilpowered.catalyst.velocity
 
-import com.google.inject.Injector
 import org.anvilpowered.anvil.core.AnvilApi
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.AnvilVelocityApi
-import org.anvilpowered.anvil.velocity.createVelocity
 import org.anvilpowered.catalyst.velocity.db.RepositoryScope
 
-interface CatalystVelocityApi : CatalystApi {
+interface CatalystApi : RepositoryScope {
 
-    override val anvil: AnvilVelocityApi
-}
+    val registry: Registry
 
-fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object :
-        CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(injector)
-        override val registry: Registry
-            get() = TODO("Not yet implemented")
-    }
+    val anvil: AnvilApi
+
+    companion object
 }

@@ -26,7 +26,7 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.core.CatalystApi
+import org.anvilpowered.catalyst.velocity.CatalystApi
 
 context(CatalystApi)
 class VelocityCommandNode @Inject constructor(

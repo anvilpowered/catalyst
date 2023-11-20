@@ -16,26 +16,24 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity
+package org.anvilpowered.catalyst.velocity.chat
 
-import com.google.inject.Injector
-import org.anvilpowered.anvil.core.AnvilApi
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.AnvilVelocityApi
-import org.anvilpowered.anvil.velocity.createVelocity
-import org.anvilpowered.catalyst.velocity.db.RepositoryScope
+import net.kyori.adventure.text.Component
+import org.anvilpowered.anvil.core.user.Player
+import java.util.UUID
 
-interface CatalystVelocityApi : CatalystApi {
+interface ChatService {
 
-    override val anvil: AnvilVelocityApi
-}
+    suspend fun sendMessageToChannel(channelId: String, message: Component, userId: UUID)
+    suspend fun sendChatMessage(message: ChatMessage)
+    fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component
+    fun unIgnore(playerUUID: UUID, targetPlayerUUID: UUID): Component
+    fun isIgnored(playerUUID: UUID, targetPlayerUUID: UUID): Boolean
+    fun highlightPlayerNames(sender: Player, message: Component): Component
+    fun toggleChatForPlayer(player: Player)
+    fun isDisabledForPlayer(player: Player): Boolean
 
-fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object :
-        CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(injector)
-        override val registry: Registry
-            get() = TODO("Not yet implemented")
+    interface Scope {
+        val chatService: ChatService
     }
 }

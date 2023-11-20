@@ -16,26 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity
+package org.anvilpowered.catalyst.velocity.command.nickname
 
-import com.google.inject.Injector
-import org.anvilpowered.anvil.core.AnvilApi
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.AnvilVelocityApi
-import org.anvilpowered.anvil.velocity.createVelocity
-import org.anvilpowered.catalyst.velocity.db.RepositoryScope
+import org.anvilpowered.anvil.core.command.CommandSource
+import org.anvilpowered.catalyst.velocity.CatalystApi
+import org.anvilpowered.kbrig.builder.ArgumentBuilder
+import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-interface CatalystVelocityApi : CatalystApi {
+object NicknameCommand {
 
-    override val anvil: AnvilVelocityApi
-}
-
-fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object :
-        CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(injector)
-        override val registry: Registry
-            get() = TODO("Not yet implemented")
+    context(CatalystApi)
+    fun create(): LiteralCommandNode<CommandSource> {
+        return ArgumentBuilder.literal<CommandSource>("nickname")
+            .then(createSet())
+            .then(createDelete())
+            .build()
     }
 }

@@ -16,26 +16,23 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity
+package org.anvilpowered.catalyst.velocity.db
 
-import com.google.inject.Injector
-import org.anvilpowered.anvil.core.AnvilApi
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.AnvilVelocityApi
-import org.anvilpowered.anvil.velocity.createVelocity
-import org.anvilpowered.catalyst.velocity.db.RepositoryScope
+import org.anvilpowered.anvil.core.db.DomainEntity
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.statements.InsertStatement
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-interface CatalystVelocityApi : CatalystApi {
-
-    override val anvil: AnvilVelocityApi
-}
-
-fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object :
-        CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
-        override val anvil = AnvilApi.createVelocity(injector)
-        override val registry: Registry
-            get() = TODO("Not yet implemented")
-    }
+internal suspend fun <T : Table, E : DomainEntity> newSaveTransaction(
+    table: T,
+    toTable: context(T) InsertStatement<Number>.() -> Unit,
+    toEntity: ResultRow.() -> E,
+): E {
+    val fromDB = newSuspendedTransaction {
+        table.insert { toTable(it) }
+    }.resultedValues?.firstOrNull()?.toEntity()
+    checkNotNull(fromDB) { "Failed to save entity" }
+    return fromDB
 }

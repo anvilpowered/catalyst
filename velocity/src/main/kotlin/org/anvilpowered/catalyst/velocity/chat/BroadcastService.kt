@@ -16,21 +16,11 @@
  *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package org.anvilpowered.catalyst.velocity.service
+package org.anvilpowered.catalyst.velocity.chat
 
-import com.google.inject.Inject
-import com.velocitypowered.api.proxy.ProxyServer
-import net.kyori.adventure.identity.Identity
 import net.kyori.adventure.text.Component
-import org.anvilpowered.catalyst.velocity.chat.BroadcastService
 
-class VelocityBroadcastService @Inject constructor(
-    private val proxyServer: ProxyServer,
-) : org.anvilpowered.catalyst.velocity.chat.BroadcastService {
-    override fun broadcast(message: Component) {
-        if (message.toString().isEmpty()) {
-            return
-        }
-        proxyServer.allPlayers.forEach { it.sendMessage(Identity.nil(), message) }
-    }
+interface BroadcastService {
+
+    fun broadcast(message: Component)
 }

@@ -31,9 +31,9 @@ import org.anvilpowered.catalyst.common.member.CommonMemberManager
 import org.anvilpowered.catalyst.common.module.CommonModule
 import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
 import org.anvilpowered.catalyst.common.service.CommonStaffListService
-import org.anvilpowered.catalyst.core.chat.BroadcastService
-import org.anvilpowered.catalyst.core.chat.ChannelService
-import org.anvilpowered.catalyst.core.chat.ChannelServiceImpl
+import org.anvilpowered.catalyst.velocity.chat.BroadcastService
+import org.anvilpowered.catalyst.velocity.chat.ChannelService
+import org.anvilpowered.catalyst.velocity.chat.ChannelServiceImpl
 import org.anvilpowered.catalyst.core.chat.ChatService
 import org.anvilpowered.catalyst.core.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.core.chat.CommonTabService
@@ -47,10 +47,10 @@ import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService
 class VelocityModule : CommonModule("plugins") {
     override fun configure() {
         with(binder()) {
-            bind<BroadcastService>().to<VelocityBroadcastService>()
+            bind<org.anvilpowered.catalyst.velocity.chat.BroadcastService>().to<VelocityBroadcastService>()
             bind<DiscordCommandService>().to<VelocityDiscordCommandService>()
             bind<MemberManager>().to<CommonMemberManager<Player>>()
-            bind<ChannelService<Player>>().to<ChannelServiceImpl<Player>>()
+            bind<org.anvilpowered.catalyst.velocity.chat.ChannelService<Player>>().to<org.anvilpowered.catalyst.velocity.chat.ChannelServiceImpl<Player>>()
             bind<ChatService<Player, CommandSource>>().to<ChatServiceImpl<Player, CommandSource>>()
             bind<PrivateMessageService>().to<PrivateMessageService<Player>>()
             bind<StaffListService>().to<CommonStaffListService<Player>>()
