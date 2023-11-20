@@ -19,9 +19,6 @@
 package org.anvilpowered.catalyst.core.chat
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import org.anvilpowered.anvil.core.user.PlayerService
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.GameUser

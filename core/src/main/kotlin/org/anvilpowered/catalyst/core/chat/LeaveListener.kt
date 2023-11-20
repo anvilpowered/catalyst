@@ -20,12 +20,12 @@ package org.anvilpowered.catalyst.common.listener
 import com.google.common.eventbus.Subscribe
 import com.google.inject.Inject
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.util.UserService
 import org.anvilpowered.catalyst.api.event.LeaveEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.BroadcastService
 import org.anvilpowered.catalyst.api.service.StaffListService
-import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 
 class LeaveListener<TPlayer> @Inject constructor(
@@ -43,7 +43,7 @@ class LeaveListener<TPlayer> @Inject constructor(
 
         if (registry.getOrDefault(CatalystKeys.LEAVE_LISTENER_ENABLED)) {
             broadcastService.broadcast(
-                LegacyComponentSerializer.legacyAmpersand().deserialize(message.replace("%player%", userService.getUserName(player)))
+                LegacyComponentSerializer.legacyAmpersand().deserialize(message.replace("%player%", userService.getUserName(player))),
             )
             logger.info(registry.getOrDefault(CatalystKeys.LEAVE_MESSAGE).replace("%player%", userService.getUserName(player)))
         }

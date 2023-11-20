@@ -25,12 +25,12 @@ import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.core.chat.BroadcastService
 
 class VelocityBroadcastService @Inject constructor(
-  private val proxyServer: ProxyServer
+    private val proxyServer: ProxyServer,
 ) : BroadcastService {
-  override fun broadcast(message: Component) {
-    if (message.toString().isEmpty()) {
-      return
+    override fun broadcast(message: Component) {
+        if (message.toString().isEmpty()) {
+            return
+        }
+        proxyServer.allPlayers.forEach { it.sendMessage(Identity.nil(), message) }
     }
-    proxyServer.allPlayers.forEach { it.sendMessage(Identity.nil(), message) }
-  }
 }

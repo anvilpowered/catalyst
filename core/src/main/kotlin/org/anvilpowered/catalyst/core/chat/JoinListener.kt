@@ -20,6 +20,7 @@ package org.anvilpowered.catalyst.common.listener
 import com.google.common.eventbus.Subscribe
 import com.google.inject.Inject
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.anvilpowered.anvil.api.registry.Registry
 import org.anvilpowered.anvil.api.server.LocationService
 import org.anvilpowered.anvil.api.util.PermissionService
 import org.anvilpowered.anvil.api.util.UserService
@@ -27,7 +28,6 @@ import org.anvilpowered.catalyst.api.event.JoinEvent
 import org.anvilpowered.catalyst.api.registry.CatalystKeys
 import org.anvilpowered.catalyst.api.service.BroadcastService
 import org.anvilpowered.catalyst.api.service.StaffListService
-import org.anvilpowered.anvil.api.registry.Registry
 import org.slf4j.Logger
 
 class JoinListener<TPlayer> @Inject constructor(
@@ -54,12 +54,12 @@ class JoinListener<TPlayer> @Inject constructor(
             userName,
             permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.STAFFLIST_ADMIN_PERMISSION)),
             permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.STAFFLIST_STAFF_PERMISSION)),
-            permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER_PERMISSION))
+            permissionService.hasPermission(player, registry.getOrDefault(CatalystKeys.STAFFLIST_OWNER_PERMISSION)),
         )
         val joinMessage = registry.getOrDefault(CatalystKeys.JOIN_MESSAGE)
         if (registry.getOrDefault(CatalystKeys.JOIN_LISTENER_ENABLED)) {
             broadcastService.broadcast(
-                LegacyComponentSerializer.legacyAmpersand().deserialize(joinMessage.replace("%player%", userName).replace("%server%", server))
+                LegacyComponentSerializer.legacyAmpersand().deserialize(joinMessage.replace("%player%", userName).replace("%server%", server)),
             )
             logger.info(registry.getOrDefault(CatalystKeys.JOIN_MESSAGE).replace("%player%", userName).replace("%server%", server))
         }

@@ -19,37 +19,36 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat.Companion.trb
+import org.anvilpowered.anvil.velocity.ProxyServerScope
 
-class ServerFormat(private val format: Component, private val placeholders: Placeholders) : MessageFormat {
+class ProxyServerFormat(private val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
-    context(PlayerService.Scope)
+    context(ProxyServerScope)
     fun resolvePlaceholders(): Component = resolvePlaceholders(format, placeholders)
 
     override fun asComponent(): Component = format
 
-    companion object : MessageFormat.Builder<Placeholders, ServerFormat> {
+    companion object : MessageFormat.Builder<Placeholders, ProxyServerFormat> {
 
-        context(PlayerService.Scope)
+        context(ProxyServerScope)
         fun resolvePlaceholders(format: Component, placeholders: Placeholders): Component {
-            return sequenceOf<(Component) -> Component>(
-                { it.replaceText(trb().match(placeholders.playerCount).replacement(playerService.getAll().count().toString()).build()) },
-//                { it.replaceText(trb().match(placeholders.serverName).replacement(serverName).build()) },
+            return sequenceOf<Component.() -> Component>(
+                { replaceText { it.match(placeholders.version).replacement(proxyServer.version.version) } },
+                { replaceText { it.match(placeholders.playerCount).replacement(proxyServer.playerCount.toString()) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
-        override fun build(block: Placeholders.() -> Component): ServerFormat {
+        override fun build(block: Placeholders.() -> Component): ProxyServerFormat {
             val placeholders = Placeholders()
-            return ServerFormat(block(placeholders), placeholders)
+            return ProxyServerFormat(block(placeholders), placeholders)
         }
     }
 
-    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ServerFormat> {
+    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ProxyServerFormat> {
 
         private val prefix = path.joinToString { "$it." }
 
+        val version: Placeholder = "%${prefix}version%"
         val playerCount: Placeholder = "%${prefix}playerCount%"
-        val serverName: Placeholder = "%${prefix}serverName%"
     }
 }

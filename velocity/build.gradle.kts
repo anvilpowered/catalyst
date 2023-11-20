@@ -1,4 +1,5 @@
 dependencies {
+    implementation(project(":catalyst-api-velocity"))
     implementation(project(":catalyst-core"))
     implementation(libs.anvil.velocity)
 //    implementation("net.kyori:adventure-text-minimessage:$minimessageVersion")

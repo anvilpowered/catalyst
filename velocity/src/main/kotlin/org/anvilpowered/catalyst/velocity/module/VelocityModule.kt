@@ -25,22 +25,22 @@ import org.anvilpowered.anvil.api.misc.bind
 import org.anvilpowered.anvil.api.misc.to
 import org.anvilpowered.catalyst.api.discord.DiscordCommandService
 import org.anvilpowered.catalyst.api.member.MemberManager
-import org.anvilpowered.catalyst.core.chat.BroadcastService
-import org.anvilpowered.catalyst.core.chat.ChannelService
-import org.anvilpowered.catalyst.core.chat.ChatService
 import org.anvilpowered.catalyst.api.service.StaffListService
 import org.anvilpowered.catalyst.api.service.TabService
-import org.anvilpowered.catalyst.core.discord.JDAService
-import org.anvilpowered.catalyst.core.discord.WebhookSender
 import org.anvilpowered.catalyst.common.member.CommonMemberManager
 import org.anvilpowered.catalyst.common.module.CommonModule
-import org.anvilpowered.catalyst.core.chat.ChannelServiceImpl
-import org.anvilpowered.catalyst.core.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.common.service.CommonEventRegistrationService
-import org.anvilpowered.catalyst.core.chat.LuckpermsService
-import org.anvilpowered.catalyst.core.chat.pm.PrivateMessageService
 import org.anvilpowered.catalyst.common.service.CommonStaffListService
+import org.anvilpowered.catalyst.core.chat.BroadcastService
+import org.anvilpowered.catalyst.core.chat.ChannelService
+import org.anvilpowered.catalyst.core.chat.ChannelServiceImpl
+import org.anvilpowered.catalyst.core.chat.ChatService
+import org.anvilpowered.catalyst.core.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.core.chat.CommonTabService
+import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.core.chat.pm.PrivateMessageService
+import org.anvilpowered.catalyst.core.discord.JDAService
+import org.anvilpowered.catalyst.core.discord.WebhookSender
 import org.anvilpowered.catalyst.velocity.service.VelocityBroadcastService
 
 @Singleton

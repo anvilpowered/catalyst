@@ -32,7 +32,8 @@ interface CatalystVelocityApi : CatalystApi {
 }
 
 fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
-    return object : CatalystVelocityApi,
+    return object :
+        CatalystVelocityApi,
         RepositoryScope by RepositoryScope.create() {
         override val anvil = AnvilApi.createVelocity(injector)
         override val registry: Registry

@@ -24,19 +24,21 @@ import org.anvilpowered.anvil.core.user.PlayerService
 import org.anvilpowered.anvil.core.user.hasPermissionNotSet
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.event.ChatEvent
-import org.anvilpowered.catalyst.core.db.RepositoryScope
 import org.anvilpowered.catalyst.api.user.LocationScope
+import org.anvilpowered.catalyst.core.db.RepositoryScope
 
-context(ChatService.Scope, Registry.Scope, PlayerService.Scope, ChannelService.Scope, LuckpermsService.Scope, ChatFilter.Scope,
-RepositoryScope, org.anvilpowered.catalyst.api.user.LocationScope)
+context(
+    ChatService.Scope, Registry.Scope, PlayerService.Scope, ChannelService.Scope, LuckpermsService.Scope, ChatFilter.Scope,
+    RepositoryScope, org.anvilpowered.catalyst.api.user.LocationScope
+)
 class ChatListener {
 
     @Subscribe
     fun onPlayerChat(event: ChatEvent) = runBlocking {
         val player = event.player
         var message = chatService.highlightPlayerNames(player, event.message)
-        if (player.hasPermissionNotSet(registry[CatalystKeys.LANGUAGE_ADMIN_PERMISSION])
-            && registry[CatalystKeys.CHAT_FILTER_ENABLED]
+        if (player.hasPermissionNotSet(registry[CatalystKeys.LANGUAGE_ADMIN_PERMISSION]) &&
+            registry[CatalystKeys.CHAT_FILTER_ENABLED]
         ) {
             message = chatFilter.replaceSwears(message)
         }

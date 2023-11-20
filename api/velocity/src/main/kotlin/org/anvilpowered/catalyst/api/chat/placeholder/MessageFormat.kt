@@ -20,7 +20,6 @@ package org.anvilpowered.catalyst.api.chat.placeholder
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.ComponentLike
-import net.kyori.adventure.text.TextReplacementConfig
 
 typealias Placeholder = String
 
@@ -30,10 +29,6 @@ interface MessageFormat : ComponentLike {
     }
 
     interface Placeholders<M : MessageFormat>
-
-    companion object {
-        internal fun trb(): TextReplacementConfig.Builder = TextReplacementConfig.builder()
-    }
 }
 
 // don't ask, it works

@@ -19,15 +19,15 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.anvil.core.LoggerScope
+import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.ChatMessage
-import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat.Companion.trb
-import org.anvilpowered.catalyst.api.user.LocationScope
+import org.anvilpowered.catalyst.api.chat.LuckpermsService
 
 class ChatMessageFormat(private val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
-    context(LocationScope, PlayerService.Scope)
-    fun resolvePlaceholders(message: ChatMessage): Component = resolvePlaceholders(format, placeholders, message)
+    context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
+    suspend fun resolvePlaceholders(message: ChatMessage): Component = resolvePlaceholders(format, placeholders, message)
 
     override fun asComponent(): Component = format
 
@@ -36,12 +36,12 @@ class ChatMessageFormat(private val format: Component, private val placeholders:
         private val source = NestedFormat(PlayerFormat, Placeholders::source)
         private val recipient = NestedFormat(PlayerFormat, Placeholders::recipient)
 
-        context(LocationScope, PlayerService.Scope)
-        fun resolvePlaceholders(format: Component, placeholders: Placeholders, message: ChatMessage): Component {
-            return sequenceOf<(Component) -> Component>(
-                { source.format.resolvePlaceholders(it, source.placeholderResolver(placeholders), message.source) },
-                { recipient.format.resolvePlaceholders(it, recipient.placeholderResolver(placeholders), message.recipient) },
-                { it.replaceText(trb().match(placeholders.message).replacement(message.content).build()) },
+        context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
+        suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, message: ChatMessage): Component {
+            return sequenceOf<suspend Component.() -> Component>(
+                { source.format.resolvePlaceholders(this, source.placeholderResolver(placeholders), message.source) },
+                { recipient.format.resolvePlaceholders(this, recipient.placeholderResolver(placeholders), message.recipient) },
+                { replaceText { it.match(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
@@ -57,6 +57,6 @@ class ChatMessageFormat(private val format: Component, private val placeholders:
 
         val source = PlayerFormat.Placeholders(path + listOf("source"))
         val recipient = PlayerFormat.Placeholders(path + listOf("recipient"))
-        val message: Placeholder = "%${prefix}messageContent%"
+        val content: Placeholder = "%${prefix}content%"
     }
 }

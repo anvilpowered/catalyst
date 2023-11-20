@@ -30,17 +30,16 @@ import org.anvilpowered.catalyst.api.discord.JDAService
 import java.util.Objects
 
 class DiscordCommandSource @Inject constructor(
-  private val jdaHook: JDAService,
-  private val discordCommandService: DiscordCommandService
+    private val jdaHook: JDAService,
+    private val discordCommandService: DiscordCommandService,
 ) : CommandSource {
 
-  override fun hasPermission(permission: String): Boolean = true
-  override fun getPermissionValue(permission: String): Tristate = Tristate.TRUE
+    override fun hasPermission(permission: String): Boolean = true
+    override fun getPermissionValue(permission: String): Tristate = Tristate.TRUE
 
-  override fun sendMessage(identity: Identity, message: Component, type: MessageType) {
-    Objects.requireNonNull(jdaHook.jda.getTextChannelById(discordCommandService.channelId))
-      ?.sendMessage("```" + PlainTextComponentSerializer.plainText().serialize(message) + "```")
-      ?.queue()
-  }
+    override fun sendMessage(identity: Identity, message: Component, type: MessageType) {
+        Objects.requireNonNull(jdaHook.jda.getTextChannelById(discordCommandService.channelId))
+            ?.sendMessage("```" + PlainTextComponentSerializer.plainText().serialize(message) + "```")
+            ?.queue()
+    }
 }
-

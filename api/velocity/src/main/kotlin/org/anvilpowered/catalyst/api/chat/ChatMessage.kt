@@ -18,8 +18,8 @@
 
 package org.anvilpowered.catalyst.api.chat
 
+import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.user.Player
 
 class ChatMessage(
     val source: Player,

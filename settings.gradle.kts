@@ -21,7 +21,9 @@ rootProject.name = "catalyst"
 
 sequenceOf(
     "api",
+    "api-velocity",
     "core",
+    "paper",
     "velocity",
 ).forEach {
     val project = ":catalyst-$it"

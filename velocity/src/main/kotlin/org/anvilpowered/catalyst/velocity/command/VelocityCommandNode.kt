@@ -19,7 +19,6 @@
 package org.anvilpowered.catalyst.velocity.command
 
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
@@ -46,11 +45,11 @@ class VelocityCommandNode @Inject constructor(
             proxyServer.commandManager.unregister("server")
         }
 
-        //register commands from CommonCommandNode
+        // register commands from CommonCommandNode
         val manager = proxyServer.commandManager
         commands.forEach { (aliases: List<String>, command: LiteralCommandNode<CommandSource>) ->
             val metaBuilder = manager.metaBuilder(aliases[0])
-            //Skipping first entry as it is already defined
+            // Skipping first entry as it is already defined
             for (i in 1 until aliases.size) {
                 metaBuilder.aliases(aliases[i])
             }

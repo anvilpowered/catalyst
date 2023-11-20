@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit
 class CommonStaffListService<TPlayer> @Inject constructor(
     private val registry: Registry,
     private val userService: UserService<TPlayer, TPlayer>,
-    private val permissionService: PermissionService
+    private val permissionService: PermissionService,
 ) : StaffListService {
 
     init {
@@ -73,7 +73,7 @@ class CommonStaffListService<TPlayer> @Inject constructor(
                         userName,
                         permissionService.hasPermission(player, registry.getOrDefault(STAFFLIST_ADMIN_PERMISSION)),
                         permissionService.hasPermission(player, registry.getOrDefault(STAFFLIST_STAFF_PERMISSION)),
-                        permissionService.hasPermission(player, registry.getOrDefault(STAFFLIST_OWNER_PERMISSION))
+                        permissionService.hasPermission(player, registry.getOrDefault(STAFFLIST_OWNER_PERMISSION)),
                     )
                 }
             }

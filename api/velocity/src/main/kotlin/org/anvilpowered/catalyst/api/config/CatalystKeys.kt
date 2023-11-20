@@ -1,19 +1,19 @@
 /*
- *   Catalyst - AnvilPowered
- *   Copyright (C) 2021
+ *   Catalyst - AnvilPowered.org
+ *   Copyright (C) 2020-2023 Contributors
  *
  *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU Affero General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU Affero General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this program.  If not, see https://www.gnu.org/licenses/.
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 @file:Suppress("MemberVisibilityCanBePrivate")
@@ -28,8 +28,10 @@ import org.anvilpowered.anvil.core.config.KeyBuilderDsl
 import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.ListKey
 import org.anvilpowered.anvil.core.config.SimpleKey
+import org.anvilpowered.catalyst.api.chat.placeholder.ChatMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat
-import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormatBuilder
+import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.ProxyServerFormat
 
 object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
 
@@ -48,21 +50,29 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     @KeyBuilderDsl
-    private fun <M : MessageFormat> SimpleKey.BuilderFacet<M, *>.miniMessageFallback(
-        fallbackValue: M,
-        builder: MessageFormatBuilder<*, M>,
+    private fun <
+        M : MessageFormat,
+        P : MessageFormat.Placeholders<M>,
+        B : MessageFormat.Builder<P, M>,
+        > SimpleKey.BuilderFacet<M, *>.miniMessageFallbackFormat(
+        builder: B,
+        block: P.() -> Component,
     ) {
-        fallback(fallbackValue)
+        fallback(builder.build(block))
         serializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
         deserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
 
     @KeyBuilderDsl
-    private fun <M : MessageFormat> ListKey.BuilderFacet<M, *>.miniMessageListFallback(
-        fallbackValue: List<M>,
-        builder: MessageFormatBuilder<*, M>,
+    private fun <
+        M : MessageFormat,
+        P : MessageFormat.Placeholders<M>,
+        B : MessageFormat.Builder<P, M>,
+        > ListKey.BuilderFacet<M, *>.miniMessageListFallbackFormat(
+        builder: B,
+        blocks: List<P.() -> Component>,
     ) {
-        fallback(fallbackValue)
+        fallback(blocks.map { builder.build(it) })
         elementSerializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
         elementDeserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
@@ -80,16 +90,15 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val FIRST_JOIN by Key.buildingSimple {
-        miniMessageFallback(
-            MessageFormat.PlayerContext.build {
-                Component.text("Welcome to the server, $playerName").color(NamedTextColor.GOLD)
-            },
-            MessageFormat.PlayerContext,
-        )
+        miniMessageFallbackFormat(PlayerFormat) {
+            Component.text("Welcome to the server, $name").color(NamedTextColor.GOLD)
+        }
     }
 
     val JOIN_MESSAGE by Key.buildingSimple {
-        fallback("%player% has joined the proxy")
+        miniMessageFallbackFormat(PlayerFormat) {
+            Component.text("$name has joined the proxy")
+        }
     }
 
     val JOIN_LISTENER_ENABLED by Key.buildingSimple {
@@ -97,7 +106,9 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val LEAVE_MESSAGE by Key.buildingSimple {
-        fallback("%player% has left the proxy")
+        miniMessageFallbackFormat(PlayerFormat) {
+            Component.text("$name has left the proxy")
+        }
     }
 
     val LEAVE_LISTENER_ENABLED by Key.buildingSimple {
@@ -109,19 +120,16 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val PRIVATE_MESSAGE_FORMAT by Key.buildingSimple {
-        miniMessageFallback(
-            MessageFormat.ServerContext.build {
-                Component.text()
-                    .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
-                    .append(Component.text("%sender%").color(NamedTextColor.BLUE))
-                    .append(Component.text(" -> ").color(NamedTextColor.GOLD))
-                    .append(Component.text("%recipient%").color(NamedTextColor.BLUE))
-                    .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
-                    .append(Component.text("%message%").color(NamedTextColor.GRAY))
-                    .build()
-            },
-            MessageFormat.ServerContext,
-        )
+        miniMessageFallbackFormat(ChatMessageFormat) {
+            Component.text()
+                .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text("${source.name}(${source.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text(" -> ").color(NamedTextColor.GOLD))
+                .append(Component.text("${recipient.name}(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(content).color(NamedTextColor.GRAY))
+                .build()
+        }
     }
 
     val TAB_ENABLED by Key.buildingSimple {
@@ -141,31 +149,31 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val TAB_FORMAT_CUSTOM by Key.buildingList {
-        miniMessageListFallback(
+        miniMessageListFallbackFormat(
+            PlayerFormat,
             listOf(
-                MessageFormat.ServerContext.build {
+                {
                     Component.text()
-                        .append(Component.text("Your ping").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text("Your latency").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(": ").color(NamedTextColor.GRAY))
-                        .append(Component.text(ping).color(NamedTextColor.YELLOW))
+                        .append(Component.text(latency).color(NamedTextColor.YELLOW))
                         .build()
                 },
-                MessageFormat.ServerContext.build {
+                {
                     Component.text()
                         .append(Component.text("Current Server").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(": ").color(NamedTextColor.GRAY))
-                        .append(Component.text(server).color(NamedTextColor.YELLOW))
+                        .append(Component.text(backendServer.name).color(NamedTextColor.YELLOW))
                         .build()
                 },
-                MessageFormat.ServerContext.build {
+                {
                     Component.text()
                         .append(Component.text("Player Count").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(": ").color(NamedTextColor.GRAY))
-                        .append(Component.text(playerCount).color(NamedTextColor.YELLOW))
+                        .append(Component.text(proxyServer.playerCount).color(NamedTextColor.YELLOW))
                         .build()
                 },
             ),
-            MessageFormat.ServerContext,
         )
     }
 
@@ -398,7 +406,9 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val MOTD by Key.buildingSimple {
-        miniMessageFallback(Component.text("A Velocity Proxy!").color(NamedTextColor.DARK_AQUA))
+        miniMessageFallbackFormat(ProxyServerFormat) {
+            Component.text("A Velocity Proxy running version $version!").color(NamedTextColor.DARK_AQUA)
+        }
     }
 
     val MOTD_ENABLED by Key.buildingSimple {

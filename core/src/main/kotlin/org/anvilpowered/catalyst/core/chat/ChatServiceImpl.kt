@@ -35,8 +35,8 @@ class ChatServiceImpl : ChatService {
 
     override suspend fun sendMessageToChannel(channelId: String, message: Component, userId: UUID) {
         playerService.getAll().forEach { player ->
-            if (player.hasPermissionSet(registry[CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION])
-                || channelService.getForPlayer(player.id).id == channelId
+            if (player.hasPermissionSet(registry[CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
+                channelService.getForPlayer(player.id).id == channelId
             ) {
                 // TODO: This is icky
                 if (userId != player.id) {
@@ -86,8 +86,9 @@ class ChatServiceImpl : ChatService {
         // TODO: What if the player leaves after being ignored?
         return Component.text("You are no longer ignoring")
             .append(
-                (playerService[targetPlayerUUID]?.displayname
-                    ?: Component.text(targetPlayerUUID.toString())
+                (
+                    playerService[targetPlayerUUID]?.displayname
+                        ?: Component.text(targetPlayerUUID.toString())
                     ).color(NamedTextColor.GREEN),
             )
     }
