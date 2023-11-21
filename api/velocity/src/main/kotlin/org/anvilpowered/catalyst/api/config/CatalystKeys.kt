@@ -28,9 +28,9 @@ import org.anvilpowered.anvil.core.config.KeyBuilderDsl
 import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.ListKey
 import org.anvilpowered.anvil.core.config.SimpleKey
-import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ProxyServerFormat
 
 object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
@@ -59,7 +59,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
         block: P.() -> Component,
     ) {
         fallback(builder.build(block))
-        serializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
+        serializer { MiniMessage.miniMessage().serialize(it.format) }
         deserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
 
@@ -73,7 +73,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
         blocks: List<P.() -> Component>,
     ) {
         fallback(blocks.map { builder.build(it) })
-        elementSerializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
+        elementSerializer { MiniMessage.miniMessage().serialize(it.format) }
         elementDeserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
 
@@ -121,6 +121,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
 
     val PRIVATE_MESSAGE_SOURCE_FORMAT by Key.buildingSimple {
         miniMessageFallbackFormat(PrivateMessageFormat) {
+            // TODO: Nice builder api with + unary operator
             Component.text()
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text("me(${source.backendServer.name})").color(NamedTextColor.BLUE))
@@ -362,16 +363,10 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
         fallback("bot token")
     }
 
-    val DISCORD_PLAYER_CHAT_FORMAT by Key.buildingSimple {
-        fallback("[%server%] %prefix% %player% %suffix%")
-    }
-
-    val DISCORD_JOIN_FORMAT by Key.buildingSimple {
-        fallback("%player% has joined the game.")
-    }
-
-    val DISCORD_LEAVE_FORMAT by Key.buildingSimple {
-        fallback("%player% has left the game.")
+    val DISCORD_USERNAME_FORMAT by Key.buildingSimple {
+        miniMessageFallbackFormat(PlayerFormat) {
+            Component.text("[${backendServer.name}] $prefix $username $suffix")
+        }
     }
 
     val DISCORD_CHAT_FORMAT by Key.buildingSimple {
@@ -398,15 +393,15 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
         fallback("A Minecraft Server!")
     }
 
-    val WEBHOOK_URL by Key.buildingSimple {
-        fallback("https://crafatar.com/avatars/%uuid%?default=MHF_Alex")
+    val AVATAR_URL by Key.buildingSimple {
+        fallback("https://crafthead.net/avatar/%uuid%")
     }
 
     val DISCORD_URL by Key.buildingSimple {
         fallback("https://discord.gg/8RUzuwu")
     }
 
-    val DISCORD_ENABLE by Key.buildingSimple {
+    val DISCORD_ENABLED by Key.buildingSimple {
         fallback(false)
     }
 

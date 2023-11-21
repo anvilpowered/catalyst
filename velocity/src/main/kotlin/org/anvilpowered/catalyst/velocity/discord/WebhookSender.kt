@@ -17,58 +17,89 @@
  */
 package org.anvilpowered.catalyst.velocity.discord
 
+import com.velocitypowered.api.proxy.Player
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.serialization.Serializable
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Webhook
-import org.anvilpowered.anvil.core.command.CommandSource
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.anvil.core.config.SimpleKey
 import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.anvil.velocity.ProxyServerScope
+import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import java.util.UUID
 
 context(Registry.Scope, PlayerService.Scope, JDAService.Scope)
 class WebhookSender {
 
     private val httpClient = HttpClient(CIO)
 
-    suspend fun sendWebhookMessage(player: String, message: String, channelId: String, source: CommandSource) {
-        sendWebhook(
-            getWebhook(channelId) ?: return,
+    context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
+    suspend fun sendChannelMessage(player: Player, content: Component, discordChannelId: String) {
+        getWebhook(discordChannelId)?.send(
             WebhookPackage(
-                registry[CatalystKeys.WEBHOOK_URL].replace("%uuid%", source.player?.id.toString()),
-                player.withoutColor(),
-                message.withoutColor(),
+                registry[CatalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
+                PlainTextComponentSerializer.plainText()
+                    .serialize(registry[CatalystKeys.DISCORD_USERNAME_FORMAT].resolvePlaceholders(player)),
+                PlainTextComponentSerializer.plainText().serialize(content),
             ),
         )
     }
 
-    suspend fun sendConsoleWebhookMessage(message: String, channelId: String) {
-        sendWebhook(
-            getWebhook(channelId) ?: return,
+    context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
+    suspend fun sendSpecialMessage(
+        player: Player,
+        discordChannelId: String,
+        messageKey: SimpleKey<PlayerFormat>,
+    ) {
+        getWebhook(discordChannelId)?.send(
+            WebhookPackage(
+                registry[CatalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
+                "System",
+                PlainTextComponentSerializer.plainText().serialize(registry[messageKey].resolvePlaceholders(player)),
+            ),
+        )
+    }
+
+    suspend fun sendLeaveMessage(userId: UUID, username: String, discordChannelId: String) {
+        getWebhook(discordChannelId)?.send(
+            WebhookPackage(
+                registry[CatalystKeys.AVATAR_URL].replace("%uuid%", userId.toString()),
+                "System",
+                "$username has left the game.",
+            ),
+        )
+    }
+
+    suspend fun sendConsoleChatMessage(message: String, channelId: String) {
+        getWebhook(channelId)?.send(
             WebhookPackage(
                 "",
                 "Console",
-                message.withoutColor(),
+                message,
             ),
         )
     }
 
-    private suspend fun sendWebhook(webhook: Webhook, webhookPackage: WebhookPackage) {
-        httpClient.post(webhook.url) {
+    private suspend fun Webhook.send(webhookPackage: WebhookPackage) {
+        httpClient.post(url) {
             contentType(ContentType.Application.Json)
             setBody(webhookPackage)
         }
     }
 
-    private fun getWebhook(channelID: String): Webhook? {
-        if (channelID.isEmpty()) {
-            return null
-        }
-        val channel = jdaService.jda?.getTextChannelById(channelID) ?: throw AssertionError("Discord channel may not be null!")
+    private fun getWebhook(discordChannelId: String): Webhook? {
+        val channel = jdaService.jda?.getTextChannelById(discordChannelId) ?: throw AssertionError("Discord channel may not be null!")
         if (channel.guild.selfMember.hasPermission(Permission.MANAGE_WEBHOOKS)) {
             throw AssertionError("Please allow the discord bot to handle webhooks!")
         }
@@ -77,11 +108,10 @@ class WebhookSender {
             .findFirst().orElse(null) ?: channel.createWebhook("Catalyst-DB " + channel.name).complete()
     }
 
-    private fun String.withoutColor() = replace("&[0-9a-fklmnor]".toRegex(), "")
-
     interface Scope {
         val webhookSender: WebhookSender
     }
 
+    @Serializable
     class WebhookPackage(var avatarUrl: String, var name: String, var message: String)
 }

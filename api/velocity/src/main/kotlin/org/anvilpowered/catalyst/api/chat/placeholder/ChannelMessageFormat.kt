@@ -52,9 +52,9 @@ class ChannelMessageFormat(override val format: Component, private val placehold
 
         private val prefix = path.joinToString { "$it." }
 
+        // TODO: Replace with tag resolver
         val source = PlayerFormat.Placeholders(path + listOf("source"))
-        val channel: Placeholder = "%${prefix}channel"
-
+        val channel: Placeholder = "%${prefix}channel%"
         val content: Placeholder = "%${prefix}content%"
     }
 }

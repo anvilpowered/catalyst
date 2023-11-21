@@ -27,11 +27,12 @@ import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.user.PlayerService
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.velocity.listener.DiscordListener
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.security.auth.login.LoginException
 
-context(Registry.Scope, PlayerService.Scope, LoggerScope, org.anvilpowered.catalyst.velocity.chat.ChannelService.Scope, DiscordListener.Scope)
+context(Registry.Scope, PlayerService.Scope, LoggerScope, ChannelService.Scope, DiscordListener.Scope)
 internal class JDAService {
 
     private var isLoaded = false
@@ -42,7 +43,7 @@ internal class JDAService {
     }
 
     private fun enableDiscordBot() {
-        if (!registry[CatalystKeys.DISCORD_ENABLE]) {
+        if (!registry[CatalystKeys.DISCORD_ENABLED]) {
             logger.warn("The discord bot is disabled! Chat will not be transmitted from in-game to discord.")
             return
         }

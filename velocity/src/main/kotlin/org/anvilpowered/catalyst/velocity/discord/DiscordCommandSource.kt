@@ -25,11 +25,10 @@ import net.kyori.adventure.audience.MessageType
 import net.kyori.adventure.identity.Identity
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import org.anvilpowered.catalyst.api.discord.DiscordCommandService
-import org.anvilpowered.catalyst.api.discord.JDAService
 import java.util.Objects
 
-class DiscordCommandSource @Inject constructor(
+context(JDAService.Scope)
+internal class DiscordCommandSource @Inject constructor(
     private val jdaHook: JDAService,
     private val discordCommandService: DiscordCommandService,
 ) : CommandSource {

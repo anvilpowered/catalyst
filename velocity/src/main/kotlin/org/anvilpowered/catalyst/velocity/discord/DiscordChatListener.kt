@@ -18,69 +18,50 @@
 package org.anvilpowered.catalyst.velocity.discord
 
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.LoginEvent
+import kotlinx.coroutines.runBlocking
+import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 
-context(Registry.Scope, PlayerService, LuckpermsService.Scope, WebhookSender.Scope)
+context(Registry.Scope, ProxyServerScope, ChannelService.Scope, LuckpermsService.Scope, WebhookSender.Scope, LoggerScope)
 class DiscordChatListener {
 
     @Subscribe
-    fun onChatEvent(message: ChannelMessage) {
-        if (!registry[CatalystKeys.DISCORD_ENABLE]) {
-            return
+    fun onChatEvent(message: ChannelMessage) = runBlocking {
+        if (!registry[CatalystKeys.DISCORD_ENABLED]) {
+            return@runBlocking
         }
-        val player = message.source
-//        val channel = channelService.getForPlayer(userService.getUUID(event.player)!!)
-        if (!player.hasPermission(registry[CatalystKeys.LANGUAGE_ADMIN_PERMISSION])) {
-            message = message.replace("@".toRegex(), "")
-        }
-//        val server = locationService.getServer(userService.getUserName(event.player))?.name ?: "null"
-        val name = registry.getOrDefault(CatalystKeys.DISCORD_PLAYER_CHAT_FORMAT)
-            .replace("%server%", server)
-            .replace("%channel%", channel.id)
-            .replace("%player%", userService.getUserName(event.player))
-            .replace("%prefix%", luckPermsService.prefix(event.player!!))
-            .replace("%suffix%", luckPermsService.suffix(event.player!!))
-        webHookSender.sendWebhookMessage(
-            registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
-            name.withoutColor(),
-            message.withoutColor(),
-            channel.discordChannel,
-            event.player,
+//        if (!player.hasPermission(registry[CatalystKeys.LANGUAGE_ADMIN_PERMISSION])) {
+//            message = message.replace("@".toRegex(), "")
+//        }
+        webhookSender.sendChannelMessage(
+            message.source,
+            message.content,
+            message.channel.discordChannel,
         )
     }
 
     @Subscribe
-    fun onPlayerJoinEvent(event: LoginEvent) {
-        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) {
-            return
+    fun onPlayerJoinEvent(event: LoginEvent) = runBlocking {
+        if (!registry[CatalystKeys.DISCORD_ENABLED]) {
+            return@runBlocking
         }
-        val joinMessage = registry.getOrDefault(CatalystKeys.DISCORD_JOIN_FORMAT)
-        val server = locationService.getServer(userService.getUserName(event.player))?.name ?: "null"
-        webHookSender.sendWebhookMessage(
-            registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
-            registry.getOrDefault(CatalystKeys.BOT_NAME),
-            joinMessage.replace("%player%", userService.getUserName(event.player)).replace("%server%", server),
-            channelService.defaultChannel()?.discordChannel,
-            event.player,
-        )
+        val discordChannel = channelService.getForPlayer(event.player.uniqueId)
+        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannel, CatalystKeys.JOIN_MESSAGE)
     }
 
     @Subscribe
-    fun onPlayerLeaveEvent(event: LeaveEvent<TPlayer>) {
-        if (!registry.getOrDefault(CatalystKeys.DISCORD_ENABLE)) return
-        webHookSender.sendWebhookMessage(
-            registry.getOrDefault(CatalystKeys.WEBHOOK_URL),
-            registry.getOrDefault(CatalystKeys.BOT_NAME),
-            registry.getOrDefault(CatalystKeys.DISCORD_LEAVE_FORMAT)
-                .replace("%player%", userService.getUserName(event.player))
-                .replace("%server%", locationService.getServer(userService.getUserName(event.player))?.name ?: "null"),
-            channelService.fromUUID(userService.getUUID(event.player)!!).discordChannel,
-            event.player,
-        )
+    fun onPlayerLeaveEvent(event: DisconnectEvent) = runBlocking {
+        if (!registry[CatalystKeys.DISCORD_ENABLED]) {
+            return@runBlocking
+        }
+        val discordChannel = channelService.getForPlayer(event.player.uniqueId)
+        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannel, CatalystKeys.LEAVE_MESSAGE)
     }
 }
