@@ -18,15 +18,19 @@
 
 package org.anvilpowered.catalyst.velocity.db.user
 
+import org.anvilpowered.anvil.core.db.Pagination
 import org.anvilpowered.catalyst.api.user.User
 import org.anvilpowered.catalyst.api.user.UserRepository
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.sourcegrade.kontour.UUID
+import java.util.UUID
 
 object UserRepositoryImpl : UserRepository {
+    override suspend fun paginate(): Pagination<User> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun initializeFromGameUser(
         gameUserId: UUID,
@@ -79,6 +83,10 @@ object UserRepositoryImpl : UserRepository {
 
     override suspend fun exists(id: UUID): Boolean = newSuspendedTransaction {
         UserEntity.findById(id) != null
+    }
+
+    override suspend fun getById(id: UUID): User? = newSuspendedTransaction {
+        UserEntity.findById(id)?.let { User(it.id.value, it.username, it.email) }
     }
 
     override suspend fun deleteById(id: UUID): Boolean = newSuspendedTransaction {

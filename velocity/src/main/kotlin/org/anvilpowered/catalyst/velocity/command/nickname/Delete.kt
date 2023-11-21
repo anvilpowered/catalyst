@@ -23,15 +23,15 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.anvil.core.user.hasPermissionSet
 import org.anvilpowered.catalyst.api.PluginMessages
-import org.anvilpowered.catalyst.core.command.GameUserCommandScope
-import org.anvilpowered.catalyst.core.command.common.addHelpChild
 import org.anvilpowered.catalyst.velocity.CatalystApi
+import org.anvilpowered.catalyst.velocity.command.common.addHelpChild
+import org.anvilpowered.catalyst.velocity.command.gameUser
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-context(CatalystApi, GameUserCommandScope)
+context(CatalystApi)
 fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> =
     ArgumentBuilder.literal<CommandSource>("delete")
         .addHelpChild("nickname|nick delete [<player>]")
