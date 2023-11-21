@@ -18,8 +18,8 @@
 
 package org.anvilpowered.catalyst.velocity.db.user
 
-import org.anvilpowered.catalyst.api.user.UserRepository
 import org.anvilpowered.catalyst.api.user.User
+import org.anvilpowered.catalyst.api.user.UserRepository
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select

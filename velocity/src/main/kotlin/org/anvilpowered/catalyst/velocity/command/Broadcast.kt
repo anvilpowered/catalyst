@@ -21,15 +21,16 @@ package org.anvilpowered.catalyst.velocity.command
 import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.anvil.core.user.requiresPermission
-import org.anvilpowered.catalyst.api.PluginMessages
+import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.agent.command.CatalystCommand
+import org.anvilpowered.catalyst.api.PluginMessages
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.executesSingleSuccess
 import org.anvilpowered.kbrig.context.get
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-context(BroadcastScope)
+context(ProxyServerScope)
 fun CatalystCommand.createBroadcast(): LiteralCommandNode<CommandSource> {
     return ArgumentBuilder.literal<CommandSource>("broadcast")
         .executes(CommandDefaults::notEnoughArgs)
@@ -37,7 +38,7 @@ fun CatalystCommand.createBroadcast(): LiteralCommandNode<CommandSource> {
         .then(
             ArgumentBuilder.required<CommandSource, String>("message", StringArgumentType.GreedyPhrase)
                 .executesSingleSuccess { context ->
-                    broadcast(PluginMessages.getBroadcast(Component.text(context.get<String>("message"))))
+                    proxyServer.sendMessage(PluginMessages.getBroadcast(Component.text(context.get<String>("message"))))
                 }
                 .build(),
         )

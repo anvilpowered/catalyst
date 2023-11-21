@@ -46,9 +46,9 @@ internal class DiscordListener : ListenerAdapter() {
             return
         }
         val messageRaw = event.message.toString()
-        if (event.member != null
-            && event.member!!.hasPermission(Permission.ADMINISTRATOR)
-            && messageRaw.contains("!cmd")
+        if (event.member != null &&
+            event.member!!.hasPermission(Permission.ADMINISTRATOR) &&
+            messageRaw.contains("!cmd")
         ) {
             val command = event.message.contentRaw.replace("!cmd ", "")
             // TODO: Use coroutines properly
@@ -56,9 +56,9 @@ internal class DiscordListener : ListenerAdapter() {
                 loggingCommandExecutor.execute(DiscordCommandSource(event.channel.id).toAnvilCommandSource(), command)
             }
             return
-        } else if (messageRaw.contains("!players")
-            || messageRaw.contains("!online")
-            || messageRaw.contains("!list")
+        } else if (messageRaw.contains("!players") ||
+            messageRaw.contains("!online") ||
+            messageRaw.contains("!list")
         ) {
             val onlinePlayers = playerService.getAll().toList()
             val playerNames: String = if (onlinePlayers.isEmpty()) {

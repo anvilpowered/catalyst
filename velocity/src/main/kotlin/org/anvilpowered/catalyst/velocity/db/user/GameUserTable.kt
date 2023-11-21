@@ -47,5 +47,5 @@ internal fun ResultRow.toGameUser() = GameUser(
     userId = this[GameUserTable.userId].value,
     username = this[GameUserTable.username],
     gameType = this[GameUserTable.gameType],
-    nickname = this[GameUserTable.nickname]
+    nickname = this[GameUserTable.nickname],
 )

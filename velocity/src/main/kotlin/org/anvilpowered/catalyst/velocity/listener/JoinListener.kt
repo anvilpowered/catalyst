@@ -38,7 +38,7 @@ class JoinListener {
         val result = gameUserRepository.initialize(player.uniqueId, user.id, player.username, player.remoteAddress.hostString)
 
         if (result.firstJoin && registry[CatalystKeys.JOIN_LISTENER_ENABLED]) {
-            proxyServer.sendMessage(registry[CatalystKeys.FIRST_JOIN].resolvePlaceholders(player),)
+            proxyServer.sendMessage(registry[CatalystKeys.FIRST_JOIN].resolvePlaceholders(player))
         }
 
         staffListService.getStaffNames(

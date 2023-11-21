@@ -24,6 +24,7 @@ import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.velocity.AnvilVelocityApi
 import org.anvilpowered.anvil.velocity.createVelocity
 import org.anvilpowered.catalyst.api.db.RepositoryScope
+import org.anvilpowered.catalyst.velocity.db.RepositoryScopeImpl
 
 interface CatalystVelocityApi : CatalystApi {
 
@@ -33,7 +34,7 @@ interface CatalystVelocityApi : CatalystApi {
 fun CatalystApi.Companion.createVelocity(injector: Injector): CatalystVelocityApi {
     return object :
         CatalystVelocityApi,
-        RepositoryScope by RepositoryScope.create() {
+        RepositoryScope by RepositoryScopeImpl {
         override val anvil = AnvilApi.createVelocity(injector)
         override val registry: Registry
             get() = TODO("Not yet implemented")

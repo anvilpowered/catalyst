@@ -36,8 +36,10 @@ import org.anvilpowered.catalyst.api.db.RepositoryScope
 import org.anvilpowered.catalyst.velocity.chat.ChatFilter
 import org.anvilpowered.catalyst.velocity.chat.ChatService
 
-context(ProxyServerScope, Registry.Scope, LoggerScope, LuckpermsService.Scope, ChatService.Scope, ChannelService.Scope, ChatFilter.Scope,
-ChannelMessage.Scope, RepositoryScope)
+context(
+    ProxyServerScope, Registry.Scope, LoggerScope, LuckpermsService.Scope, ChatService.Scope, ChannelService.Scope, ChatFilter.Scope,
+    ChannelMessage.Scope, RepositoryScope
+)
 class ChatListener {
     @Subscribe
     fun onPlayerChat(event: PlayerChatEvent) = runBlocking {

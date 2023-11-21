@@ -74,7 +74,8 @@ internal class JDAService {
             Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
                 updateTopic(),
                 1,
-                registry[CatalystKeys.TOPIC_UPDATE_DELAY].toLong(), TimeUnit.MINUTES,
+                registry[CatalystKeys.TOPIC_UPDATE_DELAY].toLong(),
+                TimeUnit.MINUTES,
             )
         }
         try {

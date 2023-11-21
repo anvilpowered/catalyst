@@ -24,9 +24,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.anvil.core.user.hasPermissionSet
 import org.anvilpowered.catalyst.api.PluginMessages
-import org.anvilpowered.catalyst.velocity.CatalystApi
 import org.anvilpowered.catalyst.core.command.common.addHelpChild
 import org.anvilpowered.catalyst.core.command.gameUser
+import org.anvilpowered.catalyst.velocity.CatalystApi
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder

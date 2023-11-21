@@ -24,8 +24,8 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.velocity.ProxyServerScope
-import org.anvilpowered.catalyst.api.chat.PrivateMessage
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.chat.PrivateMessage
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.UUID
 
