@@ -29,11 +29,14 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.command.CommandExecutor
 import org.anvilpowered.anvil.core.user.PlayerService
+import org.anvilpowered.anvil.velocity.command.toAnvilCommandSource
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.velocity.CatalystApi
+import org.anvilpowered.catalyst.velocity.discord.DiscordCommandSource
+import org.anvilpowered.catalyst.velocity.discord.JDAService
 
-context(CatalystApi, CommandExecutor.Scope, LoggerScope, ChannelService.Scope, PlayerService.Scope)
+context(CatalystApi, CommandExecutor.Scope, LoggerScope, ChannelService.Scope, PlayerService.Scope, JDAService.Scope)
 internal class DiscordListener : ListenerAdapter() {
 
     private val loggingCommandExecutor = CommandExecutor.withLogging("discord")
@@ -50,7 +53,7 @@ internal class DiscordListener : ListenerAdapter() {
             val command = event.message.contentRaw.replace("!cmd ", "")
             // TODO: Use coroutines properly
             runBlocking {
-                loggingCommandExecutor.executeAsConsole(command)
+                loggingCommandExecutor.execute(DiscordCommandSource(event.channel.id).toAnvilCommandSource(), command)
             }
             return
         } else if (messageRaw.contains("!players")

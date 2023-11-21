@@ -18,27 +18,22 @@
 
 package org.anvilpowered.catalyst.velocity.discord
 
-import com.google.inject.Inject
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.permission.Tristate
-import net.kyori.adventure.audience.MessageType
-import net.kyori.adventure.identity.Identity
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import java.util.Objects
 
 context(JDAService.Scope)
-internal class DiscordCommandSource @Inject constructor(
-    private val jdaHook: JDAService,
-    private val discordCommandService: DiscordCommandService,
-) : CommandSource {
+internal class DiscordCommandSource(private val discordChannelId: String) : CommandSource {
 
     override fun hasPermission(permission: String): Boolean = true
     override fun getPermissionValue(permission: String): Tristate = Tristate.TRUE
 
-    override fun sendMessage(identity: Identity, message: Component, type: MessageType) {
-        Objects.requireNonNull(jdaHook.jda.getTextChannelById(discordCommandService.channelId))
-            ?.sendMessage("```" + PlainTextComponentSerializer.plainText().serialize(message) + "```")
-            ?.queue()
+    override fun sendMessage(message: Component) {
+        val channel = checkNotNull(jdaService.jda) { "JDA is not initialized yet" }
+            .getTextChannelById(discordChannelId)
+
+        checkNotNull(channel) { "Discord channel $discordChannelId is not found" }
+        channel.sendMessage("```" + PlainTextComponentSerializer.plainText().serialize(message) + "```").queue()
     }
 }
