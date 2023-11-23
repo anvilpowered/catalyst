@@ -18,8 +18,10 @@
 
 package org.anvilpowered.catalyst.api.config
 
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 
+@Serializable
 data class ChatChannel(
     val id: String,
     val nameFormat: Component,

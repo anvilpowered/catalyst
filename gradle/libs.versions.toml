@@ -1,6 +1,6 @@
 [versions]
 kbrig = "0.1.0-SNAPSHOT"
-kotlin = "1.9.20"
+kotlin = "1.9.21"
 ktor = "2.2.4"
 log4j = "2.20.0"
 

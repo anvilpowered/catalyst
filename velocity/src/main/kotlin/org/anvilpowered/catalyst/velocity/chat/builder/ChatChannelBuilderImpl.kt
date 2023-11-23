@@ -74,7 +74,7 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
     override fun build(): ChatChannel =
         ChatChannel(id, nameFormat, messageFormat, hoverFormat, clickFormat, alwaysVisible, passthrough, discordChannel)
 
-    class Factory() : ChatChannel.Builder.Factory {
+    class Factory : ChatChannel.Builder.Factory {
         override fun builder(): ChatChannel.Builder = ChatChannelBuilderImpl()
     }
 }

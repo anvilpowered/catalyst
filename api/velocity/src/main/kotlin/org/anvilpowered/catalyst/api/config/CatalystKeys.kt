@@ -20,6 +20,8 @@
 
 package org.anvilpowered.catalyst.api.config
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -80,49 +82,49 @@ class CatalystKeys(
         elementDeserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
 
-    val CHAT_FILTER_ENABLED by Key.buildingSimple {
+    val CHAT_FILTER_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }
 
-    val CHAT_FILTER_SWEARS by Key.buildingList {
+    val CHAT_FILTER_SWEARS by Key.buildingList(TypeTokens.STRING) {
         fallback(listOf("fuck", "shit", "ass"))
     }
 
-    val CHAT_FILTER_EXCEPTIONS by Key.buildingSimple {
+    val CHAT_FILTER_EXCEPTIONS by Key.buildingList(TypeTokens.STRING) {
         fallback(listOf("assassin", "jkass"))
     }
 
-    val FIRST_JOIN by Key.buildingSimple {
+    val FIRST_JOIN by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
         miniMessageFallbackFormat(PlayerFormat) {
             Component.text("Welcome to the server, $username").color(NamedTextColor.GOLD)
         }
     }
 
-    val JOIN_MESSAGE by Key.buildingSimple {
+    val JOIN_MESSAGE by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
         miniMessageFallbackFormat(PlayerFormat) {
             Component.text("$username has joined the proxy")
         }
     }
 
-    val JOIN_LISTENER_ENABLED by Key.buildingSimple {
+    val JOIN_LISTENER_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val LEAVE_MESSAGE by Key.buildingSimple {
+    val LEAVE_MESSAGE by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
         miniMessageFallbackFormat(PlayerFormat) {
             Component.text("$username has left the proxy")
         }
     }
 
-    val LEAVE_LISTENER_ENABLED by Key.buildingSimple {
+    val LEAVE_LISTENER_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val PROXY_CHAT_ENABLED by Key.buildingSimple {
+    val PROXY_CHAT_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val PRIVATE_MESSAGE_SOURCE_FORMAT by Key.buildingSimple {
+    val PRIVATE_MESSAGE_SOURCE_FORMAT by Key.buildingSimple(TypeTokens.PRIVATE_MESSAGE_FORMAT) {
         miniMessageFallbackFormat(PrivateMessageFormat) {
             // TODO: Nice builder api with + unary operator
             Component.text()
@@ -136,7 +138,7 @@ class CatalystKeys(
         }
     }
 
-    val PRIVATE_MESSAGE_RECIPIENT_FORMAT by Key.buildingSimple {
+    val PRIVATE_MESSAGE_RECIPIENT_FORMAT by Key.buildingSimple(TypeTokens.PRIVATE_MESSAGE_FORMAT) {
         miniMessageFallbackFormat(PrivateMessageFormat) {
             Component.text()
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
@@ -149,7 +151,7 @@ class CatalystKeys(
         }
     }
 
-    val SOCIALSPY_MESSAGE_FORMAT by Key.buildingSimple {
+    val SOCIALSPY_MESSAGE_FORMAT by Key.buildingSimple(TypeTokens.PRIVATE_MESSAGE_FORMAT) {
         miniMessageFallbackFormat(PrivateMessageFormat) {
             Component.text()
                 .append(Component.text("[SocialSpy] ").color(NamedTextColor.GRAY))
@@ -163,29 +165,29 @@ class CatalystKeys(
         }
     }
 
-    val TAB_ENABLED by Key.buildingSimple {
+    val TAB_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val TAB_HEADER by Key.buildingSimple {
+    val TAB_HEADER by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
         miniMessageFallbackFormat(PlayerFormat) {
             Component.text("Welcome to")
         }
     }
 
-    val TAB_FOOTER by Key.buildingSimple {
+    val TAB_FOOTER by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
         miniMessageFallbackFormat(PlayerFormat) {
             Component.text("A Velocity Server")
         }
     }
 
-    val TAB_FORMAT by Key.buildingSimple {
+    val TAB_FORMAT by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
         miniMessageFallbackFormat(PlayerFormat) {
             Component.text("$prefix $username $suffix")
         }
     }
 
-    val TAB_FORMAT_CUSTOM by Key.buildingList {
+    val TAB_FORMAT_CUSTOM by Key.buildingList(TypeTokens.PLAYER_FORMAT) {
         miniMessageListFallbackFormat(
             PlayerFormat,
             listOf(
@@ -214,240 +216,240 @@ class CatalystKeys(
         )
     }
 
-    val TAB_UPDATE by Key.buildingSimple {
+    val TAB_UPDATE by Key.buildingSimple(TypeTokens.INTEGER) {
         fallback(1)
     }
 
-    val CHAT_DEFAULT_CHANNEL by Key.buildingSimple {
+    val CHAT_DEFAULT_CHANNEL by Key.buildingSimple(TypeTokens.STRING) {
         fallback("global")
     }
 
-    val BAN_PERMISSION by Key.buildingSimple {
+    val BAN_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.ban")
     }
 
-    val TEMP_BAN_PERMISSION by Key.buildingSimple {
+    val TEMP_BAN_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.tempban")
     }
 
-    val BAN_EXEMPT_PERMISSION by Key.buildingSimple {
+    val BAN_EXEMPT_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.ban.exempt")
     }
 
-    val BROADCAST_PERMISSION by Key.buildingSimple {
+    val BROADCAST_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.broadcast")
     }
 
-    val CHANNEL_EDIT_PERMISSION by Key.buildingSimple {
+    val CHANNEL_EDIT_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.channel.edit")
     }
 
-    val CHAT_COLOR_PERMISSION by Key.buildingSimple {
+    val CHAT_COLOR_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.chat.color")
     }
 
-    val FIND_PERMISSION by Key.buildingSimple {
+    val FIND_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.find")
     }
 
-    val INFO_PERMISSION by Key.buildingSimple {
+    val INFO_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.info")
     }
 
-    val INFO_IP_PERMISSION by Key.buildingSimple {
+    val INFO_IP_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.info.ip")
     }
 
-    val INFO_BANNED_PERMISSION by Key.buildingSimple {
+    val INFO_BANNED_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.info.banned")
     }
 
-    val INFO_CHANNEL_PERMISSION by Key.buildingSimple {
+    val INFO_CHANNEL_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.info.channel")
     }
 
-    val KICK_PERMISSION by Key.buildingSimple {
+    val KICK_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.kick")
     }
 
-    val KICK_EXEMPT_PERMISSION by Key.buildingSimple {
+    val KICK_EXEMPT_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.kick.exempt")
     }
 
-    val LANGUAGE_ADMIN_PERMISSION by Key.buildingSimple {
+    val LANGUAGE_ADMIN_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.language.admin")
     }
 
-    val LANGUAGE_LIST_PERMISSION by Key.buildingSimple {
+    val LANGUAGE_LIST_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.language.list")
     }
 
-    val LIST_PERMISSION by Key.buildingSimple {
+    val LIST_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.list")
     }
 
-    val MESSAGE_PERMISSION by Key.buildingSimple {
+    val MESSAGE_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.message")
     }
 
-    val MUTE_PERMISSION by Key.buildingSimple {
+    val MUTE_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.mute")
     }
 
-    val MUTE_EXEMPT_PERMISSION by Key.buildingSimple {
+    val MUTE_EXEMPT_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.mute.exempt")
     }
 
-    val NICKNAME_PERMISSION by Key.buildingSimple {
+    val NICKNAME_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.nickname")
     }
 
-    val NICKNAME_COLOR_PERMISSION by Key.buildingSimple {
+    val NICKNAME_COLOR_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.nickname.color")
     }
 
-    val NICKNAME_MAGIC_PERMISSION by Key.buildingSimple {
+    val NICKNAME_MAGIC_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.nickname.magic")
     }
 
-    val NICKNAME_OTHER_PERMISSION by Key.buildingSimple {
+    val NICKNAME_OTHER_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.nickname.other")
     }
 
-    val NICKNAME_PREFIX by Key.buildingSimple {
+    val NICKNAME_PREFIX by Key.buildingSimple(TypeTokens.STRING) {
         fallback("~")
     }
 
-    val SEND_PERMISSION by Key.buildingSimple {
+    val SEND_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.admin.command.send")
     }
 
-    val SOCIALSPY_PERMISSION by Key.buildingSimple {
+    val SOCIALSPY_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.admin.command.socialspy")
     }
 
-    val SOCIALSPY_ONJOIN_PERMISSION by Key.buildingSimple {
+    val SOCIALSPY_ONJOIN_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.admin.command.socialspy.onjoin")
     }
 
-    val STAFFLIST_ADMIN_PERMISSION by Key.buildingSimple {
+    val STAFFLIST_ADMIN_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.stafflist.admin")
     }
 
-    val STAFFLIST_BASE_PERMISSION by Key.buildingSimple {
+    val STAFFLIST_BASE_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.stafflist.base")
     }
 
-    val STAFFLIST_OWNER_PERMISSION by Key.buildingSimple {
+    val STAFFLIST_OWNER_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.stafflist.owner")
     }
 
-    val STAFFLIST_STAFF_PERMISSION by Key.buildingSimple {
+    val STAFFLIST_STAFF_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.stafflist.staff")
     }
 
-    val TOGGLE_CHAT_PERMISSION by Key.buildingSimple {
+    val TOGGLE_CHAT_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.chat.toggle")
     }
 
-    val ALL_CHAT_CHANNELS_PERMISSION by Key.buildingSimple {
+    val ALL_CHAT_CHANNELS_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.channel.all")
     }
 
-    val CHANNEL_BASE_PERMISSION by Key.buildingSimple {
+    val CHANNEL_BASE_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.channel.")
     }
 
-    val BOT_NAME by Key.buildingSimple {
+    val BOT_NAME by Key.buildingSimple(TypeTokens.STRING) {
         fallback("System")
     }
 
-    val BOT_TOKEN by Key.buildingSimple {
+    val BOT_TOKEN by Key.buildingSimple(TypeTokens.STRING) {
         fallback("bot token")
     }
 
-    val DISCORD_USERNAME_FORMAT by Key.buildingSimple {
+    val DISCORD_USERNAME_FORMAT by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
         miniMessageFallbackFormat(PlayerFormat) {
             Component.text("[${backendServer.name}] $prefix $username $suffix")
         }
     }
 
     // TODO: Use ChannelFormat
-    val DISCORD_CHAT_FORMAT by Key.buildingSimple {
+    val DISCORD_CHAT_FORMAT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("&6[Discord]&7 %name% : %message%")
     }
 
-    val TOPIC_FORMAT by Key.buildingSimple {
+    val TOPIC_FORMAT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("Player Count: %players%")
     }
 
-    val TOPIC_UPDATE_ENABLED by Key.buildingSimple {
+    val TOPIC_UPDATE_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }
 
-    val TOPIC_UPDATE_DELAY by Key.buildingSimple {
+    val TOPIC_UPDATE_DELAY by Key.buildingSimple(TypeTokens.INTEGER) {
         fallback(5)
     }
 
-    val TOPIC_NO_ONLINE_PLAYERS by Key.buildingSimple {
+    val TOPIC_NO_ONLINE_PLAYERS by Key.buildingSimple(TypeTokens.STRING) {
         fallback("There are no players online!")
     }
 
-    val NOW_PLAYING_MESSAGE by Key.buildingSimple {
+    val NOW_PLAYING_MESSAGE by Key.buildingSimple(TypeTokens.STRING) {
         fallback("A Minecraft Server!")
     }
 
-    val AVATAR_URL by Key.buildingSimple {
+    val AVATAR_URL by Key.buildingSimple(TypeTokens.STRING) {
         fallback("https://crafthead.net/avatar/%uuid%")
     }
 
-    val DISCORD_URL by Key.buildingSimple {
+    val DISCORD_URL by Key.buildingSimple(TypeTokens.STRING) {
         fallback("https://discord.gg/8RUzuwu")
     }
 
-    val DISCORD_ENABLED by Key.buildingSimple {
+    val DISCORD_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }
 
-    val DISCORD_HOVER_MESSAGE by Key.buildingSimple {
+    val DISCORD_HOVER_MESSAGE by Key.buildingSimple(TypeTokens.COMPONENT) {
         miniMessageFallback(Component.text("Click here to join our discord!"))
     }
 
-    val WEBSITE_URL by Key.buildingSimple {
+    val WEBSITE_URL by Key.buildingSimple(TypeTokens.STRING) {
         fallback("https://www.anvilpowered.org")
     }
 
-    val IGNORE_PERMISSION by Key.buildingSimple {
+    val IGNORE_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.ignore")
     }
 
-    val IGNORE_EXEMPT_PERMISSION by Key.buildingSimple {
+    val IGNORE_EXEMPT_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.command.ignore.exempt")
     }
 
-    val SERVER_PING by Key.buildingSimple {
+    val SERVER_PING by Key.buildingSimple(TypeTokens.STRING) {
         fallback("PLAYERS")
     }
 
-    val SERVER_PING_MESSAGE by Key.buildingSimple {
+    val SERVER_PING_MESSAGE by Key.buildingSimple(TypeTokens.STRING) {
         fallback("Change this message in the config!")
     }
 
-    val SYNC_COMMAND_PERMISSION by Key.buildingSimple {
+    val SYNC_COMMAND_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
         fallback("catalyst.admin.command.sync")
     }
 
-    val MOTD by Key.buildingSimple {
+    val MOTD by Key.buildingSimple(TypeTokens.PROXY_SERVER_FORMAT) {
         miniMessageFallbackFormat(ProxyServerFormat) {
             Component.text("A Velocity Proxy running version $version!").color(NamedTextColor.DARK_AQUA)
         }
     }
 
-    val MOTD_ENABLED by Key.buildingSimple {
+    val MOTD_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }
 
-    val CHAT_CHANNELS by Key.buildingMap {
+    val CHAT_CHANNELS by Key.buildingMap(TypeTokens.STRING, TypeTokens.CHAT_CHANNEL) {
         fallback(
             mapOf(
                 "global" to chatChannelBuilderFactory.build {
@@ -470,127 +472,130 @@ class CatalystKeys(
                 },
             ),
         )
+        valueSerializer { Json.encodeToString(it) }
+        valueDeserializer { Json.decodeFromString(ChatChannel.serializer(), it) }
     }
 
-    val VIA_VERSION_ENABLED by Key.buildingSimple {
+    val VIA_VERSION_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }
 
-    val COMMAND_LOGGING_ENABLED by Key.buildingSimple {
+    val COMMAND_LOGGING_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val COMMAND_LOGGING_FILTER by Key.buildingList {
+    // TODO: Regex?
+    val COMMAND_LOGGING_FILTER by Key.buildingList(TypeTokens.STRING) {
         fallback(listOf("*"))
     }
 
-    val ENABLE_PER_SERVER_PERMS by Key.buildingSimple {
+    val ENABLE_PER_SERVER_PERMS by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }
 
     // Keys for command toggling
-    val BAN_COMMAND_ENABLED by Key.buildingSimple {
+    val BAN_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val BROADCAST_COMMAND_ENABLED by Key.buildingSimple {
+    val BROADCAST_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val CHANNEL_COMMAND_ENABLED by Key.buildingSimple {
+    val CHANNEL_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val CHANNEL_COMMAND_ALIAS_ENABLED by Key.buildingSimple {
+    val CHANNEL_COMMAND_ALIAS_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }
 
-    val NICKNAME_COMMAND_ENABLED by Key.buildingSimple {
+    val NICKNAME_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val FIND_COMMAND_ENABLED by Key.buildingSimple {
+    val FIND_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val INFO_COMMAND_ENABLED by Key.buildingSimple {
+    val INFO_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val KICK_COMMAND_ENABLED by Key.buildingSimple {
+    val KICK_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val LIST_COMMAND_ENABLED by Key.buildingSimple {
+    val LIST_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }
 
-    val MESSAGE_COMMAND_ENABLED by Key.buildingSimple {
+    val MESSAGE_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val SEND_COMMAND_ENABLED by Key.buildingSimple {
+    val SEND_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val SERVER_COMMAND_ENABLED by Key.buildingSimple {
+    val SERVER_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val SOCIALSPY_COMMAND_ENABLED by Key.buildingSimple {
+    val SOCIALSPY_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val MUTE_COMMAND_ENABLED by Key.buildingSimple {
+    val MUTE_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val IGNORE_COMMAND_ENABLED by Key.buildingSimple {
+    val IGNORE_COMMAND_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(true)
     }
 
-    val CATALYST_PREFIX by Key.buildingSimple {
+    val CATALYST_PREFIX by Key.buildingSimple(TypeTokens.STRING) {
         fallback("Catalyst")
     }
 
     // Keys for root node comments
-    val ADVANCED_ROOT by Key.buildingSimple {
+    val ADVANCED_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val COMMANDS_ROOT by Key.buildingSimple {
+    val COMMANDS_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val CHAT_ROOT by Key.buildingSimple {
+    val CHAT_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val DISCORD_ROOT by Key.buildingSimple {
+    val DISCORD_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val JOIN_ROOT by Key.buildingSimple {
+    val JOIN_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val LEAVE_ROOT by Key.buildingSimple {
+    val LEAVE_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val MODULES_ROOT by Key.buildingSimple {
+    val MODULES_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val MOTD_ROOT by Key.buildingSimple {
+    val MOTD_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val PING_ROOT by Key.buildingSimple {
+    val PING_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 
-    val TAB_ROOT by Key.buildingSimple {
+    val TAB_ROOT by Key.buildingSimple(TypeTokens.STRING) {
         fallback("null")
     }
 }

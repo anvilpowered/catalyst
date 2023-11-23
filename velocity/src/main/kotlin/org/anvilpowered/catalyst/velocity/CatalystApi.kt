@@ -24,7 +24,6 @@ import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
-import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.DiscordUserRepository
@@ -34,13 +33,19 @@ import org.anvilpowered.catalyst.velocity.chat.ChannelServiceImpl
 import org.anvilpowered.catalyst.velocity.chat.ChatFilter
 import org.anvilpowered.catalyst.velocity.chat.ChatService
 import org.anvilpowered.catalyst.velocity.chat.ChatServiceImpl
-import org.anvilpowered.catalyst.velocity.chat.builder.ChatChannelBuilderImpl
+import org.anvilpowered.catalyst.velocity.chat.StaffListService
 import org.anvilpowered.catalyst.velocity.chat.builder.ChannelMessageBuilderImpl
+import org.anvilpowered.catalyst.velocity.chat.builder.ChatChannelBuilderImpl
 import org.anvilpowered.catalyst.velocity.command.nickname.NicknameCommandFactory
 import org.anvilpowered.catalyst.velocity.db.user.DiscordUserRepositoryImpl
 import org.anvilpowered.catalyst.velocity.db.user.GameUserRepositoryImpl
-import org.anvilpowered.catalyst.velocity.listener.ChatListener
 import org.anvilpowered.catalyst.velocity.db.user.UserRepositoryImpl
+import org.anvilpowered.catalyst.velocity.discord.JDAService
+import org.anvilpowered.catalyst.velocity.listener.ChatListener
+import org.anvilpowered.catalyst.velocity.listener.CommandListener
+import org.anvilpowered.catalyst.velocity.listener.DiscordListener
+import org.anvilpowered.catalyst.velocity.listener.JoinListener
+import org.anvilpowered.catalyst.velocity.listener.LeaveListener
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
@@ -54,7 +59,7 @@ interface CatalystApi {
 
 fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
     val velocityModule = module {
-        single<Registry> { EnvironmentRegistry() }
+        single<Registry> { EnvironmentRegistry(prefix = "CATALYST") }
         singleOf(::LuckpermsService)
         singleOf(::ChatFilter)
         singleOf(ChatChannelBuilderImpl::Factory) {
@@ -72,6 +77,12 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         singleOf(::NicknameCommandFactory)
         singleOf(::ChatListener)
         singleOf(::CatalystKeys)
+        singleOf(::CommandListener)
+        singleOf(::JoinListener)
+        singleOf(::LeaveListener)
+        singleOf(::DiscordListener)
+        singleOf(::JDAService)
+        singleOf(::StaffListService)
         single<DiscordUserRepository> { DiscordUserRepositoryImpl }
         single<GameUserRepository> { GameUserRepositoryImpl }
         single<UserRepository> { UserRepositoryImpl }

@@ -4,12 +4,14 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.shadow)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val projectVersion = file("version").readLines().first()
 
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "java-library")
     group = "org.anvilpowered"
