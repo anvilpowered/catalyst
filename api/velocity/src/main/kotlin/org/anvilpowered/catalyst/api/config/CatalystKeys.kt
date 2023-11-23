@@ -28,12 +28,16 @@ import org.anvilpowered.anvil.core.config.KeyBuilderDsl
 import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.ListKey
 import org.anvilpowered.anvil.core.config.SimpleKey
+import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ProxyServerFormat
 
-object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
+@Suppress("PropertyName")
+class CatalystKeys(
+    private val chatChannelBuilderFactory: ChatChannel.Builder.Factory,
+) : KeyNamespace by KeyNamespace.create("CATALYST") {
 
     @KeyBuilderDsl
     private fun SimpleKey.BuilderFacet<Component, *>.miniMessageFallback(fallbackValue: Component) {
@@ -369,6 +373,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
         }
     }
 
+    // TODO: Use ChannelFormat
     val DISCORD_CHAT_FORMAT by Key.buildingSimple {
         fallback("&6[Discord]&7 %name% : %message%")
     }
@@ -406,7 +411,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     }
 
     val DISCORD_HOVER_MESSAGE by Key.buildingSimple {
-        fallback("Click here to join our discord!")
+        miniMessageFallback(Component.text("Click here to join our discord!"))
     }
 
     val WEBSITE_URL by Key.buildingSimple {
@@ -446,7 +451,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
     val CHAT_CHANNELS by Key.buildingMap {
         fallback(
             mapOf(
-                "global" to ChatChannel.build {
+                "global" to chatChannelBuilderFactory.build {
                     id("global")
                     alwaysVisible(true)
                     clickFormat("/msg %player%")
@@ -455,7 +460,7 @@ object CatalystKeys : KeyNamespace by KeyNamespace.create("CATALYST") {
                     hoverFormat(Component.text("Click to message %player%"))
                     passThrough(false)
                 },
-                "admin" to ChatChannel.build {
+                "admin" to chatChannelBuilderFactory.build {
                     id("admin")
                     alwaysVisible(true)
                     clickFormat("/msg %player%")

@@ -16,14 +16,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.db
+package org.anvilpowered.catalyst.velocity.command.nickname
 
-import org.anvilpowered.catalyst.api.user.DiscordUserRepository
+import com.velocitypowered.api.command.CommandSource
 import org.anvilpowered.catalyst.api.user.GameUserRepository
-import org.anvilpowered.catalyst.api.user.UserRepository
+import org.anvilpowered.kbrig.builder.ArgumentBuilder
+import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-interface RepositoryScope {
-    val discordUserRepository: DiscordUserRepository
-    val gameUserRepository: GameUserRepository
-    val userRepository: UserRepository
+class NicknameCommandFactory(val gameUserRepository: GameUserRepository) {
+
+    fun create(): LiteralCommandNode<CommandSource> {
+        return ArgumentBuilder.literal<CommandSource>("nickname")
+            .then(createSet())
+            .then(createDelete())
+            .build()
+    }
 }

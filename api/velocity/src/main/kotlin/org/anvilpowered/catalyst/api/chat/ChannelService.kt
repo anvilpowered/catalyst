@@ -35,8 +35,4 @@ interface ChannelService {
     fun switch(userUUID: UUID, channelId: String)
 
     fun moveUsersToChannel(sourceChannel: String, targetChannel: String)
-
-    interface Scope {
-        val channelService: ChannelService
-    }
 }

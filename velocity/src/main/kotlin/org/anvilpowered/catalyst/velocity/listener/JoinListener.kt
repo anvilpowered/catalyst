@@ -19,36 +19,45 @@ package org.anvilpowered.catalyst.velocity.listener
 
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.LoginEvent
+import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.db.RepositoryScope
+import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.UserRepository
 import org.anvilpowered.catalyst.velocity.chat.StaffListService
+import org.apache.logging.log4j.Logger
 
-context(ProxyServerScope, Registry.Scope, LoggerScope, StaffListService.Scope, LuckpermsService.Scope, RepositoryScope)
-class JoinListener {
+class JoinListener(
+    private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+    private val logger: Logger,
+    private val staffListService: StaffListService,
+    private val luckpermsService: LuckpermsService,
+    private val userRepository: UserRepository,
+    private val gameUserRepository: GameUserRepository,
+) {
     @Subscribe
     fun onPlayerJoin(event: LoginEvent) = runBlocking {
         val player = event.player
         val user = userRepository.initializeFromGameUser(player.uniqueId, player.username)
         val result = gameUserRepository.initialize(player.uniqueId, user.id, player.username, player.remoteAddress.hostString)
 
-        if (result.firstJoin && registry[CatalystKeys.JOIN_LISTENER_ENABLED]) {
-            proxyServer.sendMessage(registry[CatalystKeys.FIRST_JOIN].resolvePlaceholders(player))
+        if (result.firstJoin && registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
+            proxyServer.sendMessage(registry[catalystKeys.FIRST_JOIN].resolve(proxyServer, logger, luckpermsService, player))
         }
 
         staffListService.getStaffNames(
             player.username,
-            player.hasPermission(registry[CatalystKeys.STAFFLIST_ADMIN_PERMISSION]),
-            player.hasPermission(registry[CatalystKeys.STAFFLIST_STAFF_PERMISSION]),
-            player.hasPermission(registry[CatalystKeys.STAFFLIST_OWNER_PERMISSION]),
+            player.hasPermission(registry[catalystKeys.STAFFLIST_ADMIN_PERMISSION]),
+            player.hasPermission(registry[catalystKeys.STAFFLIST_STAFF_PERMISSION]),
+            player.hasPermission(registry[catalystKeys.STAFFLIST_OWNER_PERMISSION]),
         )
-        val joinMessage = registry[CatalystKeys.JOIN_MESSAGE].resolvePlaceholders(player)
-        if (registry[CatalystKeys.JOIN_LISTENER_ENABLED]) {
+        val joinMessage = registry[catalystKeys.JOIN_MESSAGE].resolve(proxyServer, logger, luckpermsService, player)
+        if (registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
             proxyServer.sendMessage(joinMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))
         }

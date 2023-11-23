@@ -20,6 +20,7 @@ exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time" }
 jda = "net.dv8tion:JDA:5.0.0-beta.17"
 kbrig-brigadier = { module = "org.anvilpowered:kbrig-brigadier", version.ref = "kbrig" }
 kbrig-core = { module = "org.anvilpowered:kbrig-core", version.ref = "kbrig" }
+koin ="io.insert-koin:koin-core:3.5.2-RC1"
 kontour = "org.sourcegrade:kontour-domain:0.1.0-SNAPSHOT"
 kotest = "io.kotest:kotest-runner-junit5-jvm:5.5.4"
 kotlinx-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"

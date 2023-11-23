@@ -18,11 +18,11 @@
 
 package org.anvilpowered.catalyst.velocity.command
 
+import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.anvilpowered.anvil.core.command.CommandSource
-import org.anvilpowered.catalyst.api.db.RepositoryScope
 import org.anvilpowered.catalyst.api.user.GameUser
+import org.anvilpowered.catalyst.api.user.GameUserRepository
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.RequiredArgumentBuilder
@@ -30,22 +30,21 @@ import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.context.CommandContext
 import org.anvilpowered.kbrig.context.get
 
-context(RepositoryScope)
-fun ArgumentBuilder.Companion.gameUser(
+fun GameUserRepository.argument(
     argumentName: String = "gameUser",
     command: suspend (context: CommandContext<CommandSource>, gameUser: GameUser) -> Int,
 ): RequiredArgumentBuilder<CommandSource, String> =
-    required<CommandSource, String>(argumentName, StringArgumentType.SingleWord)
+    ArgumentBuilder.required<CommandSource, String>(argumentName, StringArgumentType.SingleWord)
         .suggests { _, builder ->
-            gameUserRepository.getAllUsernames(startWith = builder.input).forEach { name -> builder.suggest(name) }
+            getAllUsernames(startWith = builder.input).forEach { name -> builder.suggest(name) }
             builder.build()
         }
         .executesSuspending { context ->
             val gameUserName = context.get<String>(argumentName)
-            gameUserRepository.getByUsername(gameUserName)?.let { gameUser ->
+            getByUsername(gameUserName)?.let { gameUser ->
                 command(context, gameUser)
             } ?: run {
-                context.source.audience.sendMessage(
+                context.source.sendMessage(
                     Component.text()
                         .append(Component.text("GameUser with name ", NamedTextColor.RED))
                         .append(Component.text(gameUserName, NamedTextColor.GOLD))

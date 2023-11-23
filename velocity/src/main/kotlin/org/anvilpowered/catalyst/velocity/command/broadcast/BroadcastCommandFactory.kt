@@ -1,6 +1,6 @@
 /*
  *   Catalyst - AnvilPowered.org
- *   Copyright (C) 2020-2023 Contributors
+ *   Copyright (C) 2020-2024 Contributors
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published by
@@ -16,31 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.velocity.command
+package org.anvilpowered.catalyst.velocity.command.broadcast
 
+import com.velocitypowered.api.command.CommandSource
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.command.CommandSource
-import org.anvilpowered.anvil.core.user.requiresPermission
-import org.anvilpowered.anvil.velocity.ProxyServerScope
-import org.anvilpowered.catalyst.agent.command.CatalystCommand
+import org.anvilpowered.anvil.velocity.user.requiresPermission
 import org.anvilpowered.catalyst.api.PluginMessages
+import org.anvilpowered.catalyst.velocity.command.CommandDefaults
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.executesSingleSuccess
 import org.anvilpowered.kbrig.context.get
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-context(ProxyServerScope)
-fun CatalystCommand.createBroadcast(): LiteralCommandNode<CommandSource> {
-    return ArgumentBuilder.literal<CommandSource>("broadcast")
-        .executes(CommandDefaults::notEnoughArgs)
-        .requiresPermission("catalyst.chat.broadcast")
-        .then(
-            ArgumentBuilder.required<CommandSource, String>("message", StringArgumentType.GreedyPhrase)
-                .executesSingleSuccess { context ->
-                    proxyServer.sendMessage(PluginMessages.getBroadcast(Component.text(context.get<String>("message"))))
-                }
-                .build(),
-        )
-        .build()
+class BroadcastCommandFactory(private val proxyServer: ProxyServer) {
+    fun create(): LiteralCommandNode<CommandSource> =
+        ArgumentBuilder.literal<CommandSource>("broadcast").executes(CommandDefaults::notEnoughArgs)
+            .requiresPermission("catalyst.chat.broadcast").then(
+                ArgumentBuilder.required<CommandSource, String>("message", StringArgumentType.GreedyPhrase)
+                    .executesSingleSuccess { context ->
+                        proxyServer.sendMessage(PluginMessages.getBroadcast(Component.text(context.get<String>("message"))))
+                    }.build(),
+            ).build()
 }

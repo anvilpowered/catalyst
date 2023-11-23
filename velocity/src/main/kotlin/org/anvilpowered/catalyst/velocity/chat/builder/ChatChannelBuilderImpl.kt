@@ -1,6 +1,6 @@
 /*
  *   Catalyst - AnvilPowered.org
- *   Copyright (C) 2020-2023 Contributors
+ *   Copyright (C) 2020-2024 Contributors
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.chat.builder
+package org.anvilpowered.catalyst.velocity.chat.builder
 
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.config.ChatChannel
@@ -73,4 +73,8 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
 
     override fun build(): ChatChannel =
         ChatChannel(id, nameFormat, messageFormat, hoverFormat, clickFormat, alwaysVisible, passthrough, discordChannel)
+
+    class Factory() : ChatChannel.Builder.Factory {
+        override fun builder(): ChatChannel.Builder = ChatChannelBuilderImpl()
+    }
 }

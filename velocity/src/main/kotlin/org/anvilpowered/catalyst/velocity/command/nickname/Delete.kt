@@ -18,33 +18,31 @@
 
 package org.anvilpowered.catalyst.velocity.command.nickname
 
+import com.velocitypowered.api.command.CommandSource
+import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.anvilpowered.anvil.core.command.CommandSource
-import org.anvilpowered.anvil.core.user.hasPermissionSet
 import org.anvilpowered.catalyst.api.PluginMessages
-import org.anvilpowered.catalyst.velocity.CatalystApi
+import org.anvilpowered.catalyst.velocity.command.argument
 import org.anvilpowered.catalyst.velocity.command.common.addHelpChild
-import org.anvilpowered.catalyst.velocity.command.gameUser
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-context(CatalystApi)
-fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> =
+fun NicknameCommandFactory.createDelete(): LiteralCommandNode<CommandSource> =
     ArgumentBuilder.literal<CommandSource>("delete")
         .addHelpChild("nickname|nick delete [<player>]")
         .executesSuspending { context ->
             // without explicit target player
-            context.source.player?.let { player ->
-                if (!player.hasPermissionSet("catalyst.nickname.delete.base")) {
+            (context.source as? Player)?.let { player ->
+                if (!player.hasPermission("catalyst.nickname.delete.base")) {
                     player.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("You don't have permission to delete your nickname!", NamedTextColor.RED)),
                     )
                     0
-                } else if (gameUserRepository.deleteNickname(player.id)) {
+                } else if (gameUserRepository.deleteNickname(player.uniqueId)) {
                     player.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("Your nickname has been deleted!", NamedTextColor.RED)),
@@ -58,7 +56,7 @@ fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> =
                     0
                 }
             } ?: run {
-                context.source.audience.sendMessage(
+                context.source.sendMessage(
                     PluginMessages.pluginPrefix
                         .append(Component.text("You must be a player to use this command without arguments!", NamedTextColor.RED)),
                 )
@@ -66,15 +64,15 @@ fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> =
             }
         }
         .then(
-            ArgumentBuilder.gameUser { context, gameUser ->
-                if (!context.source.subject.hasPermissionSet("catalyst.nickname.delete.other")) {
-                    context.source.audience.sendMessage(
+            gameUserRepository.argument { context, gameUser ->
+                if (!context.source.hasPermission("catalyst.nickname.delete.other")) {
+                    context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("You don't have permission to delete other players' nicknames!", NamedTextColor.RED)),
                     )
                     0
                 } else if (gameUserRepository.deleteNickname(gameUser.id)) {
-                    context.source.audience.sendMessage(
+                    context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of ", NamedTextColor.RED))
                             .append(Component.text(gameUser.username, NamedTextColor.GOLD))
@@ -82,7 +80,7 @@ fun NicknameCommand.createDelete(): LiteralCommandNode<CommandSource> =
                     )
                     Command.SINGLE_SUCCESS
                 } else {
-                    context.source.audience.sendMessage(
+                    context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The player ", NamedTextColor.RED))
                             .append(Component.text(gameUser.username, NamedTextColor.GOLD))

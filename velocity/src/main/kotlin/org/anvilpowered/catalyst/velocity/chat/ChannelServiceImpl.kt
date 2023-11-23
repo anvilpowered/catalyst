@@ -19,21 +19,24 @@
 package org.anvilpowered.catalyst.velocity.chat
 
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import java.util.UUID
 
-context(Registry.Scope, ProxyServerScope)
-class ChannelServiceImpl : ChannelService {
+class ChannelServiceImpl(
+    private val registry: Registry,
+    private val proxyServer: ProxyServer,
+    private val catalystKeys: CatalystKeys,
+) : ChannelService {
     private var playerChannelMapping = mutableMapOf<UUID, String>()
 
-    private var defaultChannelId = registry[CatalystKeys.CHAT_DEFAULT_CHANNEL]
+    private var defaultChannelId = registry[catalystKeys.CHAT_DEFAULT_CHANNEL]
     override val defaultChannel: ChatChannel = requireNotNull(get(defaultChannelId)) { "Default chat channel not found" }
 
-    override fun get(channelId: String): ChatChannel? = registry[CatalystKeys.CHAT_CHANNELS][channelId]
+    override fun get(channelId: String): ChatChannel? = registry[catalystKeys.CHAT_CHANNELS][channelId]
     override fun getForPlayer(playerId: UUID): ChatChannel = playerChannelMapping[playerId]?.let { get(it) } ?: defaultChannel
     override fun getPlayers(channelId: String): Sequence<Player> =
         proxyServer.allPlayers.asSequence().filter { player -> getForPlayer(player.uniqueId).id == channelId }

@@ -20,17 +20,20 @@ package org.anvilpowered.catalyst.velocity.listener
 
 import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.proxy.Player
-import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.apache.logging.log4j.Logger
 
-context(LoggerScope, Registry.Scope)
-class CommandListener {
+class CommandListener(
+    private val logger: Logger,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+) {
 
     @com.google.common.eventbus.Subscribe
     fun onCommandExecution(event: CommandExecuteEvent) {
-        if (registry[CatalystKeys.COMMAND_LOGGING_ENABLED]) {
-            val commandList = registry[CatalystKeys.COMMAND_LOGGING_FILTER]
+        if (registry[catalystKeys.COMMAND_LOGGING_ENABLED]) {
+            val commandList = registry[catalystKeys.COMMAND_LOGGING_FILTER]
             if (commandList.size == 1 && commandList[0] == "*" || commandList.contains(event.command)) {
                 logger.info((event.commandSource as? Player)?.username + " executed command : " + event.command)
             }

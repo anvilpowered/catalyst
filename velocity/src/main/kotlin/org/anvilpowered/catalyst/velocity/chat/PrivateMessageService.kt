@@ -19,24 +19,36 @@
 package org.anvilpowered.catalyst.velocity.chat
 
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.PrivateMessage
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.apache.logging.log4j.Logger
 import java.util.UUID
 
-context(ProxyServerScope, Registry.Scope, LoggerScope, LuckpermsService.Scope)
-class PrivateMessageService {
+class PrivateMessageService(
+    private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+    private val logger: Logger,
+    private val luckpermsService: LuckpermsService,
+) {
     private var replyMap = mutableMapOf<UUID, UUID>()
 
     suspend fun sendMessage(source: Player, recipient: Player, content: Component) {
         val message = PrivateMessage(source, recipient, content)
-        source.sendMessage(registry[CatalystKeys.PRIVATE_MESSAGE_SOURCE_FORMAT].resolvePlaceholders(message))
-        recipient.sendMessage(registry[CatalystKeys.PRIVATE_MESSAGE_RECIPIENT_FORMAT].resolvePlaceholders(message))
+        source.sendMessage(registry[catalystKeys.PRIVATE_MESSAGE_SOURCE_FORMAT].resolve(proxyServer, logger, luckpermsService, message))
+        recipient.sendMessage(
+            registry[catalystKeys.PRIVATE_MESSAGE_RECIPIENT_FORMAT].resolve(
+                proxyServer,
+                logger,
+                luckpermsService,
+                message,
+            ),
+        )
         replyMap[recipient.uniqueId] = source.uniqueId
         socialSpy(message)
     }
@@ -60,9 +72,9 @@ class PrivateMessageService {
     // TODO: Send PM from console
 
     private suspend fun socialSpy(message: PrivateMessage) {
-        val socialSpyMessage = registry[CatalystKeys.SOCIALSPY_MESSAGE_FORMAT].resolvePlaceholders(message)
+        val socialSpyMessage = registry[catalystKeys.SOCIALSPY_MESSAGE_FORMAT].resolve(proxyServer, logger, luckpermsService, message)
         proxyServer.allPlayers
-            .filter { it.hasPermission(registry[CatalystKeys.SOCIALSPY_PERMISSION]) }
+            .filter { it.hasPermission(registry[catalystKeys.SOCIALSPY_PERMISSION]) }
             .filter { it != message.source && it != message.recipient }
             .forEach { it.sendMessage(socialSpyMessage) }
     }

@@ -19,30 +19,40 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.LoggerScope
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.apache.logging.log4j.Logger
 
 class PlayerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
-    context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-    suspend fun resolvePlaceholders(player: Player): Component = resolvePlaceholders(format, placeholders, player)
+    suspend fun resolve(
+        proxyServer: ProxyServer,
+        logger: Logger,
+        luckpermsService: LuckpermsService,
+        player: Player,
+    ): Component = resolve(proxyServer, logger, luckpermsService, format, placeholders, player)
 
     companion object : MessageFormat.Builder<Placeholders, PlayerFormat> {
 
-        private val backendServer = NestedFormat(BackendServerFormat, Placeholders::backendServer)
-        private val proxyServer = NestedFormat(ProxyServerFormat, Placeholders::proxyServer)
+        private val backendServerContext = NestedFormat(BackendServerFormat, Placeholders::backendServer)
+        private val proxyServerContext = NestedFormat(ProxyServerFormat, Placeholders::proxyServer)
 
-        context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-        suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, player: Player): Component {
+        suspend fun resolve(
+            proxyServer: ProxyServer,
+            logger: Logger,
+            luckpermsService: LuckpermsService,
+            format: Component,
+            placeholders: Placeholders,
+            player: Player,
+        ): Component {
             val server = player.currentServer.orElse(null)?.server ?: run {
                 logger.error("Could not resolve placeholders for player ${player.username} because they are not connected to a server.")
                 return format
             }
             return sequenceOf<suspend Component.() -> Component>(
-                { backendServer.format.resolvePlaceholders(this, backendServer.placeholderResolver(placeholders), server) },
-                { proxyServer.format.resolvePlaceholders(this, proxyServer.placeholderResolver(placeholders)) },
+                { backendServerContext.format.resolvePlaceholders(this, backendServerContext.placeholderResolver(placeholders), server) },
+                { proxyServerContext.format.resolve(proxyServer, this, proxyServerContext.placeholderResolver(placeholders)) },
                 { replaceText { it.match(placeholders.latency).replacement(player.ping.toString()) } },
                 { replaceText { it.match(placeholders.username).replacement(player.username) } },
                 { replaceText { it.match(placeholders.id).replacement(player.uniqueId.toString()) } },

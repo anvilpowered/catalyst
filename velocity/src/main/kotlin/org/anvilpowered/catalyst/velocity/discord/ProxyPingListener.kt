@@ -21,23 +21,26 @@ package org.anvilpowered.catalyst.velocity.discord
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyPingEvent
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import com.velocitypowered.api.util.ModInfo
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.UUID
 
-context(ProxyServerScope, Registry.Scope)
-class ProxyPingListener {
+class ProxyPingListener(
+    private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+) {
 
     @Subscribe
     fun onServerListPing(proxyPingEvent: ProxyPingEvent) {
         val serverPing = proxyPingEvent.ping
         val builder = ServerPing.builder()
         var modInfo: ModInfo? = null
-        if (registry[CatalystKeys.MOTD_ENABLED]) {
-            builder.description(registry[CatalystKeys.MOTD].resolvePlaceholders())
+        if (registry[catalystKeys.MOTD_ENABLED]) {
+            builder.description(registry[catalystKeys.MOTD].resolve(proxyServer))
         } else {
             return
         }
@@ -59,7 +62,7 @@ class ProxyPingListener {
         if (modInfo != null) {
             builder.mods(modInfo)
         }
-        if (registry[CatalystKeys.SERVER_PING].equals("players", ignoreCase = true)) {
+        if (registry[catalystKeys.SERVER_PING].equals("players", ignoreCase = true)) {
             if (proxyServer.playerCount > 0) {
                 val samplePlayers = arrayOfNulls<ServerPing.SamplePlayer>(proxyServer.playerCount)
                 val proxiedPlayers: List<Player> = ArrayList(proxyServer.allPlayers)
@@ -68,8 +71,8 @@ class ProxyPingListener {
                 }
                 builder.samplePlayers(*samplePlayers)
             }
-        } else if (registry[CatalystKeys.SERVER_PING].equals("MESSAGE", ignoreCase = true)) {
-            builder.samplePlayers(ServerPing.SamplePlayer(registry[CatalystKeys.SERVER_PING_MESSAGE], UUID.randomUUID()))
+        } else if (registry[catalystKeys.SERVER_PING].equals("MESSAGE", ignoreCase = true)) {
+            builder.samplePlayers(ServerPing.SamplePlayer(registry[catalystKeys.SERVER_PING_MESSAGE], UUID.randomUUID()))
         }
         if (serverPing.favicon.isPresent) {
             builder.favicon(serverPing.favicon.get())

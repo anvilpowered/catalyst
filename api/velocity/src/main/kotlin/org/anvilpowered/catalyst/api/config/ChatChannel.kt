@@ -19,7 +19,6 @@
 package org.anvilpowered.catalyst.api.config
 
 import net.kyori.adventure.text.Component
-import org.anvilpowered.catalyst.api.chat.builder.ChatChannelBuilderImpl
 
 data class ChatChannel(
     val id: String,
@@ -51,10 +50,11 @@ data class ChatChannel(
         fun discordChannel(discordChannel: String): Builder
 
         fun build(): ChatChannel
-    }
 
-    companion object {
-        fun builder(): Builder = ChatChannelBuilderImpl()
-        inline fun build(block: Builder.() -> Unit): ChatChannel = builder().apply(block).build()
+        interface Factory {
+            fun builder(): Builder
+        }
     }
 }
+
+inline fun ChatChannel.Builder.Factory.build(block: ChatChannel.Builder.() -> Unit): ChatChannel = builder().apply(block).build()

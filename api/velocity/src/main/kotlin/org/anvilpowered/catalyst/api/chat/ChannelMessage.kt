@@ -20,9 +20,7 @@ package org.anvilpowered.catalyst.api.chat
 
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.config.ChatChannel
-import org.anvilpowered.catalyst.api.db.RepositoryScope
 import org.anvilpowered.catalyst.api.user.GameUser
 import java.util.UUID
 
@@ -35,10 +33,14 @@ class ChannelMessage(val source: Player, val content: Component, val channel: Ch
          */
         fun user(user: GameUser): Builder
 
+        suspend fun userId(userId: UUID): Builder
+
         /**
          * Use [Builder.channelId] if you only have a channelId.
          */
         fun channel(channel: ChatChannel): Builder
+
+        suspend fun channelId(channelId: String): Builder
 
         fun message(message: Component): Builder
         fun prefix(prefix: Component): Builder
@@ -52,27 +54,13 @@ class ChannelMessage(val source: Player, val content: Component, val channel: Ch
 
         fun server(server: String): Builder
         fun build(): ChannelMessage
-    }
 
-    interface Scope {
-        context(ProxyServerScope)
-        fun Companion.builder(): Builder
+        interface Factory {
+            fun builder(): Builder
+        }
     }
 
     data class Event(val message: ChannelMessage)
-
-    companion object
 }
 
-context(ChannelMessage.Scope, ProxyServerScope)
-inline fun ChannelMessage.Companion.build(block: ChannelMessage.Builder.() -> Unit): ChannelMessage = builder().apply(block).build()
-
-context(RepositoryScope)
-suspend fun ChannelMessage.Builder.userId(userId: UUID): ChannelMessage.Builder = user(
-    requireNotNull(gameUserRepository.getById(userId)) { "Could not find user with id $userId" },
-)
-
-context(ChannelService.Scope)
-fun ChannelMessage.Builder.channelId(channelId: String): ChannelMessage.Builder = channel(
-    requireNotNull(channelService.get(channelId)) { "Could not find channel with id $channelId" },
-)
+inline fun ChannelMessage.Builder.Factory.build(block: ChannelMessage.Builder.() -> Unit): ChannelMessage = builder().apply(block).build()

@@ -21,16 +21,13 @@ package org.anvilpowered.catalyst.api.chat.placeholder
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import kotlinx.coroutines.future.await
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 
 class BackendServerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
-    context(ProxyServerScope)
     suspend fun resolvePlaceholders(server: RegisteredServer): Component = resolvePlaceholders(format, placeholders, server)
 
     companion object : MessageFormat.Builder<Placeholders, BackendServerFormat> {
 
-        context(ProxyServerScope)
         suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, server: RegisteredServer): Component {
             val ops = sequenceOf<Component.() -> Component>(
                 { replaceText { it.match(placeholders.name).replacement(server.serverInfo.name) } },

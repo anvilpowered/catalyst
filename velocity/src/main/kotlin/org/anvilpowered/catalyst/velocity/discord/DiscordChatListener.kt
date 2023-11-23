@@ -21,20 +21,21 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.LoginEvent
 import kotlinx.coroutines.runBlocking
-import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 
-context(Registry.Scope, ProxyServerScope, ChannelService.Scope, LuckpermsService.Scope, WebhookSender.Scope, LoggerScope)
-class DiscordChatListener {
+class DiscordChatListener(
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+    private val channelService: ChannelService,
+    private val webhookSender: WebhookSender,
+) {
 
     @Subscribe
     fun onChatEvent(message: ChannelMessage) = runBlocking {
-        if (!registry[CatalystKeys.DISCORD_ENABLED]) {
+        if (!registry[catalystKeys.DISCORD_ENABLED]) {
             return@runBlocking
         }
 //        if (!player.hasPermission(registry[CatalystKeys.LANGUAGE_ADMIN_PERMISSION])) {
@@ -49,19 +50,19 @@ class DiscordChatListener {
 
     @Subscribe
     fun onPlayerJoinEvent(event: LoginEvent) = runBlocking {
-        if (!registry[CatalystKeys.DISCORD_ENABLED]) {
+        if (!registry[catalystKeys.DISCORD_ENABLED]) {
             return@runBlocking
         }
         val discordChannel = channelService.getForPlayer(event.player.uniqueId)
-        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannel, CatalystKeys.JOIN_MESSAGE)
+        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannel, catalystKeys.JOIN_MESSAGE)
     }
 
     @Subscribe
     fun onPlayerLeaveEvent(event: DisconnectEvent) = runBlocking {
-        if (!registry[CatalystKeys.DISCORD_ENABLED]) {
+        if (!registry[catalystKeys.DISCORD_ENABLED]) {
             return@runBlocking
         }
         val discordChannel = channelService.getForPlayer(event.player.uniqueId)
-        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannel, CatalystKeys.LEAVE_MESSAGE)
+        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannel, catalystKeys.LEAVE_MESSAGE)
     }
 }

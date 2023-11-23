@@ -18,27 +18,55 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.LoggerScope
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.PrivateMessage
+import org.apache.logging.log4j.Logger
 
 class PrivateMessageFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
-    context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-    suspend fun resolvePlaceholders(message: PrivateMessage): Component = resolvePlaceholders(format, placeholders, message)
+    suspend fun resolve(
+        proxyServer: ProxyServer,
+        logger: Logger,
+        luckpermsService: LuckpermsService,
+        message: PrivateMessage,
+    ): Component = resolve(proxyServer, logger, luckpermsService, format, placeholders, message)
 
     companion object : MessageFormat.Builder<Placeholders, PrivateMessageFormat> {
 
         private val source = NestedFormat(PlayerFormat, Placeholders::source)
         private val recipient = NestedFormat(PlayerFormat, Placeholders::recipient)
 
-        context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-        suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, message: PrivateMessage): Component {
+        suspend fun resolve(
+            proxyServer: ProxyServer,
+            logger: Logger,
+            luckpermsService: LuckpermsService,
+            format: Component,
+            placeholders: Placeholders,
+            message: PrivateMessage,
+        ): Component {
             return sequenceOf<suspend Component.() -> Component>(
-                { source.format.resolvePlaceholders(this, source.placeholderResolver(placeholders), message.source) },
-                { recipient.format.resolvePlaceholders(this, recipient.placeholderResolver(placeholders), message.recipient) },
+                {
+                    source.format.resolve(
+                        proxyServer,
+                        logger,
+                        luckpermsService,
+                        this,
+                        source.placeholderResolver(placeholders),
+                        message.source,
+                    )
+                },
+                {
+                    recipient.format.resolve(
+                        proxyServer,
+                        logger,
+                        luckpermsService,
+                        this,
+                        recipient.placeholderResolver(placeholders),
+                        message.recipient,
+                    )
+                },
                 { replaceText { it.match(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }

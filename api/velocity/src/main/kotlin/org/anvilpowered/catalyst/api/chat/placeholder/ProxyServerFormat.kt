@@ -18,18 +18,16 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 
 class ProxyServerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
-    context(ProxyServerScope)
-    fun resolvePlaceholders(): Component = resolvePlaceholders(format, placeholders)
+    fun resolve(proxyServer: ProxyServer): Component = resolve(proxyServer, format, placeholders)
 
     companion object : MessageFormat.Builder<Placeholders, ProxyServerFormat> {
 
-        context(ProxyServerScope)
-        fun resolvePlaceholders(format: Component, placeholders: Placeholders): Component {
+        fun resolve(proxyServer: ProxyServer, format: Component, placeholders: Placeholders): Component {
             return sequenceOf<Component.() -> Component>(
                 { replaceText { it.match(placeholders.version).replacement(proxyServer.version.version) } },
                 { replaceText { it.match(placeholders.playerCount).replacement(proxyServer.playerCount.toString()) } },

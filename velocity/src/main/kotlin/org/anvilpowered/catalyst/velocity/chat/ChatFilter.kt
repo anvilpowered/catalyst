@@ -23,8 +23,10 @@ import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.Locale
 
-context(Registry.Scope)
-class ChatFilter {
+class ChatFilter(
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+) {
 
     private fun stripMessage(checkMessage: String): String {
         return checkMessage.lowercase(Locale.getDefault())
@@ -47,8 +49,8 @@ class ChatFilter {
 
     private fun findSwears(message: String, spacePositions: List<Int>): List<Pair<Int, Int>> {
         val swearList: MutableList<Pair<Int, Int>> = ArrayList()
-        val exceptions = registry[CatalystKeys.CHAT_FILTER_EXCEPTIONS].map { it.lowercase(Locale.getDefault()) }
-        for (bannedWord in registry[CatalystKeys.CHAT_FILTER_SWEARS]) {
+        val exceptions = registry[catalystKeys.CHAT_FILTER_EXCEPTIONS].map { it.lowercase(Locale.getDefault()) }
+        for (bannedWord in registry[catalystKeys.CHAT_FILTER_SWEARS]) {
             if (message.contains(bannedWord) && !exceptions.contains(bannedWord)) {
                 var startIndex = message.indexOf(bannedWord)
                 while (startIndex != -1) {
@@ -81,16 +83,12 @@ class ChatFilter {
 //        val swearPositions = findSwears(noSpacesMessage, spacePositions)
 
         message.replaceText {
-            it.match(registry[CatalystKeys.CHAT_FILTER_SWEARS].joinToString("|"))
+            it.match(registry[catalystKeys.CHAT_FILTER_SWEARS].joinToString("|"))
             it.replacement { matchResult, builder ->
                 builder.append(Component.text("*".repeat(matchResult.end() - matchResult.start())))
                 builder.build()
             }
         }
         return message
-    }
-
-    interface Scope {
-        val chatFilter: ChatFilter
     }
 }

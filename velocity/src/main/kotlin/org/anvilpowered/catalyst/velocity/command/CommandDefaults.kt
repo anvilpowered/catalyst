@@ -18,15 +18,15 @@
 
 package org.anvilpowered.catalyst.velocity.command
 
+import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.context.CommandContext
 
 internal object CommandDefaults {
     fun notEnoughArgs(context: CommandContext<CommandSource>): Int {
-        context.source.audience.sendMessage(
+        context.source.sendMessage(
             Component.text()
                 .append(Component.text("Invalid command usage!\n").color(NamedTextColor.RED))
                 .append(
@@ -38,7 +38,7 @@ internal object CommandDefaults {
     }
 
     fun syntaxError(usage: String): Command<CommandSource> = Command { context ->
-        context.source.audience.sendMessage(
+        context.source.sendMessage(
             Component.text()
                 .append(Component.text("Invalid command usage '${context.input}'").color(NamedTextColor.RED))
                 .append(Component.newline())

@@ -18,15 +18,18 @@
 
 package org.anvilpowered.catalyst.velocity.chat
 
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-context(Registry.Scope, ProxyServerScope)
-class StaffListService {
+class StaffListService(
+    private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+) {
 
     init {
         val executor = Executors.newSingleThreadScheduledExecutor()
@@ -57,9 +60,9 @@ class StaffListService {
         for (player in proxyServer.allPlayers) {
             getStaffNames(
                 player.username,
-                player.hasPermission(registry[CatalystKeys.STAFFLIST_ADMIN_PERMISSION]),
-                player.hasPermission(registry[CatalystKeys.STAFFLIST_STAFF_PERMISSION]),
-                player.hasPermission(registry[CatalystKeys.STAFFLIST_OWNER_PERMISSION]),
+                player.hasPermission(registry[catalystKeys.STAFFLIST_ADMIN_PERMISSION]),
+                player.hasPermission(registry[catalystKeys.STAFFLIST_STAFF_PERMISSION]),
+                player.hasPermission(registry[catalystKeys.STAFFLIST_OWNER_PERMISSION]),
             )
         }
     }

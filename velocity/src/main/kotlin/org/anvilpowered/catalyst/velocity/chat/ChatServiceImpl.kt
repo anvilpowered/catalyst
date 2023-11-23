@@ -19,25 +19,27 @@
 package org.anvilpowered.catalyst.velocity.chat
 
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.core.platform.Server
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.UUID
 
-context(ChannelService.Scope, LuckpermsService.Scope, Registry.Scope, ProxyServerScope, Server.Scope)
-class ChatServiceImpl : ChatService {
+class ChatServiceImpl(
+    private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+    private val channelService: ChannelService,
+) : ChatService {
     private var ignoreMap = mutableMapOf<UUID, MutableList<UUID>>()
     private var disabledList = mutableListOf<UUID>()
 
     override suspend fun sendMessageToChannel(channelId: String, message: Component, userId: UUID) {
         proxyServer.allPlayers.forEach { player ->
-            if (player.hasPermission(registry[CatalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
+            if (player.hasPermission(registry[catalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
                 channelService.getForPlayer(player.uniqueId).id == channelId
             ) {
                 // TODO: This is icky
@@ -56,7 +58,7 @@ class ChatServiceImpl : ChatService {
         if (message.content == Component.text("")) {
             return
         }
-        server.systemSubject.sendMessage(message.content)
+        proxyServer.consoleCommandSource.sendMessage(message.content)
         sendMessageToChannel(channelService.getForPlayer(message.source.uniqueId).id, message.content, message.source.uniqueId)
     }
 

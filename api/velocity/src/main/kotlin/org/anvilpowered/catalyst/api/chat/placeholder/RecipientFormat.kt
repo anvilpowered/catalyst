@@ -19,23 +19,41 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.LoggerScope
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.apache.logging.log4j.Logger
 
 class RecipientFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
 
-    context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-    suspend fun resolvePlaceholders(recipient: Player): Component = resolvePlaceholders(format, placeholders, recipient)
+    suspend fun resolvePlaceholders(
+        proxyServer: ProxyServer,
+        logger: Logger,
+        luckpermsService: LuckpermsService,
+        recipient: Player,
+    ): Component =
+        resolvePlaceholders(proxyServer, logger, luckpermsService, format, placeholders, recipient)
 
     companion object : MessageFormat.Builder<Placeholders, RecipientFormat> {
 
         private val recipientContext = NestedFormat(PlayerFormat, Placeholders::recipient)
 
-        context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-        suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, recipient: Player): Component {
-            return recipientContext.format.resolvePlaceholders(format, recipientContext.placeholderResolver(placeholders), recipient)
+        suspend fun resolvePlaceholders(
+            proxyServer: ProxyServer,
+            logger: Logger,
+            luckpermsService: LuckpermsService,
+            format: Component,
+            placeholders: Placeholders,
+            recipient: Player,
+        ): Component {
+            return recipientContext.format.resolve(
+                proxyServer,
+                logger,
+                luckpermsService,
+                format,
+                recipientContext.placeholderResolver(placeholders),
+                recipient,
+            )
         }
 
         override fun build(block: Placeholders.() -> Component): RecipientFormat {

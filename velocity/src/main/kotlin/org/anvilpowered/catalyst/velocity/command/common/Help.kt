@@ -18,10 +18,10 @@
 
 package org.anvilpowered.catalyst.velocity.command.common
 
+import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
-import org.anvilpowered.anvil.core.command.CommandSource
 import org.anvilpowered.catalyst.api.PluginMessages
 import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
@@ -32,7 +32,7 @@ fun <B : ArgumentBuilder<CommandSource, B>> B.addHelpChild(usage: String): B = t
 )
 
 private fun usage(usage: String): Command<CommandSource> = Command { context ->
-    context.source.audience.sendMessage(
+    context.source.sendMessage(
         Component.text()
             .append(PluginMessages.pluginPrefix)
             .append(Component.text("Command Usage", NamedTextColor.RED, TextDecoration.BOLD))

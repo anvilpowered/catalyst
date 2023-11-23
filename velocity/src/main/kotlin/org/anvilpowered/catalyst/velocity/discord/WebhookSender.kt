@@ -18,6 +18,7 @@
 package org.anvilpowered.catalyst.velocity.discord
 
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.ProxyServer
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.post
@@ -29,34 +30,36 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Webhook
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.config.SimpleKey
-import org.anvilpowered.anvil.core.user.PlayerService
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.apache.logging.log4j.Logger
 import java.util.UUID
 
-context(Registry.Scope, PlayerService.Scope, JDAService.Scope)
-class WebhookSender {
+class WebhookSender(
+    private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+    private val logger: Logger,
+    private val jdaService: JDAService,
+    private val luckpermsService: LuckpermsService,
+) {
 
     private val httpClient = HttpClient(CIO)
 
-    context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
     suspend fun sendChannelMessage(player: Player, content: Component, discordChannelId: String) {
         getWebhook(discordChannelId)?.send(
             WebhookPackage(
-                registry[CatalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
+                registry[catalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
                 PlainTextComponentSerializer.plainText()
-                    .serialize(registry[CatalystKeys.DISCORD_USERNAME_FORMAT].resolvePlaceholders(player)),
+                    .serialize(registry[catalystKeys.DISCORD_USERNAME_FORMAT].resolve(proxyServer, logger, luckpermsService, player)),
                 PlainTextComponentSerializer.plainText().serialize(content),
             ),
         )
     }
 
-    context(ProxyServerScope, LoggerScope, LuckpermsService.Scope)
     suspend fun sendSpecialMessage(
         player: Player,
         discordChannelId: String,
@@ -64,9 +67,10 @@ class WebhookSender {
     ) {
         getWebhook(discordChannelId)?.send(
             WebhookPackage(
-                registry[CatalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
+                registry[catalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
                 "System",
-                PlainTextComponentSerializer.plainText().serialize(registry[messageKey].resolvePlaceholders(player)),
+                PlainTextComponentSerializer.plainText()
+                    .serialize(registry[messageKey].resolve(proxyServer, logger, luckpermsService, player)),
             ),
         )
     }
@@ -74,7 +78,7 @@ class WebhookSender {
     suspend fun sendLeaveMessage(userId: UUID, username: String, discordChannelId: String) {
         getWebhook(discordChannelId)?.send(
             WebhookPackage(
-                registry[CatalystKeys.AVATAR_URL].replace("%uuid%", userId.toString()),
+                registry[catalystKeys.AVATAR_URL].replace("%uuid%", userId.toString()),
                 "System",
                 "$username has left the game.",
             ),
@@ -106,10 +110,6 @@ class WebhookSender {
         return channel.guild
             .retrieveWebhooks().complete().stream().filter { it.name.equals("Catalyst-DB: " + channel.name, ignoreCase = true) }
             .findFirst().orElse(null) ?: channel.createWebhook("Catalyst-DB " + channel.name).complete()
-    }
-
-    interface Scope {
-        val webhookSender: WebhookSender
     }
 
     @Serializable

@@ -20,19 +20,20 @@ package org.anvilpowered.catalyst.velocity.discord
 
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.permission.Tristate
+import net.dv8tion.jda.api.JDA
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 
-context(JDAService.Scope)
-internal class DiscordCommandSource(private val discordChannelId: String) : CommandSource {
+internal class DiscordCommandSource(
+    private val jda: JDA,
+    private val discordChannelId: String,
+) : CommandSource {
 
     override fun hasPermission(permission: String): Boolean = true
     override fun getPermissionValue(permission: String): Tristate = Tristate.TRUE
 
     override fun sendMessage(message: Component) {
-        val channel = checkNotNull(jdaService.jda) { "JDA is not initialized yet" }
-            .getTextChannelById(discordChannelId)
-
+        val channel = jda.getTextChannelById(discordChannelId)
         checkNotNull(channel) { "Discord channel $discordChannelId is not found" }
         channel.sendMessage("```" + PlainTextComponentSerializer.plainText().serialize(message) + "```").queue()
     }

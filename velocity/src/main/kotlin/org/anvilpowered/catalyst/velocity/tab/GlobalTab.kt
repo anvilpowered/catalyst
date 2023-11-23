@@ -18,25 +18,29 @@
 
 package org.anvilpowered.catalyst.velocity.tab
 
+import com.velocitypowered.api.plugin.PluginContainer
+import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.player.TabList
 import com.velocitypowered.api.proxy.player.TabListEntry
 import com.velocitypowered.api.util.GameProfile
 import kotlinx.coroutines.runBlocking
-import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
-import org.anvilpowered.anvil.velocity.platform.PluginContainerScope
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-context(Registry.Scope, PluginContainerScope, ProxyServerScope, LoggerScope, LuckpermsService.Scope)
-class GlobalTab {
+class GlobalTab(
+    private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+    private val pluginContainer: PluginContainer,
+    private val logger: org.apache.logging.log4j.Logger,
+    private val luckpermsService: org.anvilpowered.catalyst.api.chat.LuckpermsService,
+) {
 
     private fun registryLoaded() {
-        if (registry[CatalystKeys.TAB_ENABLED]) {
+        if (registry[catalystKeys.TAB_ENABLED]) {
             schedule()
         }
     }
@@ -76,27 +80,27 @@ class GlobalTab {
             for (processPlayer in proxyServer.allPlayers) {
                 val currentEntry = TabListEntry.builder()
                     .profile(GameProfile(processPlayer.uniqueId, processPlayer.username, processPlayer.gameProfileProperties))
-                    .displayName(registry[CatalystKeys.TAB_FORMAT].resolvePlaceholders(processPlayer))
+                    .displayName(registry[catalystKeys.TAB_FORMAT].resolve(proxyServer, logger, luckpermsService, processPlayer))
                     .tabList(displayPlayer.tabList)
                     .build()
                 insertIntoTab(displayPlayer.tabList, currentEntry)
             }
             var x = 0
-            for (customFormat in registry[CatalystKeys.TAB_FORMAT_CUSTOM]) {
+            for (customFormat in registry[catalystKeys.TAB_FORMAT_CUSTOM]) {
                 x++
                 val tabProfile = GameProfile.forOfflinePlayer("catalyst$x")
                 val currentEntry = TabListEntry.builder()
                     .profile(tabProfile)
                     .displayName(
-                        customFormat.resolvePlaceholders(displayPlayer),
+                        customFormat.resolve(proxyServer, logger, luckpermsService, displayPlayer),
                     )
                     .tabList(displayPlayer.tabList)
                     .build()
                 insertIntoTab(displayPlayer.tabList, currentEntry)
             }
             displayPlayer.sendPlayerListHeaderAndFooter(
-                registry[CatalystKeys.TAB_HEADER].resolvePlaceholders(displayPlayer),
-                registry[CatalystKeys.TAB_FOOTER].resolvePlaceholders(displayPlayer),
+                registry[catalystKeys.TAB_HEADER].resolve(proxyServer, logger, luckpermsService, displayPlayer),
+                registry[catalystKeys.TAB_FOOTER].resolve(proxyServer, logger, luckpermsService, displayPlayer),
             )
         }
     }

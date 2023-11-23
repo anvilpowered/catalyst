@@ -26,10 +26,8 @@ import net.luckperms.api.context.ContextManager
 import net.luckperms.api.model.user.User
 import net.luckperms.api.model.user.UserManager
 import net.luckperms.api.query.QueryOptions
-import org.anvilpowered.anvil.core.user.PlayerService
 import java.util.UUID
 
-context(PlayerService.Scope)
 class LuckpermsService {
 
     private fun String.toMiniComponent(): Component = MiniMessage.miniMessage().deserialize(this)
@@ -56,8 +54,4 @@ class LuckpermsService {
     fun nameFormat(userId: UUID, channelId: String): Component? =
         cachedPlayerData(userId)?.getMetaValue("channel.$channelId.name-format")
             ?.let { MiniMessage.miniMessage().deserialize(it) }
-
-    interface Scope {
-        val luckpermsService: LuckpermsService
-    }
 }

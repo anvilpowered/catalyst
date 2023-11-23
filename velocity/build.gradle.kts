@@ -8,6 +8,7 @@ dependencies {
     api(libs.jda)
     api(libs.ktor.client.cio)
     api(libs.ktor.serialization)
+    api(libs.koin)
 //    implementation("net.kyori:adventure-text-minimessage:$minimessageVersion")
 //    compileOnly("com.velocitypowered:velocity-api:3.0.0-SNAPSHOT")
 //    kapt("com.velocitypowered:velocity-api:3.0.0-SNAPSHOT")

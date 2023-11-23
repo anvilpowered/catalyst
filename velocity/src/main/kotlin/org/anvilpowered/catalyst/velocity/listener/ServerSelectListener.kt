@@ -21,14 +21,7 @@ package org.anvilpowered.catalyst.velocity.listener
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import kotlinx.coroutines.runBlocking
-import org.anvilpowered.anvil.core.LoggerScope
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
-import org.anvilpowered.catalyst.api.db.RepositoryScope
-import org.anvilpowered.catalyst.velocity.chat.StaffListService
 
-context(ProxyServerScope, Registry.Scope, LoggerScope, StaffListService.Scope, LuckpermsService.Scope, RepositoryScope)
 class ServerSelectListener {
     @Subscribe
     fun onPlayerJoin(event: PlayerChooseInitialServerEvent) = runBlocking {

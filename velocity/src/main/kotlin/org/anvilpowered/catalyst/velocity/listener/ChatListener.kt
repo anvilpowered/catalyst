@@ -20,51 +20,53 @@ package org.anvilpowered.catalyst.velocity.listener
 
 import com.google.common.eventbus.Subscribe
 import com.velocitypowered.api.event.player.PlayerChatEvent
+import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
-import org.anvilpowered.anvil.core.LoggerScope
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.build
-import org.anvilpowered.catalyst.api.chat.userId
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.db.RepositoryScope
 import org.anvilpowered.catalyst.velocity.chat.ChatFilter
 import org.anvilpowered.catalyst.velocity.chat.ChatService
 
-context(
-    ProxyServerScope, Registry.Scope, LoggerScope, LuckpermsService.Scope, ChatService.Scope, ChannelService.Scope, ChatFilter.Scope,
-    ChannelMessage.Scope, RepositoryScope
-)
-class ChatListener {
+class ChatListener(
+    private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val chatService: ChatService,
+    private val channelService: ChannelService,
+    private val luckpermsService: LuckpermsService,
+    private val chatFilter: ChatFilter,
+    private val catalystKeys: CatalystKeys,
+    private val channelMessageBuilderFactory: ChannelMessage.Builder.Factory,
+) {
     @Subscribe
     fun onPlayerChat(event: PlayerChatEvent) = runBlocking {
         val player = event.player
-        if (registry[CatalystKeys.PROXY_CHAT_ENABLED]) {
+        if (registry[catalystKeys.PROXY_CHAT_ENABLED]) {
             if (chatService.isDisabledForPlayer(player) || channelService.getForPlayer(player.uniqueId).passthrough) {
                 return@runBlocking
             }
             event.result = PlayerChatEvent.ChatResult.denied()
-            val rawMessage = if (player.hasPermission(registry[CatalystKeys.CHAT_COLOR_PERMISSION])) {
+            val rawMessage = if (player.hasPermission(registry[catalystKeys.CHAT_COLOR_PERMISSION])) {
                 MiniMessage.miniMessage().deserialize(event.message)
             } else {
                 Component.text(event.message)
             }
             // TODO: Move this to dedicated class
             var message = chatService.highlightPlayerNames(player, rawMessage)
-            if (!player.hasPermission(registry[CatalystKeys.LANGUAGE_ADMIN_PERMISSION]) &&
-                registry[CatalystKeys.CHAT_FILTER_ENABLED]
+            if (!player.hasPermission(registry[catalystKeys.LANGUAGE_ADMIN_PERMISSION]) &&
+                registry[catalystKeys.CHAT_FILTER_ENABLED]
             ) {
                 message = chatFilter.replaceSwears(message)
             }
 
             val channel = channelService.getForPlayer(player.uniqueId)
 
-            val channelMessage = ChannelMessage.build {
+            val channelMessage = channelMessageBuilderFactory.build {
                 userId(player.uniqueId)
                 message(message)
                 prefix(luckpermsService.prefix(player.uniqueId))

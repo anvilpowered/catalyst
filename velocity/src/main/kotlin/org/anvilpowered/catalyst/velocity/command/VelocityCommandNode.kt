@@ -18,24 +18,12 @@
 
 package org.anvilpowered.catalyst.velocity.command
 
-import com.google.inject.Inject
-import com.mojang.brigadier.tree.LiteralCommandNode
-import com.velocitypowered.api.command.BrigadierCommand
-import com.velocitypowered.api.command.CommandSource
-import com.velocitypowered.api.proxy.ConsoleCommandSource
-import com.velocitypowered.api.proxy.Player
-import com.velocitypowered.api.proxy.ProxyServer
-import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.ProxyServerScope
-import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.velocity.CatalystApi
-
-//context(Registry.Scope, ProxyServerScope)
-//class VelocityCommandNode : CommonCommandNode<Player, CommandSource>(
+// context(Registry.Scope, ProxyServerScope)
+// class VelocityCommandNode : CommonCommandNode<Player, CommandSource>(
 //    registry,
 //    Player::class.java,
 //    ConsoleCommandSource::class.java,
-//) {
+// ) {
 //
 //    public override fun loadCommands() {
 //        // We unregister the command velocity has provided so that ours
@@ -55,4 +43,4 @@ import org.anvilpowered.catalyst.velocity.CatalystApi
 //            manager.register(metaBuilder.build(), BrigadierCommand(command))
 //        }
 //    }
-//}
+// }

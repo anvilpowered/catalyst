@@ -1,6 +1,6 @@
 /*
  *   Catalyst - AnvilPowered.org
- *   Copyright (C) 2020-2023 Contributors
+ *   Copyright (C) 2020-2024 Contributors
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published by
@@ -16,20 +16,26 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.chat.builder
+package org.anvilpowered.catalyst.velocity.chat.builder
 
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import org.anvilpowered.anvil.velocity.ProxyServerScope
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.GameUser
+import org.anvilpowered.catalyst.api.user.GameUserRepository
+import java.util.UUID
 
-context(ProxyServerScope)
-internal class ChatMessageBuilderImpl : ChannelMessage.Builder {
+internal class ChatMessageBuilderImpl(
+    private val proxyServer: ProxyServer,
+    private val gameUserRepository: GameUserRepository,
+    private val channelService: ChannelService,
+) : ChannelMessage.Builder {
 
     private var user: GameUser? = null
     private var player: Player? = null
@@ -48,10 +54,16 @@ internal class ChatMessageBuilderImpl : ChannelMessage.Builder {
         return this
     }
 
+    override suspend fun userId(userId: UUID): ChannelMessage.Builder =
+        user(requireNotNull(gameUserRepository.getById(userId)) { "Could not find user with id $userId" })
+
     override fun channel(channel: ChatChannel): ChannelMessage.Builder {
         this.channel = channel
         return this
     }
+
+    override suspend fun channelId(channelId: String): ChannelMessage.Builder =
+        channel(requireNotNull(channelService.get(channelId)) { "Could not find channel with id $channelId" })
 
     override fun message(message: Component): ChannelMessage.Builder {
         this.message = message
@@ -160,5 +172,13 @@ internal class ChatMessageBuilderImpl : ChannelMessage.Builder {
         val channel = requireNotNull(channel) { "Channel is null" }
 
         return ChannelMessage(player, message, channel)
+    }
+
+    class Factory(
+        private val proxyServer: ProxyServer,
+        private val gameUserRepository: GameUserRepository,
+        private val channelService: ChannelService,
+    ) : ChannelMessage.Builder.Factory {
+        override fun builder(): ChannelMessage.Builder = ChatMessageBuilderImpl(proxyServer, gameUserRepository, channelService)
     }
 }
