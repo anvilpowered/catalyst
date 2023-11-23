@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.shadow)
 }
 
 val projectVersion = file("version").readLines().first()
@@ -35,4 +36,9 @@ allprojects {
             targetCompatibility = "17"
         }
     }
+}
+
+// for uber jar
+dependencies {
+    runtimeOnly(project(":catalyst-velocity"))
 }

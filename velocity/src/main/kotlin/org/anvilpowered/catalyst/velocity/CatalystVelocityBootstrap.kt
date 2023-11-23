@@ -23,7 +23,6 @@ import com.google.inject.Injector
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.Plugin
-import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.core.AnvilApi
 import org.anvilpowered.anvil.velocity.createVelocity
 import org.koin.core.module.dsl.singleOf
@@ -36,10 +35,7 @@ import org.koin.dsl.module
     version = "0.4.0-SNAPSHOT",
     authors = ["AnvilPowered"],
 )
-class CatalystVelocityBootstrap @Inject constructor(
-    private val injector: Injector,
-    private val proxyServer: ProxyServer,
-) {
+class CatalystVelocityBootstrap @Inject constructor(private val injector: Injector) {
 
     private lateinit var plugin: CatalystVelocityPlugin
 
@@ -52,6 +48,7 @@ class CatalystVelocityBootstrap @Inject constructor(
                 module { singleOf(::CatalystVelocityPlugin) },
             )
         }.koin.get()
-        plugin
+        plugin.registerCommands()
+        plugin.registerListeners()
     }
 }

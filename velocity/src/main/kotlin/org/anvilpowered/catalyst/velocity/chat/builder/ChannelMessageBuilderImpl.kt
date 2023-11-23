@@ -31,7 +31,7 @@ import org.anvilpowered.catalyst.api.user.GameUser
 import org.anvilpowered.catalyst.api.user.GameUserRepository
 import java.util.UUID
 
-internal class ChatMessageBuilderImpl(
+internal class ChannelMessageBuilderImpl(
     private val proxyServer: ProxyServer,
     private val gameUserRepository: GameUserRepository,
     private val channelService: ChannelService,
@@ -179,6 +179,6 @@ internal class ChatMessageBuilderImpl(
         private val gameUserRepository: GameUserRepository,
         private val channelService: ChannelService,
     ) : ChannelMessage.Builder.Factory {
-        override fun builder(): ChannelMessage.Builder = ChatMessageBuilderImpl(proxyServer, gameUserRepository, channelService)
+        override fun builder(): ChannelMessage.Builder = ChannelMessageBuilderImpl(proxyServer, gameUserRepository, channelService)
     }
 }

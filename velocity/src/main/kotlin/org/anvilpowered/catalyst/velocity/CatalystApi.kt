@@ -21,8 +21,12 @@ package org.anvilpowered.catalyst.velocity
 import com.google.inject.Injector
 import org.anvilpowered.anvil.core.config.EnvironmentRegistry
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.DiscordUserRepository
 import org.anvilpowered.catalyst.api.user.GameUserRepository
 import org.anvilpowered.catalyst.api.user.UserRepository
@@ -31,9 +35,11 @@ import org.anvilpowered.catalyst.velocity.chat.ChatFilter
 import org.anvilpowered.catalyst.velocity.chat.ChatService
 import org.anvilpowered.catalyst.velocity.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.velocity.chat.builder.ChatChannelBuilderImpl
-import org.anvilpowered.catalyst.velocity.chat.builder.ChatMessageBuilderImpl
+import org.anvilpowered.catalyst.velocity.chat.builder.ChannelMessageBuilderImpl
+import org.anvilpowered.catalyst.velocity.command.nickname.NicknameCommandFactory
 import org.anvilpowered.catalyst.velocity.db.user.DiscordUserRepositoryImpl
 import org.anvilpowered.catalyst.velocity.db.user.GameUserRepositoryImpl
+import org.anvilpowered.catalyst.velocity.listener.ChatListener
 import org.anvilpowered.catalyst.velocity.db.user.UserRepositoryImpl
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
@@ -51,14 +57,21 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         single<Registry> { EnvironmentRegistry() }
         singleOf(::LuckpermsService)
         singleOf(::ChatFilter)
-        singleOf(ChatChannelBuilderImpl::Factory)
-        singleOf(ChatMessageBuilderImpl::Factory)
+        singleOf(ChatChannelBuilderImpl::Factory) {
+            bind<ChatChannel.Builder.Factory>()
+        }
+        singleOf(ChannelMessageBuilderImpl::Factory) {
+            bind<ChannelMessage.Builder.Factory>()
+        }
         singleOf(::ChannelServiceImpl) {
             bind<ChannelService>()
         }
         singleOf(::ChatServiceImpl) {
             bind<ChatService>()
         }
+        singleOf(::NicknameCommandFactory)
+        singleOf(::ChatListener)
+        singleOf(::CatalystKeys)
         single<DiscordUserRepository> { DiscordUserRepositoryImpl }
         single<GameUserRepository> { GameUserRepositoryImpl }
         single<UserRepository> { UserRepositoryImpl }

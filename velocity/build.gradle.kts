@@ -1,10 +1,17 @@
 plugins {
     alias(libs.plugins.kotlin.serialization)
+    kotlin("kapt")
 }
 dependencies {
+    api(libs.anvil.core)
+    api(platform("net.kyori:adventure-bom:4.14.0"))
+    api("net.kyori:adventure-text-serializer-legacy")
+    api("net.kyori:adventure-text-serializer-plain")
+
     implementation(project(":catalyst-api-velocity"))
     implementation(project(":catalyst-core"))
     implementation(libs.anvil.velocity)
+    kapt(libs.velocity)
     api(libs.jda)
     api(libs.ktor.client.cio)
     api(libs.ktor.serialization)

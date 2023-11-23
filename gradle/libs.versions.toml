@@ -4,9 +4,8 @@ kotlin = "1.9.20"
 ktor = "2.2.4"
 log4j = "2.20.0"
 
-
 [libraries]
-adventure-bom = "net.kyori:adventure-bom:4.13.0"
+adventure-bom = "net.kyori:adventure-bom:4.14.0"
 anvil-core = "org.anvilpowered:anvil-core:0.4.0-SNAPSHOT"
 anvil-velocity = "org.anvilpowered:anvil-velocity:0.4.0-SNAPSHOT"
 annotations = "org.jetbrains:annotations:24.0.0"
@@ -51,6 +50,6 @@ kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = "org.jlleitschuh.gradle.ktlint:11.3.1"
-shadow = "com.github.johnrengelman.shadow:8.1.0"
+shadow = "com.github.johnrengelman.shadow:8.1.1"
 sponge = "org.spongepowered.gradle.plugin:2.1.1"
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
