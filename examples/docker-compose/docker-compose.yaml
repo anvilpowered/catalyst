@@ -1,0 +1,41 @@
+version: "3.8"
+
+# This is not intended to be a production-ready deployment; It is only intended to demonstrate
+# how Catalyst may be deployed in a container environment.
+# Carefully read and understand the entire configuration before using any part of it in a production environment.
+services:
+  db:
+    image: postgres:15.5
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+
+  proxy:
+    image: itzg/bungeecord:java17
+    ports:
+      - "25565:25565"
+    environment:
+      - TYPE=VELOCITY
+      - VELOCITY_VERSION=3.2.0-SNAPSHOT
+      - VELOCITY_BUILD_ID=294
+      - PLUGINS=https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
+    volumes:
+      - ../../build/libs:/plugins
+      - ../config/velocity.toml:/server/velocity.toml
+      - ../config/forwarding.secret:/server/forwarding.secret
+
+  paper-0:
+    image: itzg/minecraft-server:2023.11.1-java21
+    ports:
+      - "25565:25565"
+    environment:
+      - TYPE=PAPER
+      - EULA=true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
+      - ONLINE_MODE=false
+      - PATCH_DEFINITIONS=/config/paper-patch-set.json
+    volumes:
+      - ../config/paper-patch-set.json:/config/paper-patch-set.json
