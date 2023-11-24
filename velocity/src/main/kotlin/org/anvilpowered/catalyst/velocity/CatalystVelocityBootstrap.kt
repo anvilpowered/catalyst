@@ -52,5 +52,6 @@ class CatalystVelocityBootstrap @Inject constructor(private val injector: Inject
         }.koin.get()
         plugin.registerCommands()
         plugin.registerListeners()
+        plugin.connectDatabase()
     }
 }

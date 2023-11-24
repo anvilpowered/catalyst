@@ -82,6 +82,18 @@ class CatalystKeys(
         elementDeserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
 
+    val DB_URL by Key.buildingSimple(TypeTokens.STRING) {
+        fallback("jdbc:postgresql://db:5432/catalyst")
+    }
+
+    val DB_USER by Key.buildingSimple(TypeTokens.STRING) {
+        fallback("catalyst")
+    }
+
+    val DB_PASSWORD by Key.buildingSimple(TypeTokens.STRING) {
+        fallback("catalyst")
+    }
+
     val CHAT_FILTER_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
         fallback(false)
     }

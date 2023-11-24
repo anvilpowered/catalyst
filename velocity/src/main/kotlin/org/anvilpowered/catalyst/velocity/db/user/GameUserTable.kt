@@ -29,14 +29,12 @@ import java.util.UUID
 internal object GameUserTable : UUIDTable("game_users") {
     val userId = reference("user_id", UserTable)
     val username = varchar("username", 255).uniqueIndex()
-    val gameType = varchar("game_type", 255)
     val nickname = varchar("nickname", 255).nullable()
 }
 
 internal class GameUserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var user: UserEntity by UserEntity referencedOn GameUserTable.userId
     var username: String by GameUserTable.username
-    var gameType: String by GameUserTable.gameType
     var nickname: String? by GameUserTable.nickname
 
     companion object : UUIDEntityClass<GameUserEntity>(GameUserTable)
@@ -46,6 +44,5 @@ internal fun ResultRow.toGameUser() = GameUser(
     id = this[GameUserTable.id].value,
     userId = this[GameUserTable.userId].value,
     username = this[GameUserTable.username],
-    gameType = this[GameUserTable.gameType],
     nickname = this[GameUserTable.nickname],
 )

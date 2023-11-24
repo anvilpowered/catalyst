@@ -33,7 +33,6 @@ data class GameUser(
     override val id: UUID,
     val userId: UUID,
     val username: String,
-    val gameType: String,
     val nickname: String? = null,
 ) : DomainEntity, Creates<GameUser> {
 

@@ -7,23 +7,35 @@ version: "3.8"
 services:
   db:
     image: postgres:15.5
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_DB: catalyst_docker_compose
+      POSTGRES_USER: catalyst_docker_compose
+      POSTGRES_PASSWORD: catalyst_docker_compose
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+  pg-admin:
+    image: dpage/pgadmin4:8.0
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: catalyst@example.com
+      PGADMIN_DEFAULT_PASSWORD: catalyst
 
   proxy:
     image: itzg/bungeecord:java17
     ports:
       - "25565:25565"
     environment:
-      - TYPE=VELOCITY
-      - VELOCITY_VERSION=3.2.0-SNAPSHOT
-      - VELOCITY_BUILD_ID=294
-      - PLUGINS=https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
+      TYPE: VELOCITY
+      VELOCITY_VERSION: 3.2.0-SNAPSHOT
+      VELOCITY_BUILD_ID: 294
+      PLUGINS: https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
+      CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
+      CATALYST_DB_USER: catalyst_docker_compose
+      CATALYST_DB_PASSWORD: catalyst_docker_compose
     volumes:
       - ../../build/libs:/plugins
       - ../config/velocity.toml:/server/velocity.toml
@@ -34,10 +46,10 @@ services:
     expose:
       - 25565
     environment:
-      - TYPE=PAPER
-      - EULA=true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
-      - ONLINE_MODE=false
-      - PATCH_DEFINITIONS=/config/paper-patch-set.json
+      TYPE: PAPER
+      EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
+      ONLINE_MODE: false
+      PATCH_DEFINITIONS: /config/paper-patch-set.json
     volumes:
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
       - ./paper-0:/data
@@ -47,10 +59,10 @@ services:
     expose:
       - 25565
     environment:
-      - TYPE=PAPER
-      - EULA=true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
-      - ONLINE_MODE=false
-      - PATCH_DEFINITIONS=/config/paper-patch-set.json
+      TYPE: PAPER
+      EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
+      ONLINE_MODE: false
+      PATCH_DEFINITIONS: /config/paper-patch-set.json
     volumes:
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
       - ./paper-1:/data

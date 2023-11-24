@@ -38,7 +38,7 @@ object GameUserRepositoryImpl : GameUserRepository {
     ): GameUserRepository.InitializeResult = newSuspendedTransaction {
         val existing = getById(id)
         if (existing == null) {
-            val newUser = create(GameUser(id, userId, username, "minecraft", null))
+            val newUser = create(GameUser(id, userId, username, null))
             GameUserRepository.InitializeResult(newUser, firstJoin = true)
         } else {
             GameUserRepository.InitializeResult(existing, firstJoin = false)
@@ -80,7 +80,6 @@ object GameUserRepositoryImpl : GameUserRepository {
     override suspend fun create(item: GameUser): GameUser = newSuspendedTransaction {
         GameUserEntity.new(item.id) {
             user = UserEntity[item.userId]
-            gameType = item.gameType
             username = item.username
         }
         item

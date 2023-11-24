@@ -22,7 +22,12 @@ import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.plugin.PluginContainer
 import com.velocitypowered.api.proxy.ProxyServer
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.velocity.command.nickname.NicknameCommandFactory
+import org.anvilpowered.catalyst.velocity.db.user.DiscordUserTable
+import org.anvilpowered.catalyst.velocity.db.user.GameUserTable
+import org.anvilpowered.catalyst.velocity.db.user.UserTable
 import org.anvilpowered.catalyst.velocity.listener.ChatListener
 import org.anvilpowered.catalyst.velocity.listener.CommandListener
 import org.anvilpowered.catalyst.velocity.listener.DiscordListener
@@ -31,9 +36,14 @@ import org.anvilpowered.catalyst.velocity.listener.LeaveListener
 import org.anvilpowered.kbrig.brigadier.toBrigadier
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 import org.apache.logging.log4j.Logger
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class CatalystVelocityPlugin(
     private val proxyServer: ProxyServer,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
     private val pluginContainer: PluginContainer,
     private val logger: Logger,
     private val nicknameCommandFactory: NicknameCommandFactory,
@@ -60,5 +70,25 @@ class CatalystVelocityPlugin(
         proxyServer.eventManager.register(pluginContainer, joinListener)
         proxyServer.eventManager.register(pluginContainer, leaveListener)
         logger.info("Finished registering listeners.")
+    }
+
+    fun connectDatabase() {
+        logger.info("Connecting to database...")
+        Database.connect(
+            registry[catalystKeys.DB_URL],
+            driver = "org.postgresql.Driver",
+            user = registry[catalystKeys.DB_USER],
+            password = registry[catalystKeys.DB_PASSWORD],
+        )
+        logger.info("Finished connecting to database.")
+        logger.info("Creating tables...")
+        transaction {
+            SchemaUtils.create(
+                DiscordUserTable,
+                GameUserTable,
+                UserTable,
+            )
+        }
+        logger.info("Finished creating tables.")
     }
 }

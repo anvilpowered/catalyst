@@ -56,7 +56,6 @@ object UserRepositoryImpl : UserRepository {
 
         GameUserEntity.new {
             this.user = user
-            this.gameType
         }.let { User(it.id.value, username) }
     }
 
