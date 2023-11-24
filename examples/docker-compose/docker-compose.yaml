@@ -1,8 +1,9 @@
-version: "3.8"
-
 # This is not intended to be a production-ready deployment; It is only intended to demonstrate
 # how Catalyst may be deployed in a container environment.
-# Carefully read and understand the entire configuration before using any part of it in a production environment.
+# Carefully read and understand the entire configuration before using any part of it.
+# By using this file, you are indicating your acceptance of the Minecraft EULA (https://www.minecraft.net/en-us/eula).
+version: "3.8"
+
 services:
   db:
     image: postgres:15.5
@@ -30,12 +31,26 @@ services:
 
   paper-0:
     image: itzg/minecraft-server:2023.11.1-java21
-    ports:
-      - "25565:25565"
+    expose:
+      - 25565
     environment:
       - TYPE=PAPER
       - EULA=true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       - ONLINE_MODE=false
       - PATCH_DEFINITIONS=/config/paper-patch-set.json
     volumes:
-      - ../config/paper-patch-set.json:/config/paper-patch-set.json
+      - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
+      - ./paper-0:/data
+
+  paper-1:
+    image: itzg/minecraft-server:2023.11.1-java21
+    expose:
+      - 25565
+    environment:
+      - TYPE=PAPER
+      - EULA=true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
+      - ONLINE_MODE=false
+      - PATCH_DEFINITIONS=/config/paper-patch-set.json
+    volumes:
+      - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
+      - ./paper-1:/data
