@@ -62,11 +62,11 @@ open class PlayerFormat(
             return sequenceOf(
                 backendFormat,
                 { proxyServerContext.format.resolve(proxyServer, this, proxyServerContext.placeholderResolver(placeholders)) },
-                { replaceText { it.match(placeholders.latency).replacement(player.ping.toString()) } },
-                { replaceText { it.match(placeholders.username).replacement(player.username) } },
-                { replaceText { it.match(placeholders.id).replacement(player.uniqueId.toString()) } },
-                { replaceText { it.match(placeholders.prefix).replacement(luckpermsService.prefix(player.uniqueId)) } },
-                { replaceText { it.match(placeholders.suffix).replacement(luckpermsService.suffix(player.uniqueId)) } },
+                { replaceText { it.matchLiteral(placeholders.latency).replacement(player.ping.toString()) } },
+                { replaceText { it.matchLiteral(placeholders.username).replacement(player.username) } },
+                { replaceText { it.matchLiteral(placeholders.id).replacement(player.uniqueId.toString()) } },
+                { replaceText { it.matchLiteral(placeholders.prefix).replacement(luckpermsService.prefix(player.uniqueId)) } },
+                { replaceText { it.matchLiteral(placeholders.suffix).replacement(luckpermsService.suffix(player.uniqueId)) } },
             ).filterNotNull().fold(format) { acc, transform -> transform(acc) }
         }
 
@@ -92,12 +92,12 @@ open class PlayerFormat(
     class ConcretePlaceholders internal constructor(path: List<String> = listOf()) :
         MessageFormat.Placeholders<PlayerFormat>, Placeholders {
 
-        private val pathPrefix = path.joinToString { "$it." }
+        private val pathPrefix = path.joinToString("") { "$it." }
 
-        override val backendServer = BackendServerFormat.Placeholders(path + listOf("backendServer"))
-        override val proxyServer = ProxyServerFormat.Placeholders(path + listOf("proxyServer"))
+        override val backendServer = BackendServerFormat.Placeholders(path + "backendServer")
+        override val proxyServer = ProxyServerFormat.Placeholders(path + "proxyServer")
 
-        override val latency: Placeholder = "%${pathPrefix}ping%"
+        override val latency: Placeholder = "%${pathPrefix}latency%"
         override val username: Placeholder = "%${pathPrefix}username%"
         override val id: Placeholder = "%${pathPrefix}id%"
         override val prefix: Placeholder = "%${pathPrefix}prefix%"

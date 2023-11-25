@@ -32,7 +32,7 @@ class MessageContentFormat(
     companion object : MessageFormat.Builder<Placeholders, MessageContentFormat> {
 
         fun resolve(format: Component, placeholders: Placeholders, content: Component): Component =
-            format.replaceText { it.match(placeholders.content).replacement(content) }
+            format.replaceText { it.matchLiteral(placeholders.content).replacement(content) }
 
         override fun build(block: Placeholders.() -> Component): MessageContentFormat {
             val placeholders = Placeholders()
@@ -44,8 +44,8 @@ class MessageContentFormat(
 
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<MessageContentFormat> {
 
-        private val prefix = path.joinToString { "$it." }
+        private val pathPrefix = path.joinToString("") { "$it." }
 
-        val content: Placeholder = "%${prefix}content%"
+        val content: Placeholder = "%${pathPrefix}content%"
     }
 }

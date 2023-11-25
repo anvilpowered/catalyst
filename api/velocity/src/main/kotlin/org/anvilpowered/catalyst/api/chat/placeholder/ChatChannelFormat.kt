@@ -34,11 +34,11 @@ class ChatChannelFormat(
 
         fun resolve(format: Component, placeholders: Placeholders, channel: ChatChannel): Component {
             return sequenceOf<Component.() -> Component>(
-                { replaceText { it.match(placeholders.id).replacement(channel.id) } },
-                { replaceText { it.match(placeholders.name).replacement(channel.name) } },
-                { replaceText { it.match(placeholders.alwaysVisible).replacement(channel.alwaysVisible.toString()) } },
-                { replaceText { it.match(placeholders.passthrough).replacement(channel.passthrough.toString()) } },
-                { replaceText { it.match(placeholders.discordChannelid).replacement(channel.discordChannelId) } },
+                { replaceText { it.matchLiteral(placeholders.id).replacement(channel.id) } },
+                { replaceText { it.matchLiteral(placeholders.name).replacement(channel.name) } },
+                { replaceText { it.matchLiteral(placeholders.alwaysVisible).replacement(channel.alwaysVisible.toString()) } },
+                { replaceText { it.matchLiteral(placeholders.passthrough).replacement(channel.passthrough.toString()) } },
+                { replaceText { it.matchLiteral(placeholders.discordChannelid).replacement(channel.discordChannelId) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
@@ -52,13 +52,13 @@ class ChatChannelFormat(
 
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ChatChannelFormat> {
 
-        private val prefix = path.joinToString { "$it." }
+        private val pathPrefix = path.joinToString("") { "$it." }
 
         // TODO: Replace with tag resolver
-        val id: Placeholder = "%${prefix}id%"
-        val name: Placeholder = "%${prefix}name%"
-        val alwaysVisible: Placeholder = "%${prefix}alwaysVisible%"
-        val passthrough: Placeholder = "%${prefix}passthrough%"
-        val discordChannelid: Placeholder = "%${prefix}discordChannelid%"
+        val id: Placeholder = "%${pathPrefix}id%"
+        val name: Placeholder = "%${pathPrefix}name%"
+        val alwaysVisible: Placeholder = "%${pathPrefix}alwaysVisible%"
+        val passthrough: Placeholder = "%${pathPrefix}passthrough%"
+        val discordChannelid: Placeholder = "%${pathPrefix}discordChannelid%"
     }
 }

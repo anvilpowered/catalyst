@@ -72,7 +72,7 @@ class PrivateMessageFormat(
                         message.recipient,
                     )
                 },
-                { replaceText { it.match(placeholders.content).replacement(message.content) } },
+                { replaceText { it.matchLiteral(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
@@ -86,10 +86,10 @@ class PrivateMessageFormat(
 
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<PrivateMessageFormat> {
 
-        private val prefix = path.joinToString { "$it." }
+        private val pathPrefix = path.joinToString("") { "$it." }
 
         val source = OnlineUserFormat.Placeholders(path + listOf("source"))
         val recipient = OnlineUserFormat.Placeholders(path + listOf("recipient"))
-        val content: Placeholder = "%${prefix}content%"
+        val content: Placeholder = "%${pathPrefix}content%"
     }
 }

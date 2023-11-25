@@ -54,7 +54,7 @@ class OnlineUserFormat(
             format,
             PlayerFormat.ConcretePlaceholders(placeholders.path),
             user.player,
-        ).replaceText { it.match(placeholders.displayname).replacement(user.user.nickname ?: user.player.username) }
+        ).replaceText { it.matchLiteral(placeholders.displayname).replacement(user.user.nickname ?: user.player.username) }
 
         override fun build(block: Placeholders.() -> Component): OnlineUserFormat {
             val placeholders = Placeholders()
@@ -67,7 +67,7 @@ class OnlineUserFormat(
     open class Placeholders internal constructor(internal val path: List<String> = listOf()) : MessageFormat.Placeholders<OnlineUserFormat>,
         PlayerFormat.Placeholders by PlayerFormat.ConcretePlaceholders(path) {
 
-        private val pathPrefix = path.joinToString { "$it." }
+        private val pathPrefix = path.joinToString("") { "$it." }
 
         val displayname: Placeholder = "%${pathPrefix}displayname%"
     }

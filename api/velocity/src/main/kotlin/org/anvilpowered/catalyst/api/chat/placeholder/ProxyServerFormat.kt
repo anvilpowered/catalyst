@@ -34,8 +34,8 @@ class ProxyServerFormat(
 
         fun resolve(proxyServer: ProxyServer, format: Component, placeholders: Placeholders): Component {
             return sequenceOf<Component.() -> Component>(
-                { replaceText { it.match(placeholders.version).replacement(proxyServer.version.version) } },
-                { replaceText { it.match(placeholders.playerCount).replacement(proxyServer.playerCount.toString()) } },
+                { replaceText { it.matchLiteral(placeholders.version).replacement(proxyServer.version.version) } },
+                { replaceText { it.matchLiteral(placeholders.playerCount).replacement(proxyServer.playerCount.toString()) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
@@ -49,9 +49,9 @@ class ProxyServerFormat(
 
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ProxyServerFormat> {
 
-        private val prefix = path.joinToString { "$it." }
+        private val pathPrefix = path.joinToString("") { "$it." }
 
-        val version: Placeholder = "%${prefix}version%"
-        val playerCount: Placeholder = "%${prefix}playerCount%"
+        val version: Placeholder = "%${pathPrefix}version%"
+        val playerCount: Placeholder = "%${pathPrefix}playerCount%"
     }
 }

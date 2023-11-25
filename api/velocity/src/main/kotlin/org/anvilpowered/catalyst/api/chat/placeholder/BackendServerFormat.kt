@@ -35,8 +35,8 @@ class BackendServerFormat(
 
         suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, server: RegisteredServer): Component {
             val ops = sequenceOf<Component.() -> Component>(
-                { replaceText { it.match(placeholders.name).replacement(server.serverInfo.name) } },
-                { replaceText { it.match(placeholders.address).replacement(server.serverInfo.address.hostString) } },
+                { replaceText { it.matchLiteral(placeholders.name).replacement(server.serverInfo.name) } },
+                { replaceText { it.matchLiteral(placeholders.address).replacement(server.serverInfo.address.hostString) } },
             )
             return if (
                 format.contains(Component.text(placeholders.version)) ||
@@ -45,9 +45,9 @@ class BackendServerFormat(
             ) {
                 val ping = server.ping().await()
                 ops + sequenceOf(
-                    { replaceText { it.match(placeholders.version).replacement(ping.version.toString()) } },
-                    { replaceText { it.match(placeholders.playerCount).replacement(ping.players.orElse(null)?.online.toString()) } },
-                    { replaceText { it.match(placeholders.description).replacement(ping.descriptionComponent) } },
+                    { replaceText { it.matchLiteral(placeholders.version).replacement(ping.version.toString()) } },
+                    { replaceText { it.matchLiteral(placeholders.playerCount).replacement(ping.players.orElse(null)?.online.toString()) } },
+                    { replaceText { it.matchLiteral(placeholders.description).replacement(ping.descriptionComponent) } },
                 )
             } else {
                 ops
@@ -64,12 +64,12 @@ class BackendServerFormat(
 
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<BackendServerFormat> {
 
-        private val prefix = path.joinToString { "$it." }
+        private val pathPrefix = path.joinToString("") { "$it." }
 
-        val name: Placeholder = "%${prefix}name%"
-        val address: Placeholder = "%${prefix}address%"
-        val version: Placeholder = "%${prefix}version%"
-        val playerCount: Placeholder = "%${prefix}playerCount%"
-        val description: Placeholder = "%${prefix}description%"
+        val name: Placeholder = "%${pathPrefix}name%"
+        val address: Placeholder = "%${pathPrefix}address%"
+        val version: Placeholder = "%${pathPrefix}version%"
+        val playerCount: Placeholder = "%${pathPrefix}playerCount%"
+        val description: Placeholder = "%${pathPrefix}description%"
     }
 }

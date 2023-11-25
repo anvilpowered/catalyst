@@ -38,8 +38,8 @@ class ChannelMessageFormat(
         suspend fun resolve(format: Component, placeholders: Placeholders, message: ChannelMessage): PlayerFormat {
             val resultFormat = sequenceOf<suspend Component.() -> Component>(
                 { channelContext.format.resolve(this, channelContext.placeholderResolver(placeholders), message.channel) },
-                { replaceText { it.match(placeholders.name).replacement(message.name) } },
-                { replaceText { it.match(placeholders.content).replacement(message.content) } },
+                { replaceText { it.matchLiteral(placeholders.name).replacement(message.name) } },
+                { replaceText { it.matchLiteral(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -> transform(acc) }
             return PlayerFormat(resultFormat, PlayerFormat.ConcretePlaceholders(listOf("recipient")))
         }
@@ -54,11 +54,11 @@ class ChannelMessageFormat(
 
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ChannelMessageFormat> {
 
-        private val prefix = path.joinToString { "$it." }
+        private val pathPrefix = path.joinToString("") { "$it." }
 
         // TODO: Replace with tag resolver
         val channel = ChatChannelFormat.Placeholders(path + "channel")
-        val name: Placeholder = "%${prefix}name%"
-        val content: Placeholder = "%${prefix}content%"
+        val name: Placeholder = "%${pathPrefix}name%"
+        val content: Placeholder = "%${pathPrefix}content%"
     }
 }
