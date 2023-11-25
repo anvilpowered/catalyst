@@ -69,20 +69,20 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
                 },
         )
         .then(
-            minecraftUserRepository.argument { context, gameUser ->
+            minecraftUserRepository.argument { context, minecraftUser ->
                 if (!context.source.hasPermission("catalyst.nickname.set.other")) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("You don't have permission to set other players' nicknames!", NamedTextColor.RED)),
                     )
                     0
-                } else if (minecraftUserRepository.updateNickname(gameUser.id, context["nickname"])) {
+                } else if (minecraftUserRepository.updateNickname(minecraftUser.id, context["nickname"])) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of '", NamedTextColor.GRAY))
-                            .append(Component.text(gameUser.username, NamedTextColor.GOLD))
+                            .append(Component.text(minecraftUser.username, NamedTextColor.GOLD))
                             .append(Component.text("' has been set from '", NamedTextColor.GRAY))
-                            .append(MiniMessage.miniMessage().deserialize(gameUser.nickname ?: "[none]"))
+                            .append(MiniMessage.miniMessage().deserialize(minecraftUser.nickname ?: "[none]"))
                             .append(Component.text("' to '", NamedTextColor.GRAY))
                             .append(MiniMessage.miniMessage().deserialize(context["nickname"]))
                             .append(Component.text("'!", NamedTextColor.GRAY)),
@@ -92,7 +92,7 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of '", NamedTextColor.GRAY))
-                            .append(Component.text(gameUser.username, NamedTextColor.GOLD))
+                            .append(Component.text(minecraftUser.username, NamedTextColor.GOLD))
                             .append(Component.text("' could not be set!", NamedTextColor.RED)),
                     )
                     0

@@ -19,7 +19,7 @@ package org.anvilpowered.catalyst.velocity.discord
 
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
-import com.velocitypowered.api.event.connection.LoginEvent
+import com.velocitypowered.api.event.connection.PostLoginEvent
 import kotlinx.coroutines.runBlocking
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
@@ -49,7 +49,7 @@ class DiscordChatListener(
     }
 
     @Subscribe
-    fun onPlayerJoinEvent(event: LoginEvent) = runBlocking {
+    fun onPlayerJoinEvent(event: PostLoginEvent) = runBlocking {
         if (!registry[catalystKeys.DISCORD_ENABLED]) {
             return@runBlocking
         }

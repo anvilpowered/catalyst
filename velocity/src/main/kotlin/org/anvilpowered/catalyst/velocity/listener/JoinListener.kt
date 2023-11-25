@@ -18,7 +18,7 @@
 package org.anvilpowered.catalyst.velocity.listener
 
 import com.velocitypowered.api.event.Subscribe
-import com.velocitypowered.api.event.connection.LoginEvent
+import com.velocitypowered.api.event.connection.PostLoginEvent
 import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -27,7 +27,6 @@ import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
-import org.anvilpowered.catalyst.api.user.UserRepository
 import org.anvilpowered.catalyst.velocity.chat.StaffListService
 import org.apache.logging.log4j.Logger
 
@@ -38,11 +37,10 @@ class JoinListener(
     private val logger: Logger,
     private val staffListService: StaffListService,
     private val luckpermsService: LuckpermsService,
-    private val userRepository: UserRepository,
     private val minecraftUserRepository: MinecraftUserRepository,
 ) {
     @Subscribe
-    fun onPlayerJoin(event: LoginEvent) = runBlocking {
+    fun onPlayerJoin(event: PostLoginEvent) = runBlocking {
         val player = event.player
         val result = minecraftUserRepository.put(
             MinecraftUser.CreateDto(

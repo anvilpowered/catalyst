@@ -26,7 +26,7 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ResultRow
 import java.util.UUID
 
-internal object MinecraftUserTable : UUIDTable("game_users") {
+internal object MinecraftUserTable : UUIDTable("minecraft_users") {
     val username = varchar("username", 255).uniqueIndex()
     val ipAddress = varchar("ip_address", 255)
     val nickname = varchar("nickname", 255).nullable()

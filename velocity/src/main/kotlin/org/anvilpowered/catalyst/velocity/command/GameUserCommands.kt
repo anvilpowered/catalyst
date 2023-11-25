@@ -31,7 +31,7 @@ import org.anvilpowered.kbrig.context.CommandContext
 import org.anvilpowered.kbrig.context.get
 
 fun MinecraftUserRepository.argument(
-    argumentName: String = "gameUser",
+    argumentName: String = "minecraftUser",
     command: suspend (context: CommandContext<CommandSource>, minecraftUser: MinecraftUser) -> Int,
 ): RequiredArgumentBuilder<CommandSource, String> =
     ArgumentBuilder.required<CommandSource, String>(argumentName, StringArgumentType.SingleWord)
@@ -40,14 +40,14 @@ fun MinecraftUserRepository.argument(
             builder.build()
         }
         .executesSuspending { context ->
-            val gameUserName = context.get<String>(argumentName)
-            getByUsername(gameUserName)?.let { gameUser ->
-                command(context, gameUser)
+            val minecraftUsername = context.get<String>(argumentName)
+            getByUsername(minecraftUsername)?.let { minecraftUser ->
+                command(context, minecraftUser)
             } ?: run {
                 context.source.sendMessage(
                     Component.text()
-                        .append(Component.text("GameUser with name ", NamedTextColor.RED))
-                        .append(Component.text(gameUserName, NamedTextColor.GOLD))
+                        .append(Component.text("MinecraftUser with name ", NamedTextColor.RED))
+                        .append(Component.text(minecraftUsername, NamedTextColor.GOLD))
                         .append(Component.text(" not found!", NamedTextColor.RED)),
                 )
                 0

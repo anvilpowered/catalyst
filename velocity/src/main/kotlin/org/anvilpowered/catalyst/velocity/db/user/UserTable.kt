@@ -30,7 +30,7 @@ internal object UserTable : UUIDTable("users") {
     val username = varchar("username", 255).uniqueIndex()
     val email = varchar("email", 255).uniqueIndex().nullable()
     val discordUserId = long("discord_user_id").uniqueIndex().nullable()
-    val minecraftUserId = optReference("game_user_id", MinecraftUserTable)
+    val minecraftUserId = optReference("minecraft_user_id", MinecraftUserTable)
 }
 
 internal class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {

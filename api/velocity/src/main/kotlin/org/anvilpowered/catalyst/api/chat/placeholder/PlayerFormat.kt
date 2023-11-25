@@ -46,19 +46,23 @@ class PlayerFormat(override val format: Component, private val placeholders: Pla
             placeholders: Placeholders,
             player: Player,
         ): Component {
-            val server = player.currentServer.orElse(null)?.server ?: run {
-                logger.error("Could not resolve placeholders for player ${player.username} because they are not connected to a server.")
-                return format
+            val backendFormat: (suspend Component.() -> Component)? = player.currentServer.orElse(null)?.server?.let {
+                { backendServerContext.format.resolvePlaceholders(format, backendServerContext.placeholderResolver(placeholders), it) }
             }
-            return sequenceOf<suspend Component.() -> Component>(
-                { backendServerContext.format.resolvePlaceholders(this, backendServerContext.placeholderResolver(placeholders), server) },
+
+            if (backendFormat == null) {
+                logger.error("Could not resolve backend placeholders for ${player.username} because they are not connected to a server.")
+            }
+
+            return sequenceOf(
+                backendFormat,
                 { proxyServerContext.format.resolve(proxyServer, this, proxyServerContext.placeholderResolver(placeholders)) },
                 { replaceText { it.match(placeholders.latency).replacement(player.ping.toString()) } },
                 { replaceText { it.match(placeholders.username).replacement(player.username) } },
                 { replaceText { it.match(placeholders.id).replacement(player.uniqueId.toString()) } },
                 { replaceText { it.match(placeholders.prefix).replacement(luckpermsService.prefix(player.uniqueId)) } },
                 { replaceText { it.match(placeholders.suffix).replacement(luckpermsService.suffix(player.uniqueId)) } },
-            ).fold(format) { acc, transform -> transform(acc) }
+            ).filterNotNull().fold(format) { acc, transform -> transform(acc) }
         }
 
         override fun build(block: Placeholders.() -> Component): PlayerFormat {
