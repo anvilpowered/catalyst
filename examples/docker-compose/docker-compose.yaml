@@ -24,6 +24,16 @@ services:
       PGADMIN_DEFAULT_EMAIL: catalyst@example.com
       PGADMIN_DEFAULT_PASSWORD: catalyst
 
+  lp:
+    image: ghcr.io/luckperms/luckperms:v5.4.108
+    environment:
+      LUCKPERMS_STORAGE_METHOD: postgresql
+      LUCKPERMS_DATA_ADDRESS: db
+      # Use a different database and credentials in production
+      LUCKPERMS_DATA_DATABASE: catalyst_docker_compose
+      LUCKPERMS_DATA_USERNAME: catalyst_docker_compose
+      LUCKPERMS_DATA_PASSWORD: catalyst_docker_compose
+
   proxy:
     image: itzg/bungeecord:java17
     ports:
@@ -33,6 +43,7 @@ services:
       VELOCITY_VERSION: 3.2.0-SNAPSHOT
       VELOCITY_BUILD_ID: 294
       PLUGINS: https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
+      PATCH_DEFINITIONS: /server/velocity-patch-set.json # Does not work yet
       CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
       CATALYST_DB_PASSWORD: catalyst_docker_compose
@@ -40,6 +51,8 @@ services:
       - ../../build/libs:/plugins
       - ../config/velocity.toml:/server/velocity.toml
       - ../config/forwarding.secret:/server/forwarding.secret
+      - ../config/velocity-patch-set.json:/server/velocity-patch-set.json
+      - ./proxy/plugins:/server/plugins
 
   paper-0:
     image: itzg/minecraft-server:2023.11.1-java21
@@ -51,8 +64,8 @@ services:
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
     volumes:
-      - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
       - ./paper-0:/data
+      - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
 
   paper-1:
     image: itzg/minecraft-server:2023.11.1-java21
@@ -64,5 +77,5 @@ services:
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
     volumes:
-      - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
       - ./paper-1:/data
+      - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
