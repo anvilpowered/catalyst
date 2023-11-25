@@ -95,7 +95,7 @@ class ChatServiceImpl(
         return proxyServer.allPlayers.map { it.username }.fold(message) { msg, username ->
             msg.replaceText {
                 it.match(username)
-                it.replacement(Component.text(username).color(NamedTextColor.AQUA))
+                it.replacement(Component.text("@$username").color(NamedTextColor.AQUA))
                 // TODO: On click DM?
             }
         }

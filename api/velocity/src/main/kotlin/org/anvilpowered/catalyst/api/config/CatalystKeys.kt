@@ -34,7 +34,7 @@ import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
-import org.anvilpowered.catalyst.api.chat.placeholder.ProxyServerFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.ProxyFormat
 
 @Suppress("PropertyName")
 class CatalystKeys(
@@ -153,9 +153,9 @@ class CatalystKeys(
             // TODO: Nice builder api with + unary operator
             Component.text()
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text("me(${source.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("me(${source.backend.name})").color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
-                .append(Component.text("${recipient.displayname}(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("${recipient.displayname}(${recipient.backend.name})").color(NamedTextColor.BLUE))
                 .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
@@ -166,9 +166,9 @@ class CatalystKeys(
         miniMessageFallbackFormat(PrivateMessageFormat) {
             Component.text()
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text("${source.displayname}(${source.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("${source.displayname}(${source.backend.name})").color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
-                .append(Component.text("me(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("me(${recipient.backend.name})").color(NamedTextColor.BLUE))
                 .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
@@ -226,14 +226,14 @@ class CatalystKeys(
                     Component.text()
                         .append(Component.text("Current Server").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(": ").color(NamedTextColor.GRAY))
-                        .append(Component.text(backendServer.name).color(NamedTextColor.YELLOW))
+                        .append(Component.text(backend.name).color(NamedTextColor.YELLOW))
                         .build()
                 },
                 {
                     Component.text()
                         .append(Component.text("Player Count").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(": ").color(NamedTextColor.GRAY))
-                        .append(Component.text(proxyServer.playerCount).color(NamedTextColor.YELLOW))
+                        .append(Component.text(proxy.playerCount).color(NamedTextColor.YELLOW))
                         .build()
                 },
             ),
@@ -394,7 +394,7 @@ class CatalystKeys(
 
     val DISCORD_USERNAME_FORMAT by Key.buildingSimple(TypeTokens.ONLINE_USER_FORMAT) {
         miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text("[${backendServer.name}] $prefix $displayname $suffix")
+            Component.text("[${backend.name}] $prefix $displayname $suffix")
         }
     }
 
@@ -464,7 +464,7 @@ class CatalystKeys(
     }
 
     val MOTD by Key.buildingSimple(TypeTokens.PROXY_SERVER_FORMAT) {
-        miniMessageFallbackFormat(ProxyServerFormat) {
+        miniMessageFallbackFormat(ProxyFormat) {
             Component.text("A Velocity Proxy running version $version!").color(NamedTextColor.DARK_AQUA)
         }
     }

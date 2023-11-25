@@ -23,15 +23,15 @@ import kotlinx.coroutines.future.await
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 
-@Serializable(with = BackendServerFormat.Serializer::class)
-class BackendServerFormat(
+@Serializable(with = BackendFormat.Serializer::class)
+class BackendFormat(
     override val format: Component,
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
     suspend fun resolvePlaceholders(server: RegisteredServer): Component = resolvePlaceholders(format, placeholders, server)
 
-    companion object : MessageFormat.Builder<Placeholders, BackendServerFormat> {
+    companion object : MessageFormat.Builder<Placeholders, BackendFormat> {
 
         suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, server: RegisteredServer): Component {
             val ops = sequenceOf<Component.() -> Component>(
@@ -54,15 +54,15 @@ class BackendServerFormat(
             }.fold(format) { acc, transform -> transform(acc) }
         }
 
-        override fun build(block: Placeholders.() -> Component): BackendServerFormat {
+        override fun build(block: Placeholders.() -> Component): BackendFormat {
             val placeholders = Placeholders()
-            return BackendServerFormat(block(placeholders), placeholders)
+            return BackendFormat(block(placeholders), placeholders)
         }
     }
 
-    object Serializer : MessageFormat.Serializer<BackendServerFormat>(::BackendServerFormat)
+    object Serializer : MessageFormat.Serializer<BackendFormat>(::BackendFormat)
 
-    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<BackendServerFormat> {
+    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<BackendFormat> {
 
         private val pathPrefix = path.joinToString("") { "$it." }
 

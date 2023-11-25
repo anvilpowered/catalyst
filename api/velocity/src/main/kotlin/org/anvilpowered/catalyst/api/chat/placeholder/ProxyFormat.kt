@@ -22,15 +22,15 @@ import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 
-@Serializable(with = ProxyServerFormat.Serializer::class)
-class ProxyServerFormat(
+@Serializable(with = ProxyFormat.Serializer::class)
+class ProxyFormat(
     override val format: Component,
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
     fun resolve(proxyServer: ProxyServer): Component = resolve(proxyServer, format, placeholders)
 
-    companion object : MessageFormat.Builder<Placeholders, ProxyServerFormat> {
+    companion object : MessageFormat.Builder<Placeholders, ProxyFormat> {
 
         fun resolve(proxyServer: ProxyServer, format: Component, placeholders: Placeholders): Component {
             return sequenceOf<Component.() -> Component>(
@@ -39,15 +39,15 @@ class ProxyServerFormat(
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
-        override fun build(block: Placeholders.() -> Component): ProxyServerFormat {
+        override fun build(block: Placeholders.() -> Component): ProxyFormat {
             val placeholders = Placeholders()
-            return ProxyServerFormat(block(placeholders), placeholders)
+            return ProxyFormat(block(placeholders), placeholders)
         }
     }
 
-    object Serializer : MessageFormat.Serializer<ProxyServerFormat>(::ProxyServerFormat)
+    object Serializer : MessageFormat.Serializer<ProxyFormat>(::ProxyFormat)
 
-    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ProxyServerFormat> {
+    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ProxyFormat> {
 
         private val pathPrefix = path.joinToString("") { "$it." }
 

@@ -29,7 +29,10 @@ import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.build
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
+import org.anvilpowered.catalyst.api.user.getOnlineUser
 import org.anvilpowered.catalyst.velocity.chat.ChatFilter
 import org.anvilpowered.catalyst.velocity.chat.ChatService
 import org.apache.logging.log4j.Logger
@@ -44,6 +47,7 @@ class ChatListener(
     private val luckpermsService: LuckpermsService,
     private val chatFilter: ChatFilter,
     private val channelMessageBuilderFactory: ChannelMessage.Builder.Factory,
+    private val minecraftUserRepository: MinecraftUserRepository,
 ) {
     @Subscribe
     fun onPlayerChat(event: PlayerChatEvent) = runBlocking {
@@ -69,12 +73,17 @@ class ChatListener(
             rawContent = chatFilter.replaceSwears(rawContent)
         }
 
+        val user = minecraftUserRepository.getOnlineUser(player)
+
+        val formattedRawContent = OnlineUserFormat(rawContent, OnlineUserFormat.Placeholders(listOf("source")))
+            .resolve(proxyServer, logger, luckpermsService, user)
+
         val channel = channelService.getForPlayer(player.uniqueId)
 
         val channelMessage = channelMessageBuilderFactory.build {
-            userId(player.uniqueId)
+            user(user.user)
             channel(channel)
-            rawContent(rawContent)
+            rawContent(formattedRawContent)
         }
 
         val formatted = channel.messageFormat.resolve(channelMessage)

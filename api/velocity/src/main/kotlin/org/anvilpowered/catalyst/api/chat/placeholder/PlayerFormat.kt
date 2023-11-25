@@ -40,8 +40,8 @@ open class PlayerFormat(
 
     companion object : MessageFormat.Builder<ConcretePlaceholders, PlayerFormat> {
 
-        private val backendServerContext = NestedFormat(BackendServerFormat, ConcretePlaceholders::backendServer)
-        private val proxyServerContext = NestedFormat(ProxyServerFormat, ConcretePlaceholders::proxyServer)
+        private val backendContext = NestedFormat(BackendFormat, ConcretePlaceholders::backend)
+        private val proxyContext = NestedFormat(ProxyFormat, ConcretePlaceholders::proxy)
 
         suspend fun resolve(
             proxyServer: ProxyServer,
@@ -52,7 +52,7 @@ open class PlayerFormat(
             player: Player,
         ): Component {
             val backendFormat: (suspend Component.() -> Component)? = player.currentServer.orElse(null)?.server?.let {
-                { backendServerContext.format.resolvePlaceholders(format, backendServerContext.placeholderResolver(placeholders), it) }
+                { backendContext.format.resolvePlaceholders(format, backendContext.placeholderResolver(placeholders), it) }
             }
 
             if (backendFormat == null) {
@@ -61,7 +61,7 @@ open class PlayerFormat(
 
             return sequenceOf(
                 backendFormat,
-                { proxyServerContext.format.resolve(proxyServer, this, proxyServerContext.placeholderResolver(placeholders)) },
+                { proxyContext.format.resolve(proxyServer, this, proxyContext.placeholderResolver(placeholders)) },
                 { replaceText { it.matchLiteral(placeholders.latency).replacement(player.ping.toString()) } },
                 { replaceText { it.matchLiteral(placeholders.username).replacement(player.username) } },
                 { replaceText { it.matchLiteral(placeholders.id).replacement(player.uniqueId.toString()) } },
@@ -79,8 +79,8 @@ open class PlayerFormat(
     object Serializer : MessageFormat.Serializer<PlayerFormat>(::PlayerFormat)
 
     interface Placeholders {
-        val backendServer: BackendServerFormat.Placeholders
-        val proxyServer: ProxyServerFormat.Placeholders
+        val backend: BackendFormat.Placeholders
+        val proxy: ProxyFormat.Placeholders
 
         val latency: Placeholder
         val username: Placeholder
@@ -94,8 +94,8 @@ open class PlayerFormat(
 
         private val pathPrefix = path.joinToString("") { "$it." }
 
-        override val backendServer = BackendServerFormat.Placeholders(path + "backendServer")
-        override val proxyServer = ProxyServerFormat.Placeholders(path + "proxyServer")
+        override val backend = BackendFormat.Placeholders(path + "backend")
+        override val proxy = ProxyFormat.Placeholders(path + "proxy")
 
         override val latency: Placeholder = "%${pathPrefix}latency%"
         override val username: Placeholder = "%${pathPrefix}username%"
