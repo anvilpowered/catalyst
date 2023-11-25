@@ -42,7 +42,9 @@ services:
       TYPE: VELOCITY
       VELOCITY_VERSION: 3.2.0-SNAPSHOT
       VELOCITY_BUILD_ID: 294
-      PLUGINS: https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
+      PLUGINS: |
+        https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/XDSKb8fH/SignedVelocity-Proxy-1.2.1.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json # Does not work yet
       CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
@@ -63,6 +65,8 @@ services:
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
+      PLUGINS: |
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/tgeLnuE7/SignedVelocity-Paper-1.2.1.jar
     volumes:
       - ./paper-0:/data
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
@@ -76,6 +80,8 @@ services:
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
+      PLUGINS: |
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/tgeLnuE7/SignedVelocity-Paper-1.2.1.jar
     volumes:
       - ./paper-1:/data
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro

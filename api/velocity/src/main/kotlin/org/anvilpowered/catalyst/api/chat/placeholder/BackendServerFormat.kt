@@ -20,9 +20,14 @@ package org.anvilpowered.catalyst.api.chat.placeholder
 
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import kotlinx.coroutines.future.await
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 
-class BackendServerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
+@Serializable(with = BackendServerFormat.Serializer::class)
+class BackendServerFormat(
+    override val format: Component,
+    private val placeholders: Placeholders = Placeholders(),
+) : MessageFormat {
 
     suspend fun resolvePlaceholders(server: RegisteredServer): Component = resolvePlaceholders(format, placeholders, server)
 
@@ -54,6 +59,8 @@ class BackendServerFormat(override val format: Component, private val placeholde
             return BackendServerFormat(block(placeholders), placeholders)
         }
     }
+
+    object Serializer : MessageFormat.Serializer<BackendServerFormat>(::BackendServerFormat)
 
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<BackendServerFormat> {
 

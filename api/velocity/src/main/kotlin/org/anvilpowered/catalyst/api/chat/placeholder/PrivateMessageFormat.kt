@@ -19,12 +19,17 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import com.velocitypowered.api.proxy.ProxyServer
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.PrivateMessage
 import org.apache.logging.log4j.Logger
 
-class PrivateMessageFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
+@Serializable(with = PrivateMessageFormat.Serializer::class)
+class PrivateMessageFormat(
+    override val format: Component,
+    private val placeholders: Placeholders = Placeholders(),
+) : MessageFormat {
 
     suspend fun resolve(
         proxyServer: ProxyServer,
@@ -35,8 +40,8 @@ class PrivateMessageFormat(override val format: Component, private val placehold
 
     companion object : MessageFormat.Builder<Placeholders, PrivateMessageFormat> {
 
-        private val source = NestedFormat(PlayerFormat, Placeholders::source)
-        private val recipient = NestedFormat(PlayerFormat, Placeholders::recipient)
+        private val sourceContext = NestedFormat(OnlineUserFormat, Placeholders::source)
+        private val recipientContext = NestedFormat(OnlineUserFormat, Placeholders::recipient)
 
         suspend fun resolve(
             proxyServer: ProxyServer,
@@ -48,22 +53,22 @@ class PrivateMessageFormat(override val format: Component, private val placehold
         ): Component {
             return sequenceOf<suspend Component.() -> Component>(
                 {
-                    source.format.resolve(
+                    sourceContext.format.resolve(
                         proxyServer,
                         logger,
                         luckpermsService,
                         this,
-                        source.placeholderResolver(placeholders),
+                        sourceContext.placeholderResolver(placeholders),
                         message.source,
                     )
                 },
                 {
-                    recipient.format.resolve(
+                    recipientContext.format.resolve(
                         proxyServer,
                         logger,
                         luckpermsService,
                         this,
-                        recipient.placeholderResolver(placeholders),
+                        recipientContext.placeholderResolver(placeholders),
                         message.recipient,
                     )
                 },
@@ -77,12 +82,14 @@ class PrivateMessageFormat(override val format: Component, private val placehold
         }
     }
 
+    object Serializer : MessageFormat.Serializer<PrivateMessageFormat>(::PrivateMessageFormat)
+
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<PrivateMessageFormat> {
 
         private val prefix = path.joinToString { "$it." }
 
-        val source = PlayerFormat.Placeholders(path + listOf("source"))
-        val recipient = PlayerFormat.Placeholders(path + listOf("recipient"))
+        val source = OnlineUserFormat.Placeholders(path + listOf("source"))
+        val recipient = OnlineUserFormat.Placeholders(path + listOf("recipient"))
         val content: Placeholder = "%${prefix}content%"
     }
 }

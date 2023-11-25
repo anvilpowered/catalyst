@@ -18,6 +18,10 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import net.kyori.adventure.text.Component
 
 typealias Placeholder = String
@@ -26,11 +30,17 @@ interface MessageFormat {
 
     val format: Component
 
-    interface Builder<P, M : MessageFormat> {
+    interface Builder<out P, out M : MessageFormat> {
         fun build(block: P.() -> Component): M
     }
 
-    interface Placeholders<M : MessageFormat>
+    interface Placeholders<in M : MessageFormat>
+
+    open class Serializer<T : MessageFormat>(private val constructor: (format: Component) -> T) : KSerializer<T> {
+        override val descriptor: SerialDescriptor = MiniMessageSerializer.descriptor
+        override fun deserialize(decoder: Decoder): T = constructor(MiniMessageSerializer.deserialize(decoder))
+        override fun serialize(encoder: Encoder, value: T) = MiniMessageSerializer.serialize(encoder, value.format)
+    }
 }
 
 // don't ask, it works

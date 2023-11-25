@@ -26,6 +26,8 @@ import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.PrivateMessage
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.user.MinecraftUser
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.apache.logging.log4j.Logger
 import java.util.UUID
 
@@ -35,11 +37,19 @@ class PrivateMessageService(
     private val catalystKeys: CatalystKeys,
     private val logger: Logger,
     private val luckpermsService: LuckpermsService,
+    private val minecraftUserRepository: MinecraftUserRepository,
 ) {
     private var replyMap = mutableMapOf<UUID, UUID>()
 
     suspend fun sendMessage(source: Player, recipient: Player, content: Component) {
-        val message = PrivateMessage(source, recipient, content)
+
+        val sourceUser = minecraftUserRepository.getById(source.uniqueId)?.let { MinecraftUser.Online(it, source) }
+            ?: throw IllegalStateException("User ${source.username} with id ${source.uniqueId} is not in the database!")
+
+        val recipientUser = minecraftUserRepository.getById(recipient.uniqueId)?.let { MinecraftUser.Online(it, recipient) }
+            ?: throw IllegalStateException("User ${recipient.username} with id ${recipient.uniqueId} is not in the database!")
+
+        val message = PrivateMessage(sourceUser, recipientUser, content)
         source.sendMessage(registry[catalystKeys.PRIVATE_MESSAGE_SOURCE_FORMAT].resolve(proxyServer, logger, luckpermsService, message))
         recipient.sendMessage(
             registry[catalystKeys.PRIVATE_MESSAGE_RECIPIENT_FORMAT].resolve(
@@ -75,11 +85,7 @@ class PrivateMessageService(
         val socialSpyMessage = registry[catalystKeys.SOCIALSPY_MESSAGE_FORMAT].resolve(proxyServer, logger, luckpermsService, message)
         proxyServer.allPlayers
             .filter { it.hasPermission(registry[catalystKeys.SOCIALSPY_PERMISSION]) }
-            .filter { it != message.source && it != message.recipient }
+            .filter { it.uniqueId != message.source.player.uniqueId && it.uniqueId != message.recipient.player.uniqueId }
             .forEach { it.sendMessage(socialSpyMessage) }
-    }
-
-    interface Scope {
-        val privateMessageService: PrivateMessageService
     }
 }

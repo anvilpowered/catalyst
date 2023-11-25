@@ -19,40 +19,58 @@
 package org.anvilpowered.catalyst.velocity.chat.builder
 
 import net.kyori.adventure.text.Component
+import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.ChatChannel
 
 internal class ChatChannelBuilderImpl : ChatChannel.Builder {
     private var id: String = ""
-    private var nameFormat: Component = Component.text("%name%")
-    private var messageFormat: Component = Component.text("%message%")
-    private var hoverFormat: Component = Component.text("%message%")
-    private var clickFormat: String = ""
+    private var name: Component? = null
+    private var nameFormat: OnlineUserFormat = OnlineUserFormat.build {
+        Component.text()
+            .append(Component.text(prefix))
+            .append(Component.space())
+            .append(Component.text(displayname))
+            .build()
+    }
+    private var contentFormat: MessageContentFormat = MessageContentFormat.build {
+        Component.text(content)
+    }
+    private var messageFormat: ChannelMessageFormat = ChannelMessageFormat.build {
+        Component.text()
+            .append(Component.text(channel.name))
+            .append(Component.text(name))
+            .append(Component.text(": "))
+            .append(Component.text(content))
+            .build()
+    }
     private var alwaysVisible: Boolean = false
     private var passthrough: Boolean = false
-    private var discordChannel: String = ""
+    private var discordChannelId: String = ""
 
     override fun id(id: String): ChatChannel.Builder {
         this.id = id
         return this
     }
 
-    override fun nameFormat(nameFormat: Component): ChatChannel.Builder {
+    override fun name(name: Component): ChatChannel.Builder {
+        this.name = name
+        return this
+    }
+
+    override fun nameFormat(nameFormat: OnlineUserFormat): ChatChannel.Builder {
         this.nameFormat = nameFormat
         return this
     }
 
-    override fun messageFormat(messageFormat: Component): ChatChannel.Builder {
+    override fun contentFormat(contentFormat: MessageContentFormat): ChatChannel.Builder {
+        this.contentFormat = contentFormat
+        return this
+    }
+
+    override fun messageFormat(messageFormat: ChannelMessageFormat): ChatChannel.Builder {
         this.messageFormat = messageFormat
-        return this
-    }
-
-    override fun hoverFormat(hoverFormat: Component): ChatChannel.Builder {
-        this.hoverFormat = hoverFormat
-        return this
-    }
-
-    override fun clickFormat(clickFormat: String): ChatChannel.Builder {
-        this.clickFormat = clickFormat
         return this
     }
 
@@ -66,13 +84,21 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
         return this
     }
 
-    override fun discordChannel(discordChannel: String): ChatChannel.Builder {
-        this.discordChannel = discordChannel
+    override fun discordChannelId(discordChannelId: String): ChatChannel.Builder {
+        this.discordChannelId = discordChannelId
         return this
     }
 
-    override fun build(): ChatChannel =
-        ChatChannel(id, nameFormat, messageFormat, hoverFormat, clickFormat, alwaysVisible, passthrough, discordChannel)
+    override fun build(): ChatChannel = ChatChannel(
+        id,
+        name ?: Component.text(id),
+        nameFormat,
+        contentFormat,
+        messageFormat,
+        alwaysVisible,
+        passthrough,
+        discordChannelId,
+    )
 
     class Factory : ChatChannel.Builder.Factory {
         override fun builder(): ChatChannel.Builder = ChatChannelBuilderImpl()

@@ -18,7 +18,7 @@
 
 package org.anvilpowered.catalyst.velocity.listener
 
-import com.google.common.eventbus.Subscribe
+import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
@@ -32,54 +32,54 @@ import org.anvilpowered.catalyst.api.chat.build
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.velocity.chat.ChatFilter
 import org.anvilpowered.catalyst.velocity.chat.ChatService
+import org.apache.logging.log4j.Logger
 
 class ChatListener(
     private val proxyServer: ProxyServer,
     private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+    private val logger: Logger,
     private val chatService: ChatService,
     private val channelService: ChannelService,
     private val luckpermsService: LuckpermsService,
     private val chatFilter: ChatFilter,
-    private val catalystKeys: CatalystKeys,
     private val channelMessageBuilderFactory: ChannelMessage.Builder.Factory,
 ) {
     @Subscribe
     fun onPlayerChat(event: PlayerChatEvent) = runBlocking {
+        logger.info("Player ${event.player.username} sent message: ${event.message}")
         val player = event.player
-        if (registry[catalystKeys.PROXY_CHAT_ENABLED]) {
-            if (chatService.isDisabledForPlayer(player) || channelService.getForPlayer(player.uniqueId).passthrough) {
-                return@runBlocking
-            }
-            event.result = PlayerChatEvent.ChatResult.denied()
-            val rawMessage = if (player.hasPermission(registry[catalystKeys.CHAT_COLOR_PERMISSION])) {
-                MiniMessage.miniMessage().deserialize(event.message)
-            } else {
-                Component.text(event.message)
-            }
-            // TODO: Move this to dedicated class
-            var message = chatService.highlightPlayerNames(player, rawMessage)
-            if (!player.hasPermission(registry[catalystKeys.LANGUAGE_ADMIN_PERMISSION]) &&
-                registry[catalystKeys.CHAT_FILTER_ENABLED]
-            ) {
-                message = chatFilter.replaceSwears(message)
-            }
-
-            val channel = channelService.getForPlayer(player.uniqueId)
-
-            val channelMessage = channelMessageBuilderFactory.build {
-                userId(player.uniqueId)
-                message(message)
-                prefix(luckpermsService.prefix(player.uniqueId))
-                suffix(luckpermsService.suffix(player.uniqueId))
-                messageFormatOverride(luckpermsService.messageFormat(player.uniqueId, channel.id))
-                nameFormatOverride(luckpermsService.nameFormat(player.uniqueId, channel.id))
-                server(player.currentServer.orElse(null)?.serverInfo?.name ?: "unknown")
-                channel(channel)
-            }
-
-            // TODO: Use a listener instead?
-            chatService.sendMessage(channelMessage)
-            proxyServer.eventManager.fire(ChannelMessage.Event(channelMessage))
+        if (!registry[catalystKeys.PROXY_CHAT_ENABLED] ||
+            chatService.isDisabledForPlayer(player) ||
+            channelService.getForPlayer(player.uniqueId).passthrough
+        ) {
+            return@runBlocking
         }
+        event.result = PlayerChatEvent.ChatResult.denied()
+        val rawMessage = if (player.hasPermission(registry[catalystKeys.CHAT_COLOR_PERMISSION])) {
+            MiniMessage.miniMessage().deserialize(event.message)
+        } else {
+            Component.text(event.message)
+        }
+        // TODO: Move this to dedicated class
+        var rawContent = chatService.highlightPlayerNames(player, rawMessage)
+        if (!player.hasPermission(registry[catalystKeys.LANGUAGE_ADMIN_PERMISSION]) &&
+            registry[catalystKeys.CHAT_FILTER_ENABLED]
+        ) {
+            rawContent = chatFilter.replaceSwears(rawContent)
+        }
+
+        val channel = channelService.getForPlayer(player.uniqueId)
+
+        val channelMessage = channelMessageBuilderFactory.build {
+            userId(player.uniqueId)
+            channel(channel)
+            rawContent(rawContent)
+        }
+
+        val formatted = channel.messageFormat.resolve(channelMessage)
+        val resolved = ChannelMessage.Resolved(channelMessage, formatted)
+        proxyServer.eventManager.fire(ChannelMessage.Event(resolved))
+        chatService.sendMessage(resolved)
     }
 }

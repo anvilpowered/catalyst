@@ -18,11 +18,11 @@
 
 package org.anvilpowered.catalyst.api.chat
 
-import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
+import org.anvilpowered.catalyst.api.user.MinecraftUser
 
 class PrivateMessage(
-    val source: Player,
-    val recipient: Player,
+    val source: MinecraftUser.Online,
+    val recipient: MinecraftUser.Online,
     val content: Component,
 )

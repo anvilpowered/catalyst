@@ -31,6 +31,7 @@ import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.ListKey
 import org.anvilpowered.anvil.core.config.SimpleKey
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ProxyServerFormat
@@ -106,15 +107,23 @@ class CatalystKeys(
         fallback(listOf("assassin", "jkass"))
     }
 
-    val FIRST_JOIN by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
-        miniMessageFallbackFormat(PlayerFormat) {
-            Component.text("Welcome to the server, $username").color(NamedTextColor.GOLD)
+    val FIRST_JOIN by Key.buildingSimple(TypeTokens.ONLINE_USER_FORMAT) {
+        miniMessageFallbackFormat(OnlineUserFormat) {
+            Component.text()
+                .append(Component.text("Welcome to the server, "))
+                .append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE))
+                .append(Component.text("!"))
+                .color(NamedTextColor.DARK_GRAY)
+                .build()
         }
     }
 
-    val JOIN_MESSAGE by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
-        miniMessageFallbackFormat(PlayerFormat) {
-            Component.text("$username has joined the proxy")
+    val JOIN_MESSAGE by Key.buildingSimple(TypeTokens.ONLINE_USER_FORMAT) {
+        miniMessageFallbackFormat(OnlineUserFormat) {
+            Component.text()
+                .append(Component.text(displayname).color(NamedTextColor.GOLD))
+                .append(Component.text(" has joined the proxy").color(NamedTextColor.GRAY))
+                .build()
         }
     }
 
@@ -122,9 +131,12 @@ class CatalystKeys(
         fallback(true)
     }
 
-    val LEAVE_MESSAGE by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
-        miniMessageFallbackFormat(PlayerFormat) {
-            Component.text("$username has left the proxy")
+    val LEAVE_MESSAGE by Key.buildingSimple(TypeTokens.ONLINE_USER_FORMAT) {
+        miniMessageFallbackFormat(OnlineUserFormat) {
+            Component.text()
+                .append(Component.text(displayname).color(NamedTextColor.GOLD))
+                .append(Component.text(" has left the proxy").color(NamedTextColor.GRAY))
+                .build()
         }
     }
 
@@ -143,7 +155,7 @@ class CatalystKeys(
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text("me(${source.backendServer.name})").color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
-                .append(Component.text("${recipient.username}(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("${recipient.displayname}(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
                 .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
@@ -154,7 +166,7 @@ class CatalystKeys(
         miniMessageFallbackFormat(PrivateMessageFormat) {
             Component.text()
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text("${source.username}(${source.backendServer.name})").color(NamedTextColor.BLUE))
+                .append(Component.text("${source.displayname}(${source.backendServer.name})").color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
                 .append(Component.text("me(${recipient.backendServer.name})").color(NamedTextColor.BLUE))
                 .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
@@ -168,9 +180,9 @@ class CatalystKeys(
             Component.text()
                 .append(Component.text("[SocialSpy] ").color(NamedTextColor.GRAY))
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text(source.username).color(NamedTextColor.BLUE))
+                .append(Component.text(source.displayname).color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
-                .append(Component.text(recipient.username).color(NamedTextColor.BLUE))
+                .append(Component.text(recipient.displayname).color(NamedTextColor.BLUE))
                 .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
@@ -380,9 +392,9 @@ class CatalystKeys(
         fallback("bot token")
     }
 
-    val DISCORD_USERNAME_FORMAT by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
-        miniMessageFallbackFormat(PlayerFormat) {
-            Component.text("[${backendServer.name}] $prefix $username $suffix")
+    val DISCORD_USERNAME_FORMAT by Key.buildingSimple(TypeTokens.ONLINE_USER_FORMAT) {
+        miniMessageFallbackFormat(OnlineUserFormat) {
+            Component.text("[${backendServer.name}] $prefix $displayname $suffix")
         }
     }
 
@@ -466,20 +478,25 @@ class CatalystKeys(
             mapOf(
                 "global" to chatChannelBuilderFactory.build {
                     id("global")
+                    name(Component.text("[Global]").color(NamedTextColor.GREEN))
                     alwaysVisible(true)
-                    clickFormat("/msg %player%")
-                    discordChannel("123456789")
-                    messageFormat(Component.text("[Global] %player% : %message%"))
-                    hoverFormat(Component.text("Click to message %player%"))
+                    discordChannelId("123456789")
                     passThrough(false)
                 },
                 "admin" to chatChannelBuilderFactory.build {
                     id("admin")
+                    name(Component.text("Admin"))
+                    messageFormat {
+                        Component.text()
+                            .append(Component.text(channel.name))
+                            .append(Component.text(name))
+                            .append(Component.text(": "))
+                            .append(Component.text(content))
+                            .color(NamedTextColor.RED)
+                            .build()
+                    }
                     alwaysVisible(true)
-                    clickFormat("/msg %player%")
-                    discordChannel("123456789")
-                    messageFormat(Component.text("[Admin Chat] %player% : %message%"))
-                    hoverFormat(Component.text("Click to message %player%"))
+                    discordChannelId("123456789")
                     passThrough(false)
                 },
             ),

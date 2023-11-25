@@ -18,6 +18,7 @@
 
 package org.anvilpowered.catalyst.api.user
 
+import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.core.db.MutableRepository
 import org.jetbrains.exposed.sql.SizedIterable
 import java.util.UUID
@@ -34,3 +35,6 @@ interface MinecraftUserRepository : MutableRepository<MinecraftUser, MinecraftUs
 
     suspend fun getByUsername(username: String): MinecraftUser?
 }
+
+suspend fun MinecraftUserRepository.getOnlineUser(player: Player) = getById(player.uniqueId)?.let { MinecraftUser.Online(it, player) }
+    ?: throw IllegalStateException("User ${player.username} with id ${player.uniqueId} is not in the database!")

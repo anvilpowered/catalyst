@@ -50,8 +50,10 @@ class JoinListener(
             ),
         )
 
+        val user = MinecraftUser.Online(result.entity, player)
+
         if (result.created && registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
-            proxyServer.sendMessage(registry[catalystKeys.FIRST_JOIN].resolve(proxyServer, logger, luckpermsService, player))
+            proxyServer.sendMessage(registry[catalystKeys.FIRST_JOIN].resolve(proxyServer, logger, luckpermsService, user))
         }
 
         staffListService.getStaffNames(
@@ -60,7 +62,7 @@ class JoinListener(
             player.hasPermission(registry[catalystKeys.STAFFLIST_STAFF_PERMISSION]),
             player.hasPermission(registry[catalystKeys.STAFFLIST_OWNER_PERMISSION]),
         )
-        val joinMessage = registry[catalystKeys.JOIN_MESSAGE].resolve(proxyServer, logger, luckpermsService, player)
+        val joinMessage = registry[catalystKeys.JOIN_MESSAGE].resolve(proxyServer, logger, luckpermsService, user)
         if (registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
             proxyServer.sendMessage(joinMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))

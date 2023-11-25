@@ -18,14 +18,19 @@
 
 package org.anvilpowered.catalyst.api.chat
 
-import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
+import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 import java.util.UUID
 
 // Utility class to construct a chat message and format it
-class ChannelMessage(val source: Player, val content: Component, val channel: ChatChannel) {
+class ChannelMessage(
+    val source: MinecraftUser.Online,
+    val channel: ChatChannel,
+    val name: Component,
+    val content: Component,
+) {
 
     interface Builder {
         /**
@@ -42,25 +47,18 @@ class ChannelMessage(val source: Player, val content: Component, val channel: Ch
 
         suspend fun channelId(channelId: String): Builder
 
-        fun message(message: Component): Builder
-        fun prefix(prefix: Component): Builder
-        fun suffix(suffix: Component): Builder
-
-        /**
-         * Override channel-specific message format.
-         */
-        fun messageFormatOverride(format: Component?): Builder
-        fun nameFormatOverride(format: Component?): Builder
-
-        fun server(server: String): Builder
-        fun build(): ChannelMessage
+        fun rawContent(rawContent: Component): Builder
+        suspend fun build(): ChannelMessage
 
         interface Factory {
             fun builder(): Builder
         }
     }
 
-    data class Event(val message: ChannelMessage)
+    data class Resolved(val backing: ChannelMessage, val formatted: PlayerFormat)
+
+    data class Event(val message: Resolved)
 }
 
-inline fun ChannelMessage.Builder.Factory.build(block: ChannelMessage.Builder.() -> Unit): ChannelMessage = builder().apply(block).build()
+suspend inline fun ChannelMessage.Builder.Factory.build(block: ChannelMessage.Builder.() -> Unit): ChannelMessage =
+    builder().apply(block).build()

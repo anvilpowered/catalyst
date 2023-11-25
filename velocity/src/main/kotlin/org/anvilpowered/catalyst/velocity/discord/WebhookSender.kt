@@ -33,8 +33,11 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.config.SimpleKey
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
-import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.user.MinecraftUser
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
+import org.anvilpowered.catalyst.api.user.getOnlineUser
 import org.apache.logging.log4j.Logger
 import java.util.UUID
 
@@ -45,16 +48,21 @@ class WebhookSender(
     private val logger: Logger,
     private val jdaService: JDAService,
     private val luckpermsService: LuckpermsService,
+    private val minecraftUserRepository: MinecraftUserRepository,
 ) {
 
     private val httpClient = HttpClient(CIO)
 
     suspend fun sendChannelMessage(player: Player, content: Component, discordChannelId: String) {
+        val user = minecraftUserRepository.getOnlineUser(player)
         getWebhook(discordChannelId)?.send(
             WebhookPackage(
                 registry[catalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
                 PlainTextComponentSerializer.plainText()
-                    .serialize(registry[catalystKeys.DISCORD_USERNAME_FORMAT].resolve(proxyServer, logger, luckpermsService, player)),
+                    .serialize(
+                        registry[catalystKeys.DISCORD_USERNAME_FORMAT]
+                            .resolve(proxyServer, logger, luckpermsService, user),
+                    ),
                 PlainTextComponentSerializer.plainText().serialize(content),
             ),
         )
@@ -63,14 +71,15 @@ class WebhookSender(
     suspend fun sendSpecialMessage(
         player: Player,
         discordChannelId: String,
-        messageKey: SimpleKey<PlayerFormat>,
+        messageKey: SimpleKey<OnlineUserFormat>,
     ) {
+        val user = minecraftUserRepository.getOnlineUser(player)
         getWebhook(discordChannelId)?.send(
             WebhookPackage(
                 registry[catalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
                 "System",
                 PlainTextComponentSerializer.plainText()
-                    .serialize(registry[messageKey].resolve(proxyServer, logger, luckpermsService, player)),
+                    .serialize(registry[messageKey].resolve(proxyServer, logger, luckpermsService, user)),
             ),
         )
     }

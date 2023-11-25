@@ -20,36 +20,39 @@ package org.anvilpowered.catalyst.api.config
 
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
+import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 
 @Serializable
 data class ChatChannel(
     val id: String,
-    val nameFormat: Component,
-    val messageFormat: Component,
-    val hoverFormat: Component,
-    val clickFormat: String,
+    val name: Component,
+    val nameFormat: OnlineUserFormat,
+    val contentFormat: MessageContentFormat,
+    val messageFormat: ChannelMessageFormat,
     val alwaysVisible: Boolean,
     val passthrough: Boolean,
-    val discordChannel: String,
+    val discordChannelId: String,
 ) {
 
     interface Builder {
 
         fun id(id: String): Builder
 
-        fun nameFormat(nameFormat: Component): Builder
+        fun name(name: Component): Builder
 
-        fun messageFormat(messageFormat: Component): Builder
+        fun nameFormat(nameFormat: OnlineUserFormat): Builder
 
-        fun hoverFormat(hoverFormat: Component): Builder
+        fun contentFormat(contentFormat: MessageContentFormat): Builder
 
-        fun clickFormat(clickFormat: String): Builder
+        fun messageFormat(messageFormat: ChannelMessageFormat): Builder
 
         fun alwaysVisible(visible: Boolean): Builder
 
         fun passThrough(passThrough: Boolean): Builder
 
-        fun discordChannel(discordChannel: String): Builder
+        fun discordChannelId(discordChannelId: String): Builder
 
         fun build(): ChatChannel
 
@@ -59,4 +62,14 @@ data class ChatChannel(
     }
 }
 
-inline fun ChatChannel.Builder.Factory.build(block: ChatChannel.Builder.() -> Unit): ChatChannel = builder().apply(block).build()
+inline fun ChatChannel.Builder.Factory.build(block: ChatChannel.Builder.() -> Unit): ChatChannel =
+    builder().apply(block).build()
+
+fun ChatChannel.Builder.nameFormat(block: OnlineUserFormat.Placeholders.() -> Component) =
+    nameFormat(OnlineUserFormat.build(block))
+
+fun ChatChannel.Builder.contentFormat(block: MessageContentFormat.Placeholders.() -> Component) =
+    contentFormat(MessageContentFormat.build(block))
+
+fun ChatChannel.Builder.messageFormat(block: ChannelMessageFormat.Placeholders.() -> Component) =
+    messageFormat(ChannelMessageFormat.build(block))

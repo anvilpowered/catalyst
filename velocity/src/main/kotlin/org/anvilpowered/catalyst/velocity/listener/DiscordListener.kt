@@ -93,7 +93,7 @@ class DiscordListener(
     }
 
     private fun sendMessage(channelId: String, content: String, username: String) {
-        val targetChannel = registry[catalystKeys.CHAT_CHANNELS].values.firstOrNull { it.discordChannel == channelId }
+        val targetChannel = registry[catalystKeys.CHAT_CHANNELS].values.firstOrNull { it.discordChannelId == channelId }
             ?: channelService.defaultChannel
 
         // TODO: Get userId for discord user

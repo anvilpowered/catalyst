@@ -18,48 +18,30 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
-import com.velocitypowered.api.proxy.ProxyServer
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
-import org.apache.logging.log4j.Logger
 
-class ChannelMessageFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
+@Serializable(with = ChannelMessageFormat.Serializer::class)
+class ChannelMessageFormat(
+    override val format: Component,
+    private val placeholders: Placeholders = Placeholders(),
+) : MessageFormat {
 
-    suspend fun resolve(
-        proxyServer: ProxyServer,
-        logger: Logger,
-        luckpermsService: LuckpermsService,
-        message: ChannelMessage,
-    ): RecipientFormat = resolve(proxyServer, logger, luckpermsService, format, placeholders, message)
+    suspend fun resolve(message: ChannelMessage): PlayerFormat = resolve(format, placeholders, message)
 
     // TODO: Consider DI
     companion object : MessageFormat.Builder<Placeholders, ChannelMessageFormat> {
 
-        private val source = NestedFormat(PlayerFormat, Placeholders::source)
+        private val channelContext = NestedFormat(ChatChannelFormat, Placeholders::channel)
 
-        suspend fun resolve(
-            proxyServer: ProxyServer,
-            logger: Logger,
-            luckpermsService: LuckpermsService,
-            format: Component,
-            placeholders: Placeholders,
-            message: ChannelMessage,
-        ): RecipientFormat {
+        suspend fun resolve(format: Component, placeholders: Placeholders, message: ChannelMessage): PlayerFormat {
             val resultFormat = sequenceOf<suspend Component.() -> Component>(
-                {
-                    source.format.resolve(
-                        proxyServer,
-                        logger,
-                        luckpermsService,
-                        this,
-                        source.placeholderResolver(placeholders),
-                        message.source,
-                    )
-                },
+                { channelContext.format.resolve(this, channelContext.placeholderResolver(placeholders), message.channel) },
+                { replaceText { it.match(placeholders.name).replacement(message.name) } },
                 { replaceText { it.match(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -> transform(acc) }
-            return RecipientFormat(resultFormat, RecipientFormat.Placeholders())
+            return PlayerFormat(resultFormat, PlayerFormat.ConcretePlaceholders(listOf("recipient")))
         }
 
         override fun build(block: Placeholders.() -> Component): ChannelMessageFormat {
@@ -68,13 +50,15 @@ class ChannelMessageFormat(override val format: Component, private val placehold
         }
     }
 
+    object Serializer : MessageFormat.Serializer<ChannelMessageFormat>(::ChannelMessageFormat)
+
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ChannelMessageFormat> {
 
         private val prefix = path.joinToString { "$it." }
 
         // TODO: Replace with tag resolver
-        val source = PlayerFormat.Placeholders(path + listOf("source"))
-        val channel: Placeholder = "%${prefix}channel%"
+        val channel = ChatChannelFormat.Placeholders(path + "channel")
+        val name: Placeholder = "%${prefix}name%"
         val content: Placeholder = "%${prefix}content%"
     }
 }

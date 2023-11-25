@@ -26,6 +26,8 @@ import net.luckperms.api.context.ContextManager
 import net.luckperms.api.model.user.User
 import net.luckperms.api.model.user.UserManager
 import net.luckperms.api.query.QueryOptions
+import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import java.util.UUID
 
 class LuckpermsService {
@@ -47,11 +49,11 @@ class LuckpermsService {
     fun suffix(userId: UUID): Component = cachedPlayerData(userId)?.suffix?.toMiniComponent() ?: Component.empty()
     fun group(userId: UUID): Component = cachedPlayerData(userId)?.primaryGroup?.toMiniComponent() ?: Component.empty()
 
-    fun messageFormat(userId: UUID, channelId: String): Component? =
-        cachedPlayerData(userId)?.getMetaValue("channel.$channelId.message-format")
-            ?.let { MiniMessage.miniMessage().deserialize(it) }
-
-    fun nameFormat(userId: UUID, channelId: String): Component? =
+    fun nameFormat(userId: UUID, channelId: String): OnlineUserFormat? =
         cachedPlayerData(userId)?.getMetaValue("channel.$channelId.name-format")
-            ?.let { MiniMessage.miniMessage().deserialize(it) }
+            ?.let { OnlineUserFormat(MiniMessage.miniMessage().deserialize(it)) }
+
+    fun getMessageContentFormat(userId: UUID, channelId: String): MessageContentFormat? =
+        cachedPlayerData(userId)?.getMetaValue("channel.$channelId.message-content-format")
+            ?.let { MessageContentFormat(MiniMessage.miniMessage().deserialize(it)) }
 }

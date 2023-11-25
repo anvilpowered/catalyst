@@ -25,8 +25,7 @@ import java.util.UUID
 
 interface ChatService {
 
-    suspend fun sendMessageToChannel(channelId: String, message: Component, userId: UUID)
-    suspend fun sendMessage(message: ChannelMessage)
+    suspend fun sendMessage(message: ChannelMessage.Resolved)
     fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component
     fun unIgnore(playerUUID: UUID, targetPlayerUUID: UUID): Component
     fun isIgnored(playerUUID: UUID, targetPlayerUUID: UUID): Boolean

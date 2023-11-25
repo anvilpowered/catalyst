@@ -18,10 +18,9 @@
 
 package org.anvilpowered.catalyst.api.user
 
+import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.core.db.Creates
 import org.anvilpowered.anvil.core.db.DomainEntity
-import org.anvilpowered.anvil.core.user.Player
-import org.anvilpowered.anvil.core.user.Subject
 import java.util.UUID
 
 /**
@@ -36,16 +35,14 @@ data class MinecraftUser(
     val nickname: String? = null,
 ) : DomainEntity {
 
-    interface GamePlatformScope { // TODO: Maybe just GameScope?
-
-        val MinecraftUser.subject: Subject?
-
-        val MinecraftUser.player: Player?
-    }
-
     data class CreateDto(
         val id: UUID,
         val username: String,
         val ipAddress: String,
     ) : Creates<MinecraftUser>
+
+    data class Online(
+        val user: MinecraftUser,
+        val player: Player,
+    )
 }

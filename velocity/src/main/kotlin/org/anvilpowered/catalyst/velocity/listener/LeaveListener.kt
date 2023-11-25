@@ -25,6 +25,8 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
+import org.anvilpowered.catalyst.api.user.getOnlineUser
 import org.anvilpowered.catalyst.velocity.chat.StaffListService
 import org.apache.logging.log4j.Logger
 
@@ -35,6 +37,7 @@ class LeaveListener(
     private val logger: Logger,
     private val staffListService: StaffListService,
     private val luckpermsService: LuckpermsService,
+    private val minecraftUserRepository: MinecraftUserRepository,
 ) {
     @Subscribe
     fun onPlayerLeave(event: DisconnectEvent) = runBlocking {
@@ -42,8 +45,9 @@ class LeaveListener(
             return@runBlocking
         }
         val player = event.player
+        val user = minecraftUserRepository.getOnlineUser(player)
         staffListService.removeStaffNames(player.username)
-        val leaveMessage = registry[catalystKeys.LEAVE_MESSAGE].resolve(proxyServer, logger, luckpermsService, player)
+        val leaveMessage = registry[catalystKeys.LEAVE_MESSAGE].resolve(proxyServer, logger, luckpermsService, user)
 
         if (registry[catalystKeys.LEAVE_LISTENER_ENABLED]) {
             proxyServer.sendMessage(leaveMessage)

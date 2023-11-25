@@ -19,9 +19,14 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import com.velocitypowered.api.proxy.ProxyServer
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 
-class ProxyServerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
+@Serializable(with = ProxyServerFormat.Serializer::class)
+class ProxyServerFormat(
+    override val format: Component,
+    private val placeholders: Placeholders = Placeholders(),
+) : MessageFormat {
 
     fun resolve(proxyServer: ProxyServer): Component = resolve(proxyServer, format, placeholders)
 
@@ -39,6 +44,8 @@ class ProxyServerFormat(override val format: Component, private val placeholders
             return ProxyServerFormat(block(placeholders), placeholders)
         }
     }
+
+    object Serializer : MessageFormat.Serializer<ProxyServerFormat>(::ProxyServerFormat)
 
     open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<ProxyServerFormat> {
 

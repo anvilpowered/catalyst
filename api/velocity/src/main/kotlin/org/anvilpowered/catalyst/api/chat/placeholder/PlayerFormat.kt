@@ -20,11 +20,16 @@ package org.anvilpowered.catalyst.api.chat.placeholder
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.apache.logging.log4j.Logger
 
-class PlayerFormat(override val format: Component, private val placeholders: Placeholders) : MessageFormat {
+@Serializable(with = PlayerFormat.Serializer::class)
+open class PlayerFormat(
+    override val format: Component,
+    private val placeholders: ConcretePlaceholders = ConcretePlaceholders(),
+) : MessageFormat {
 
     suspend fun resolve(
         proxyServer: ProxyServer,
@@ -33,17 +38,17 @@ class PlayerFormat(override val format: Component, private val placeholders: Pla
         player: Player,
     ): Component = resolve(proxyServer, logger, luckpermsService, format, placeholders, player)
 
-    companion object : MessageFormat.Builder<Placeholders, PlayerFormat> {
+    companion object : MessageFormat.Builder<ConcretePlaceholders, PlayerFormat> {
 
-        private val backendServerContext = NestedFormat(BackendServerFormat, Placeholders::backendServer)
-        private val proxyServerContext = NestedFormat(ProxyServerFormat, Placeholders::proxyServer)
+        private val backendServerContext = NestedFormat(BackendServerFormat, ConcretePlaceholders::backendServer)
+        private val proxyServerContext = NestedFormat(ProxyServerFormat, ConcretePlaceholders::proxyServer)
 
         suspend fun resolve(
             proxyServer: ProxyServer,
             logger: Logger,
             luckpermsService: LuckpermsService,
             format: Component,
-            placeholders: Placeholders,
+            placeholders: ConcretePlaceholders,
             player: Player,
         ): Component {
             val backendFormat: (suspend Component.() -> Component)? = player.currentServer.orElse(null)?.server?.let {
@@ -65,23 +70,37 @@ class PlayerFormat(override val format: Component, private val placeholders: Pla
             ).filterNotNull().fold(format) { acc, transform -> transform(acc) }
         }
 
-        override fun build(block: Placeholders.() -> Component): PlayerFormat {
-            val placeholders = Placeholders()
+        override fun build(block: ConcretePlaceholders.() -> Component): PlayerFormat {
+            val placeholders = ConcretePlaceholders()
             return PlayerFormat(block(placeholders), placeholders)
         }
     }
 
-    open class Placeholders internal constructor(path: List<String> = listOf()) : MessageFormat.Placeholders<PlayerFormat> {
+    object Serializer : MessageFormat.Serializer<PlayerFormat>(::PlayerFormat)
+
+    interface Placeholders {
+        val backendServer: BackendServerFormat.Placeholders
+        val proxyServer: ProxyServerFormat.Placeholders
+
+        val latency: Placeholder
+        val username: Placeholder
+        val id: Placeholder
+        val prefix: Placeholder
+        val suffix: Placeholder
+    }
+
+    class ConcretePlaceholders internal constructor(path: List<String> = listOf()) :
+        MessageFormat.Placeholders<PlayerFormat>, Placeholders {
 
         private val pathPrefix = path.joinToString { "$it." }
 
-        val backendServer = BackendServerFormat.Placeholders(path + listOf("backendServer"))
-        val proxyServer = ProxyServerFormat.Placeholders(path + listOf("proxyServer"))
+        override val backendServer = BackendServerFormat.Placeholders(path + listOf("backendServer"))
+        override val proxyServer = ProxyServerFormat.Placeholders(path + listOf("proxyServer"))
 
-        val latency: Placeholder = "%${pathPrefix}ping%"
-        val username: Placeholder = "%${pathPrefix}username%"
-        val id: Placeholder = "%${pathPrefix}id%"
-        val prefix: Placeholder = "%${pathPrefix}prefix%"
-        val suffix: Placeholder = "%${pathPrefix}suffix%"
+        override val latency: Placeholder = "%${pathPrefix}ping%"
+        override val username: Placeholder = "%${pathPrefix}username%"
+        override val id: Placeholder = "%${pathPrefix}id%"
+        override val prefix: Placeholder = "%${pathPrefix}prefix%"
+        override val suffix: Placeholder = "%${pathPrefix}suffix%"
     }
 }

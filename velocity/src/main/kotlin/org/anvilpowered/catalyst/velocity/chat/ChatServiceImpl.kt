@@ -25,11 +25,15 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.apache.logging.log4j.Logger
 import java.util.UUID
 
 class ChatServiceImpl(
     private val proxyServer: ProxyServer,
+    private val logger: Logger,
+    private val luckpermsService: LuckpermsService,
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
     private val channelService: ChannelService,
@@ -37,34 +41,23 @@ class ChatServiceImpl(
     private var ignoreMap = mutableMapOf<UUID, MutableList<UUID>>()
     private var disabledList = mutableListOf<UUID>()
 
-    override suspend fun sendMessageToChannel(channelId: String, message: Component, userId: UUID) {
-        proxyServer.allPlayers.forEach { player ->
-            if (player.hasPermission(registry[catalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
-                channelService.getForPlayer(player.uniqueId).id == channelId
-            ) {
-                // TODO: This is icky
-                if (userId != player.uniqueId) {
-                    if (!isIgnored(player.uniqueId, userId)) {
-                        player.sendMessage(message)
-                    }
-                } else {
-                    player.sendMessage(message)
-                }
-            }
-        }
-    }
+    override suspend fun sendMessage(message: ChannelMessage.Resolved) {
+        proxyServer.consoleCommandSource.sendMessage(message.formatted.format) // won't resolve 'recipient.*' placeholders
 
-    override suspend fun sendMessage(message: ChannelMessage) {
-        if (message.content == Component.text("")) {
-            return
-        }
-        proxyServer.consoleCommandSource.sendMessage(message.content)
-        sendMessageToChannel(channelService.getForPlayer(message.source.uniqueId).id, message.content, message.source.uniqueId)
+        val channelId = message.backing.channel.id
+        val sourceUserId = message.backing.source.player.uniqueId
+
+        proxyServer.allPlayers.asSequence()
+            .filter {
+                it.hasPermission(registry[catalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
+                    channelService.getForPlayer(it.uniqueId).id == channelId
+            }.filterNot { isIgnored(it.uniqueId, sourceUserId) }
+            .forEach { it.sendMessage(message.formatted.resolve(proxyServer, logger, luckpermsService, it)) }
     }
 
     override fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component {
-        val targetPlayer = proxyServer.getPlayer(targetPlayerUUID).orElse(null)
-            ?: return Component.text("That user does not exist!").color(NamedTextColor.RED)
+        val targetPlayer = proxyServer.getPlayer(targetPlayerUUID).orElse(null) ?: return Component.text("That user does not exist!")
+            .color(NamedTextColor.RED)
         var uuidList: MutableList<UUID> = ArrayList()
         if (ignoreMap[playerUUID] == null) {
             uuidList.add(targetPlayerUUID)
@@ -75,10 +68,8 @@ class ChatServiceImpl(
             }
         }
         ignoreMap[playerUUID] = uuidList
-        return Component.text()
-            .append(Component.text("You are now ignoring ").color(NamedTextColor.GREEN))
-            .append(Component.text(targetPlayer.username).color(NamedTextColor.GOLD))
-            .build()
+        return Component.text().append(Component.text("You are now ignoring ").color(NamedTextColor.GREEN))
+            .append(Component.text(targetPlayer.username).color(NamedTextColor.GOLD)).build()
     }
 
     override fun unIgnore(playerUUID: UUID, targetPlayerUUID: UUID): Component {
@@ -89,11 +80,10 @@ class ChatServiceImpl(
             ignoreMap.replace(playerUUID, uuidList)
         }
         // TODO: What if the player leaves after being ignored?
-        return Component.text("You are no longer ignoring")
-            .append(
-                Component.text(proxyServer.getPlayer(targetPlayerUUID).map { it.username }.orElse(targetPlayerUUID.toString()))
-                    .color(NamedTextColor.GREEN),
-            )
+        return Component.text("You are no longer ignoring").append(
+            Component.text(proxyServer.getPlayer(targetPlayerUUID).map { it.username }.orElse(targetPlayerUUID.toString()))
+                .color(NamedTextColor.GREEN),
+        )
     }
 
     override fun isIgnored(playerUUID: UUID, targetPlayerUUID: UUID): Boolean {

@@ -99,7 +99,7 @@ class JDAService(
         }
         // TODO: Clean up the entire class
         return Runnable {
-            val channel = jda!!.getTextChannelById(channelService.get(channelId)?.discordChannel ?: "")
+            val channel = jda!!.getTextChannelById(channelService.get(channelId)?.discordChannelId ?: "")
             val nowPlaying = registry[catalystKeys.NOW_PLAYING_MESSAGE]
             val playerCount = proxyServer.playerCount.let { count ->
                 if (count == 0) {

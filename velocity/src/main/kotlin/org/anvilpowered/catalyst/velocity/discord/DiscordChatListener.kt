@@ -34,7 +34,7 @@ class DiscordChatListener(
 ) {
 
     @Subscribe
-    fun onChatEvent(message: ChannelMessage) = runBlocking {
+    fun onChatEvent(event: ChannelMessage.Event) = runBlocking {
         if (!registry[catalystKeys.DISCORD_ENABLED]) {
             return@runBlocking
         }
@@ -42,9 +42,9 @@ class DiscordChatListener(
 //            message = message.replace("@".toRegex(), "")
 //        }
         webhookSender.sendChannelMessage(
-            message.source,
-            message.content,
-            message.channel.discordChannel,
+            event.message.backing.source.player,
+            event.message.formatted.format, // TODO: Format for discord, create Player indirection
+            event.message.backing.channel.discordChannelId,
         )
     }
 
@@ -54,7 +54,7 @@ class DiscordChatListener(
             return@runBlocking
         }
         val discordChannel = channelService.getForPlayer(event.player.uniqueId)
-        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannel, catalystKeys.JOIN_MESSAGE)
+        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannelId, catalystKeys.JOIN_MESSAGE)
     }
 
     @Subscribe
@@ -63,6 +63,6 @@ class DiscordChatListener(
             return@runBlocking
         }
         val discordChannel = channelService.getForPlayer(event.player.uniqueId)
-        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannel, catalystKeys.LEAVE_MESSAGE)
+        webhookSender.sendSpecialMessage(event.player, discordChannel.discordChannelId, catalystKeys.LEAVE_MESSAGE)
     }
 }

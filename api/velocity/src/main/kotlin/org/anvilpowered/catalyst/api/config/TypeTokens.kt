@@ -19,6 +19,7 @@
 package org.anvilpowered.catalyst.api.config
 
 import io.leangen.geantyref.TypeToken
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ProxyServerFormat
@@ -28,6 +29,7 @@ import org.anvilpowered.anvil.core.config.TypeTokens as AnvilTypeTokens
 open class TypeTokens private constructor() : AnvilTypeTokens() {
 
     val PLAYER_FORMAT: TypeToken<PlayerFormat> = TypeToken.get(PlayerFormat::class.java)
+    val ONLINE_USER_FORMAT: TypeToken<OnlineUserFormat> = TypeToken.get(OnlineUserFormat::class.java)
     val PRIVATE_MESSAGE_FORMAT: TypeToken<PrivateMessageFormat> = TypeToken.get(PrivateMessageFormat::class.java)
     val PROXY_SERVER_FORMAT: TypeToken<ProxyServerFormat> = TypeToken.get(ProxyServerFormat::class.java)
     val CHAT_CHANNEL: TypeToken<ChatChannel> = TypeToken.get(ChatChannel::class.java)
