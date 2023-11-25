@@ -21,8 +21,8 @@ package org.anvilpowered.catalyst.velocity.command
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.anvilpowered.catalyst.api.user.GameUser
-import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.MinecraftUser
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.RequiredArgumentBuilder
@@ -30,9 +30,9 @@ import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.context.CommandContext
 import org.anvilpowered.kbrig.context.get
 
-fun GameUserRepository.argument(
+fun MinecraftUserRepository.argument(
     argumentName: String = "gameUser",
-    command: suspend (context: CommandContext<CommandSource>, gameUser: GameUser) -> Int,
+    command: suspend (context: CommandContext<CommandSource>, minecraftUser: MinecraftUser) -> Int,
 ): RequiredArgumentBuilder<CommandSource, String> =
     ArgumentBuilder.required<CommandSource, String>(argumentName, StringArgumentType.SingleWord)
         .suggests { _, builder ->

@@ -18,7 +18,7 @@
 
 package org.anvilpowered.catalyst.velocity.db.user
 
-import org.anvilpowered.catalyst.api.user.GameUser
+import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -26,23 +26,23 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ResultRow
 import java.util.UUID
 
-internal object GameUserTable : UUIDTable("game_users") {
-    val userId = reference("user_id", UserTable)
+internal object MinecraftUserTable : UUIDTable("game_users") {
     val username = varchar("username", 255).uniqueIndex()
+    val ipAddress = varchar("ip_address", 255)
     val nickname = varchar("nickname", 255).nullable()
 }
 
-internal class GameUserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    var user: UserEntity by UserEntity referencedOn GameUserTable.userId
-    var username: String by GameUserTable.username
-    var nickname: String? by GameUserTable.nickname
+internal class MinecraftUserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+    var username: String by MinecraftUserTable.username
+    var ipAddress: String by MinecraftUserTable.ipAddress
+    var nickname: String? by MinecraftUserTable.nickname
 
-    companion object : UUIDEntityClass<GameUserEntity>(GameUserTable)
+    companion object : UUIDEntityClass<MinecraftUserEntity>(MinecraftUserTable)
 }
 
-internal fun ResultRow.toGameUser() = GameUser(
-    id = this[GameUserTable.id].value,
-    userId = this[GameUserTable.userId].value,
-    username = this[GameUserTable.username],
-    nickname = this[GameUserTable.nickname],
+internal fun ResultRow.toMinecraftUser() = MinecraftUser(
+    id = this[MinecraftUserTable.id].value,
+    username = this[MinecraftUserTable.username],
+    ipAddress = this[MinecraftUserTable.ipAddress],
+    nickname = this[MinecraftUserTable.nickname],
 )

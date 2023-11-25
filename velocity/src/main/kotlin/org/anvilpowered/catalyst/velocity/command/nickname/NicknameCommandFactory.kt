@@ -19,11 +19,11 @@
 package org.anvilpowered.catalyst.velocity.command.nickname
 
 import com.velocitypowered.api.command.CommandSource
-import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
-class NicknameCommandFactory(val gameUserRepository: GameUserRepository) {
+class NicknameCommandFactory(val minecraftUserRepository: MinecraftUserRepository) {
 
     fun create(): LiteralCommandNode<CommandSource> {
         return ArgumentBuilder.literal<CommandSource>("nickname")

@@ -24,18 +24,20 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SizedIterable
 import java.util.UUID
 
 internal object UserTable : UUIDTable("users") {
     val username = varchar("username", 255).uniqueIndex()
     val email = varchar("email", 255).uniqueIndex().nullable()
+    val discordUserId = long("discord_user_id").uniqueIndex().nullable()
+    val minecraftUserId = optReference("game_user_id", MinecraftUserTable)
 }
 
 internal class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var username: String by UserTable.username
     var email: String? by UserTable.email
-    val gameUsers: SizedIterable<GameUserEntity> by GameUserEntity referrersOn GameUserTable.userId
+    var discordUserId: Long? by UserTable.discordUserId
+    var minecraftUser: MinecraftUserEntity? by MinecraftUserEntity optionalReferencedOn UserTable.minecraftUserId
 
     companion object : UUIDEntityClass<UserEntity>(UserTable)
 }

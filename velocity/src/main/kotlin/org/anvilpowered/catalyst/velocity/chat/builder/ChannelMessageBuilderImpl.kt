@@ -27,17 +27,17 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.config.ChatChannel
-import org.anvilpowered.catalyst.api.user.GameUser
-import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.MinecraftUser
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import java.util.UUID
 
 internal class ChannelMessageBuilderImpl(
     private val proxyServer: ProxyServer,
-    private val gameUserRepository: GameUserRepository,
+    private val minecraftUserRepository: MinecraftUserRepository,
     private val channelService: ChannelService,
 ) : ChannelMessage.Builder {
 
-    private var user: GameUser? = null
+    private var user: MinecraftUser? = null
     private var player: Player? = null
     private var channel: ChatChannel? = null
     private var message: Component? = null
@@ -47,7 +47,7 @@ internal class ChannelMessageBuilderImpl(
     private var nameFormatOverride: Component? = null
     private var serverName: String = ""
 
-    override fun user(user: GameUser): ChannelMessage.Builder {
+    override fun user(user: MinecraftUser): ChannelMessage.Builder {
         player = proxyServer.getPlayer(user.id)
             .orElseThrow { IllegalStateException("User ${user.username} with id ${user.id} is not on the server!") }
         this.user = user
@@ -55,7 +55,7 @@ internal class ChannelMessageBuilderImpl(
     }
 
     override suspend fun userId(userId: UUID): ChannelMessage.Builder =
-        user(requireNotNull(gameUserRepository.getById(userId)) { "Could not find user with id $userId" })
+        user(requireNotNull(minecraftUserRepository.getById(userId)) { "Could not find user with id $userId" })
 
     override fun channel(channel: ChatChannel): ChannelMessage.Builder {
         this.channel = channel
@@ -176,9 +176,9 @@ internal class ChannelMessageBuilderImpl(
 
     class Factory(
         private val proxyServer: ProxyServer,
-        private val gameUserRepository: GameUserRepository,
+        private val minecraftUserRepository: MinecraftUserRepository,
         private val channelService: ChannelService,
     ) : ChannelMessage.Builder.Factory {
-        override fun builder(): ChannelMessage.Builder = ChannelMessageBuilderImpl(proxyServer, gameUserRepository, channelService)
+        override fun builder(): ChannelMessage.Builder = ChannelMessageBuilderImpl(proxyServer, minecraftUserRepository, channelService)
     }
 }

@@ -18,28 +18,19 @@
 
 package org.anvilpowered.catalyst.api.user
 
-import org.anvilpowered.anvil.core.db.Creates
-import org.anvilpowered.anvil.core.db.DomainEntity
-import org.anvilpowered.anvil.core.user.Player
-import org.anvilpowered.anvil.core.user.Subject
+import org.anvilpowered.anvil.core.db.MutableRepository
+import org.jetbrains.exposed.sql.SizedIterable
 import java.util.UUID
 
-/**
- * A user of a game of the Anvil platform.
- *
- * Represents a single user of a game.
- */
-data class GameUser(
-    override val id: UUID,
-    val userId: UUID,
-    val username: String,
-    val nickname: String? = null,
-) : DomainEntity, Creates<GameUser> {
+interface MinecraftUserRepository : MutableRepository<MinecraftUser, MinecraftUser.CreateDto> {
 
-    interface GamePlatformScope { // TODO: Maybe just GameScope?
+    suspend fun getNickname(id: UUID): String?
 
-        val GameUser.subject: Subject?
+    suspend fun updateNickname(id: UUID, nickname: String): Boolean
 
-        val GameUser.player: Player?
-    }
+    suspend fun deleteNickname(id: UUID): Boolean
+
+    suspend fun getAllUsernames(startWith: String = ""): SizedIterable<String>
+
+    suspend fun getByUsername(username: String): MinecraftUser?
 }

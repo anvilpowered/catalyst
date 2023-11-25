@@ -20,9 +20,32 @@ package org.anvilpowered.catalyst.api.user
 
 import org.anvilpowered.anvil.core.db.Creates
 import org.anvilpowered.anvil.core.db.DomainEntity
+import org.anvilpowered.anvil.core.user.Player
+import org.anvilpowered.anvil.core.user.Subject
 import java.util.UUID
 
-data class DiscordUser(
+/**
+ * A user of a game of the Anvil platform.
+ *
+ * Represents a single user of a game.
+ */
+data class MinecraftUser(
     override val id: UUID,
-    val discordId: String,
-) : DomainEntity, Creates<DiscordUser>
+    val username: String,
+    val ipAddress: String,
+    val nickname: String? = null,
+) : DomainEntity {
+
+    interface GamePlatformScope { // TODO: Maybe just GameScope?
+
+        val MinecraftUser.subject: Subject?
+
+        val MinecraftUser.player: Player?
+    }
+
+    data class CreateDto(
+        val id: UUID,
+        val username: String,
+        val ipAddress: String,
+    ) : Creates<MinecraftUser>
+}

@@ -25,8 +25,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.velocity.command.nickname.NicknameCommandFactory
-import org.anvilpowered.catalyst.velocity.db.user.DiscordUserTable
-import org.anvilpowered.catalyst.velocity.db.user.GameUserTable
+import org.anvilpowered.catalyst.velocity.db.user.MinecraftUserTable
 import org.anvilpowered.catalyst.velocity.db.user.UserTable
 import org.anvilpowered.catalyst.velocity.listener.ChatListener
 import org.anvilpowered.catalyst.velocity.listener.CommandListener
@@ -83,9 +82,8 @@ class CatalystVelocityPlugin(
         logger.info("Finished connecting to database.")
         logger.info("Creating tables...")
         transaction {
-            SchemaUtils.create(
-                DiscordUserTable,
-                GameUserTable,
+            SchemaUtils.createMissingTablesAndColumns(
+                MinecraftUserTable,
                 UserTable,
             )
         }

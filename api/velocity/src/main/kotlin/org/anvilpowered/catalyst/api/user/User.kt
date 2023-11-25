@@ -33,11 +33,15 @@ data class User(
     override val id: UUID,
     val username: String,
     val email: String? = null,
+    val discordUserId: Long? = null,
+    val minecraftUserId: UUID? = null,
 ) : DomainEntity, DomainFacet<User> {
 
     data class CreateDto(
         val username: String,
         val email: String? = null,
+        val discordUserId: Long? = null,
+        val minecraftUserId: UUID? = null,
     ) : Creates<User>
 
     /**
@@ -45,7 +49,7 @@ data class User(
      */
     interface PlatformScope {
 
-        val User.gameUser: GameUser
+        val User.minecraftUser: MinecraftUser
 
         val User.player: Player?
     }

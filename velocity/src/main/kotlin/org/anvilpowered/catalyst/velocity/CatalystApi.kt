@@ -26,8 +26,7 @@ import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.config.ChatChannel
-import org.anvilpowered.catalyst.api.user.DiscordUserRepository
-import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.api.user.UserRepository
 import org.anvilpowered.catalyst.velocity.chat.ChannelServiceImpl
 import org.anvilpowered.catalyst.velocity.chat.ChatFilter
@@ -37,8 +36,7 @@ import org.anvilpowered.catalyst.velocity.chat.StaffListService
 import org.anvilpowered.catalyst.velocity.chat.builder.ChannelMessageBuilderImpl
 import org.anvilpowered.catalyst.velocity.chat.builder.ChatChannelBuilderImpl
 import org.anvilpowered.catalyst.velocity.command.nickname.NicknameCommandFactory
-import org.anvilpowered.catalyst.velocity.db.user.DiscordUserRepositoryImpl
-import org.anvilpowered.catalyst.velocity.db.user.GameUserRepositoryImpl
+import org.anvilpowered.catalyst.velocity.db.user.MinecraftUserRepositoryImpl
 import org.anvilpowered.catalyst.velocity.db.user.UserRepositoryImpl
 import org.anvilpowered.catalyst.velocity.discord.JDAService
 import org.anvilpowered.catalyst.velocity.listener.ChatListener
@@ -62,18 +60,10 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         single<Registry> { EnvironmentRegistry(prefix = "CATALYST") }
         singleOf(::LuckpermsService)
         singleOf(::ChatFilter)
-        singleOf(ChatChannelBuilderImpl::Factory) {
-            bind<ChatChannel.Builder.Factory>()
-        }
-        singleOf(ChannelMessageBuilderImpl::Factory) {
-            bind<ChannelMessage.Builder.Factory>()
-        }
-        singleOf(::ChannelServiceImpl) {
-            bind<ChannelService>()
-        }
-        singleOf(::ChatServiceImpl) {
-            bind<ChatService>()
-        }
+        singleOf(ChatChannelBuilderImpl::Factory) { bind<ChatChannel.Builder.Factory>() }
+        singleOf(ChannelMessageBuilderImpl::Factory) { bind<ChannelMessage.Builder.Factory>() }
+        singleOf(::ChannelServiceImpl) { bind<ChannelService>() }
+        singleOf(::ChatServiceImpl) { bind<ChatService>() }
         singleOf(::NicknameCommandFactory)
         singleOf(::ChatListener)
         singleOf(::CatalystKeys)
@@ -83,9 +73,8 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         singleOf(::DiscordListener)
         singleOf(::JDAService)
         singleOf(::StaffListService)
-        single<DiscordUserRepository> { DiscordUserRepositoryImpl }
-        single<GameUserRepository> { GameUserRepositoryImpl }
-        single<UserRepository> { UserRepositoryImpl }
+        singleOf(::MinecraftUserRepositoryImpl) { bind<MinecraftUserRepository>() }
+        singleOf(::UserRepositoryImpl) { bind<UserRepository>() }
     }
 
     return object : CatalystApi {

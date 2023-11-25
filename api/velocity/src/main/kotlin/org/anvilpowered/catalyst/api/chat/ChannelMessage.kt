@@ -21,7 +21,7 @@ package org.anvilpowered.catalyst.api.chat
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.config.ChatChannel
-import org.anvilpowered.catalyst.api.user.GameUser
+import org.anvilpowered.catalyst.api.user.MinecraftUser
 import java.util.UUID
 
 // Utility class to construct a chat message and format it
@@ -31,7 +31,7 @@ class ChannelMessage(val source: Player, val content: Component, val channel: Ch
         /**
          * Use [Builder.userId] if you only have a userId.
          */
-        fun user(user: GameUser): Builder
+        fun user(user: MinecraftUser): Builder
 
         suspend fun userId(userId: UUID): Builder
 

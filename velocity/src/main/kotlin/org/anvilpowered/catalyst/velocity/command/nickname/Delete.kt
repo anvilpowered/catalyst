@@ -42,7 +42,7 @@ fun NicknameCommandFactory.createDelete(): LiteralCommandNode<CommandSource> =
                             .append(Component.text("You don't have permission to delete your nickname!", NamedTextColor.RED)),
                     )
                     0
-                } else if (gameUserRepository.deleteNickname(player.uniqueId)) {
+                } else if (minecraftUserRepository.deleteNickname(player.uniqueId)) {
                     player.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("Your nickname has been deleted!", NamedTextColor.RED)),
@@ -64,14 +64,14 @@ fun NicknameCommandFactory.createDelete(): LiteralCommandNode<CommandSource> =
             }
         }
         .then(
-            gameUserRepository.argument { context, gameUser ->
+            minecraftUserRepository.argument { context, gameUser ->
                 if (!context.source.hasPermission("catalyst.nickname.delete.other")) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("You don't have permission to delete other players' nicknames!", NamedTextColor.RED)),
                     )
                     0
-                } else if (gameUserRepository.deleteNickname(gameUser.id)) {
+                } else if (minecraftUserRepository.deleteNickname(gameUser.id)) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of ", NamedTextColor.RED))

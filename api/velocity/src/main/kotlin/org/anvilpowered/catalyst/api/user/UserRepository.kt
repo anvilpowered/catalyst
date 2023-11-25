@@ -29,14 +29,8 @@ interface UserRepository : MutableRepository<User, User.CreateDto> {
      */
     suspend fun paginate(): Pagination<User>
 
-    /**
-     * This method is used to initialize a user from a game user.
-     * If a game user with the given ID does not exist, it will be created.
-     * Call this to ensure that the given game user has a corresponding user in the database.
-     *
-     * This method is idempotent.
-     */
-    suspend fun initializeFromGameUser(gameUserId: UUID, username: String): User
-    suspend fun findByGameUserId(id: UUID): User?
-    suspend fun findByUsername(username: String): User?
+    suspend fun getByUsername(username: String): User?
+    suspend fun getByEmail(email: String): User?
+    suspend fun getByDiscordUserId(id: Long): User?
+    suspend fun getByMinecraftUserId(id: UUID): User?
 }

@@ -45,7 +45,7 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
                                 PluginMessages.pluginPrefix
                                     .append(Component.text("You don't have permission to set your nickname!", NamedTextColor.RED)),
                             )
-                        } else if (gameUserRepository.updateNickname(player.uniqueId, context["nickname"])) {
+                        } else if (minecraftUserRepository.updateNickname(player.uniqueId, context["nickname"])) {
                             player.sendMessage(
                                 PluginMessages.pluginPrefix
                                     .append(Component.text("Your nickname has been set to '", NamedTextColor.GRAY))
@@ -69,14 +69,14 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
                 },
         )
         .then(
-            gameUserRepository.argument { context, gameUser ->
+            minecraftUserRepository.argument { context, gameUser ->
                 if (!context.source.hasPermission("catalyst.nickname.set.other")) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("You don't have permission to set other players' nicknames!", NamedTextColor.RED)),
                     )
                     0
-                } else if (gameUserRepository.updateNickname(gameUser.id, context["nickname"])) {
+                } else if (minecraftUserRepository.updateNickname(gameUser.id, context["nickname"])) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of '", NamedTextColor.GRAY))

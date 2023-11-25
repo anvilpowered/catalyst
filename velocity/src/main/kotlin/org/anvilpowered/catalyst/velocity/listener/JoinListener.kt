@@ -25,7 +25,8 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.user.GameUserRepository
+import org.anvilpowered.catalyst.api.user.MinecraftUser
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.api.user.UserRepository
 import org.anvilpowered.catalyst.velocity.chat.StaffListService
 import org.apache.logging.log4j.Logger
@@ -38,15 +39,20 @@ class JoinListener(
     private val staffListService: StaffListService,
     private val luckpermsService: LuckpermsService,
     private val userRepository: UserRepository,
-    private val gameUserRepository: GameUserRepository,
+    private val minecraftUserRepository: MinecraftUserRepository,
 ) {
     @Subscribe
     fun onPlayerJoin(event: LoginEvent) = runBlocking {
         val player = event.player
-        val user = userRepository.initializeFromGameUser(player.uniqueId, player.username)
-        val result = gameUserRepository.initialize(player.uniqueId, user.id, player.username, player.remoteAddress.hostString)
+        val result = minecraftUserRepository.put(
+            MinecraftUser.CreateDto(
+                id = player.uniqueId,
+                username = player.username,
+                ipAddress = player.remoteAddress.hostString,
+            ),
+        )
 
-        if (result.firstJoin && registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
+        if (result.created && registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
             proxyServer.sendMessage(registry[catalystKeys.FIRST_JOIN].resolve(proxyServer, logger, luckpermsService, player))
         }
 
