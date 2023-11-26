@@ -20,6 +20,10 @@ package org.anvilpowered.catalyst.api.chat.placeholder
 
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 
 @Serializable(with = OnlineUserFormat.Serializer::class)
@@ -28,10 +32,27 @@ class OnlineUserFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
-    class Resolver(private val playerFormatResolver: PlayerFormat.Resolver) {
+    class Resolver(
+        private val registry: Registry,
+        private val catalystKeys: CatalystKeys,
+        private val playerFormatResolver: PlayerFormat.Resolver,
+    ) {
+
+        private val MinecraftUser.nicknameComponent: Component?
+            get() = nickname?.let {
+                Component.text()
+                    .append(registry[catalystKeys.NICKNAME_PREFIX])
+                    .append(MiniMessage.miniMessage().deserialize(it))
+                    .color(NamedTextColor.GRAY)
+                    .build()
+            }
+
         suspend fun resolve(format: Component, placeholders: Placeholders, user: MinecraftUser.Online): Component =
             playerFormatResolver.resolve(format, PlayerFormat.ConcretePlaceholders(placeholders.path), user.player)
-                .replaceText { it.matchLiteral(placeholders.displayname).replacement(user.user.nickname ?: user.player.username) }
+                .replaceText {
+                    it.matchLiteral(placeholders.displayname)
+                        .replacement(user.user.nicknameComponent ?: Component.text(user.player.username))
+                }
 
         suspend fun resolve(format: OnlineUserFormat, user: MinecraftUser.Online): Component =
             resolve(format.format, format.placeholders, user)

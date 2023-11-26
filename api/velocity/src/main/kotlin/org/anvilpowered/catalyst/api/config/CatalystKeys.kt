@@ -340,8 +340,8 @@ class CatalystKeys(
         fallback("catalyst.command.nickname.other")
     }
 
-    val NICKNAME_PREFIX by Key.buildingSimple(TypeTokens.STRING) {
-        fallback("~")
+    val NICKNAME_PREFIX by Key.buildingSimple(TypeTokens.COMPONENT) {
+        miniMessageFallback(Component.text("~"))
     }
 
     val SEND_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
