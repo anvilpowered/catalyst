@@ -18,6 +18,7 @@
 
 package org.anvilpowered.catalyst.velocity.listener
 
+import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.core.config.Registry
@@ -30,7 +31,7 @@ class CommandListener(
     private val catalystKeys: CatalystKeys,
 ) {
 
-    @com.google.common.eventbus.Subscribe
+    @Subscribe
     fun onCommandExecution(event: CommandExecuteEvent) {
         if (registry[catalystKeys.COMMAND_LOGGING_ENABLED]) {
             val commandList = registry[catalystKeys.COMMAND_LOGGING_FILTER]

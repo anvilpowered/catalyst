@@ -111,9 +111,9 @@ class CatalystKeys(
         miniMessageFallbackFormat(OnlineUserFormat) {
             Component.text()
                 .append(Component.text("Welcome to the server, "))
-                .append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE))
+                .append(Component.text(displayname).color(NamedTextColor.AQUA))
                 .append(Component.text("!"))
-                .color(NamedTextColor.DARK_GRAY)
+                .color(NamedTextColor.GREEN)
                 .build()
         }
     }
@@ -122,7 +122,7 @@ class CatalystKeys(
         miniMessageFallbackFormat(OnlineUserFormat) {
             Component.text()
                 .append(Component.text(displayname).color(NamedTextColor.GOLD))
-                .append(Component.text(" has joined the proxy").color(NamedTextColor.GRAY))
+                .append(Component.text(" has joined the network").color(NamedTextColor.GRAY))
                 .build()
         }
     }
@@ -135,7 +135,7 @@ class CatalystKeys(
         miniMessageFallbackFormat(OnlineUserFormat) {
             Component.text()
                 .append(Component.text(displayname).color(NamedTextColor.GOLD))
-                .append(Component.text(" has left the proxy").color(NamedTextColor.GRAY))
+                .append(Component.text(" has left the network").color(NamedTextColor.GRAY))
                 .build()
         }
     }

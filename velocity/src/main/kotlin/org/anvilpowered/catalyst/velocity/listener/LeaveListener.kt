@@ -17,7 +17,7 @@
  */
 package org.anvilpowered.catalyst.velocity.listener
 
-import com.google.common.eventbus.Subscribe
+import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
@@ -38,10 +38,10 @@ class LeaveListener(
     private val staffListService: StaffListService,
     private val minecraftUserRepository: MinecraftUserRepository,
     private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
-
-    ) {
+) {
     @Subscribe
     fun onPlayerLeave(event: DisconnectEvent) = runBlocking {
+        logger.info("Player ${event.player.username} left the server.")
         if (event.loginStatus == DisconnectEvent.LoginStatus.PRE_SERVER_JOIN) {
             return@runBlocking
         }
@@ -51,6 +51,7 @@ class LeaveListener(
         val leaveMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.LEAVE_MESSAGE], user)
 
         if (registry[catalystKeys.LEAVE_LISTENER_ENABLED]) {
+            logger.info("Sending leave message to all players...")
             proxyServer.sendMessage(leaveMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(leaveMessage))
         }
