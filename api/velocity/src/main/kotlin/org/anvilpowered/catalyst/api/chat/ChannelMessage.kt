@@ -56,8 +56,6 @@ class ChannelMessage(
     }
 
     data class Resolved(val backing: ChannelMessage, val formatted: PlayerFormat)
-
-    data class Event(val message: Resolved)
 }
 
 suspend inline fun ChannelMessage.Builder.Factory.build(block: ChannelMessage.Builder.() -> Unit): ChannelMessage =

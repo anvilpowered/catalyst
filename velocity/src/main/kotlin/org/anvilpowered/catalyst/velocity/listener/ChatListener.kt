@@ -36,6 +36,7 @@ import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.api.user.getOnlineUser
 import org.anvilpowered.catalyst.velocity.chat.ChatFilter
 import org.anvilpowered.catalyst.velocity.chat.ChatService
+import org.anvilpowered.catalyst.velocity.discord.WebhookSender
 import org.apache.logging.log4j.Logger
 
 class ChatListener(
@@ -46,6 +47,7 @@ class ChatListener(
     private val chatService: ChatService,
     private val channelService: ChannelService,
     private val luckpermsService: LuckpermsService,
+    private val webhookSender: WebhookSender,
     private val chatFilter: ChatFilter,
     private val channelMessageBuilderFactory: ChannelMessage.Builder.Factory,
     private val minecraftUserRepository: MinecraftUserRepository,
@@ -54,7 +56,6 @@ class ChatListener(
 ) {
     @Subscribe
     fun onPlayerChat(event: PlayerChatEvent) = runBlocking {
-        logger.info("Player ${event.player.username} sent message: ${event.message}")
         val player = event.player
         if (!registry[catalystKeys.PROXY_CHAT_ENABLED] ||
             chatService.isDisabledForPlayer(player) ||
@@ -92,7 +93,13 @@ class ChatListener(
 
         val formatted = channelMessageFormatResolver.resolve(channel.messageFormat, channelMessage)
         val resolved = ChannelMessage.Resolved(channelMessage, formatted)
-        proxyServer.eventManager.fire(ChannelMessage.Event(resolved))
         chatService.sendMessage(resolved)
+        if (registry[catalystKeys.DISCORD_ENABLED]) {
+            webhookSender.sendChannelMessage(
+                user,
+                resolved.backing.content, // TODO: Format for discord, create Player indirection
+                resolved.backing.channel.discordChannelId,
+            )
+        }
     }
 }

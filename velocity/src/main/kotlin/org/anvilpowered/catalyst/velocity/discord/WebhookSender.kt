@@ -17,107 +17,64 @@
  */
 package org.anvilpowered.catalyst.velocity.discord
 
-import com.velocitypowered.api.proxy.Player
-import com.velocitypowered.api.proxy.ProxyServer
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import kotlinx.serialization.Serializable
+import club.minnced.discord.webhook.WebhookClient
+import club.minnced.discord.webhook.WebhookClientBuilder
+import club.minnced.discord.webhook.send.WebhookMessageBuilder
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.Webhook
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.core.config.SimpleKey
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
-import org.anvilpowered.catalyst.api.user.getOnlineUser
+import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.apache.logging.log4j.Logger
-import java.util.UUID
 
 class WebhookSender(
-    private val proxyServer: ProxyServer,
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
-    private val logger: Logger,
     private val jdaService: JDAService,
-    private val luckpermsService: LuckpermsService,
-    private val minecraftUserRepository: MinecraftUserRepository,
     private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
 ) {
 
-    private val httpClient = HttpClient(CIO)
-
-    suspend fun sendChannelMessage(player: Player, content: Component, discordChannelId: String) {
-        val user = minecraftUserRepository.getOnlineUser(player)
-        getWebhook(discordChannelId)?.send(
-            WebhookPackage(
-                registry[catalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
-                PlainTextComponentSerializer.plainText()
-                    .serialize(onlineUserFormatResolver.resolve(registry[catalystKeys.DISCORD_USERNAME_FORMAT], user)),
-                PlainTextComponentSerializer.plainText().serialize(content),
-            ),
+    suspend fun sendChannelMessage(user: MinecraftUser.Online, content: Component, discordChannelId: String) {
+        val client = getWebhookClient(discordChannelId) ?: return
+        val builder = WebhookMessageBuilder()
+        builder.setAvatarUrl(registry[catalystKeys.AVATAR_URL].replace("%uuid%", user.player.uniqueId.toString()))
+        builder.setUsername(
+            PlainTextComponentSerializer.plainText()
+                .serialize(onlineUserFormatResolver.resolve(registry[catalystKeys.DISCORD_USERNAME_FORMAT], user)),
         )
+        builder.setContent(PlainTextComponentSerializer.plainText().serialize(content))
+        val message = builder.build()
+        client.send(message)
     }
 
     suspend fun sendSpecialMessage(
-        player: Player,
+        user: MinecraftUser.Online,
         discordChannelId: String,
         messageKey: SimpleKey<OnlineUserFormat>,
     ) {
-        val user = minecraftUserRepository.getOnlineUser(player)
-        getWebhook(discordChannelId)?.send(
-            WebhookPackage(
-                registry[catalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
-                "System",
-                PlainTextComponentSerializer.plainText()
-                    .serialize(onlineUserFormatResolver.resolve(registry[messageKey], user)),
-            ),
+        val client = getWebhookClient(discordChannelId) ?: return
+        val builder = WebhookMessageBuilder()
+        builder.setAvatarUrl(registry[catalystKeys.AVATAR_URL].replace("%uuid%", user.player.uniqueId.toString()))
+        builder.setUsername("System")
+        builder.setContent(
+            PlainTextComponentSerializer.plainText()
+                .serialize(onlineUserFormatResolver.resolve(registry[messageKey], user)),
         )
+        val message = builder.build()
+        client.send(message)
     }
 
-    suspend fun sendLeaveMessage(userId: UUID, username: String, discordChannelId: String) {
-        getWebhook(discordChannelId)?.send(
-            WebhookPackage(
-                registry[catalystKeys.AVATAR_URL].replace("%uuid%", userId.toString()),
-                "System",
-                "$username has left the game.",
-            ),
-        )
-    }
-
-    suspend fun sendConsoleChatMessage(message: String, channelId: String) {
-        getWebhook(channelId)?.send(
-            WebhookPackage(
-                "",
-                "Console",
-                message,
-            ),
-        )
-    }
-
-    private suspend fun Webhook.send(webhookPackage: WebhookPackage) {
-        httpClient.post(url) {
-            contentType(ContentType.Application.Json)
-            setBody(webhookPackage)
-        }
-    }
-
-    private fun getWebhook(discordChannelId: String): Webhook? {
+    private fun getWebhookClient(discordChannelId: String): WebhookClient {
         val channel = jdaService.jda?.getTextChannelById(discordChannelId) ?: throw AssertionError("Discord channel may not be null!")
-        if (channel.guild.selfMember.hasPermission(Permission.MANAGE_WEBHOOKS)) {
-            throw AssertionError("Please allow the discord bot to handle webhooks!")
+        if (!channel.guild.selfMember.hasPermission(Permission.MANAGE_WEBHOOKS)) {
+            throw IllegalStateException("Please allow the discord bot to handle webhooks!")
         }
-        return channel.guild
-            .retrieveWebhooks().complete().stream().filter { it.name.equals("Catalyst-DB: " + channel.name, ignoreCase = true) }
-            .findFirst().orElse(null) ?: channel.createWebhook("Catalyst-DB " + channel.name).complete()
+        val result = channel.guild
+            .retrieveWebhooks().complete().stream().filter { it.name.equals("Catalyst " + channel.name, ignoreCase = true) }
+            .findFirst().orElse(null) ?: channel.createWebhook("Catalyst " + channel.name).complete()
+        return WebhookClientBuilder.fromJDA(result).build()
     }
-
-    @Serializable
-    class WebhookPackage(var avatarUrl: String, var name: String, var message: String)
 }

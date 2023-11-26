@@ -21,6 +21,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.Compression
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.anvilpowered.anvil.core.command.CommandExecutor
@@ -58,10 +59,11 @@ class JDAService(
             jda?.shutdownNow()
         }
         try {
-            val builder = JDABuilder.createDefault(registry[catalystKeys.BOT_TOKEN])
+            val builder = JDABuilder.createDefault(registry[catalystKeys.DISCORD_BOT_TOKEN])
             builder.setCompression(Compression.NONE)
             builder.setBulkDeleteSplittingEnabled(false)
             builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
+            builder.enableIntents(GatewayIntent.MESSAGE_CONTENT)
             jda = builder.build()
         } catch (e: LoginException) {
             e.printStackTrace()

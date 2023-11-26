@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.anvilpowered.anvil.core.command.CommandExecutor
 import org.anvilpowered.anvil.core.command.withLogging
 import org.anvilpowered.anvil.core.config.Registry
@@ -54,7 +53,7 @@ class DiscordListener(
         if (event.isWebhookMessage || event.author.isBot) {
             return
         }
-        val messageRaw = event.message.toString()
+        val messageRaw = event.message.contentRaw
         if (event.member != null &&
             event.member!!.hasPermission(Permission.ADMINISTRATOR) &&
             messageRaw.contains("!cmd")
@@ -99,11 +98,13 @@ class DiscordListener(
         // TODO: Get userId for discord user
         val finalMessage = Component.text()
             .append(
-                LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    registry[catalystKeys.DISCORD_CHAT_FORMAT]
-                        .replace("%source.username%", username)
-                        .replace("%content%", content),
-                ),
+                registry[catalystKeys.DISCORD_CHAT_FORMAT].replaceText {
+                    it.matchLiteral("%channel.name%").replacement(targetChannel.name)
+                }.replaceText {
+                    it.matchLiteral("%content%").replacement(content)
+                }.replaceText {
+                    it.matchLiteral("%name%").replacement(username)
+                },
             )
             .clickEvent(ClickEvent.openUrl(registry[catalystKeys.DISCORD_URL]))
             .hoverEvent(HoverEvent.showText(registry[catalystKeys.DISCORD_HOVER_MESSAGE]))

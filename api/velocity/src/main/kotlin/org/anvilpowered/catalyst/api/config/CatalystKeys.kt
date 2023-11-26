@@ -207,7 +207,7 @@ class CatalystKeys(
 
     val TAB_FORMAT by Key.buildingSimple(TypeTokens.PLAYER_FORMAT) {
         miniMessageFallbackFormat(PlayerFormat) {
-            Component.text("$prefix $username $suffix")
+            Component.text("$prefix$username$suffix")
         }
     }
 
@@ -384,23 +384,31 @@ class CatalystKeys(
         fallback("catalyst.channel.")
     }
 
-    val BOT_NAME by Key.buildingSimple(TypeTokens.STRING) {
+    val DISCORD_BOT_NAME by Key.buildingSimple(TypeTokens.STRING) {
         fallback("System")
     }
 
-    val BOT_TOKEN by Key.buildingSimple(TypeTokens.STRING) {
+    val DISCORD_BOT_TOKEN by Key.buildingSimple(TypeTokens.STRING) {
         fallback("bot token")
     }
 
     val DISCORD_USERNAME_FORMAT by Key.buildingSimple(TypeTokens.ONLINE_USER_FORMAT) {
         miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text("[${backend.name}] $prefix $displayname $suffix")
+            Component.text("[${backend.name}] $prefix$displayname$suffix")
         }
     }
 
     // TODO: Use ChannelFormat
-    val DISCORD_CHAT_FORMAT by Key.buildingSimple(TypeTokens.STRING) {
-        fallback("&6[Discord]&7 %name% : %message%")
+    val DISCORD_CHAT_FORMAT by Key.buildingSimple(TypeTokens.COMPONENT) {
+        miniMessageFallback(
+            Component.text()
+                .append(Component.text("%channel.name% "))
+                .append(Component.text("[Discord] ").color(NamedTextColor.GOLD))
+                .append(Component.text("%name%: "))
+                .append(Component.text("%content%"))
+                .color(NamedTextColor.GRAY)
+                .build(),
+        )
     }
 
     val TOPIC_FORMAT by Key.buildingSimple(TypeTokens.STRING) {

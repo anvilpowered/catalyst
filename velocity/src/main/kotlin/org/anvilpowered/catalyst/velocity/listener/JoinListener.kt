@@ -23,11 +23,13 @@ import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.velocity.chat.StaffListService
+import org.anvilpowered.catalyst.velocity.discord.WebhookSender
 import org.apache.logging.log4j.Logger
 
 class JoinListener(
@@ -35,6 +37,8 @@ class JoinListener(
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
     private val logger: Logger,
+    private val channelService: ChannelService,
+    private val webhookSender: WebhookSender,
     private val staffListService: StaffListService,
     private val minecraftUserRepository: MinecraftUserRepository,
     private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
@@ -66,6 +70,10 @@ class JoinListener(
         if (registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
             proxyServer.sendMessage(joinMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))
+        }
+        if (registry[catalystKeys.DISCORD_ENABLED]) {
+            val discordChannel = channelService.getForPlayer(user.player.uniqueId)
+            webhookSender.sendSpecialMessage(user, discordChannel.discordChannelId, catalystKeys.JOIN_MESSAGE)
         }
     }
 }

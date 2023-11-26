@@ -19,6 +19,7 @@
 package org.anvilpowered.catalyst.velocity.chat.builder
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
@@ -29,6 +30,7 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
     private var name: Component? = null
     private var nameFormat: OnlineUserFormat = OnlineUserFormat.build {
         Component.text()
+            .append(Component.text("[${backend.name}]").color(NamedTextColor.GOLD))
             .append(Component.text(prefix))
             .append(Component.space())
             .append(Component.text(displayname))
@@ -40,6 +42,7 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
     private var messageFormat: ChannelMessageFormat = ChannelMessageFormat.build {
         Component.text()
             .append(Component.text(channel.name))
+            .append(Component.space())
             .append(Component.text(name))
             .append(Component.text(": "))
             .append(Component.text(content))

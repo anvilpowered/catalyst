@@ -23,11 +23,13 @@ import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.api.user.getOnlineUser
 import org.anvilpowered.catalyst.velocity.chat.StaffListService
+import org.anvilpowered.catalyst.velocity.discord.WebhookSender
 import org.apache.logging.log4j.Logger
 
 class LeaveListener(
@@ -35,13 +37,14 @@ class LeaveListener(
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
     private val logger: Logger,
+    private val channelService: ChannelService,
+    private val webhookSender: WebhookSender,
     private val staffListService: StaffListService,
     private val minecraftUserRepository: MinecraftUserRepository,
     private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
 ) {
     @Subscribe
     fun onPlayerLeave(event: DisconnectEvent) = runBlocking {
-        logger.info("Player ${event.player.username} left the server.")
         if (event.loginStatus == DisconnectEvent.LoginStatus.PRE_SERVER_JOIN) {
             return@runBlocking
         }
@@ -51,9 +54,12 @@ class LeaveListener(
         val leaveMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.LEAVE_MESSAGE], user)
 
         if (registry[catalystKeys.LEAVE_LISTENER_ENABLED]) {
-            logger.info("Sending leave message to all players...")
             proxyServer.sendMessage(leaveMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(leaveMessage))
+        }
+        if (registry[catalystKeys.DISCORD_ENABLED]) {
+            val discordChannel = channelService.getForPlayer(user.player.uniqueId)
+            webhookSender.sendSpecialMessage(user, discordChannel.discordChannelId, catalystKeys.LEAVE_MESSAGE)
         }
     }
 }

@@ -48,6 +48,7 @@ import org.anvilpowered.catalyst.velocity.command.nickname.NicknameCommandFactor
 import org.anvilpowered.catalyst.velocity.db.user.MinecraftUserRepositoryImpl
 import org.anvilpowered.catalyst.velocity.db.user.UserRepositoryImpl
 import org.anvilpowered.catalyst.velocity.discord.JDAService
+import org.anvilpowered.catalyst.velocity.discord.WebhookSender
 import org.anvilpowered.catalyst.velocity.listener.ChatListener
 import org.anvilpowered.catalyst.velocity.listener.CommandListener
 import org.anvilpowered.catalyst.velocity.listener.DiscordListener
@@ -74,6 +75,7 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
     val velocityModule = module {
         single<Registry> { EnvironmentRegistry(prefix = "CATALYST") }
         singleOf(::LuckpermsService)
+        singleOf(::WebhookSender)
         singleOf(::ChatFilter)
         singleOf(ChatChannelBuilderImpl::Factory) { bind<ChatChannel.Builder.Factory>() }
         singleOf(ChannelMessageBuilderImpl::Factory) { bind<ChannelMessage.Builder.Factory>() }
