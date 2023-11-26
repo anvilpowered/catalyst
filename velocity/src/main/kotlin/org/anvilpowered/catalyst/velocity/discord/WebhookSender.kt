@@ -35,7 +35,6 @@ import org.anvilpowered.anvil.core.config.SimpleKey
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.api.user.getOnlineUser
 import org.apache.logging.log4j.Logger
@@ -49,6 +48,7 @@ class WebhookSender(
     private val jdaService: JDAService,
     private val luckpermsService: LuckpermsService,
     private val minecraftUserRepository: MinecraftUserRepository,
+    private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
 ) {
 
     private val httpClient = HttpClient(CIO)
@@ -59,10 +59,7 @@ class WebhookSender(
             WebhookPackage(
                 registry[catalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
                 PlainTextComponentSerializer.plainText()
-                    .serialize(
-                        registry[catalystKeys.DISCORD_USERNAME_FORMAT]
-                            .resolve(proxyServer, logger, luckpermsService, user),
-                    ),
+                    .serialize(onlineUserFormatResolver.resolve(registry[catalystKeys.DISCORD_USERNAME_FORMAT], user)),
                 PlainTextComponentSerializer.plainText().serialize(content),
             ),
         )
@@ -79,7 +76,7 @@ class WebhookSender(
                 registry[catalystKeys.AVATAR_URL].replace("%uuid%", player.uniqueId.toString()),
                 "System",
                 PlainTextComponentSerializer.plainText()
-                    .serialize(registry[messageKey].resolve(proxyServer, logger, luckpermsService, user)),
+                    .serialize(onlineUserFormatResolver.resolve(registry[messageKey], user)),
             ),
         )
     }

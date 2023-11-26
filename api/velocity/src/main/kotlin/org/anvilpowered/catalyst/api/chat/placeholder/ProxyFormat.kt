@@ -28,17 +28,18 @@ class ProxyFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
-    fun resolve(proxyServer: ProxyServer): Component = resolve(proxyServer, format, placeholders)
-
-    companion object : MessageFormat.Builder<Placeholders, ProxyFormat> {
-
-        fun resolve(proxyServer: ProxyServer, format: Component, placeholders: Placeholders): Component {
+    class Resolver(private val proxyServer: ProxyServer) {
+        fun resolve(format: Component, placeholders: Placeholders): Component {
             return sequenceOf<Component.() -> Component>(
                 { replaceText { it.matchLiteral(placeholders.version).replacement(proxyServer.version.version) } },
                 { replaceText { it.matchLiteral(placeholders.playerCount).replacement(proxyServer.playerCount.toString()) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
+        fun resolve(format: ProxyFormat): Component = resolve(format.format, format.placeholders)
+    }
+
+    companion object Builder : MessageFormat.Builder<Placeholders, ProxyFormat> {
         override fun build(block: Placeholders.() -> Component): ProxyFormat {
             val placeholders = Placeholders()
             return ProxyFormat(block(placeholders), placeholders)

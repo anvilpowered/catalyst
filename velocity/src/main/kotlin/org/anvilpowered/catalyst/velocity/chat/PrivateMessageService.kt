@@ -25,6 +25,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.PrivateMessage
+import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
@@ -38,6 +39,7 @@ class PrivateMessageService(
     private val logger: Logger,
     private val luckpermsService: LuckpermsService,
     private val minecraftUserRepository: MinecraftUserRepository,
+    private val privateMessageFormatResolver: PrivateMessageFormat.Resolver,
 ) {
     private var replyMap = mutableMapOf<UUID, UUID>()
 
@@ -50,15 +52,9 @@ class PrivateMessageService(
             ?: throw IllegalStateException("User ${recipient.username} with id ${recipient.uniqueId} is not in the database!")
 
         val message = PrivateMessage(sourceUser, recipientUser, content)
-        source.sendMessage(registry[catalystKeys.PRIVATE_MESSAGE_SOURCE_FORMAT].resolve(proxyServer, logger, luckpermsService, message))
-        recipient.sendMessage(
-            registry[catalystKeys.PRIVATE_MESSAGE_RECIPIENT_FORMAT].resolve(
-                proxyServer,
-                logger,
-                luckpermsService,
-                message,
-            ),
-        )
+
+        source.sendMessage(privateMessageFormatResolver.resolve(registry[catalystKeys.PRIVATE_MESSAGE_SOURCE_FORMAT], message))
+        recipient.sendMessage(privateMessageFormatResolver.resolve(registry[catalystKeys.PRIVATE_MESSAGE_RECIPIENT_FORMAT], message))
         replyMap[recipient.uniqueId] = source.uniqueId
         socialSpy(message)
     }
@@ -82,7 +78,7 @@ class PrivateMessageService(
     // TODO: Send PM from console
 
     private suspend fun socialSpy(message: PrivateMessage) {
-        val socialSpyMessage = registry[catalystKeys.SOCIALSPY_MESSAGE_FORMAT].resolve(proxyServer, logger, luckpermsService, message)
+        val socialSpyMessage = privateMessageFormatResolver.resolve(registry[catalystKeys.SOCIALSPY_MESSAGE_FORMAT], message)
         proxyServer.allPlayers
             .filter { it.hasPermission(registry[catalystKeys.SOCIALSPY_PERMISSION]) }
             .filter { it.uniqueId != message.source.player.uniqueId && it.uniqueId != message.recipient.player.uniqueId }

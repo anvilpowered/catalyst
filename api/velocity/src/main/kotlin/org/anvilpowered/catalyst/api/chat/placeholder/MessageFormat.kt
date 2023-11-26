@@ -42,14 +42,3 @@ interface MessageFormat {
         override fun serialize(encoder: Encoder, value: T) = MiniMessageSerializer.serialize(encoder, value.format)
     }
 }
-
-// don't ask, it works
-internal data class NestedFormat<
-    ChildFormat : MessageFormat,
-    ParentPlaceholders : MessageFormat.Placeholders<*>,
-    ChildPlaceholders : MessageFormat.Placeholders<ChildFormat>,
-    Builder : MessageFormat.Builder<ChildPlaceholders, ChildFormat>,
-    >(
-    val format: Builder,
-    val placeholderResolver: (ParentPlaceholders) -> ChildPlaceholders,
-)

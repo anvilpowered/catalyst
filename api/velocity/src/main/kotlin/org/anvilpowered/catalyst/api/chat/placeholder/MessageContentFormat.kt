@@ -27,13 +27,14 @@ class MessageContentFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
-    fun resolve(content: Component): Component = resolve(format, placeholders, content)
-
-    companion object : MessageFormat.Builder<Placeholders, MessageContentFormat> {
-
+    class Resolver {
         fun resolve(format: Component, placeholders: Placeholders, content: Component): Component =
             format.replaceText { it.matchLiteral(placeholders.content).replacement(content) }
 
+        fun resolve(format: MessageContentFormat, content: Component): Component = resolve(format.format, format.placeholders, content)
+    }
+
+    companion object : MessageFormat.Builder<Placeholders, MessageContentFormat> {
         override fun build(block: Placeholders.() -> Component): MessageContentFormat {
             val placeholders = Placeholders()
             return MessageContentFormat(block(placeholders), placeholders)

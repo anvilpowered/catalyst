@@ -25,7 +25,9 @@ import com.velocitypowered.api.proxy.player.TabListEntry
 import com.velocitypowered.api.util.GameProfile
 import kotlinx.coroutines.runBlocking
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.apache.logging.log4j.Logger
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -35,13 +37,16 @@ class GlobalTab(
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
     private val pluginContainer: PluginContainer,
-    private val logger: org.apache.logging.log4j.Logger,
-    private val luckpermsService: org.anvilpowered.catalyst.api.chat.LuckpermsService,
+    private val logger: Logger,
+    private val playerFormatResolver: PlayerFormat.Resolver,
 ) {
 
-    private fun registryLoaded() {
+    init {
         if (registry[catalystKeys.TAB_ENABLED]) {
+            logger.info("Global tab enabled")
             schedule()
+        } else {
+            logger.info("Global tab disabled")
         }
     }
 
@@ -80,7 +85,7 @@ class GlobalTab(
             for (processPlayer in proxyServer.allPlayers) {
                 val currentEntry = TabListEntry.builder()
                     .profile(GameProfile(processPlayer.uniqueId, processPlayer.username, processPlayer.gameProfileProperties))
-                    .displayName(registry[catalystKeys.TAB_FORMAT].resolve(proxyServer, logger, luckpermsService, processPlayer))
+                    .displayName(playerFormatResolver.resolve(registry[catalystKeys.TAB_FORMAT], processPlayer))
                     .tabList(displayPlayer.tabList)
                     .build()
                 insertIntoTab(displayPlayer.tabList, currentEntry)
@@ -92,15 +97,15 @@ class GlobalTab(
                 val currentEntry = TabListEntry.builder()
                     .profile(tabProfile)
                     .displayName(
-                        customFormat.resolve(proxyServer, logger, luckpermsService, displayPlayer),
+                        playerFormatResolver.resolve(customFormat, displayPlayer),
                     )
                     .tabList(displayPlayer.tabList)
                     .build()
                 insertIntoTab(displayPlayer.tabList, currentEntry)
             }
             displayPlayer.sendPlayerListHeaderAndFooter(
-                registry[catalystKeys.TAB_HEADER].resolve(proxyServer, logger, luckpermsService, displayPlayer),
-                registry[catalystKeys.TAB_FOOTER].resolve(proxyServer, logger, luckpermsService, displayPlayer),
+                playerFormatResolver.resolve(registry[catalystKeys.TAB_HEADER], displayPlayer),
+                playerFormatResolver.resolve(registry[catalystKeys.TAB_FOOTER], displayPlayer),
             )
         }
     }

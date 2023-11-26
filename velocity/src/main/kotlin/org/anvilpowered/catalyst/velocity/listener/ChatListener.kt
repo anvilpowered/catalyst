@@ -29,6 +29,7 @@ import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.build
+import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
@@ -48,6 +49,8 @@ class ChatListener(
     private val chatFilter: ChatFilter,
     private val channelMessageBuilderFactory: ChannelMessage.Builder.Factory,
     private val minecraftUserRepository: MinecraftUserRepository,
+    private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
+    private val channelMessageFormatResolver: ChannelMessageFormat.Resolver,
 ) {
     @Subscribe
     fun onPlayerChat(event: PlayerChatEvent) = runBlocking {
@@ -75,8 +78,9 @@ class ChatListener(
 
         val user = minecraftUserRepository.getOnlineUser(player)
 
-        val formattedRawContent = OnlineUserFormat(rawContent, OnlineUserFormat.Placeholders(listOf("source")))
-            .resolve(proxyServer, logger, luckpermsService, user)
+        // TODO: Properly resolve player written placeholders (and/or escape)
+        // Idea: %search% -> google.com/search?q=%search%
+        val formattedRawContent = onlineUserFormatResolver.resolve(rawContent, OnlineUserFormat.Placeholders(listOf("source")), user)
 
         val channel = channelService.getForPlayer(player.uniqueId)
 
@@ -86,7 +90,7 @@ class ChatListener(
             rawContent(formattedRawContent)
         }
 
-        val formatted = channel.messageFormat.resolve(channelMessage)
+        val formatted = channelMessageFormatResolver.resolve(channel.messageFormat, channelMessage)
         val resolved = ChannelMessage.Resolved(channelMessage, formatted)
         proxyServer.eventManager.fire(ChannelMessage.Event(resolved))
         chatService.sendMessage(resolved)

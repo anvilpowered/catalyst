@@ -29,11 +29,8 @@ class BackendFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
-    suspend fun resolvePlaceholders(server: RegisteredServer): Component = resolvePlaceholders(format, placeholders, server)
-
-    companion object : MessageFormat.Builder<Placeholders, BackendFormat> {
-
-        suspend fun resolvePlaceholders(format: Component, placeholders: Placeholders, server: RegisteredServer): Component {
+    class Resolver {
+        suspend fun resolve(format: Component, placeholders: Placeholders, server: RegisteredServer): Component {
             val ops = sequenceOf<Component.() -> Component>(
                 { replaceText { it.matchLiteral(placeholders.name).replacement(server.serverInfo.name) } },
                 { replaceText { it.matchLiteral(placeholders.address).replacement(server.serverInfo.address.hostString) } },
@@ -53,6 +50,9 @@ class BackendFormat(
                 ops
             }.fold(format) { acc, transform -> transform(acc) }
         }
+    }
+
+    companion object : MessageFormat.Builder<Placeholders, BackendFormat> {
 
         override fun build(block: Placeholders.() -> Component): BackendFormat {
             val placeholders = Placeholders()

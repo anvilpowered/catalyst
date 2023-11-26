@@ -19,7 +19,6 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import com.velocitypowered.api.proxy.Player
-import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
@@ -31,28 +30,15 @@ open class PlayerFormat(
     private val placeholders: ConcretePlaceholders = ConcretePlaceholders(),
 ) : MessageFormat {
 
-    suspend fun resolve(
-        proxyServer: ProxyServer,
-        logger: Logger,
-        luckpermsService: LuckpermsService,
-        player: Player,
-    ): Component = resolve(proxyServer, logger, luckpermsService, format, placeholders, player)
-
-    companion object : MessageFormat.Builder<ConcretePlaceholders, PlayerFormat> {
-
-        private val backendContext = NestedFormat(BackendFormat, ConcretePlaceholders::backend)
-        private val proxyContext = NestedFormat(ProxyFormat, ConcretePlaceholders::proxy)
-
-        suspend fun resolve(
-            proxyServer: ProxyServer,
-            logger: Logger,
-            luckpermsService: LuckpermsService,
-            format: Component,
-            placeholders: ConcretePlaceholders,
-            player: Player,
-        ): Component {
+    class Resolver(
+        private val logger: Logger,
+        private val luckpermsService: LuckpermsService,
+        private val backendFormatResolver: BackendFormat.Resolver,
+        private val proxyFormatResolver: ProxyFormat.Resolver,
+    ) {
+        suspend fun resolve(format: Component, placeholders: ConcretePlaceholders, player: Player): Component {
             val backendFormat: (suspend Component.() -> Component)? = player.currentServer.orElse(null)?.server?.let {
-                { backendContext.format.resolvePlaceholders(format, backendContext.placeholderResolver(placeholders), it) }
+                { backendFormatResolver.resolve(format, placeholders.backend, it) }
             }
 
             if (backendFormat == null) {
@@ -61,7 +47,7 @@ open class PlayerFormat(
 
             return sequenceOf(
                 backendFormat,
-                { proxyContext.format.resolve(proxyServer, this, proxyContext.placeholderResolver(placeholders)) },
+                { proxyFormatResolver.resolve(this, placeholders.proxy) },
                 { replaceText { it.matchLiteral(placeholders.latency).replacement(player.ping.toString()) } },
                 { replaceText { it.matchLiteral(placeholders.username).replacement(player.username) } },
                 { replaceText { it.matchLiteral(placeholders.id).replacement(player.uniqueId.toString()) } },
@@ -70,6 +56,10 @@ open class PlayerFormat(
             ).filterNotNull().fold(format) { acc, transform -> transform(acc) }
         }
 
+        suspend fun resolve(format: PlayerFormat, player: Player): Component = resolve(format.format, format.placeholders, player)
+    }
+
+    companion object : MessageFormat.Builder<ConcretePlaceholders, PlayerFormat> {
         override fun build(block: ConcretePlaceholders.() -> Component): PlayerFormat {
             val placeholders = ConcretePlaceholders()
             return PlayerFormat(block(placeholders), placeholders)

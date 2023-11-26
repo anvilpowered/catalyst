@@ -24,6 +24,14 @@ import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.chat.placeholder.BackendFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.ChatChannelFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.ProxyFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
@@ -44,9 +52,12 @@ import org.anvilpowered.catalyst.velocity.listener.CommandListener
 import org.anvilpowered.catalyst.velocity.listener.DiscordListener
 import org.anvilpowered.catalyst.velocity.listener.JoinListener
 import org.anvilpowered.catalyst.velocity.listener.LeaveListener
+import org.anvilpowered.catalyst.velocity.tab.GlobalTab
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
 
 interface CatalystApi {
@@ -75,6 +86,19 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         singleOf(::StaffListService)
         singleOf(::MinecraftUserRepositoryImpl) { bind<MinecraftUserRepository>() }
         singleOf(::UserRepositoryImpl) { bind<UserRepository>() }
+
+        singleOf(BackendFormat::Resolver)
+        singleOf(ChannelMessageFormat::Resolver)
+        singleOf(ChatChannelFormat::Resolver)
+        singleOf(MessageContentFormat::Resolver)
+        singleOf(OnlineUserFormat::Resolver)
+        singleOf(PlayerFormat::Resolver)
+        singleOf(PrivateMessageFormat::Resolver)
+        singleOf(ProxyFormat::Resolver)
+
+        singleOf(::GlobalTab).withOptions {
+            createdAtStart()
+        }
     }
 
     return object : CatalystApi {

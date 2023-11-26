@@ -26,6 +26,7 @@ import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.apache.logging.log4j.Logger
 import java.util.UUID
@@ -37,6 +38,7 @@ class ChatServiceImpl(
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
     private val channelService: ChannelService,
+    private val playerFormatResolver: PlayerFormat.Resolver,
 ) : ChatService {
     private var ignoreMap = mutableMapOf<UUID, MutableList<UUID>>()
     private var disabledList = mutableListOf<UUID>()
@@ -52,7 +54,7 @@ class ChatServiceImpl(
                 it.hasPermission(registry[catalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
                     channelService.getForPlayer(it.uniqueId).id == channelId
             }.filterNot { isIgnored(it.uniqueId, sourceUserId) }
-            .forEach { it.sendMessage(message.formatted.resolve(proxyServer, logger, luckpermsService, it)) }
+            .forEach { it.sendMessage(playerFormatResolver.resolve(message.formatted, it)) }
     }
 
     override fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component {

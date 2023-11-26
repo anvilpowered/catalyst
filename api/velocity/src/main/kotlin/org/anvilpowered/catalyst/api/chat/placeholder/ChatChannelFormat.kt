@@ -28,20 +28,21 @@ class ChatChannelFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
-    fun resolve(channel: ChatChannel): Component = resolve(format, placeholders, channel)
-
-    companion object : MessageFormat.Builder<Placeholders, ChatChannelFormat> {
-
+    class Resolver {
         fun resolve(format: Component, placeholders: Placeholders, channel: ChatChannel): Component {
             return sequenceOf<Component.() -> Component>(
                 { replaceText { it.matchLiteral(placeholders.id).replacement(channel.id) } },
                 { replaceText { it.matchLiteral(placeholders.name).replacement(channel.name) } },
                 { replaceText { it.matchLiteral(placeholders.alwaysVisible).replacement(channel.alwaysVisible.toString()) } },
                 { replaceText { it.matchLiteral(placeholders.passthrough).replacement(channel.passthrough.toString()) } },
-                { replaceText { it.matchLiteral(placeholders.discordChannelid).replacement(channel.discordChannelId) } },
+                { replaceText { it.matchLiteral(placeholders.discordChannelId).replacement(channel.discordChannelId) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
+        fun resolve(format: ChatChannelFormat, channel: ChatChannel): Component = resolve(format.format, format.placeholders, channel)
+    }
+
+    companion object Builder : MessageFormat.Builder<Placeholders, ChatChannelFormat> {
         override fun build(block: Placeholders.() -> Component): ChatChannelFormat {
             val placeholders = Placeholders()
             return ChatChannelFormat(block(placeholders), placeholders)
@@ -59,6 +60,6 @@ class ChatChannelFormat(
         val name: Placeholder = "%${pathPrefix}name%"
         val alwaysVisible: Placeholder = "%${pathPrefix}alwaysVisible%"
         val passthrough: Placeholder = "%${pathPrefix}passthrough%"
-        val discordChannelid: Placeholder = "%${pathPrefix}discordChannelid%"
+        val discordChannelId: Placeholder = "%${pathPrefix}discordChannelId%"
     }
 }

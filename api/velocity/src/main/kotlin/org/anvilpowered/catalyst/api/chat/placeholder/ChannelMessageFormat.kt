@@ -28,22 +28,21 @@ class ChannelMessageFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
-    suspend fun resolve(message: ChannelMessage): PlayerFormat = resolve(format, placeholders, message)
-
-    // TODO: Consider DI
-    companion object : MessageFormat.Builder<Placeholders, ChannelMessageFormat> {
-
-        private val channelContext = NestedFormat(ChatChannelFormat, Placeholders::channel)
-
+    class Resolver(private val chatChannelFormatResolver: ChatChannelFormat.Resolver) {
         suspend fun resolve(format: Component, placeholders: Placeholders, message: ChannelMessage): PlayerFormat {
             val resultFormat = sequenceOf<suspend Component.() -> Component>(
-                { channelContext.format.resolve(this, channelContext.placeholderResolver(placeholders), message.channel) },
+                { chatChannelFormatResolver.resolve(this, placeholders.channel, message.channel) },
                 { replaceText { it.matchLiteral(placeholders.name).replacement(message.name) } },
                 { replaceText { it.matchLiteral(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -> transform(acc) }
             return PlayerFormat(resultFormat, PlayerFormat.ConcretePlaceholders(listOf("recipient")))
         }
 
+        suspend fun resolve(format: ChannelMessageFormat, message: ChannelMessage): PlayerFormat =
+            resolve(format.format, format.placeholders, message)
+    }
+
+    companion object Builder : MessageFormat.Builder<Placeholders, ChannelMessageFormat> {
         override fun build(block: Placeholders.() -> Component): ChannelMessageFormat {
             val placeholders = Placeholders()
             return ChannelMessageFormat(block(placeholders), placeholders)

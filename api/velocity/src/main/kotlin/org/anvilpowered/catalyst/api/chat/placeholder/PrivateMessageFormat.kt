@@ -18,12 +18,9 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
-import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.chat.PrivateMessage
-import org.apache.logging.log4j.Logger
 
 @Serializable(with = PrivateMessageFormat.Serializer::class)
 class PrivateMessageFormat(
@@ -31,51 +28,24 @@ class PrivateMessageFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
-    suspend fun resolve(
-        proxyServer: ProxyServer,
-        logger: Logger,
-        luckpermsService: LuckpermsService,
-        message: PrivateMessage,
-    ): Component = resolve(proxyServer, logger, luckpermsService, format, placeholders, message)
-
-    companion object : MessageFormat.Builder<Placeholders, PrivateMessageFormat> {
-
-        private val sourceContext = NestedFormat(OnlineUserFormat, Placeholders::source)
-        private val recipientContext = NestedFormat(OnlineUserFormat, Placeholders::recipient)
-
+    class Resolver(private val onlineUserFormatResolver: OnlineUserFormat.Resolver) {
         suspend fun resolve(
-            proxyServer: ProxyServer,
-            logger: Logger,
-            luckpermsService: LuckpermsService,
             format: Component,
             placeholders: Placeholders,
             message: PrivateMessage,
         ): Component {
             return sequenceOf<suspend Component.() -> Component>(
-                {
-                    sourceContext.format.resolve(
-                        proxyServer,
-                        logger,
-                        luckpermsService,
-                        this,
-                        sourceContext.placeholderResolver(placeholders),
-                        message.source,
-                    )
-                },
-                {
-                    recipientContext.format.resolve(
-                        proxyServer,
-                        logger,
-                        luckpermsService,
-                        this,
-                        recipientContext.placeholderResolver(placeholders),
-                        message.recipient,
-                    )
-                },
+                { onlineUserFormatResolver.resolve(this, placeholders.source, message.source) },
+                { onlineUserFormatResolver.resolve(this, placeholders.recipient, message.recipient) },
                 { replaceText { it.matchLiteral(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
 
+        suspend fun resolve(format: PrivateMessageFormat, message: PrivateMessage): Component =
+            resolve(format.format, format.placeholders, message)
+    }
+
+    companion object : MessageFormat.Builder<Placeholders, PrivateMessageFormat> {
         override fun build(block: Placeholders.() -> Component): PrivateMessageFormat {
             val placeholders = Placeholders()
             return PrivateMessageFormat(block(placeholders), placeholders)

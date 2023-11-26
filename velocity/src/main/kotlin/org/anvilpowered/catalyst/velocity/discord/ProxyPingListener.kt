@@ -25,6 +25,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import com.velocitypowered.api.util.ModInfo
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.chat.placeholder.ProxyFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import java.util.UUID
 
@@ -32,6 +33,7 @@ class ProxyPingListener(
     private val proxyServer: ProxyServer,
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
+    private val proxyFormatResolver: ProxyFormat.Resolver,
 ) {
 
     @Subscribe
@@ -40,7 +42,7 @@ class ProxyPingListener(
         val builder = ServerPing.builder()
         var modInfo: ModInfo? = null
         if (registry[catalystKeys.MOTD_ENABLED]) {
-            builder.description(registry[catalystKeys.MOTD].resolve(proxyServer))
+            builder.description(proxyFormatResolver.resolve(registry[catalystKeys.MOTD]))
         } else {
             return
         }

@@ -18,12 +18,9 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
-import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
 import org.anvilpowered.catalyst.api.user.MinecraftUser
-import org.apache.logging.log4j.Logger
 
 @Serializable(with = OnlineUserFormat.Serializer::class)
 class OnlineUserFormat(
@@ -31,31 +28,16 @@ class OnlineUserFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) : MessageFormat {
 
-    suspend fun resolve(
-        proxyServer: ProxyServer,
-        logger: Logger,
-        luckpermsService: LuckpermsService,
-        user: MinecraftUser.Online,
-    ): Component = resolve(proxyServer, logger, luckpermsService, format, placeholders, user)
+    class Resolver(private val playerFormatResolver: PlayerFormat.Resolver) {
+        suspend fun resolve(format: Component, placeholders: Placeholders, user: MinecraftUser.Online): Component =
+            playerFormatResolver.resolve(format, PlayerFormat.ConcretePlaceholders(placeholders.path), user.player)
+                .replaceText { it.matchLiteral(placeholders.displayname).replacement(user.user.nickname ?: user.player.username) }
+
+        suspend fun resolve(format: OnlineUserFormat, user: MinecraftUser.Online): Component =
+            resolve(format.format, format.placeholders, user)
+    }
 
     companion object : MessageFormat.Builder<Placeholders, OnlineUserFormat> {
-
-        suspend fun resolve(
-            proxyServer: ProxyServer,
-            logger: Logger,
-            luckpermsService: LuckpermsService,
-            format: Component,
-            placeholders: Placeholders,
-            user: MinecraftUser.Online,
-        ): Component = PlayerFormat.resolve(
-            proxyServer,
-            logger,
-            luckpermsService,
-            format,
-            PlayerFormat.ConcretePlaceholders(placeholders.path),
-            user.player,
-        ).replaceText { it.matchLiteral(placeholders.displayname).replacement(user.user.nickname ?: user.player.username) }
-
         override fun build(block: Placeholders.() -> Component): OnlineUserFormat {
             val placeholders = Placeholders()
             return OnlineUserFormat(block(placeholders), placeholders)

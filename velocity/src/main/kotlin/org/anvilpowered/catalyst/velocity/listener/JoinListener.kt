@@ -23,7 +23,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
@@ -36,8 +36,8 @@ class JoinListener(
     private val catalystKeys: CatalystKeys,
     private val logger: Logger,
     private val staffListService: StaffListService,
-    private val luckpermsService: LuckpermsService,
     private val minecraftUserRepository: MinecraftUserRepository,
+    private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
 ) {
     @Subscribe
     fun onPlayerJoin(event: PostLoginEvent) = runBlocking {
@@ -53,7 +53,7 @@ class JoinListener(
         val user = MinecraftUser.Online(result.entity, player)
 
         if (result.created && registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
-            proxyServer.sendMessage(registry[catalystKeys.FIRST_JOIN].resolve(proxyServer, logger, luckpermsService, user))
+            proxyServer.sendMessage(onlineUserFormatResolver.resolve(registry[catalystKeys.FIRST_JOIN], user))
         }
 
         staffListService.getStaffNames(
@@ -62,7 +62,7 @@ class JoinListener(
             player.hasPermission(registry[catalystKeys.STAFFLIST_STAFF_PERMISSION]),
             player.hasPermission(registry[catalystKeys.STAFFLIST_OWNER_PERMISSION]),
         )
-        val joinMessage = registry[catalystKeys.JOIN_MESSAGE].resolve(proxyServer, logger, luckpermsService, user)
+        val joinMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.JOIN_MESSAGE], user)
         if (registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
             proxyServer.sendMessage(joinMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))

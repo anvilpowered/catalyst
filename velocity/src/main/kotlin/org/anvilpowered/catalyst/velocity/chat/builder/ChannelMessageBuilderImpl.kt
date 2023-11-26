@@ -24,6 +24,8 @@ import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
@@ -36,6 +38,8 @@ internal class ChannelMessageBuilderImpl(
     private val luckpermsService: LuckpermsService,
     private val minecraftUserRepository: MinecraftUserRepository,
     private val channelService: ChannelService,
+    private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
+    private val messageContentFormatResolver: MessageContentFormat.Resolver,
 ) : ChannelMessage.Builder {
 
     private var user: MinecraftUser? = null
@@ -72,11 +76,15 @@ internal class ChannelMessageBuilderImpl(
         val channel = requireNotNull(channel) { "Channel is null" }
         val rawContent = requireNotNull(rawContent) { "Content is null" }
 
-        val name = (luckpermsService.nameFormat(player.uniqueId, channel.id) ?: channel.nameFormat)
-            .resolve(proxyServer, logger, luckpermsService, MinecraftUser.Online(user, player))
+        val name = onlineUserFormatResolver.resolve(
+            format = luckpermsService.nameFormat(player.uniqueId, channel.id) ?: channel.nameFormat,
+            MinecraftUser.Online(user, player),
+        )
 
-        val content = (luckpermsService.getMessageContentFormat(player.uniqueId, channel.id) ?: channel.contentFormat)
-            .resolve(rawContent)
+        val content = messageContentFormatResolver.resolve(
+            format = luckpermsService.getMessageContentFormat(player.uniqueId, channel.id) ?: channel.contentFormat,
+            rawContent,
+        )
 
         return ChannelMessage(MinecraftUser.Online(user, player), channel, name, content)
     }
@@ -87,8 +95,17 @@ internal class ChannelMessageBuilderImpl(
         private val luckpermsService: LuckpermsService,
         private val minecraftUserRepository: MinecraftUserRepository,
         private val channelService: ChannelService,
+        private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
+        private val messageContentFormatResolver: MessageContentFormat.Resolver,
     ) : ChannelMessage.Builder.Factory {
-        override fun builder(): ChannelMessage.Builder =
-            ChannelMessageBuilderImpl(proxyServer, logger, luckpermsService, minecraftUserRepository, channelService)
+        override fun builder(): ChannelMessage.Builder = ChannelMessageBuilderImpl(
+            proxyServer,
+            logger,
+            luckpermsService,
+            minecraftUserRepository,
+            channelService,
+            onlineUserFormatResolver,
+            messageContentFormatResolver,
+        )
     }
 }
