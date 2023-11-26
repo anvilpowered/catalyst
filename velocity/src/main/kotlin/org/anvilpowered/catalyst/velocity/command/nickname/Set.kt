@@ -37,7 +37,7 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
     ArgumentBuilder.literal<CommandSource>("set")
         .addHelpChild("nickname set <nickname> [<player>]")
         .then(
-            ArgumentBuilder.required<CommandSource, String>("nickname", StringArgumentType.singleWord())
+            ArgumentBuilder.required<CommandSource, String>("nickname", StringArgumentType.quotablePhrase())
                 .executesSuspending { context ->
                     (context.source as? Player)?.let { player ->
                         if (!player.hasPermission("catalyst.nickname.set.base")) {
