@@ -43,6 +43,7 @@ import org.anvilpowered.catalyst.velocity.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.velocity.chat.StaffListService
 import org.anvilpowered.catalyst.velocity.chat.builder.ChannelMessageBuilderImpl
 import org.anvilpowered.catalyst.velocity.chat.builder.ChatChannelBuilderImpl
+import org.anvilpowered.catalyst.velocity.command.broadcast.BroadcastCommandFactory
 import org.anvilpowered.catalyst.velocity.command.nickname.NicknameCommandFactory
 import org.anvilpowered.catalyst.velocity.db.user.MinecraftUserRepositoryImpl
 import org.anvilpowered.catalyst.velocity.db.user.UserRepositoryImpl
@@ -78,7 +79,6 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         singleOf(ChannelMessageBuilderImpl::Factory) { bind<ChannelMessage.Builder.Factory>() }
         singleOf(::ChannelServiceImpl) { bind<ChannelService>() }
         singleOf(::ChatServiceImpl) { bind<ChatService>() }
-        singleOf(::NicknameCommandFactory)
         singleOf(::ChatListener)
         singleOf(::CatalystKeys)
         singleOf(::CommandListener)
@@ -102,6 +102,9 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         singleOf(::GlobalTab).withOptions {
             createdAtStart()
         }
+
+        singleOf(::NicknameCommandFactory)
+        singleOf(::BroadcastCommandFactory)
 
         singleOf(::CommandRegistrar) { bind<Registrar>() }
         singleOf(::ListenerRegistrar) { bind<Registrar>() }

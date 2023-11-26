@@ -19,6 +19,5 @@
 package org.anvilpowered.catalyst.velocity.registrar
 
 interface Registrar {
-
     fun register()
 }
