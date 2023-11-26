@@ -50,8 +50,6 @@ class CatalystVelocityBootstrap @Inject constructor(private val injector: Inject
                 module { singleOf(::CatalystVelocityPlugin) },
             )
         }.koin.get()
-        plugin.registerCommands()
-        plugin.registerListeners()
-        plugin.connectDatabase()
+        plugin.initialize()
     }
 }

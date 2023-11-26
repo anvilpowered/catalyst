@@ -52,6 +52,9 @@ import org.anvilpowered.catalyst.velocity.listener.CommandListener
 import org.anvilpowered.catalyst.velocity.listener.DiscordListener
 import org.anvilpowered.catalyst.velocity.listener.JoinListener
 import org.anvilpowered.catalyst.velocity.listener.LeaveListener
+import org.anvilpowered.catalyst.velocity.registrar.CommandRegistrar
+import org.anvilpowered.catalyst.velocity.registrar.ListenerRegistrar
+import org.anvilpowered.catalyst.velocity.registrar.Registrar
 import org.anvilpowered.catalyst.velocity.tab.GlobalTab
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
@@ -99,6 +102,9 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         singleOf(::GlobalTab).withOptions {
             createdAtStart()
         }
+
+        singleOf(::CommandRegistrar) { bind<Registrar>() }
+        singleOf(::ListenerRegistrar) { bind<Registrar>() }
     }
 
     return object : CatalystApi {

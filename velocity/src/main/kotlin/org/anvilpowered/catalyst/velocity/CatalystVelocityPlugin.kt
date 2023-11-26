@@ -18,60 +18,29 @@
 
 package org.anvilpowered.catalyst.velocity
 
-import com.velocitypowered.api.command.BrigadierCommand
-import com.velocitypowered.api.command.CommandSource
-import com.velocitypowered.api.plugin.PluginContainer
-import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.velocity.command.nickname.NicknameCommandFactory
 import org.anvilpowered.catalyst.velocity.db.user.MinecraftUserTable
 import org.anvilpowered.catalyst.velocity.db.user.UserTable
-import org.anvilpowered.catalyst.velocity.listener.ChatListener
-import org.anvilpowered.catalyst.velocity.listener.CommandListener
-import org.anvilpowered.catalyst.velocity.listener.DiscordListener
-import org.anvilpowered.catalyst.velocity.listener.JoinListener
-import org.anvilpowered.catalyst.velocity.listener.LeaveListener
-import org.anvilpowered.kbrig.brigadier.toBrigadier
-import org.anvilpowered.kbrig.tree.LiteralCommandNode
+import org.anvilpowered.catalyst.velocity.registrar.Registrar
 import org.apache.logging.log4j.Logger
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class CatalystVelocityPlugin(
-    private val proxyServer: ProxyServer,
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
-    private val pluginContainer: PluginContainer,
     private val logger: Logger,
-    private val nicknameCommandFactory: NicknameCommandFactory,
-    private val chatListener: ChatListener,
-    private val commandListener: CommandListener,
-    private val discordListener: DiscordListener,
-    private val joinListener: JoinListener,
-    private val leaveListener: LeaveListener,
+    private val registrars: List<Registrar>,
 ) {
 
-    private fun LiteralCommandNode<CommandSource>.register() = proxyServer.commandManager.register(BrigadierCommand(toBrigadier()))
-
-    fun registerCommands() {
-        logger.info("Building command trees and registering commands...")
-        nicknameCommandFactory.create().register()
-        logger.info("Finished registering commands.")
+    fun initialize() {
+        connectDatabase()
+        registrars.forEach(Registrar::register)
     }
 
-    fun registerListeners() {
-        logger.info("Registering listeners...")
-        proxyServer.eventManager.register(pluginContainer, chatListener)
-        proxyServer.eventManager.register(pluginContainer, commandListener)
-        proxyServer.eventManager.register(pluginContainer, discordListener)
-        proxyServer.eventManager.register(pluginContainer, joinListener)
-        proxyServer.eventManager.register(pluginContainer, leaveListener)
-        logger.info("Finished registering listeners.")
-    }
-
-    fun connectDatabase() {
+    private fun connectDatabase() {
         logger.info("Connecting to database...")
         Database.connect(
             registry[catalystKeys.DB_URL],
