@@ -56,6 +56,7 @@ class PrivateMessageService(
         source.sendMessage(privateMessageFormatResolver.resolve(registry[catalystKeys.PRIVATE_MESSAGE_SOURCE_FORMAT], message))
         recipient.sendMessage(privateMessageFormatResolver.resolve(registry[catalystKeys.PRIVATE_MESSAGE_RECIPIENT_FORMAT], message))
         replyMap[recipient.uniqueId] = source.uniqueId
+        replyMap[source.uniqueId] = recipient.uniqueId
         socialSpy(message)
     }
 
