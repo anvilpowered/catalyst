@@ -1,0 +1,39 @@
+{
+  "patches": [
+    {
+      "file": "/server/plugins/luckperms/config.yml",
+      "ops": [
+        {
+          "$set": {
+            "path": "$.storage-method",
+            "value": "postgresql"
+          }
+        },
+        {
+          "$set": {
+            "path": "$.data.address",
+            "value": "db"
+          }
+        },
+        {
+          "$set": {
+            "path": "$.data.database",
+            "value": "catalyst_docker_compose"
+          }
+        },
+        {
+          "$set": {
+            "path": "$.data.username",
+            "value": "catalyst_docker_compose"
+          }
+        },
+        {
+          "$set": {
+            "path": "$.data.password",
+            "value": "catalyst_docker_compose"
+          }
+        }
+      ]
+    }
+  ]
+}

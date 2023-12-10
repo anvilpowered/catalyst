@@ -1,33 +1,46 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm")
-    `java-library`
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.kotlin.serialization)
 }
 
-subprojects {
+val projectVersion = file("version").readLines().first()
+
+allprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "java-library")
     group = "org.anvilpowered"
-    version = "0.4.0-SNAPSHOT"
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven("https://oss.sonatype.org/content/repositories/snapshots")
-        maven("https://repo.spongepowered.org/repository/maven-public/")
-        maven("https://packages.jetbrains.team/maven/p/xodus/xodus-daily")
-        maven("https://papermc.io/repo/repository/maven-public/")
-        maven("https://jetbrains.bintray.com/xodus")
-    }
+    version = projectVersion
     project.findProperty("buildNumber")
         ?.takeIf { version.toString().contains("SNAPSHOT") }
         ?.also { version = version.toString().replace("SNAPSHOT", "RC$it") }
+    kotlin {
+        compilerOptions {
+            freeCompilerArgs = listOf(
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xcontext-receivers",
+            )
+        }
+    }
+
     tasks {
         withType<KotlinCompile> {
             kotlinOptions.jvmTarget = "17"
-            kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         }
         withType<JavaCompile> {
-            targetCompatibility = "17"
+            options.encoding = "UTF-8"
             sourceCompatibility = "17"
+            targetCompatibility = "17"
         }
     }
+}
+
+// for uber jar
+dependencies {
+    runtimeOnly(project(":catalyst-proxy"))
 }

@@ -1,0 +1,118 @@
+/*
+ *   Catalyst - AnvilPowered.org
+ *   Copyright (C) 2019-2024 Contributors
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package org.anvilpowered.catalyst.proxy
+
+import com.google.inject.Injector
+import org.anvilpowered.anvil.core.config.EnvironmentRegistry
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.chat.ChannelMessage
+import org.anvilpowered.catalyst.api.chat.ChannelService
+import org.anvilpowered.catalyst.api.chat.LuckpermsService
+import org.anvilpowered.catalyst.api.chat.placeholder.BackendFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.ChatChannelFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.ProxyFormat
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.api.config.ChatChannel
+import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
+import org.anvilpowered.catalyst.api.user.UserRepository
+import org.anvilpowered.catalyst.proxy.chat.ChannelServiceImpl
+import org.anvilpowered.catalyst.proxy.chat.ChatFilter
+import org.anvilpowered.catalyst.proxy.chat.ChatService
+import org.anvilpowered.catalyst.proxy.chat.ChatServiceImpl
+import org.anvilpowered.catalyst.proxy.chat.StaffListService
+import org.anvilpowered.catalyst.proxy.chat.builder.ChannelMessageBuilderImpl
+import org.anvilpowered.catalyst.proxy.chat.builder.ChatChannelBuilderImpl
+import org.anvilpowered.catalyst.proxy.command.broadcast.BroadcastCommandFactory
+import org.anvilpowered.catalyst.proxy.command.nickname.NicknameCommandFactory
+import org.anvilpowered.catalyst.proxy.db.user.MinecraftUserRepositoryImpl
+import org.anvilpowered.catalyst.proxy.db.user.UserRepositoryImpl
+import org.anvilpowered.catalyst.proxy.discord.JDAService
+import org.anvilpowered.catalyst.proxy.discord.WebhookSender
+import org.anvilpowered.catalyst.proxy.listener.ChatListener
+import org.anvilpowered.catalyst.proxy.listener.CommandListener
+import org.anvilpowered.catalyst.proxy.listener.DiscordListener
+import org.anvilpowered.catalyst.proxy.listener.JoinListener
+import org.anvilpowered.catalyst.proxy.listener.LeaveListener
+import org.anvilpowered.catalyst.proxy.registrar.CommandRegistrar
+import org.anvilpowered.catalyst.proxy.registrar.ListenerRegistrar
+import org.anvilpowered.catalyst.proxy.registrar.Registrar
+import org.anvilpowered.catalyst.proxy.tab.GlobalTab
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.createdAtStart
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.withOptions
+import org.koin.dsl.module
+
+interface CatalystApi {
+    val module: Module
+
+    companion object
+}
+
+fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
+    val velocityModule = module {
+        single<Registry> { EnvironmentRegistry(prefix = "CATALYST") }
+        singleOf(::LuckpermsService)
+        singleOf(::WebhookSender)
+        singleOf(::ChatFilter)
+        singleOf(ChatChannelBuilderImpl::Factory) { bind<ChatChannel.Builder.Factory>() }
+        singleOf(ChannelMessageBuilderImpl::Factory) { bind<ChannelMessage.Builder.Factory>() }
+        singleOf(::ChannelServiceImpl) { bind<ChannelService>() }
+        singleOf(::ChatServiceImpl) { bind<ChatService>() }
+        singleOf(::ChatListener)
+        singleOf(::CatalystKeys)
+        singleOf(::CommandListener)
+        singleOf(::JoinListener)
+        singleOf(::LeaveListener)
+        singleOf(::DiscordListener)
+        singleOf(::JDAService)
+        singleOf(::StaffListService)
+        singleOf(::MinecraftUserRepositoryImpl) { bind<MinecraftUserRepository>() }
+        singleOf(::UserRepositoryImpl) { bind<UserRepository>() }
+
+        singleOf(BackendFormat::Resolver)
+        singleOf(ChannelMessageFormat::Resolver)
+        singleOf(ChatChannelFormat::Resolver)
+        singleOf(MessageContentFormat::Resolver)
+        singleOf(OnlineUserFormat::Resolver)
+        singleOf(PlayerFormat::Resolver)
+        singleOf(PrivateMessageFormat::Resolver)
+        singleOf(ProxyFormat::Resolver)
+
+        singleOf(::GlobalTab).withOptions {
+            createdAtStart()
+        }
+
+        singleOf(::NicknameCommandFactory)
+        singleOf(::BroadcastCommandFactory)
+
+        singleOf(::CommandRegistrar) { bind<Registrar>() }
+        singleOf(::ListenerRegistrar) { bind<Registrar>() }
+    }
+
+    return object : CatalystApi {
+        override val module: Module = velocityModule
+    }
+}
