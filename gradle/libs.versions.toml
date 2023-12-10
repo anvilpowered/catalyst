@@ -1,5 +1,5 @@
 [versions]
-kbrig = "0.1.0-SNAPSHOT"
+kbrig = "0.1.0"
 kotlin = "1.9.21"
 ktor = "2.3.6"
 log4j = "2.22.0"
