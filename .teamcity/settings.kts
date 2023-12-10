@@ -149,6 +149,10 @@ class PluginJar : BuildType() {
     init {
         name = "plugin-jar"
 
+        params {
+            param("env.VCS_BRANCH", "%teamcity.build.branch%")
+        }
+
         configureVcs()
         configureTriggers()
         features {
@@ -159,7 +163,7 @@ class PluginJar : BuildType() {
         steps {
             gradle {
                 id = "gradle_runner"
-                tasks = "shadowJar"
+                tasks = "clean shadowJar"
             }
         }
 
