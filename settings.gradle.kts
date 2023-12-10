@@ -2,7 +2,7 @@
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
         mavenCentral()
         maven("https://libraries.minecraft.net")
         maven("https://repo.papermc.io/repository/maven-public/")
@@ -21,10 +21,8 @@ rootProject.name = "catalyst"
 
 sequenceOf(
     "api",
-    "api-velocity",
     "core",
-    "paper",
-    "velocity",
+    "proxy",
 ).forEach {
     val project = ":catalyst-$it"
     include(project)

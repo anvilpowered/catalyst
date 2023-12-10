@@ -42,5 +42,5 @@ allprojects {
 
 // for uber jar
 dependencies {
-    runtimeOnly(project(":catalyst-velocity"))
+    runtimeOnly(project(":catalyst-proxy"))
 }
