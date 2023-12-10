@@ -16,9 +16,9 @@ allprojects {
     apply(plugin = "java-library")
     group = "org.anvilpowered"
     version = projectVersion
-    project.findProperty("buildNumber")
-        ?.takeIf { version.toString().contains("SNAPSHOT") }
-        ?.also { version = version.toString().replace("SNAPSHOT", "RC$it") }
+    System.getenv("BUILD_NUMBER")?.let { buildNumber ->
+        version = version.toString().replace("SNAPSHOT", "RC$buildNumber")
+    }
     kotlin {
         compilerOptions {
             freeCompilerArgs = listOf(
@@ -43,4 +43,10 @@ allprojects {
 // for uber jar
 dependencies {
     runtimeOnly(project(":catalyst-proxy"))
+}
+
+tasks {
+    shadowJar {
+        archiveFileName = "catalyst-${project.version}.jar"
+    }
 }

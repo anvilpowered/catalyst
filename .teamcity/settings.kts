@@ -40,10 +40,12 @@ project {
 
     val test = Test()
     val style = Style()
+    val pluginJar = PluginJar()
     val publish = Publish(test, style)
 
     buildType(test)
     buildType(style)
+    buildType(pluginJar)
     buildType(publish)
 
     features {
@@ -140,6 +142,28 @@ class Style : BuildType() {
                 tasks = "ktlintCheck"
             }
         }
+    }
+}
+
+class PluginJar : BuildType() {
+    init {
+        name = "plugin-jar"
+
+        configureVcs()
+        configureTriggers()
+        features {
+            configureBaseFeatures()
+            configurePullRequests()
+        }
+
+        steps {
+            gradle {
+                id = "gradle_runner"
+                tasks = "shadowJar"
+            }
+        }
+
+        artifactRules = "+:build/libs/*.jar"
     }
 }
 
