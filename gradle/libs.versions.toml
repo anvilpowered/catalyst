@@ -1,7 +1,7 @@
 [versions]
 kbrig = "0.1.0-SNAPSHOT"
 kotlin = "1.9.21"
-ktor = "2.3.6"
+ktor = "2.3.7"
 log4j = "2.22.0"
 
 [libraries]
