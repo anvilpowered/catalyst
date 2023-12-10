@@ -67,7 +67,8 @@ class OnlineUserFormat(
 
     object Serializer : MessageFormat.Serializer<OnlineUserFormat>(::OnlineUserFormat)
 
-    open class Placeholders(internal val path: List<String> = listOf()) : MessageFormat.Placeholders<OnlineUserFormat>,
+    open class Placeholders(internal val path: List<String> = listOf()) :
+        MessageFormat.Placeholders<OnlineUserFormat>,
         PlayerFormat.Placeholders by PlayerFormat.ConcretePlaceholders(path) {
 
         private val pathPrefix = path.joinToString("") { "$it." }

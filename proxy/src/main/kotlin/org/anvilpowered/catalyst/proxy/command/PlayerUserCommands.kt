@@ -21,7 +21,6 @@ package org.anvilpowered.catalyst.proxy.command
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
-import kotlin.jvm.optionals.getOrNull
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.anvilpowered.kbrig.argument.StringArgumentType
@@ -29,7 +28,7 @@ import org.anvilpowered.kbrig.builder.ArgumentBuilder.Companion.required
 import org.anvilpowered.kbrig.builder.RequiredArgumentBuilder
 import org.anvilpowered.kbrig.context.CommandContext
 import org.anvilpowered.kbrig.context.get
-
+import kotlin.jvm.optionals.getOrNull
 
 fun ProxyServer.playerArgument(
     argumentName: String = "player",

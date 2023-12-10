@@ -65,7 +65,7 @@ class MessageCommandFactory(
                                         privateMessageService.sendMessage(
                                             context.source as Player,
                                             context.get<Player>("player"),
-                                            Component.text(context.get<String>("message"))
+                                            Component.text(context.get<String>("message")),
                                         )
                                     }
                                     0

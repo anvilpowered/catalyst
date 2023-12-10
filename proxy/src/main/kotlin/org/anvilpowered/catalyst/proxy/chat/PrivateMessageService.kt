@@ -44,7 +44,6 @@ class PrivateMessageService(
     private var replyMap = mutableMapOf<UUID, UUID>()
 
     suspend fun sendMessage(source: Player, recipient: Player, content: Component) {
-
         val sourceUser = minecraftUserRepository.getById(source.uniqueId)?.let { MinecraftUser.Online(it, source) }
             ?: throw IllegalStateException("User ${source.username} with id ${source.uniqueId} is not in the database!")
 
