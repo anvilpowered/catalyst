@@ -54,7 +54,7 @@ project {
             displayName = "anvilpowered/catalyst"
             repositoryURL = "https://github.com/anvilpowered/catalyst"
             authType = accessToken {
-                accessToken = "credentialsJSON:cd9fa95f-cb19-4a1c-87ad-e02c6ad4ade3"
+                accessToken = "credentialsJSON:f57a4fdd-fb30-41c0-9983-620364336d03"
             }
             param("tokenId", "")
         }
@@ -87,7 +87,7 @@ fun BuildFeatures.configureBaseFeatures() {
         publisher = github {
             githubUrl = "https://api.github.com"
             authType = personalToken {
-                token = "credentialsJSON:446a66f5-8a12-41b4-a31f-6eb9ee6087ba"
+                token = "credentialsJSON:f57a4fdd-fb30-41c0-9983-620364336d03"
             }
         }
     }
@@ -98,7 +98,7 @@ fun BuildFeatures.configurePullRequests() {
         vcsRootExtId = "${DslContext.settingsRoot.id}"
         provider = github {
             authType = token {
-                token = "credentialsJSON:a30ebfc3-045a-4821-9f62-f061490d2987"
+                token = "credentialsJSON:f57a4fdd-fb30-41c0-9983-620364336d03"
             }
             filterAuthorRole = PullRequests.GitHubRoleFilter.MEMBER_OR_COLLABORATOR
         }
