@@ -46,11 +46,34 @@ services:
         https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/XDSKb8fH/SignedVelocity-Proxy-1.2.1.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json # Does not work yet
-      CATALYST_DB_URL: jdbc\:postgresql\://db:5432/catalyst_docker_compose
+      CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
       CATALYST_DB_PASSWORD: catalyst_docker_compose
       CATALYST_DISCORD_ENABLED: false
       CATALYST_DISCORD_BOT_TOKEN: "<token here>"
+      CATALYST_CHAT_CHANNELS: |
+        {
+            "global": {
+                "id": "global",
+                "name": "<green>[Global]",
+                "nameFormat": "<gold>[%backend.name%]</gold>%prefix% %displayname%",
+                "contentFormat": "%content%",
+                "messageFormat": "%channel.name% %name%: %content%",
+                "alwaysVisible": true,
+                "passthrough": false,
+                "discordChannelId": "123456789"
+            },
+            "admin": {
+                "id": "admin",
+                "name": "Admin",
+                "nameFormat": "<gold>[%backend.name%]</gold>%prefix% %displayname%",
+                "contentFormat": "%content%",
+                "messageFormat": "<red>%channel.name%%name%: %content%",
+                "alwaysVisible": true,
+                "passthrough": false,
+                "discordChannelId": "123456789"
+            }
+        }
     volumes:
       - ../../build/libs:/plugins
       - ../config/velocity.toml:/server/velocity.toml
