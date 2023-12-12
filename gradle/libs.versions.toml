@@ -24,7 +24,7 @@ koin ="io.insert-koin:koin-core:3.5.2-RC1"
 kontour = "org.sourcegrade:kontour-domain:0.1.0-SNAPSHOT"
 kotest = "io.kotest:kotest-runner-junit5-jvm:5.5.4"
 kotlinx-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.5.0"
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
