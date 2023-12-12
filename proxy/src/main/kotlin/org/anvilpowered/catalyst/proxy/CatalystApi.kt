@@ -19,6 +19,7 @@
 package org.anvilpowered.catalyst.proxy
 
 import com.google.inject.Injector
+import org.anvilpowered.anvil.core.command.config.ConfigCommandFactory
 import org.anvilpowered.anvil.core.config.EnvironmentRegistry
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
@@ -43,6 +44,7 @@ import org.anvilpowered.catalyst.proxy.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.proxy.chat.StaffListService
 import org.anvilpowered.catalyst.proxy.chat.builder.ChannelMessageBuilderImpl
 import org.anvilpowered.catalyst.proxy.chat.builder.ChatChannelBuilderImpl
+import org.anvilpowered.catalyst.proxy.command.CatalystCommandFactory
 import org.anvilpowered.catalyst.proxy.command.broadcast.BroadcastCommandFactory
 import org.anvilpowered.catalyst.proxy.command.nickname.NicknameCommandFactory
 import org.anvilpowered.catalyst.proxy.db.user.MinecraftUserRepositoryImpl
@@ -105,6 +107,9 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
             createdAtStart()
         }
 
+        single { ConfigCommandFactory(get(), get<CatalystKeys>()) }
+
+        singleOf(::CatalystCommandFactory)
         singleOf(::NicknameCommandFactory)
         singleOf(::BroadcastCommandFactory)
 

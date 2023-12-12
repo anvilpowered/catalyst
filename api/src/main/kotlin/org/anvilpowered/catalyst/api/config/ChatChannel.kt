@@ -22,12 +22,13 @@ import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MiniMessageSerializer
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 
 @Serializable
 data class ChatChannel(
     val id: String,
-    val name: Component,
+    @Serializable(with = MiniMessageSerializer::class) val name: Component,
     val nameFormat: OnlineUserFormat,
     val contentFormat: MessageContentFormat,
     val messageFormat: ChannelMessageFormat,

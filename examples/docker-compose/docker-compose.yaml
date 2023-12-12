@@ -46,7 +46,7 @@ services:
         https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/XDSKb8fH/SignedVelocity-Proxy-1.2.1.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json # Does not work yet
-      CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
+      CATALYST_DB_URL: jdbc\:postgresql\://db:5432/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
       CATALYST_DB_PASSWORD: catalyst_docker_compose
       CATALYST_DISCORD_ENABLED: false
@@ -64,6 +64,7 @@ services:
       - 25565
     environment:
       TYPE: PAPER
+      VERSION: "1.20.2"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
@@ -79,6 +80,7 @@ services:
       - 25565
     environment:
       TYPE: PAPER
+      VERSION: "1.20.2"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
