@@ -138,6 +138,8 @@ class Style : BuildType() {
                 tasks = "ktlintCheck"
             }
         }
+
+        artifactRules = "+:build/reports/ktlint"
     }
 }
 
