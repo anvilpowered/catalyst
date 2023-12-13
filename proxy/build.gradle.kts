@@ -14,12 +14,4 @@ dependencies {
     kapt(libs.velocity)
     implementation(libs.discord.jda)
     implementation(libs.discord.webhooks)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.content.negotiation)
-    api(libs.ktor.serialization)
-    api(libs.koin)
-    runtimeOnly(libs.postgrsql)
-//    implementation("net.kyori:adventure-text-minimessage:$minimessageVersion")
-//    compileOnly("com.velocitypowered:velocity-api:3.0.0-SNAPSHOT")
-//    kapt("com.velocitypowered:velocity-api:3.0.0-SNAPSHOT")
 }
