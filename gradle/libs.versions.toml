@@ -1,5 +1,4 @@
 [versions]
-kbrig = "0.1.0-SNAPSHOT"
 kotlin = "1.9.21"
 ktor = "2.3.6"
 log4j = "2.22.0"
@@ -18,8 +17,6 @@ exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc" }
 exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time" }
 discord-jda = "net.dv8tion:JDA:5.0.0-beta.18"
 discord-webhooks = "club.minnced:discord-webhooks:0.8.4"
-kbrig-brigadier = { module = "org.anvilpowered:kbrig-brigadier", version.ref = "kbrig" }
-kbrig-core = { module = "org.anvilpowered:kbrig-core", version.ref = "kbrig" }
 koin ="io.insert-koin:koin-core:3.5.2-RC1"
 kontour = "org.sourcegrade:kontour-domain:0.1.0-SNAPSHOT"
 kotest = "io.kotest:kotest-runner-junit5-jvm:5.5.4"
