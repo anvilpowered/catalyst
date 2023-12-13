@@ -20,8 +20,9 @@ package org.anvilpowered.catalyst.proxy
 
 import com.google.inject.Injector
 import org.anvilpowered.anvil.core.command.config.ConfigCommandFactory
-import org.anvilpowered.anvil.core.config.EnvironmentRegistry
+import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.anvil.velocity.config.configureVelocityDefaults
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
@@ -60,6 +61,7 @@ import org.anvilpowered.catalyst.proxy.registrar.CommandRegistrar
 import org.anvilpowered.catalyst.proxy.registrar.ListenerRegistrar
 import org.anvilpowered.catalyst.proxy.registrar.Registrar
 import org.anvilpowered.catalyst.proxy.tab.GlobalTab
+import org.apache.logging.log4j.Logger
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.createdAtStart
@@ -73,9 +75,9 @@ interface CatalystApi {
     companion object
 }
 
-fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
+fun CatalystApi.Companion.create(injector: Injector, logger: Logger): CatalystApi {
     val velocityModule = module {
-        single<Registry> { EnvironmentRegistry(prefix = "CATALYST") }
+        Registry.configureVelocityDefaults(injector, logger)
         singleOf(::LuckpermsService)
         singleOf(::WebhookSender)
         singleOf(::ChatFilter)
@@ -84,7 +86,9 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         singleOf(::ChannelServiceImpl) { bind<ChannelService>() }
         singleOf(::ChatServiceImpl) { bind<ChatService>() }
         singleOf(::ChatListener)
-        singleOf(::CatalystKeys)
+        singleOf(::CatalystKeys).withOptions {
+            bind<KeyNamespace>()
+        }
         singleOf(::CommandListener)
         singleOf(::JoinListener)
         singleOf(::LeaveListener)
@@ -107,7 +111,7 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
             createdAtStart()
         }
 
-        single { ConfigCommandFactory(get(), get<CatalystKeys>()) }
+        single { ConfigCommandFactory(get(), get<CatalystKeys>(), getAll()) }
 
         singleOf(::CatalystCommandFactory)
         singleOf(::NicknameCommandFactory)
