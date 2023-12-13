@@ -6,7 +6,7 @@ val brigadierVersion: String by project
 
 plugins {
     kotlin("jvm")
-    id("net.kyori.blossom") version "1.3.0"
+    id("net.kyori.blossom") version "2.1.0"
     id("org.jetbrains.kotlin.kapt")
 }
 
