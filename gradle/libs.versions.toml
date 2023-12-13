@@ -10,7 +10,7 @@ coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta"
 discord-jda = "net.dv8tion:JDA:5.0.0-beta.18"
 discord-webhooks = "club.minnced:discord-webhooks:0.8.4"
 kotest = "io.kotest:kotest-runner-junit5-jvm:5.5.4"
-kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
 luckperms = "net.luckperms:api:5.4"
 velocity = "com.velocitypowered:velocity-api:3.1.1"
 
