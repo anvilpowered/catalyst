@@ -19,7 +19,6 @@
 package org.anvilpowered.catalyst.proxy
 
 import com.google.inject.Injector
-import org.anvilpowered.anvil.core.command.config.ConfigCommandFactory
 import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.velocity.config.configureVelocityDefaults
@@ -30,10 +29,12 @@ import org.anvilpowered.catalyst.api.chat.placeholder.BackendFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ChatChannelFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MiniMessageSerializer
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ProxyFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.register
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
@@ -68,6 +69,8 @@ import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
+import org.spongepowered.configurate.kotlin.objectMapperFactory
+import org.spongepowered.configurate.serialize.TypeSerializerCollection
 
 interface CatalystApi {
     val module: Module
@@ -77,7 +80,19 @@ interface CatalystApi {
 
 fun CatalystApi.Companion.create(injector: Injector, logger: Logger): CatalystApi {
     val velocityModule = module {
-        Registry.configureVelocityDefaults(injector, logger)
+        val serializers = TypeSerializerCollection.defaults().childBuilder()
+            .register(BackendFormat.Serializer)
+            .register(ChannelMessageFormat.Serializer)
+            .register(ChatChannelFormat.Serializer)
+            .register(MessageContentFormat.Serializer)
+            .register(OnlineUserFormat.Serializer)
+            .register(PlayerFormat.Serializer)
+            .register(PrivateMessageFormat.Serializer)
+            .register(ProxyFormat.Serializer)
+            .register(MiniMessageSerializer)
+            .build()
+
+        Registry.configureVelocityDefaults(injector, logger, serializers)
         singleOf(::LuckpermsService)
         singleOf(::WebhookSender)
         singleOf(::ChatFilter)
@@ -110,8 +125,6 @@ fun CatalystApi.Companion.create(injector: Injector, logger: Logger): CatalystAp
         singleOf(::GlobalTab).withOptions {
             createdAtStart()
         }
-
-        single { ConfigCommandFactory(get(), get<CatalystKeys>(), getAll()) }
 
         singleOf(::CatalystCommandFactory)
         singleOf(::NicknameCommandFactory)
