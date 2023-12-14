@@ -1,10 +1,11 @@
 [versions]
+anvil = "0.4.0-SNAPSHOT"
 kotlin = "1.9.21"
 
 [libraries]
 adventure-bom = "net.kyori:adventure-bom:4.14.0"
-anvil-core = "org.anvilpowered:anvil-core:0.4.0-SNAPSHOT"
-anvil-velocity = "org.anvilpowered:anvil-velocity:0.4.0-SNAPSHOT"
+anvil-core = { module = "org.anvilpowered:anvil-core", version.ref = "anvil" }
+anvil-velocity = { module = "org.anvilpowered:anvil-velocity", version.ref = "anvil" }
 brigadier = "com.mojang:brigadier:1.0.18"
 discord-jda = "net.dv8tion:JDA:5.0.0-beta.18"
 discord-webhooks = "club.minnced:discord-webhooks:0.8.4"
