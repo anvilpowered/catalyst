@@ -69,7 +69,6 @@ import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
-import org.spongepowered.configurate.kotlin.objectMapperFactory
 import org.spongepowered.configurate.serialize.TypeSerializerCollection
 
 interface CatalystApi {
