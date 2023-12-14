@@ -2,7 +2,6 @@
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
         maven("https://oss.sonatype.org/content/repositories/snapshots")
         mavenCentral()
         maven("https://libraries.minecraft.net")
