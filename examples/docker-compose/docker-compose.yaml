@@ -51,6 +51,29 @@ services:
       CATALYST_DB_PASSWORD: catalyst_docker_compose
       CATALYST_DISCORD_ENABLED: false
       CATALYST_DISCORD_BOT_TOKEN: "<token here>"
+      CATALYST_CHAT_CHANNELS: |
+        {
+          "global": {
+              "id": "global",
+              "name": "<green>[Global]",
+              "nameFormat": "<gold>[%backend.name%]</gold>%prefix% %displayname%",
+              "contentFormat": "%content%",
+              "messageFormat": "%channel.name% %name%: %content%",
+              "alwaysVisible": true,
+              "passthrough": false,
+              "discordChannelId": "123456789"
+          },
+          "admin": {
+              "id": "admin",
+              "name": "Admin",
+              "nameFormat": "<gold>[%backend.name%]</gold>%prefix% %displayname%",
+              "contentFormat": "%content%",
+              "messageFormat": "<red>%channel.name%%name%: %content%",
+              "alwaysVisible": true,
+              "passthrough": false,
+              "discordChannelId": "123456789"
+          }
+        }
     volumes:
       - ../../build/libs:/plugins
       - ../config/velocity.toml:/server/velocity.toml
@@ -64,6 +87,7 @@ services:
       - 25565
     environment:
       TYPE: PAPER
+      VERSION: "1.20.2"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
@@ -79,6 +103,7 @@ services:
       - 25565
     environment:
       TYPE: PAPER
+      VERSION: "1.20.2"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json

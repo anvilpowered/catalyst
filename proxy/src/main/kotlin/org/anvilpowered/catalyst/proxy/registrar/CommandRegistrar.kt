@@ -21,6 +21,7 @@ package org.anvilpowered.catalyst.proxy.registrar
 import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.ProxyServer
+import org.anvilpowered.catalyst.proxy.command.CatalystCommandFactory
 import org.anvilpowered.catalyst.proxy.command.broadcast.BroadcastCommandFactory
 import org.anvilpowered.catalyst.proxy.command.nickname.NicknameCommandFactory
 import org.anvilpowered.kbrig.brigadier.toBrigadier
@@ -30,6 +31,7 @@ import org.apache.logging.log4j.Logger
 class CommandRegistrar(
     private val proxyServer: ProxyServer,
     private val logger: Logger,
+    private val catalystCommandFactory: CatalystCommandFactory,
     private val broadcastCommandFactory: BroadcastCommandFactory,
     private val nicknameCommandFactory: NicknameCommandFactory,
 ) : Registrar {
@@ -37,6 +39,7 @@ class CommandRegistrar(
 
     override fun register() {
         logger.info("Building command trees and registering commands...")
+        catalystCommandFactory.create().register()
         broadcastCommandFactory.create().register()
         nicknameCommandFactory.create().register()
         logger.info("Finished registering commands.")

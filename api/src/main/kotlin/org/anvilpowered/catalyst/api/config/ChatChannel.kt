@@ -22,17 +22,39 @@ import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MiniMessageSerializer
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
+import org.spongepowered.configurate.objectmapping.meta.Setting
 
+@ConfigSerializable
 @Serializable
 data class ChatChannel(
+    @Setting
+    @Comment("The unique identifier of the channel")
     val id: String,
+    @Setting
+    @Comment("The name of the channel")
+    @Serializable(with = MiniMessageSerializer::class)
     val name: Component,
+    @Setting
+    @Comment("The format of the username part of each message")
     val nameFormat: OnlineUserFormat,
+    @Setting
+    @Comment("The format of the message content")
     val contentFormat: MessageContentFormat,
+    @Setting
+    @Comment("The format of the entire message - combines name and content")
     val messageFormat: ChannelMessageFormat,
+    @Setting
+    @Comment("Whether the channel should always be visible, regardless of whether the player is in it or not")
     val alwaysVisible: Boolean,
+    @Setting
+    @Comment("Whether the channel should pass through messages from other channels")
     val passthrough: Boolean,
+    @Setting
+    @Comment("The Discord channel ID to send messages to")
     val discordChannelId: String,
 ) {
 

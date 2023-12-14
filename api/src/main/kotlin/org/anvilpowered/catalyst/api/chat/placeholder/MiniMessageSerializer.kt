@@ -26,9 +26,20 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import org.spongepowered.configurate.ConfigurationNode
+import org.spongepowered.configurate.serialize.TypeSerializer
+import java.lang.reflect.Type
 
-internal object MiniMessageSerializer : KSerializer<Component> {
+object MiniMessageSerializer : KSerializer<Component>, TypeSerializer<Component> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Component", PrimitiveKind.STRING)
     override fun deserialize(decoder: Decoder): Component = MiniMessage.miniMessage().deserialize(decoder.decodeString())
     override fun serialize(encoder: Encoder, value: Component) = encoder.encodeString(MiniMessage.miniMessage().serialize(value))
+
+    override fun deserialize(type: Type, node: ConfigurationNode): Component {
+        return MiniMessage.miniMessage().deserialize(checkNotNull(node.string) { "Unable to parse String" })
+    }
+
+    override fun serialize(type: Type, obj: Component?, node: ConfigurationNode) {
+        node.set(obj?.let { MiniMessage.miniMessage().serialize(it) })
+    }
 }

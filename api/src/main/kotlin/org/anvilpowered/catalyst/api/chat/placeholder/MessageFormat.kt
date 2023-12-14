@@ -23,6 +23,10 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.kyori.adventure.text.Component
+import org.spongepowered.configurate.ConfigurationNode
+import org.spongepowered.configurate.serialize.TypeSerializer
+import org.spongepowered.configurate.serialize.TypeSerializerCollection
+import java.lang.reflect.Type
 
 typealias Placeholder = String
 
@@ -36,9 +40,17 @@ interface MessageFormat {
 
     interface Placeholders<in M : MessageFormat>
 
-    open class Serializer<T : MessageFormat>(private val constructor: (format: Component) -> T) : KSerializer<T> {
+    open class Serializer<T : MessageFormat>(private val constructor: (format: Component) -> T) : KSerializer<T>, TypeSerializer<T> {
         override val descriptor: SerialDescriptor = MiniMessageSerializer.descriptor
         override fun deserialize(decoder: Decoder): T = constructor(MiniMessageSerializer.deserialize(decoder))
         override fun serialize(encoder: Encoder, value: T) = MiniMessageSerializer.serialize(encoder, value.format)
+        override fun deserialize(type: Type, node: ConfigurationNode): T =
+            constructor(MiniMessageSerializer.deserialize(Component::class.java, node))
+
+        override fun serialize(type: Type, obj: T?, node: ConfigurationNode) = MiniMessageSerializer.serialize(type, obj?.format, node)
     }
+}
+
+inline fun <reified T> TypeSerializerCollection.Builder.register(serializer: TypeSerializer<T>): TypeSerializerCollection.Builder {
+    return register(T::class.java, serializer)
 }

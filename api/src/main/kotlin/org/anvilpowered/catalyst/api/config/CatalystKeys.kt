@@ -20,17 +20,15 @@
 
 package org.anvilpowered.catalyst.api.config
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.anvilpowered.anvil.core.config.Key
 import org.anvilpowered.anvil.core.config.KeyBuilderDsl
 import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.ListKey
 import org.anvilpowered.anvil.core.config.SimpleKey
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MiniMessageSerializer
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
@@ -44,15 +42,13 @@ class CatalystKeys(
     @KeyBuilderDsl
     private fun SimpleKey.BuilderFacet<Component, *>.miniMessageFallback(fallbackValue: Component) {
         fallback(fallbackValue)
-        serializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
-        deserializer { MiniMessage.miniMessage().deserialize(it) }
+        serializer(MiniMessageSerializer)
     }
 
     @KeyBuilderDsl
     private fun ListKey.BuilderFacet<Component, *>.miniMessageListFallback(fallbackValue: List<Component>) {
         fallback(fallbackValue)
-        elementSerializer { MiniMessage.miniMessage().serialize(it.asComponent()) }
-        elementDeserializer { MiniMessage.miniMessage().deserialize(it) }
+        elementSerializer(MiniMessageSerializer)
     }
 
     @KeyBuilderDsl
@@ -65,8 +61,6 @@ class CatalystKeys(
         block: P.() -> Component,
     ) {
         fallback(builder.build(block))
-        serializer { MiniMessage.miniMessage().serialize(it.format) }
-        deserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
 
     @KeyBuilderDsl
@@ -79,8 +73,6 @@ class CatalystKeys(
         blocks: List<P.() -> Component>,
     ) {
         fallback(blocks.map { builder.build(it) })
-        elementSerializer { MiniMessage.miniMessage().serialize(it.format) }
-        elementDeserializer { builder.build { MiniMessage.miniMessage().deserialize(it) } }
     }
 
     val DB_URL by Key.buildingSimple(TypeTokens.STRING) {
@@ -341,7 +333,7 @@ class CatalystKeys(
     }
 
     val NICKNAME_PREFIX by Key.buildingSimple(TypeTokens.COMPONENT) {
-        miniMessageFallback(Component.text("~"))
+        fallback(Component.text("~"))
     }
 
     val SEND_PERMISSION by Key.buildingSimple(TypeTokens.STRING) {
@@ -475,6 +467,7 @@ class CatalystKeys(
         miniMessageFallbackFormat(ProxyFormat) {
             Component.text("A Velocity Proxy running version $version!").color(NamedTextColor.DARK_AQUA)
         }
+        serializer(ProxyFormat.serializer())
     }
 
     val MOTD_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {
@@ -509,8 +502,6 @@ class CatalystKeys(
                 },
             ),
         )
-        valueSerializer { Json.encodeToString(it) }
-        valueDeserializer { Json.decodeFromString(ChatChannel.serializer(), it) }
     }
 
     val VIA_VERSION_ENABLED by Key.buildingSimple(TypeTokens.BOOLEAN) {

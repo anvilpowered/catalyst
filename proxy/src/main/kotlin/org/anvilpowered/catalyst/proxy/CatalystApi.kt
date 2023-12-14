@@ -19,8 +19,9 @@
 package org.anvilpowered.catalyst.proxy
 
 import com.google.inject.Injector
-import org.anvilpowered.anvil.core.config.EnvironmentRegistry
+import org.anvilpowered.anvil.core.config.KeyNamespace
 import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.anvil.velocity.config.configureVelocityDefaults
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
@@ -28,10 +29,12 @@ import org.anvilpowered.catalyst.api.chat.placeholder.BackendFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ChatChannelFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.MiniMessageSerializer
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PlayerFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.PrivateMessageFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.ProxyFormat
+import org.anvilpowered.catalyst.api.chat.placeholder.register
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
@@ -43,6 +46,7 @@ import org.anvilpowered.catalyst.proxy.chat.ChatServiceImpl
 import org.anvilpowered.catalyst.proxy.chat.StaffListService
 import org.anvilpowered.catalyst.proxy.chat.builder.ChannelMessageBuilderImpl
 import org.anvilpowered.catalyst.proxy.chat.builder.ChatChannelBuilderImpl
+import org.anvilpowered.catalyst.proxy.command.CatalystCommandFactory
 import org.anvilpowered.catalyst.proxy.command.broadcast.BroadcastCommandFactory
 import org.anvilpowered.catalyst.proxy.command.nickname.NicknameCommandFactory
 import org.anvilpowered.catalyst.proxy.db.user.MinecraftUserRepositoryImpl
@@ -58,12 +62,14 @@ import org.anvilpowered.catalyst.proxy.registrar.CommandRegistrar
 import org.anvilpowered.catalyst.proxy.registrar.ListenerRegistrar
 import org.anvilpowered.catalyst.proxy.registrar.Registrar
 import org.anvilpowered.catalyst.proxy.tab.GlobalTab
+import org.apache.logging.log4j.Logger
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
+import org.spongepowered.configurate.serialize.TypeSerializerCollection
 
 interface CatalystApi {
     val module: Module
@@ -71,9 +77,21 @@ interface CatalystApi {
     companion object
 }
 
-fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
+fun CatalystApi.Companion.create(injector: Injector, logger: Logger): CatalystApi {
     val velocityModule = module {
-        single<Registry> { EnvironmentRegistry(prefix = "CATALYST") }
+        val serializers = TypeSerializerCollection.defaults().childBuilder()
+            .register(BackendFormat.Serializer)
+            .register(ChannelMessageFormat.Serializer)
+            .register(ChatChannelFormat.Serializer)
+            .register(MessageContentFormat.Serializer)
+            .register(OnlineUserFormat.Serializer)
+            .register(PlayerFormat.Serializer)
+            .register(PrivateMessageFormat.Serializer)
+            .register(ProxyFormat.Serializer)
+            .register(MiniMessageSerializer)
+            .build()
+
+        Registry.configureVelocityDefaults(injector, logger, serializers)
         singleOf(::LuckpermsService)
         singleOf(::WebhookSender)
         singleOf(::ChatFilter)
@@ -82,7 +100,9 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
         singleOf(::ChannelServiceImpl) { bind<ChannelService>() }
         singleOf(::ChatServiceImpl) { bind<ChatService>() }
         singleOf(::ChatListener)
-        singleOf(::CatalystKeys)
+        singleOf(::CatalystKeys).withOptions {
+            bind<KeyNamespace>()
+        }
         singleOf(::CommandListener)
         singleOf(::JoinListener)
         singleOf(::LeaveListener)
@@ -105,6 +125,7 @@ fun CatalystApi.Companion.create(injector: Injector): CatalystApi {
             createdAtStart()
         }
 
+        singleOf(::CatalystCommandFactory)
         singleOf(::NicknameCommandFactory)
         singleOf(::BroadcastCommandFactory)
 
