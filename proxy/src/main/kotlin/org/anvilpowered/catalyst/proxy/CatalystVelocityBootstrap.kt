@@ -42,10 +42,11 @@ class CatalystVelocityBootstrap @Inject constructor(private val injector: Inject
 
     @Subscribe
     fun onInit(event: ProxyInitializeEvent) {
+        val anvilApi = AnvilApi.createVelocity(injector)
         plugin = koinApplication {
             modules(
-                AnvilApi.createVelocity(injector).module,
-                CatalystApi.create(injector).module,
+                anvilApi.module,
+                CatalystApi.create(injector, anvilApi.logger).module,
                 module { single { CatalystVelocityPlugin(get(), get(), get(), getAll()) } },
             )
         }.koin.get()

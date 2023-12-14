@@ -6,7 +6,6 @@ adventure-bom = "net.kyori:adventure-bom:4.14.0"
 anvil-core = "org.anvilpowered:anvil-core:0.4.0-SNAPSHOT"
 anvil-velocity = "org.anvilpowered:anvil-velocity:0.4.0-SNAPSHOT"
 brigadier = "com.mojang:brigadier:1.0.18"
-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta"
 discord-jda = "net.dv8tion:JDA:5.0.0-beta.18"
 discord-webhooks = "club.minnced:discord-webhooks:0.8.4"
 kotest = "io.kotest:kotest-runner-junit5-jvm:5.5.4"
@@ -18,6 +17,6 @@ velocity = "com.velocitypowered:velocity-api:3.1.1"
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ktlint = "org.jlleitschuh.gradle.ktlint:11.3.1"
+ktlint = "org.jlleitschuh.gradle.ktlint:11.6.1"
 shadow = "com.github.johnrengelman.shadow:8.1.1"
 sponge = "org.spongepowered.gradle.plugin:2.1.1"
