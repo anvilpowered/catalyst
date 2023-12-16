@@ -98,7 +98,7 @@ class DiscordListener(
         // TODO: Get userId for discord user
         val finalMessage = Component.text()
             .append(
-                registry[catalystKeys.DISCORD_CHAT_FORMAT].replaceText {
+                registry[catalystKeys.CHAT_DISCORD_MESSAGE_FORMAT].replaceText {
                     it.matchLiteral("%channel.name%").replacement(targetChannel.name)
                 }.replaceText {
                     it.matchLiteral("%content%").replacement(content)
@@ -106,8 +106,8 @@ class DiscordListener(
                     it.matchLiteral("%name%").replacement(username)
                 },
             )
-            .clickEvent(ClickEvent.openUrl(registry[catalystKeys.DISCORD_URL]))
-            .hoverEvent(HoverEvent.showText(registry[catalystKeys.DISCORD_HOVER_MESSAGE]))
+            .clickEvent(ClickEvent.openUrl(registry[catalystKeys.CHAT_DISCORD_INVITE]))
+            .hoverEvent(HoverEvent.showText(registry[catalystKeys.CHAT_DISCORD_HOVER_MESSAGE]))
             .build()
 
         for (player in channelService.getPlayers(targetChannel.id)) {

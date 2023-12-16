@@ -27,9 +27,11 @@ import com.velocitypowered.api.util.ModInfo
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.placeholder.ProxyFormat
 import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.apache.logging.log4j.Logger
 import java.util.UUID
 
 class ProxyPingListener(
+    private val logger: Logger,
     private val proxyServer: ProxyServer,
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
@@ -41,8 +43,8 @@ class ProxyPingListener(
         val serverPing = proxyPingEvent.ping
         val builder = ServerPing.builder()
         var modInfo: ModInfo? = null
-        if (registry[catalystKeys.MOTD_ENABLED]) {
-            builder.description(proxyFormatResolver.resolve(registry[catalystKeys.MOTD]))
+        if (registry[catalystKeys.SERVER_MOTD_ENABLED]) {
+            builder.description(proxyFormatResolver.resolve(registry[catalystKeys.SERVER_MOTD_MESSAGE]))
         } else {
             return
         }
@@ -64,7 +66,7 @@ class ProxyPingListener(
         if (modInfo != null) {
             builder.mods(modInfo)
         }
-        if (registry[catalystKeys.SERVER_PING].equals("players", ignoreCase = true)) {
+        if (registry[catalystKeys.SERVER_PING_TYPE] == "players") {
             if (proxyServer.playerCount > 0) {
                 val samplePlayers = arrayOfNulls<ServerPing.SamplePlayer>(proxyServer.playerCount)
                 val proxiedPlayers: List<Player> = ArrayList(proxyServer.allPlayers)
@@ -73,8 +75,10 @@ class ProxyPingListener(
                 }
                 builder.samplePlayers(*samplePlayers)
             }
-        } else if (registry[catalystKeys.SERVER_PING].equals("MESSAGE", ignoreCase = true)) {
+        } else if (registry[catalystKeys.SERVER_PING_TYPE] == "MESSAGE") {
             builder.samplePlayers(ServerPing.SamplePlayer(registry[catalystKeys.SERVER_PING_MESSAGE], UUID.randomUUID()))
+        } else {
+            logger.error("Invalid server ping type, must be either 'players' or 'message': " + registry[catalystKeys.SERVER_PING_TYPE])
         }
         if (serverPing.favicon.isPresent) {
             builder.favicon(serverPing.favicon.get())

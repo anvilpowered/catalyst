@@ -57,21 +57,21 @@ class ChatListener(
     @Subscribe
     fun onPlayerChat(event: PlayerChatEvent) = runBlocking {
         val player = event.player
-        if (!registry[catalystKeys.PROXY_CHAT_ENABLED] ||
+        if (!registry[catalystKeys.CHAT_ENABLED] ||
             chatService.isDisabledForPlayer(player) ||
             channelService.getForPlayer(player.uniqueId).passthrough
         ) {
             return@runBlocking
         }
         event.result = PlayerChatEvent.ChatResult.denied()
-        val rawMessage = if (player.hasPermission(registry[catalystKeys.CHAT_COLOR_PERMISSION])) {
+        val rawMessage = if (player.hasPermission(registry[catalystKeys.PERMISSION_CHAT_COLOR])) {
             MiniMessage.miniMessage().deserialize(event.message)
         } else {
             Component.text(event.message)
         }
         // TODO: Move this to dedicated class
         var rawContent = chatService.highlightPlayerNames(player, rawMessage)
-        if (!player.hasPermission(registry[catalystKeys.LANGUAGE_ADMIN_PERMISSION]) &&
+        if (!player.hasPermission(registry[catalystKeys.PERMISSION_LANGUAGE_ADMIN]) &&
             registry[catalystKeys.CHAT_FILTER_ENABLED]
         ) {
             rawContent = chatFilter.replaceSwears(rawContent)
@@ -94,7 +94,7 @@ class ChatListener(
         val formatted = channelMessageFormatResolver.resolve(channel.messageFormat, channelMessage)
         val resolved = ChannelMessage.Resolved(channelMessage, formatted)
         chatService.sendMessage(resolved)
-        if (registry[catalystKeys.DISCORD_ENABLED]) {
+        if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
             webhookSender.sendChannelMessage(
                 user,
                 resolved.backing.content, // TODO: Format for discord, create Player indirection

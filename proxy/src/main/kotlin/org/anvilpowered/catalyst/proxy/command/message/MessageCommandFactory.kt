@@ -46,7 +46,7 @@ class MessageCommandFactory(
 
     fun create(): LiteralCommandNode<CommandSource> =
         ArgumentBuilder.literal<CommandSource>("msg").executes(CommandDefaults::notEnoughArgs)
-            .requiresPermission(registry[catalystKeys.MESSAGE_PERMISSION])
+            .requiresPermission(registry[catalystKeys.PERMISSION_MESSAGE])
             .then(
                 proxyServer.playerArgument { context, _ ->
                     context.source.sendMessage(PluginMessages.notEnoughArgs)

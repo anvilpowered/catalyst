@@ -90,6 +90,10 @@ class CatalystKeys(
         fallback("catalyst")
     }
 
+    val CHAT_ENABLED by Key.buildingSimple {
+        fallback(true)
+    }
+
     val CHAT_FILTER_ENABLED by Key.buildingSimple {
         fallback(false)
     }
@@ -102,48 +106,7 @@ class CatalystKeys(
         fallback(listOf("assassin", "jkass"))
     }
 
-    val FIRST_JOIN by Key.buildingSimple {
-        miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text()
-                .append(Component.text("Welcome to the server, "))
-                .append(Component.text(displayname).color(NamedTextColor.AQUA))
-                .append(Component.text("!"))
-                .color(NamedTextColor.GREEN)
-                .build()
-        }
-    }
-
-    val JOIN_MESSAGE by Key.buildingSimple {
-        miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text()
-                .append(Component.text(displayname).color(NamedTextColor.GOLD))
-                .append(Component.text(" has joined the network").color(NamedTextColor.GRAY))
-                .build()
-        }
-    }
-
-    val JOIN_LISTENER_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val LEAVE_MESSAGE by Key.buildingSimple {
-        miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text()
-                .append(Component.text(displayname).color(NamedTextColor.GOLD))
-                .append(Component.text(" has left the network").color(NamedTextColor.GRAY))
-                .build()
-        }
-    }
-
-    val LEAVE_LISTENER_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val PROXY_CHAT_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val PRIVATE_MESSAGE_SOURCE_FORMAT by Key.buildingSimple {
+    val CHAT_DM_FORMAT_SOURCE by Key.buildingSimple {
         miniMessageFallbackFormat(PrivateMessageFormat) {
             // TODO: Nice builder api with + unary operator
             Component.text()
@@ -157,7 +120,7 @@ class CatalystKeys(
         }
     }
 
-    val PRIVATE_MESSAGE_RECIPIENT_FORMAT by Key.buildingSimple {
+    val CHAT_DM_FORMAT_RECIPIENT by Key.buildingSimple {
         miniMessageFallbackFormat(PrivateMessageFormat) {
             Component.text()
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
@@ -170,7 +133,7 @@ class CatalystKeys(
         }
     }
 
-    val SOCIALSPY_MESSAGE_FORMAT by Key.buildingSimple {
+    val CHAT_DM_FORMAT_SOCIALSPY by Key.buildingSimple {
         miniMessageFallbackFormat(PrivateMessageFormat) {
             Component.text()
                 .append(Component.text("[SocialSpy] ").color(NamedTextColor.GRAY))
@@ -182,6 +145,107 @@ class CatalystKeys(
                 .append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
         }
+    }
+
+    val CHAT_DISCORD_ENABLED by Key.buildingSimple {
+        fallback(false)
+    }
+
+    val CHAT_DISCORD_BOT_NAME by Key.buildingSimple {
+        fallback("System")
+    }
+
+    val CHAT_DISCORD_BOT_AVATAR by Key.buildingSimple {
+        fallback("https://crafthead.net/avatar/%uuid%")
+    }
+
+    val CHAT_DISCORD_BOT_TOKEN by Key.buildingSimple {
+        fallback("bot token")
+    }
+
+    val CHAT_DISCORD_BOT_STATUS by Key.buildingSimple {
+        fallback("A Minecraft Server!")
+    }
+
+    val CHAT_DISCORD_USERNAME_FORMAT by Key.buildingSimple {
+        miniMessageFallbackFormat(OnlineUserFormat) {
+            Component.text("[${backend.name}] $prefix$displayname$suffix")
+        }
+    }
+
+    // TODO: Use ChannelFormat
+    val CHAT_DISCORD_MESSAGE_FORMAT by Key.buildingSimple {
+        miniMessageFallback(
+            Component.text()
+                .append(Component.text("%channel.name% "))
+                .append(Component.text("[Discord] ").color(NamedTextColor.GOLD))
+                .append(Component.text("%name%: "))
+                .append(Component.text("%content%"))
+                .color(NamedTextColor.GRAY)
+                .build(),
+        )
+    }
+
+    val CHAT_DISCORD_TOPIC_FORMAT by Key.buildingSimple {
+        fallback("Player Count: %players%")
+    }
+
+    val CHAT_DISCORD_TOPIC_ENABLED by Key.buildingSimple {
+        fallback(false)
+    }
+
+    val CHAT_DISCORD_TOPIC_REFRESHRATE by Key.buildingSimple {
+        fallback(5)
+    }
+
+    val CHAT_DISCORD_TOPIC_NOPLAYERS by Key.buildingSimple {
+        fallback("There are no players online!")
+    }
+
+    val CHAT_DISCORD_INVITE by Key.buildingSimple {
+        fallback("https://discord.gg/8RUzuwu")
+    }
+
+    val CHAT_DISCORD_HOVER_MESSAGE by Key.buildingSimple {
+        miniMessageFallback(Component.text("Click here to join our discord!"))
+    }
+
+    val CHAT_NICKNAME_PREFIX by Key.buildingSimple {
+        fallback(Component.text("~"))
+    }
+
+    val CHAT_DEFAULT_CHANNEL by Key.buildingSimple {
+        fallback("global")
+    }
+
+    val CHAT_CHANNELS by Key.buildingMap {
+        fallback(
+            mapOf(
+                "global" to chatChannelBuilderFactory.build {
+                    id("global")
+                    name(Component.text("[Global]").color(NamedTextColor.GREEN))
+                    alwaysVisible(true)
+                    discordChannelId("123456789")
+                    passThrough(false)
+                },
+                "admin" to chatChannelBuilderFactory.build {
+                    id("admin")
+                    name(Component.text("Admin"))
+                    messageFormat {
+                        Component.text()
+                            .append(Component.text(channel.name))
+                            .append(Component.text(name))
+                            .append(Component.text(": "))
+                            .append(Component.text(content))
+                            .color(NamedTextColor.RED)
+                            .build()
+                    }
+                    alwaysVisible(true)
+                    discordChannelId("123456789")
+                    passThrough(false)
+                },
+            ),
+        )
     }
 
     val TAB_ENABLED by Key.buildingSimple {
@@ -200,7 +264,7 @@ class CatalystKeys(
         }
     }
 
-    val TAB_FORMAT by Key.buildingSimple {
+    val TAB_FORMAT_PLAYER by Key.buildingSimple {
         miniMessageFallbackFormat(PlayerFormat) {
             Component.text("$prefix$username$suffix")
         }
@@ -235,278 +299,67 @@ class CatalystKeys(
         )
     }
 
-    val TAB_UPDATE by Key.buildingSimple {
+    val TAB_REFRESHRATE by Key.buildingSimple {
         fallback(1)
     }
 
-    val CHAT_DEFAULT_CHANNEL by Key.buildingSimple {
-        fallback("global")
+    val JOIN_LISTENER_ENABLED by Key.buildingSimple {
+        fallback(true)
     }
 
-    val BAN_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.ban")
-    }
-
-    val TEMP_BAN_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.tempban")
-    }
-
-    val BAN_EXEMPT_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.ban.exempt")
-    }
-
-    val BROADCAST_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.broadcast")
-    }
-
-    val CHANNEL_EDIT_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.channel.edit")
-    }
-
-    val CHAT_COLOR_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.chat.color")
-    }
-
-    val FIND_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.find")
-    }
-
-    val INFO_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.info")
-    }
-
-    val INFO_IP_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.info.ip")
-    }
-
-    val INFO_BANNED_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.info.banned")
-    }
-
-    val INFO_CHANNEL_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.info.channel")
-    }
-
-    val KICK_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.kick")
-    }
-
-    val KICK_EXEMPT_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.kick.exempt")
-    }
-
-    val LANGUAGE_ADMIN_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.language.admin")
-    }
-
-    val LANGUAGE_LIST_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.language.list")
-    }
-
-    val LIST_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.list")
-    }
-
-    val MESSAGE_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.message")
-    }
-
-    val MUTE_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.mute")
-    }
-
-    val MUTE_EXEMPT_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.mute.exempt")
-    }
-
-    val NICKNAME_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.nickname")
-    }
-
-    val NICKNAME_COLOR_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.nickname.color")
-    }
-
-    val NICKNAME_MAGIC_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.nickname.magic")
-    }
-
-    val NICKNAME_OTHER_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.nickname.other")
-    }
-
-    val NICKNAME_PREFIX by Key.buildingSimple {
-        fallback(Component.text("~"))
-    }
-
-    val SEND_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.admin.command.send")
-    }
-
-    val SOCIALSPY_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.admin.command.socialspy")
-    }
-
-    val SOCIALSPY_ONJOIN_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.admin.command.socialspy.onjoin")
-    }
-
-    val STAFFLIST_ADMIN_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.stafflist.admin")
-    }
-
-    val STAFFLIST_BASE_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.stafflist.base")
-    }
-
-    val STAFFLIST_OWNER_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.stafflist.owner")
-    }
-
-    val STAFFLIST_STAFF_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.stafflist.staff")
-    }
-
-    val TOGGLE_CHAT_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.chat.toggle")
-    }
-
-    val ALL_CHAT_CHANNELS_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.channel.all")
-    }
-
-    val CHANNEL_BASE_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.channel.")
-    }
-
-    val DISCORD_BOT_NAME by Key.buildingSimple {
-        fallback("System")
-    }
-
-    val DISCORD_BOT_TOKEN by Key.buildingSimple {
-        fallback("bot token")
-    }
-
-    val DISCORD_USERNAME_FORMAT by Key.buildingSimple {
+    val JOIN_MESSAGE_FIRST by Key.buildingSimple {
         miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text("[${backend.name}] $prefix$displayname$suffix")
+            Component.text()
+                .append(Component.text("Welcome to the server, "))
+                .append(Component.text(displayname).color(NamedTextColor.AQUA))
+                .append(Component.text("!"))
+                .color(NamedTextColor.GREEN)
+                .build()
         }
     }
 
-    // TODO: Use ChannelFormat
-    val DISCORD_CHAT_FORMAT by Key.buildingSimple {
-        miniMessageFallback(
+    val JOIN_MESSAGE_NORMAL by Key.buildingSimple {
+        miniMessageFallbackFormat(OnlineUserFormat) {
             Component.text()
-                .append(Component.text("%channel.name% "))
-                .append(Component.text("[Discord] ").color(NamedTextColor.GOLD))
-                .append(Component.text("%name%: "))
-                .append(Component.text("%content%"))
-                .color(NamedTextColor.GRAY)
-                .build(),
-        )
+                .append(Component.text(displayname).color(NamedTextColor.GOLD))
+                .append(Component.text(" has joined the network").color(NamedTextColor.GRAY))
+                .build()
+        }
     }
 
-    val TOPIC_FORMAT by Key.buildingSimple {
-        fallback("Player Count: %players%")
+    val LEAVE_LISTENER_ENABLED by Key.buildingSimple {
+        fallback(true)
     }
 
-    val TOPIC_UPDATE_ENABLED by Key.buildingSimple {
-        fallback(false)
+    val LEAVE_MESSAGE by Key.buildingSimple {
+        miniMessageFallbackFormat(OnlineUserFormat) {
+            Component.text()
+                .append(Component.text(displayname).color(NamedTextColor.GOLD))
+                .append(Component.text(" has left the network").color(NamedTextColor.GRAY))
+                .build()
+        }
     }
 
-    val TOPIC_UPDATE_DELAY by Key.buildingSimple {
-        fallback(5)
-    }
-
-    val TOPIC_NO_ONLINE_PLAYERS by Key.buildingSimple {
-        fallback("There are no players online!")
-    }
-
-    val NOW_PLAYING_MESSAGE by Key.buildingSimple {
-        fallback("A Minecraft Server!")
-    }
-
-    val AVATAR_URL by Key.buildingSimple {
-        fallback("https://crafthead.net/avatar/%uuid%")
-    }
-
-    val DISCORD_URL by Key.buildingSimple {
-        fallback("https://discord.gg/8RUzuwu")
-    }
-
-    val DISCORD_ENABLED by Key.buildingSimple {
-        fallback(false)
-    }
-
-    val DISCORD_HOVER_MESSAGE by Key.buildingSimple {
-        miniMessageFallback(Component.text("Click here to join our discord!"))
-    }
-
-    val WEBSITE_URL by Key.buildingSimple {
+    val SERVER_WEBSITE by Key.buildingSimple {
         fallback("https://www.anvilpowered.org")
     }
 
-    val IGNORE_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.ignore")
-    }
-
-    val IGNORE_EXEMPT_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.command.ignore.exempt")
-    }
-
-    val SERVER_PING by Key.buildingSimple {
-        fallback("PLAYERS")
+    val SERVER_PING_TYPE by Key.buildingSimple {
+        description("Choose one of 'players' or 'message'. You may configure the message with SERVER_PING_MESSAGE")
+        fallback("players")
     }
 
     val SERVER_PING_MESSAGE by Key.buildingSimple {
         fallback("Change this message in the config!")
     }
 
-    val SYNC_COMMAND_PERMISSION by Key.buildingSimple {
-        fallback("catalyst.admin.command.sync")
-    }
-
-    val MOTD by Key.buildingSimple {
+    val SERVER_MOTD_MESSAGE by Key.buildingSimple {
         miniMessageFallbackFormat(ProxyFormat) {
             Component.text("A Velocity Proxy running version $version!").color(NamedTextColor.DARK_AQUA)
         }
     }
 
-    val MOTD_ENABLED by Key.buildingSimple {
-        fallback(false)
-    }
-
-    val CHAT_CHANNELS by Key.buildingMap {
-        fallback(
-            mapOf(
-                "global" to chatChannelBuilderFactory.build {
-                    id("global")
-                    name(Component.text("[Global]").color(NamedTextColor.GREEN))
-                    alwaysVisible(true)
-                    discordChannelId("123456789")
-                    passThrough(false)
-                },
-                "admin" to chatChannelBuilderFactory.build {
-                    id("admin")
-                    name(Component.text("Admin"))
-                    messageFormat {
-                        Component.text()
-                            .append(Component.text(channel.name))
-                            .append(Component.text(name))
-                            .append(Component.text(": "))
-                            .append(Component.text(content))
-                            .color(NamedTextColor.RED)
-                            .build()
-                    }
-                    alwaysVisible(true)
-                    discordChannelId("123456789")
-                    passThrough(false)
-                },
-            ),
-        )
-    }
-
-    val VIA_VERSION_ENABLED by Key.buildingSimple {
+    val SERVER_MOTD_ENABLED by Key.buildingSimple {
         fallback(false)
     }
 
@@ -516,116 +369,131 @@ class CatalystKeys(
 
     // TODO: Regex?
     val COMMAND_LOGGING_FILTER by Key.buildingList {
+        description("A list of root commands to log. Use * to log all commands.")
         fallback(listOf("*"))
-    }
-
-    val ENABLE_PER_SERVER_PERMS by Key.buildingSimple {
-        fallback(false)
-    }
-
-    // Keys for command toggling
-    val BAN_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val BROADCAST_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val CHANNEL_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val CHANNEL_COMMAND_ALIAS_ENABLED by Key.buildingSimple {
-        fallback(false)
-    }
-
-    val NICKNAME_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val FIND_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val INFO_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val KICK_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val LIST_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(false)
-    }
-
-    val MESSAGE_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val SEND_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val SERVER_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val SOCIALSPY_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val MUTE_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
-    }
-
-    val IGNORE_COMMAND_ENABLED by Key.buildingSimple {
-        fallback(true)
     }
 
     val CATALYST_PREFIX by Key.buildingSimple {
         fallback("Catalyst")
     }
 
-    // Keys for root node comments
-    val ADVANCED_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_BROADCAST by Key.buildingSimple {
+        fallback("catalyst.command.broadcast")
     }
 
-    val COMMANDS_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_CHANNEL_EDIT by Key.buildingSimple {
+        fallback("catalyst.command.channel.edit")
     }
 
-    val CHAT_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_CHAT_COLOR by Key.buildingSimple {
+        fallback("catalyst.chat.color")
     }
 
-    val DISCORD_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_FIND by Key.buildingSimple {
+        fallback("catalyst.command.find")
     }
 
-    val JOIN_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_IGNORE_BASE by Key.buildingSimple {
+        fallback("catalyst.command.ignore.base")
     }
 
-    val LEAVE_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_IGNORE_EXEMPT by Key.buildingSimple {
+        fallback("catalyst.command.ignore.exempt")
     }
 
-    val MODULES_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_INFO_BASE by Key.buildingSimple {
+        fallback("catalyst.command.info.base")
     }
 
-    val MOTD_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_INFO_IP by Key.buildingSimple {
+        fallback("catalyst.command.info.ip")
     }
 
-    val PING_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_INFO_CHANNEL by Key.buildingSimple {
+        fallback("catalyst.command.info.channel")
     }
 
-    val TAB_ROOT by Key.buildingSimple {
-        fallback("null")
+    val PERMISSION_KICK_BASE by Key.buildingSimple {
+        fallback("catalyst.command.kick.base")
+    }
+
+    val PERMISSION_KICK_EXEMPT by Key.buildingSimple {
+        fallback("catalyst.command.kick.exempt")
+    }
+
+    val PERMISSION_LANGUAGE_ADMIN by Key.buildingSimple {
+        fallback("catalyst.command.language.admin")
+    }
+
+    val PERMISSION_LANGUAGE_LIST by Key.buildingSimple {
+        fallback("catalyst.command.language.list")
+    }
+
+    val PERMISSION_LIST by Key.buildingSimple {
+        fallback("catalyst.command.list")
+    }
+
+    val PERMISSION_MESSAGE by Key.buildingSimple {
+        fallback("catalyst.command.message")
+    }
+
+    val PERMISSION_MUTE_BASE by Key.buildingSimple {
+        fallback("catalyst.command.mute.base")
+    }
+
+    val PERMISSION_MUTE_EXEMPT by Key.buildingSimple {
+        fallback("catalyst.command.mute.exempt")
+    }
+
+    val PERMISSION_NICKNAME_BASE by Key.buildingSimple {
+        fallback("catalyst.command.nickname.base")
+    }
+
+    val PERMISSION_NICKNAME_COLOR by Key.buildingSimple {
+        fallback("catalyst.command.nickname.color")
+    }
+
+    val PERMISSION_NICKNAME_MAGIC by Key.buildingSimple {
+        fallback("catalyst.command.nickname.magic")
+    }
+
+    val PERMISSION_SEND by Key.buildingSimple {
+        fallback("catalyst.admin.command.send")
+    }
+
+    val PERMISSION_SOCIALSPY_BASE by Key.buildingSimple {
+        fallback("catalyst.admin.command.socialspy,base")
+    }
+
+    val PERMISSION_SOCIALSPY_ONJOIN by Key.buildingSimple {
+        fallback("catalyst.admin.command.socialspy.onjoin")
+    }
+
+    val PERMISSION_STAFFLIST_BASE by Key.buildingSimple {
+        fallback("catalyst.stafflist.base")
+    }
+
+    val PERMISSION_STAFFLIST_STAFF by Key.buildingSimple {
+        fallback("catalyst.stafflist.staff")
+    }
+
+    val PERMISSION_STAFFLIST_ADMIN by Key.buildingSimple {
+        fallback("catalyst.stafflist.admin")
+    }
+
+    val PERMISSION_STAFFLIST_OWNER by Key.buildingSimple {
+        fallback("catalyst.stafflist.owner")
+    }
+
+    val PERMISSION_CHAT_TOGGLE by Key.buildingSimple {
+        fallback("catalyst.chat.toggle")
+    }
+
+    val PERMISSION_CHANNEL_ALL by Key.buildingSimple {
+        fallback("catalyst.channel.all")
+    }
+
+    val PERMISSION_CHANNEL_PREFIX by Key.buildingSimple {
+        fallback("catalyst.channel.")
     }
 }

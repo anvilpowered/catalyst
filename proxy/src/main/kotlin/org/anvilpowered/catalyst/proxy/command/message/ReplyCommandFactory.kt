@@ -43,7 +43,7 @@ class ReplyCommandFactory(
 
     fun create(): LiteralCommandNode<CommandSource> =
         ArgumentBuilder.literal<CommandSource>("reply").executes(CommandDefaults::notEnoughArgs)
-            .requiresPermission(registry[catalystKeys.MESSAGE_PERMISSION])
+            .requiresPermission(registry[catalystKeys.PERMISSION_MESSAGE])
             .then(
                 ArgumentBuilder.required<CommandSource, String>("message", StringArgumentType.GreedyPhrase)
                     .executes { context ->

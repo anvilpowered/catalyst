@@ -39,10 +39,10 @@ class WebhookSender(
     suspend fun sendChannelMessage(user: MinecraftUser.Online, content: Component, discordChannelId: String) {
         val client = getWebhookClient(discordChannelId) ?: return
         val builder = WebhookMessageBuilder()
-        builder.setAvatarUrl(registry[catalystKeys.AVATAR_URL].replace("%uuid%", user.player.uniqueId.toString()))
+        builder.setAvatarUrl(registry[catalystKeys.CHAT_DISCORD_BOT_AVATAR].replace("%uuid%", user.player.uniqueId.toString()))
         builder.setUsername(
             PlainTextComponentSerializer.plainText()
-                .serialize(onlineUserFormatResolver.resolve(registry[catalystKeys.DISCORD_USERNAME_FORMAT], user)),
+                .serialize(onlineUserFormatResolver.resolve(registry[catalystKeys.CHAT_DISCORD_USERNAME_FORMAT], user)),
         )
         builder.setContent(PlainTextComponentSerializer.plainText().serialize(content))
         val message = builder.build()
@@ -56,7 +56,7 @@ class WebhookSender(
     ) {
         val client = getWebhookClient(discordChannelId) ?: return
         val builder = WebhookMessageBuilder()
-        builder.setAvatarUrl(registry[catalystKeys.AVATAR_URL].replace("%uuid%", user.player.uniqueId.toString()))
+        builder.setAvatarUrl(registry[catalystKeys.CHAT_DISCORD_BOT_AVATAR].replace("%uuid%", user.player.uniqueId.toString()))
         builder.setUsername("System")
         builder.setContent(
             PlainTextComponentSerializer.plainText()

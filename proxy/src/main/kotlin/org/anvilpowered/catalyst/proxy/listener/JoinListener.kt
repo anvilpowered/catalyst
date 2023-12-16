@@ -57,23 +57,23 @@ class JoinListener(
         val user = MinecraftUser.Online(result.entity, player)
 
         if (result.created && registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
-            proxyServer.sendMessage(onlineUserFormatResolver.resolve(registry[catalystKeys.FIRST_JOIN], user))
+            proxyServer.sendMessage(onlineUserFormatResolver.resolve(registry[catalystKeys.JOIN_MESSAGE_FIRST], user))
         }
 
         staffListService.getStaffNames(
             player.username,
-            player.hasPermission(registry[catalystKeys.STAFFLIST_ADMIN_PERMISSION]),
-            player.hasPermission(registry[catalystKeys.STAFFLIST_STAFF_PERMISSION]),
-            player.hasPermission(registry[catalystKeys.STAFFLIST_OWNER_PERMISSION]),
+            player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_ADMIN]),
+            player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_STAFF]),
+            player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_OWNER]),
         )
-        val joinMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.JOIN_MESSAGE], user)
+        val joinMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.JOIN_MESSAGE_NORMAL], user)
         if (registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
             proxyServer.sendMessage(joinMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))
         }
-        if (registry[catalystKeys.DISCORD_ENABLED]) {
+        if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
             val discordChannel = channelService.getForPlayer(user.player.uniqueId)
-            webhookSender.sendSpecialMessage(user, discordChannel.discordChannelId, catalystKeys.JOIN_MESSAGE)
+            webhookSender.sendSpecialMessage(user, discordChannel.discordChannelId, catalystKeys.JOIN_MESSAGE_NORMAL)
         }
     }
 }

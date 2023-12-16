@@ -85,7 +85,7 @@ class GlobalTab(
             for (processPlayer in proxyServer.allPlayers) {
                 val currentEntry = TabListEntry.builder()
                     .profile(GameProfile(processPlayer.uniqueId, processPlayer.username, processPlayer.gameProfileProperties))
-                    .displayName(playerFormatResolver.resolve(registry[catalystKeys.TAB_FORMAT], processPlayer))
+                    .displayName(playerFormatResolver.resolve(registry[catalystKeys.TAB_FORMAT_PLAYER], processPlayer))
                     .tabList(displayPlayer.tabList)
                     .build()
                 insertIntoTab(displayPlayer.tabList, currentEntry)

@@ -41,7 +41,7 @@ class OnlineUserFormat(
         private val MinecraftUser.nicknameComponent: Component?
             get() = nickname?.let {
                 Component.text()
-                    .append(registry[catalystKeys.NICKNAME_PREFIX])
+                    .append(registry[catalystKeys.CHAT_NICKNAME_PREFIX])
                     .append(MiniMessage.miniMessage().deserialize(it))
                     .color(NamedTextColor.GRAY)
                     .build()

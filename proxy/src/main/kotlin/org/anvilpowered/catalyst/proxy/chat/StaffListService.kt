@@ -60,9 +60,9 @@ class StaffListService(
         for (player in proxyServer.allPlayers) {
             getStaffNames(
                 player.username,
-                player.hasPermission(registry[catalystKeys.STAFFLIST_ADMIN_PERMISSION]),
-                player.hasPermission(registry[catalystKeys.STAFFLIST_STAFF_PERMISSION]),
-                player.hasPermission(registry[catalystKeys.STAFFLIST_OWNER_PERMISSION]),
+                player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_ADMIN]),
+                player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_STAFF]),
+                player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_OWNER]),
             )
         }
     }

@@ -51,7 +51,7 @@ class ChatServiceImpl(
 
         proxyServer.allPlayers.asSequence()
             .filter {
-                it.hasPermission(registry[catalystKeys.ALL_CHAT_CHANNELS_PERMISSION]) ||
+                it.hasPermission(registry[catalystKeys.PERMISSION_CHANNEL_ALL]) ||
                     channelService.getForPlayer(it.uniqueId).id == channelId
             }.filterNot { isIgnored(it.uniqueId, sourceUserId) }
             .forEach { it.sendMessage(playerFormatResolver.resolve(message.formatted, it)) }

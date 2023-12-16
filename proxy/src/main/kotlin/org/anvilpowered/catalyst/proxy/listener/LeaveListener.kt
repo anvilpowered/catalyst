@@ -57,7 +57,7 @@ class LeaveListener(
             proxyServer.sendMessage(leaveMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(leaveMessage))
         }
-        if (registry[catalystKeys.DISCORD_ENABLED]) {
+        if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
             val discordChannel = channelService.getForPlayer(user.player.uniqueId)
             webhookSender.sendSpecialMessage(user, discordChannel.discordChannelId, catalystKeys.LEAVE_MESSAGE)
         }

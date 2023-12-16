@@ -51,7 +51,7 @@ class JDAService(
     }
 
     private fun enableDiscordBot() {
-        if (!registry[catalystKeys.DISCORD_ENABLED]) {
+        if (!registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
             logger.warn("The discord bot is disabled! Chat will not be transmitted from in-game to discord.")
             return
         }
@@ -59,7 +59,7 @@ class JDAService(
             jda?.shutdownNow()
         }
         try {
-            val builder = JDABuilder.createDefault(registry[catalystKeys.DISCORD_BOT_TOKEN])
+            val builder = JDABuilder.createDefault(registry[catalystKeys.CHAT_DISCORD_BOT_TOKEN])
             builder.setCompression(Compression.NONE)
             builder.setBulkDeleteSplittingEnabled(false)
             builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
@@ -68,10 +68,10 @@ class JDAService(
         } catch (e: LoginException) {
             e.printStackTrace()
         }
-        val nowPlaying = registry[catalystKeys.NOW_PLAYING_MESSAGE]
+        val nowPlaying = registry[catalystKeys.CHAT_DISCORD_BOT_STATUS]
         val playerCount = proxyServer.playerCount.let { count ->
             if (count == 0) {
-                registry[catalystKeys.TOPIC_NO_ONLINE_PLAYERS]
+                registry[catalystKeys.CHAT_DISCORD_TOPIC_NOPLAYERS]
             } else {
                 count.toString()
             }
@@ -79,11 +79,11 @@ class JDAService(
         jda!!.presence.activity = Activity.playing(nowPlaying.replace("%players%".toRegex(), playerCount))
         jda!!.addEventListener(createListener())
         isLoaded = true
-        if (registry[catalystKeys.TOPIC_UPDATE_ENABLED]) {
+        if (registry[catalystKeys.CHAT_DISCORD_TOPIC_ENABLED]) {
             Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
                 updateTopic(),
                 1,
-                registry[catalystKeys.TOPIC_UPDATE_DELAY].toLong(),
+                registry[catalystKeys.CHAT_DISCORD_TOPIC_REFRESHRATE].toLong(),
                 TimeUnit.MINUTES,
             )
         }
@@ -102,10 +102,10 @@ class JDAService(
         // TODO: Clean up the entire class
         return Runnable {
             val channel = jda!!.getTextChannelById(channelService.get(channelId)?.discordChannelId ?: "")
-            val nowPlaying = registry[catalystKeys.NOW_PLAYING_MESSAGE]
+            val nowPlaying = registry[catalystKeys.CHAT_DISCORD_BOT_STATUS]
             val playerCount = proxyServer.playerCount.let { count ->
                 if (count == 0) {
-                    registry[catalystKeys.TOPIC_NO_ONLINE_PLAYERS]
+                    registry[catalystKeys.CHAT_DISCORD_TOPIC_NOPLAYERS]
                 } else {
                     count.toString()
                 }
@@ -117,7 +117,7 @@ class JDAService(
                 logger.error("Could not update the main channel topic!")
             } else {
                 channel.manager.setTopic(
-                    registry[catalystKeys.TOPIC_FORMAT]
+                    registry[catalystKeys.CHAT_DISCORD_TOPIC_FORMAT]
                         .replace("%players%", playerCount),
                 ).queue()
             }

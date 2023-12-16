@@ -52,8 +52,8 @@ class PrivateMessageService(
 
         val message = PrivateMessage(sourceUser, recipientUser, content)
 
-        source.sendMessage(privateMessageFormatResolver.resolve(registry[catalystKeys.PRIVATE_MESSAGE_SOURCE_FORMAT], message))
-        recipient.sendMessage(privateMessageFormatResolver.resolve(registry[catalystKeys.PRIVATE_MESSAGE_RECIPIENT_FORMAT], message))
+        source.sendMessage(privateMessageFormatResolver.resolve(registry[catalystKeys.CHAT_DM_FORMAT_SOURCE], message))
+        recipient.sendMessage(privateMessageFormatResolver.resolve(registry[catalystKeys.CHAT_DM_FORMAT_RECIPIENT], message))
         replyMap[recipient.uniqueId] = source.uniqueId
         replyMap[source.uniqueId] = recipient.uniqueId
         socialSpy(message)
@@ -78,9 +78,9 @@ class PrivateMessageService(
     // TODO: Send PM from console
 
     private suspend fun socialSpy(message: PrivateMessage) {
-        val socialSpyMessage = privateMessageFormatResolver.resolve(registry[catalystKeys.SOCIALSPY_MESSAGE_FORMAT], message)
+        val socialSpyMessage = privateMessageFormatResolver.resolve(registry[catalystKeys.CHAT_DM_FORMAT_SOCIALSPY], message)
         proxyServer.allPlayers
-            .filter { it.hasPermission(registry[catalystKeys.SOCIALSPY_PERMISSION]) }
+            .filter { it.hasPermission(registry[catalystKeys.PERMISSION_SOCIALSPY_BASE]) }
             .filter { it.uniqueId != message.source.player.uniqueId && it.uniqueId != message.recipient.player.uniqueId }
             .forEach { it.sendMessage(socialSpyMessage) }
     }
