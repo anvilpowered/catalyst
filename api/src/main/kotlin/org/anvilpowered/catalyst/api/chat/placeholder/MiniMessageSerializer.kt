@@ -36,7 +36,7 @@ object MiniMessageSerializer : KSerializer<Component>, TypeSerializer<Component>
     override fun serialize(encoder: Encoder, value: Component) = encoder.encodeString(MiniMessage.miniMessage().serialize(value))
 
     override fun deserialize(type: Type, node: ConfigurationNode): Component {
-        return MiniMessage.miniMessage().deserialize(checkNotNull(node.string) { "Unable to parse String" })
+        return MiniMessage.miniMessage().deserialize(checkNotNull(node.string) { "Unable to parse String from node ${node.path()}" })
     }
 
     override fun serialize(type: Type, obj: Component?, node: ConfigurationNode) {
