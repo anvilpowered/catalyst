@@ -36,7 +36,11 @@ class CatalystVelocityPlugin(
 ) {
 
     fun initialize() {
-        connectDatabase()
+        try {
+            connectDatabase()
+        } catch (e: Exception) {
+            logger.error("Could not connect to the database, please check your config!", e)
+        }
         registrars.forEach(Registrar::register)
     }
 
