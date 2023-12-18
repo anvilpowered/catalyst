@@ -4,7 +4,7 @@ plugins {
 }
 dependencies {
     api(libs.anvil.core)
-    api(platform("net.kyori:adventure-bom:4.14.0"))
+    api(platform("net.kyori:adventure-bom:4.15.0"))
     api("net.kyori:adventure-text-serializer-legacy")
     api("net.kyori:adventure-text-serializer-plain")
 
