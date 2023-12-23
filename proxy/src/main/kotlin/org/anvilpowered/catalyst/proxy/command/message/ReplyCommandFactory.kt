@@ -20,24 +20,24 @@ package org.anvilpowered.catalyst.proxy.command.message
 
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
-import com.velocitypowered.api.proxy.ProxyServer
-import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.anvil.velocity.user.requiresPermission
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.proxy.chat.PrivateMessageService
 import org.anvilpowered.catalyst.proxy.command.CommandDefaults
+import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
+import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.context.get
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
 class ReplyCommandFactory(
-    val minecraftUserRepository: MinecraftUserRepository,
     private val registry: Registry,
     private val catalystKeys: CatalystKeys,
-    private val proxyServer: ProxyServer,
+    private val minecraftUserRepository: MinecraftUserRepository,
     private val privateMessageService: PrivateMessageService,
 ) {
 
@@ -46,14 +46,15 @@ class ReplyCommandFactory(
             .requiresPermission(registry[catalystKeys.PERMISSION_MESSAGE])
             .then(
                 ArgumentBuilder.required<CommandSource, String>("message", StringArgumentType.GreedyPhrase)
-                    .executes { context ->
-                        suspend {
-                            privateMessageService.reply(
-                                context.source as Player,
-                                Component.text(context.get<String>("message")),
-                            )
-                        }
-                        0
+                    .executesSuspending { context ->
+                        // console messaging not supported yet
+                        val sourcePlayer = context.source as? Player
+                            ?: return@executesSuspending 0
+                        privateMessageService.reply(
+                            sourcePlayer,
+                            MiniMessage.miniMessage().deserialize(context.get<String>("message")),
+                        )
+                        Command.SINGLE_SUCCESS
                     }.build(),
             ).build()
 }

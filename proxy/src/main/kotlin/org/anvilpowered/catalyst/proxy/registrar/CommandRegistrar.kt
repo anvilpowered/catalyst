@@ -23,6 +23,8 @@ import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.catalyst.proxy.command.CatalystCommandFactory
 import org.anvilpowered.catalyst.proxy.command.broadcast.BroadcastCommandFactory
+import org.anvilpowered.catalyst.proxy.command.message.MessageCommandFactory
+import org.anvilpowered.catalyst.proxy.command.message.ReplyCommandFactory
 import org.anvilpowered.catalyst.proxy.command.nickname.NicknameCommandFactory
 import org.anvilpowered.kbrig.brigadier.toBrigadier
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
@@ -33,15 +35,19 @@ class CommandRegistrar(
     private val logger: Logger,
     private val catalystCommandFactory: CatalystCommandFactory,
     private val broadcastCommandFactory: BroadcastCommandFactory,
+    private val messageCommandFactory: MessageCommandFactory,
     private val nicknameCommandFactory: NicknameCommandFactory,
+    private val replyCommandFactory: ReplyCommandFactory,
 ) : Registrar {
     private fun LiteralCommandNode<CommandSource>.register() = proxyServer.commandManager.register(BrigadierCommand(toBrigadier()))
 
     override fun register() {
         logger.info("Building command trees and registering commands...")
-        catalystCommandFactory.create().register()
         broadcastCommandFactory.create().register()
+        catalystCommandFactory.create().register()
+        messageCommandFactory.create().register()
         nicknameCommandFactory.create().register()
+        replyCommandFactory.create().register()
         logger.info("Finished registering commands.")
     }
 }

@@ -43,11 +43,14 @@ import org.anvilpowered.catalyst.proxy.chat.ChannelServiceImpl
 import org.anvilpowered.catalyst.proxy.chat.ChatFilter
 import org.anvilpowered.catalyst.proxy.chat.ChatService
 import org.anvilpowered.catalyst.proxy.chat.ChatServiceImpl
+import org.anvilpowered.catalyst.proxy.chat.PrivateMessageService
 import org.anvilpowered.catalyst.proxy.chat.StaffListService
 import org.anvilpowered.catalyst.proxy.chat.builder.ChannelMessageBuilderImpl
 import org.anvilpowered.catalyst.proxy.chat.builder.ChatChannelBuilderImpl
 import org.anvilpowered.catalyst.proxy.command.CatalystCommandFactory
 import org.anvilpowered.catalyst.proxy.command.broadcast.BroadcastCommandFactory
+import org.anvilpowered.catalyst.proxy.command.message.MessageCommandFactory
+import org.anvilpowered.catalyst.proxy.command.message.ReplyCommandFactory
 import org.anvilpowered.catalyst.proxy.command.nickname.NicknameCommandFactory
 import org.anvilpowered.catalyst.proxy.db.user.MinecraftUserRepositoryImpl
 import org.anvilpowered.catalyst.proxy.db.user.UserRepositoryImpl
@@ -99,6 +102,7 @@ fun CatalystApi.Companion.create(injector: Injector, logger: Logger): CatalystAp
         singleOf(ChannelMessageBuilderImpl::Factory) { bind<ChannelMessage.Builder.Factory>() }
         singleOf(::ChannelServiceImpl) { bind<ChannelService>() }
         singleOf(::ChatServiceImpl) { bind<ChatService>() }
+        singleOf(::PrivateMessageService)
         singleOf(::ChatListener)
         singleOf(::CatalystKeys).withOptions {
             bind<KeyNamespace>()
@@ -125,9 +129,11 @@ fun CatalystApi.Companion.create(injector: Injector, logger: Logger): CatalystAp
             createdAtStart()
         }
 
-        singleOf(::CatalystCommandFactory)
-        singleOf(::NicknameCommandFactory)
         singleOf(::BroadcastCommandFactory)
+        singleOf(::CatalystCommandFactory)
+        singleOf(::MessageCommandFactory)
+        singleOf(::NicknameCommandFactory)
+        singleOf(::ReplyCommandFactory)
 
         singleOf(::CommandRegistrar) { bind<Registrar>() }
         singleOf(::ListenerRegistrar) { bind<Registrar>() }
