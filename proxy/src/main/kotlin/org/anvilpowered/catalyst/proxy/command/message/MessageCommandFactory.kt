@@ -19,21 +19,23 @@
 package org.anvilpowered.catalyst.proxy.command.message
 
 import com.velocitypowered.api.command.CommandSource
-import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.anvilpowered.anvil.core.config.Registry
-import org.anvilpowered.anvil.velocity.command.requirePlayer
+import org.anvilpowered.anvil.velocity.command.extractPlayerArgument
+import org.anvilpowered.anvil.velocity.command.extractPlayerSource
+import org.anvilpowered.anvil.velocity.command.requirePlayerArgumentScoped
 import org.anvilpowered.anvil.velocity.user.requiresPermission
 import org.anvilpowered.catalyst.api.PluginMessages
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.proxy.chat.PrivateMessageService
 import org.anvilpowered.catalyst.proxy.command.CommandDefaults
-import org.anvilpowered.kbrig.Command
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
-import org.anvilpowered.kbrig.builder.executesSuspending
+import org.anvilpowered.kbrig.context.executesScoped
 import org.anvilpowered.kbrig.context.get
+import org.anvilpowered.kbrig.context.yieldError
+import org.anvilpowered.kbrig.context.yieldSuccess
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
 class MessageCommandFactory(
@@ -47,28 +49,26 @@ class MessageCommandFactory(
         ArgumentBuilder.literal<CommandSource>("msg").executes(CommandDefaults::notEnoughArgs)
             .requiresPermission(registry[catalystKeys.PERMISSION_MESSAGE])
             .then(
-                ArgumentBuilder.requirePlayer(proxyServer) { context, _ ->
+                ArgumentBuilder.requirePlayerArgumentScoped(proxyServer) {_ ->
                     context.source.sendMessage(PluginMessages.notEnoughArgs)
-                    0
+                    yieldError()
                 }.then(
                     ArgumentBuilder.required<CommandSource, String>("message", StringArgumentType.GreedyPhrase)
-                        .executesSuspending { context ->
+                        .executesScoped {
                             // console messaging not supported yet
-                            val sourcePlayer = context.source as? Player
-                                ?: return@executesSuspending 0
+                            val sourcePlayer = extractPlayerSource()
+                            val targetPlayer = extractPlayerArgument(proxyServer)
 
-                            context.requirePlayer(proxyServer) { targetPlayer ->
-                                if ((context.source as? Player)?.uniqueId == targetPlayer.uniqueId) {
-                                    context.source.sendMessage(PluginMessages.messageSelf)
-                                    return@requirePlayer 0
-                                }
-                                privateMessageService.sendMessage(
-                                    sourcePlayer,
-                                    targetPlayer,
-                                    MiniMessage.miniMessage().deserialize(context.get<String>("message")),
-                                )
-                                Command.SINGLE_SUCCESS
+                            if (sourcePlayer.uniqueId == targetPlayer.uniqueId) {
+                                context.source.sendMessage(PluginMessages.messageSelf)
+                                yieldError()
                             }
+                            privateMessageService.sendMessage(
+                                sourcePlayer,
+                                targetPlayer,
+                                MiniMessage.miniMessage().deserialize(context.get<String>("message")),
+                            )
+                            yieldSuccess()
                         }.build(),
                 ).build(),
             ).build()
