@@ -54,10 +54,11 @@ class DiscordListener(
             return
         }
         val messageRaw = event.message.contentRaw
-        if (event.member != null &&
-            event.member!!.hasPermission(Permission.ADMINISTRATOR) &&
-            messageRaw.contains("!cmd")
-        ) {
+        val member = event.member ?: run {
+            logger.error("Discord member is null in chat listener, ignoring message $messageRaw")
+            return
+        }
+        if (member.hasPermission(Permission.ADMINISTRATOR) && messageRaw.contains("!cmd")) {
             val command = event.message.contentRaw.replace("!cmd ", "")
             // TODO: Use coroutines properly
             runBlocking {
@@ -70,10 +71,7 @@ class DiscordListener(
                 )
             }
             return
-        } else if (messageRaw.contains("!players") ||
-            messageRaw.contains("!online") ||
-            messageRaw.contains("!list")
-        ) {
+        } else if (messageRaw.startsWith("!list")) {
             val onlinePlayers = proxyServer.allPlayers
             val playerNames: String = if (onlinePlayers.isEmpty()) {
                 "```There are currently no players online!```"
@@ -93,7 +91,7 @@ class DiscordListener(
 
     private fun sendMessage(channelId: String, content: String, username: String) {
         val targetChannel = registry[catalystKeys.CHAT_CHANNELS].values.firstOrNull { it.discordChannelId == channelId }
-            ?: channelService.defaultChannel
+            ?: return
 
         // TODO: Get userId for discord user
         val finalMessage = Component.text()
