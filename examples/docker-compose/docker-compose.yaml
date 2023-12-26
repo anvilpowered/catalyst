@@ -25,7 +25,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: catalyst
 
   lp:
-    image: ghcr.io/luckperms/luckperms:v5.4.108
+    image: ghcr.io/luckperms/luckperms:v5.4.113
     environment:
       LUCKPERMS_STORAGE_METHOD: postgresql
       LUCKPERMS_DATA_ADDRESS: db
@@ -40,11 +40,11 @@ services:
       - "25565:25565"
     environment:
       TYPE: VELOCITY
-      VELOCITY_VERSION: 3.2.0-SNAPSHOT
-      VELOCITY_BUILD_ID: 294
+      VELOCITY_VERSION: 3.3.0-SNAPSHOT
+      VELOCITY_BUILD_ID: 310
       PLUGINS: |
-        https://download.luckperms.net/1521/velocity/LuckPerms-Velocity-5.4.108.jar
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/XDSKb8fH/SignedVelocity-Proxy-1.2.1.jar
+        https://download.luckperms.net/1526/velocity/LuckPerms-Velocity-5.4.113.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/fUJtz3XS/SignedVelocity-Proxy-1.2.2.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json # Does not work yet
       CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
@@ -95,12 +95,12 @@ services:
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.2"
+      VERSION: "1.20.4"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
       PLUGINS: |
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/tgeLnuE7/SignedVelocity-Paper-1.2.1.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/iL7nlFlA/SignedVelocity-Paper-1.2.2.jar
     volumes:
       - ./paper-0:/data
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
@@ -111,12 +111,12 @@ services:
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.2"
+      VERSION: "1.20.4"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
       PLUGINS: |
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/tgeLnuE7/SignedVelocity-Paper-1.2.1.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/iL7nlFlA/SignedVelocity-Paper-1.2.2.jar
     volumes:
       - ./paper-1:/data
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
