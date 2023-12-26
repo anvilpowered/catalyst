@@ -38,9 +38,7 @@ fun <P : Player?> RequiredArgumentBuilder<CommandSource, String>.suggestChannelA
     channelService: ChannelService,
     playerExtractor: suspend CommandSuggestionScope<CommandSource>.() -> P,
 ): RequiredArgumentBuilder<CommandSource, String> =
-    suggestsScoped {
-        channelService.getAllForPlayer(playerExtractor()).suggestAll { it.id }
-    }
+    suggestsScoped { channelService.getAllForPlayer(playerExtractor()).suggestAllFiltered { it.id } }
 
 @CommandContextScopeDsl
 suspend fun CommandExecutionScope<CommandSource>.extractChannelArgument(
