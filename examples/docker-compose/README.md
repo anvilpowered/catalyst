@@ -25,23 +25,10 @@ To work around this, the minecraft-server image comes with built in RCON support
 To run a command on one of the paper servers, attach a terminal and use the `rcon-cli` command.
 
 However, the proxy image does not come with RCON support and the RCON plugin doesn't work.
-To work around this, there is a standalone luckperms container configured in the `docker-compose.yaml` which is connected to the PostgreSQL database.
+To work around this, there is a standalone luckperms container configured in the `docker-compose.yaml`
+which is connected to the PostgreSQL database.
 
-The luckperms plugin on velocity should also connect to the same database, but it is not currently possible to automatically modify
-luckperms configuration to do this.
-You must manually set the following values in `./proxy/plugins/luckperms/config.yml` for access to permissions:
-
-```yaml
-storage-method: postgresql
-data:
-    address: db
-    database: catalyst_docker_compose
-    username: catalyst_docker_compose
-    password: catalyst_docker_compose
-```
-
-After you have done this, restart the proxy and then attach a terminal to the standalone luckperms container.
-Run the command:
+To set permissions, attach a terminal to the standalone luckperms container and run the command:
 `send lp user <your-name> p set 'luckperms.*'`
 
-The quotes are important to prevent bash from preemptively interpreting the asterisk.
+The quotes are important to prevent your shell from preemptively expanding the asterisk.

@@ -45,7 +45,7 @@ services:
       PLUGINS: |
         https://download.luckperms.net/1526/velocity/LuckPerms-Velocity-5.4.113.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/fUJtz3XS/SignedVelocity-Proxy-1.2.2.jar
-      PATCH_DEFINITIONS: /server/velocity-patch-set.json # Does not work yet
+      PATCH_DEFINITIONS: /server/velocity-patch-set.json
       CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
       CATALYST_DB_PASSWORD: catalyst_docker_compose
