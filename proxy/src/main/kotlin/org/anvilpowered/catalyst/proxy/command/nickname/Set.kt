@@ -24,13 +24,14 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.anvilpowered.catalyst.api.PluginMessages
-import org.anvilpowered.catalyst.proxy.command.argument
 import org.anvilpowered.catalyst.proxy.command.common.addHelpChild
-import org.anvilpowered.kbrig.Command
+import org.anvilpowered.catalyst.proxy.command.requireMinecraftUserArgumentScoped
 import org.anvilpowered.kbrig.argument.StringArgumentType
 import org.anvilpowered.kbrig.builder.ArgumentBuilder
 import org.anvilpowered.kbrig.builder.executesSuspending
 import org.anvilpowered.kbrig.context.get
+import org.anvilpowered.kbrig.context.yieldError
+import org.anvilpowered.kbrig.context.yieldSuccess
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 
 fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
@@ -69,13 +70,13 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
                 },
         )
         .then(
-            minecraftUserRepository.argument { context, minecraftUser ->
+            ArgumentBuilder.requireMinecraftUserArgumentScoped(minecraftUserRepository) { minecraftUser ->
                 if (!context.source.hasPermission("catalyst.nickname.set.other")) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("You don't have permission to set other players' nicknames!", NamedTextColor.RED)),
                     )
-                    0
+                    yieldError()
                 } else if (minecraftUserRepository.updateNickname(minecraftUser.id, context["nickname"])) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
@@ -87,7 +88,7 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
                             .append(MiniMessage.miniMessage().deserialize(context["nickname"]))
                             .append(Component.text("'!", NamedTextColor.GRAY)),
                     )
-                    Command.SINGLE_SUCCESS
+                    yieldSuccess()
                 } else {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
@@ -95,7 +96,7 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
                             .append(Component.text(minecraftUser.username, NamedTextColor.GOLD))
                             .append(Component.text("' could not be set!", NamedTextColor.RED)),
                     )
-                    0
+                    yieldError()
                 }
             },
         )
