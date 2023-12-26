@@ -49,7 +49,7 @@ class MessageCommandFactory(
         ArgumentBuilder.literal<CommandSource>("msg").executes(CommandDefaults::notEnoughArgs)
             .requiresPermission(registry[catalystKeys.PERMISSION_MESSAGE])
             .then(
-                ArgumentBuilder.requirePlayerArgumentScoped(proxyServer) {_ ->
+                ArgumentBuilder.requirePlayerArgumentScoped(proxyServer) {
                     context.source.sendMessage(PluginMessages.notEnoughArgs)
                     yieldError()
                 }.then(

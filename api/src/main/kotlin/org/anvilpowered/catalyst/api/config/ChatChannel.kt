@@ -48,6 +48,9 @@ data class ChatChannel(
     @Comment("The format of the entire message - combines name and content")
     val messageFormat: ChannelMessageFormat,
     @Setting
+    @Comment("The aliases of the commands to switch to this channel. Alternatively, the command '/channel <id>' is always available.")
+    val commandAliases: List<String>,
+    @Setting
     @Comment("Whether the channel should always be visible, regardless of whether the player is in it or not")
     val alwaysVisible: Boolean,
     @Setting
@@ -69,6 +72,8 @@ data class ChatChannel(
         fun contentFormat(contentFormat: MessageContentFormat): Builder
 
         fun messageFormat(messageFormat: ChannelMessageFormat): Builder
+
+        fun commandAliases(commandAliases: List<String>): Builder
 
         fun alwaysVisible(visible: Boolean): Builder
 

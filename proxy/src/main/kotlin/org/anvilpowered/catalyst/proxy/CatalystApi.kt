@@ -40,6 +40,7 @@ import org.anvilpowered.catalyst.api.config.ChatChannel
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.api.user.UserRepository
 import org.anvilpowered.catalyst.proxy.chat.ChannelServiceImpl
+import org.anvilpowered.catalyst.proxy.chat.ChannelSwitchFrontend
 import org.anvilpowered.catalyst.proxy.chat.ChatFilter
 import org.anvilpowered.catalyst.proxy.chat.ChatService
 import org.anvilpowered.catalyst.proxy.chat.ChatServiceImpl
@@ -49,6 +50,8 @@ import org.anvilpowered.catalyst.proxy.chat.builder.ChannelMessageBuilderImpl
 import org.anvilpowered.catalyst.proxy.chat.builder.ChatChannelBuilderImpl
 import org.anvilpowered.catalyst.proxy.command.CatalystCommandFactory
 import org.anvilpowered.catalyst.proxy.command.broadcast.BroadcastCommandFactory
+import org.anvilpowered.catalyst.proxy.command.channel.ChannelAliasCommandRegistrar
+import org.anvilpowered.catalyst.proxy.command.channel.ChannelCommandFactory
 import org.anvilpowered.catalyst.proxy.command.message.MessageCommandFactory
 import org.anvilpowered.catalyst.proxy.command.message.ReplyCommandFactory
 import org.anvilpowered.catalyst.proxy.command.nickname.NicknameCommandFactory
@@ -101,6 +104,7 @@ fun CatalystApi.Companion.create(injector: Injector, logger: Logger): CatalystAp
         singleOf(ChatChannelBuilderImpl::Factory) { bind<ChatChannel.Builder.Factory>() }
         singleOf(ChannelMessageBuilderImpl::Factory) { bind<ChannelMessage.Builder.Factory>() }
         singleOf(::ChannelServiceImpl) { bind<ChannelService>() }
+        singleOf(::ChannelSwitchFrontend)
         singleOf(::ChatServiceImpl) { bind<ChatService>() }
         singleOf(::PrivateMessageService)
         singleOf(::ChatListener)
@@ -131,12 +135,14 @@ fun CatalystApi.Companion.create(injector: Injector, logger: Logger): CatalystAp
 
         singleOf(::BroadcastCommandFactory)
         singleOf(::CatalystCommandFactory)
+        singleOf(::ChannelCommandFactory)
         singleOf(::MessageCommandFactory)
         singleOf(::NicknameCommandFactory)
         singleOf(::ReplyCommandFactory)
 
         singleOf(::CommandRegistrar) { bind<Registrar>() }
         singleOf(::ListenerRegistrar) { bind<Registrar>() }
+        singleOf(::ChannelAliasCommandRegistrar) { bind<Registrar>() }
     }
 
     return object : CatalystApi {

@@ -31,13 +31,25 @@ class ChannelServiceImpl(
     private val proxyServer: ProxyServer,
     private val catalystKeys: CatalystKeys,
 ) : ChannelService {
+
+    init {
+        check(!registry[catalystKeys.PERMISSION_CHANNEL_PREFIX].endsWith('.')) {
+            "Channel permission prefix must not end with a '.'"
+        }
+    }
+
     private var playerChannelMapping = mutableMapOf<UUID, String>()
 
     private var defaultChannelId = registry[catalystKeys.CHAT_DEFAULT_CHANNEL]
     override val defaultChannel: ChatChannel = requireNotNull(get(defaultChannelId)) { "Default chat channel not found" }
 
-    override fun get(channelId: String): ChatChannel? = registry[catalystKeys.CHAT_CHANNELS][channelId]
+    override operator fun get(channelId: String): ChatChannel? = registry[catalystKeys.CHAT_CHANNELS][channelId]
     override fun getForPlayer(playerId: UUID): ChatChannel = playerChannelMapping[playerId]?.let { get(it) } ?: defaultChannel
+    override fun getAllForPlayer(player: Player?): List<ChatChannel> {
+        val prefix = registry[catalystKeys.PERMISSION_CHANNEL_PREFIX]
+        return registry[catalystKeys.CHAT_CHANNELS].values.filter { player?.hasPermission("$prefix.${it.id}") != false }
+    }
+
     override fun getPlayers(channelId: String): Sequence<Player> =
         proxyServer.allPlayers.asSequence().filter { player -> getForPlayer(player.uniqueId).id == channelId }
 

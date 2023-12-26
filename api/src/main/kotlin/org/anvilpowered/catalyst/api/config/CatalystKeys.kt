@@ -109,40 +109,34 @@ class CatalystKeys(
     val CHAT_DM_FORMAT_SOURCE by Key.buildingSimple {
         miniMessageFallbackFormat(PrivateMessageFormat) {
             // TODO: Nice builder api with + unary operator
-            Component.text()
-                .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
+            Component.text().append(Component.text("[").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text("me(${source.backend.name})").color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
                 .append(Component.text("${recipient.displayname}(${recipient.backend.name})").color(NamedTextColor.BLUE))
-                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text(content).color(NamedTextColor.GRAY))
+                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY)).append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
         }
     }
 
     val CHAT_DM_FORMAT_RECIPIENT by Key.buildingSimple {
         miniMessageFallbackFormat(PrivateMessageFormat) {
-            Component.text()
-                .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
+            Component.text().append(Component.text("[").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text("${source.displayname}(${source.backend.name})").color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
                 .append(Component.text("me(${recipient.backend.name})").color(NamedTextColor.BLUE))
-                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text(content).color(NamedTextColor.GRAY))
+                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY)).append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
         }
     }
 
     val CHAT_DM_FORMAT_SOCIALSPY by Key.buildingSimple {
         miniMessageFallbackFormat(PrivateMessageFormat) {
-            Component.text()
-                .append(Component.text("[SocialSpy] ").color(NamedTextColor.GRAY))
+            Component.text().append(Component.text("[SocialSpy] ").color(NamedTextColor.GRAY))
                 .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text(source.displayname).color(NamedTextColor.BLUE))
                 .append(Component.text(" -> ").color(NamedTextColor.GOLD))
                 .append(Component.text(recipient.displayname).color(NamedTextColor.BLUE))
-                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text(content).color(NamedTextColor.GRAY))
+                .append(Component.text("] ").color(NamedTextColor.DARK_GRAY)).append(Component.text(content).color(NamedTextColor.GRAY))
                 .build()
         }
     }
@@ -178,7 +172,7 @@ class CatalystKeys(
         miniMessageFallback(
             Component.text()
                 .append(Component.text("%channel.name% "))
-                .append(Component.text("[Discord] ").color(NamedTextColor.GOLD))
+                .append(Component.text("[Discord] ", NamedTextColor.GOLD))
                 .append(Component.text("%name%: "))
                 .append(Component.text("%content%"))
                 .color(NamedTextColor.GRAY)
@@ -224,22 +218,25 @@ class CatalystKeys(
                 "global" to chatChannelBuilderFactory.build {
                     id("global")
                     name(Component.text("[Global]").color(NamedTextColor.GREEN))
+                    commandAliases(listOf("g", "global"))
                     alwaysVisible(true)
                     discordChannelId("123456789")
                     passThrough(false)
                 },
-                "admin" to chatChannelBuilderFactory.build {
-                    id("admin")
-                    name(Component.text("Admin"))
+                "staff" to chatChannelBuilderFactory.build {
+                    id("staff")
+                    name(Component.text("[Staff]").color(NamedTextColor.AQUA))
                     messageFormat {
                         Component.text()
                             .append(Component.text(channel.name))
+                            .append(Component.space())
                             .append(Component.text(name))
                             .append(Component.text(": "))
                             .append(Component.text(content))
-                            .color(NamedTextColor.RED)
+                            .color(NamedTextColor.AQUA)
                             .build()
                     }
+                    commandAliases(listOf("s", "staff"))
                     alwaysVisible(true)
                     discordChannelId("123456789")
                     passThrough(false)
@@ -275,25 +272,19 @@ class CatalystKeys(
             PlayerFormat,
             listOf(
                 {
-                    Component.text()
-                        .append(Component.text("Your latency").color(NamedTextColor.DARK_AQUA))
+                    Component.text().append(Component.text("Your latency").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(": ").color(NamedTextColor.GRAY))
-                        .append(Component.text(latency).color(NamedTextColor.YELLOW))
-                        .build()
+                        .append(Component.text(latency).color(NamedTextColor.YELLOW)).build()
                 },
                 {
-                    Component.text()
-                        .append(Component.text("Current Server").color(NamedTextColor.DARK_AQUA))
+                    Component.text().append(Component.text("Current Server").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(": ").color(NamedTextColor.GRAY))
-                        .append(Component.text(backend.name).color(NamedTextColor.YELLOW))
-                        .build()
+                        .append(Component.text(backend.name).color(NamedTextColor.YELLOW)).build()
                 },
                 {
-                    Component.text()
-                        .append(Component.text("Player Count").color(NamedTextColor.DARK_AQUA))
+                    Component.text().append(Component.text("Player Count").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(": ").color(NamedTextColor.GRAY))
-                        .append(Component.text(proxy.playerCount).color(NamedTextColor.YELLOW))
-                        .build()
+                        .append(Component.text(proxy.playerCount).color(NamedTextColor.YELLOW)).build()
                 },
             ),
         )
@@ -309,21 +300,16 @@ class CatalystKeys(
 
     val JOIN_MESSAGE_FIRST by Key.buildingSimple {
         miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text()
-                .append(Component.text("Welcome to the server, "))
-                .append(Component.text(displayname).color(NamedTextColor.AQUA))
-                .append(Component.text("!"))
-                .color(NamedTextColor.GREEN)
+            Component.text().append(Component.text("Welcome to the server, "))
+                .append(Component.text(displayname).color(NamedTextColor.AQUA)).append(Component.text("!")).color(NamedTextColor.GREEN)
                 .build()
         }
     }
 
     val JOIN_MESSAGE_NORMAL by Key.buildingSimple {
         miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text()
-                .append(Component.text(displayname).color(NamedTextColor.GOLD))
-                .append(Component.text(" has joined the network").color(NamedTextColor.GRAY))
-                .build()
+            Component.text().append(Component.text(displayname).color(NamedTextColor.GOLD))
+                .append(Component.text(" has joined the network").color(NamedTextColor.GRAY)).build()
         }
     }
 
@@ -333,10 +319,8 @@ class CatalystKeys(
 
     val LEAVE_MESSAGE by Key.buildingSimple {
         miniMessageFallbackFormat(OnlineUserFormat) {
-            Component.text()
-                .append(Component.text(displayname).color(NamedTextColor.GOLD))
-                .append(Component.text(" has left the network").color(NamedTextColor.GRAY))
-                .build()
+            Component.text().append(Component.text(displayname).color(NamedTextColor.GOLD))
+                .append(Component.text(" has left the network").color(NamedTextColor.GRAY)).build()
         }
     }
 
@@ -489,11 +473,25 @@ class CatalystKeys(
         fallback("catalyst.chat.toggle")
     }
 
-    val PERMISSION_CHANNEL_ALL by Key.buildingSimple {
-        fallback("catalyst.channel.all")
+    val PERMISSION_CHANNEL_BASE by Key.buildingSimple {
+        description("Permission to use the /channel command")
+        fallback("catalyst.channel.base")
+    }
+
+    val PERMISSION_CHANNEL_SPYALL by Key.buildingSimple {
+        description("Permission to see always see all channels")
+        fallback("catalyst.channel.spyall")
     }
 
     val PERMISSION_CHANNEL_PREFIX by Key.buildingSimple {
-        fallback("catalyst.channel.")
+        description(
+            """
+            Permission prefix for channels. For example, if the prefix is 'catalyst.channel.access' (the default), then the permission for
+            the channel with id 'foo' would be 'catalyst.channel.access.foo'.
+
+            Players always have permission to join the default channel (default 'global').
+            """.trimIndent(),
+        )
+        fallback("catalyst.channel.access")
     }
 }

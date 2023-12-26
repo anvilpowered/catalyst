@@ -54,24 +54,32 @@ services:
       CATALYST_CHAT_CHANNELS: |
         {
           "global": {
-              "id": "global",
-              "name": "<green>[Global]",
-              "nameFormat": "<gold>[%backend.name%]</gold>%prefix% %displayname%",
-              "contentFormat": "%content%",
-              "messageFormat": "%channel.name% %name%: %content%",
-              "alwaysVisible": true,
-              "passthrough": false,
-              "discordChannelId": "123456789"
+            "id": "global",
+            "name": "<green>[Global]",
+            "nameFormat": "<gold>[%backend.name%]</gold>%prefix% %displayname%",
+            "contentFormat": "%content%",
+            "messageFormat": "%channel.name% %name%: %content%",
+            "commandAliases": [
+               "g",
+               "global"
+            ],
+            "alwaysVisible": true,
+            "passthrough": false,
+            "discordChannelId": "123456789"
           },
-          "admin": {
-              "id": "admin",
-              "name": "Admin",
-              "nameFormat": "<gold>[%backend.name%]</gold>%prefix% %displayname%",
-              "contentFormat": "%content%",
-              "messageFormat": "<red>%channel.name%%name%: %content%",
-              "alwaysVisible": true,
-              "passthrough": false,
-              "discordChannelId": "123456789"
+          "staff": {
+            "id": "staff",
+            "name": "<aqua>[Staff]",
+            "nameFormat": "<gold>[%backend.name%]</gold>%prefix% %displayname%",
+            "contentFormat": "%content%",
+            "messageFormat": "<aqua>%channel.name% %name%: %content%",
+            "commandAliases": [
+               "sc",
+               "staffchat"
+            ],
+            "alwaysVisible": true,
+            "passthrough": false,
+            "discordChannelId": "123456789"
           }
         }
     volumes:

@@ -48,6 +48,7 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
             .append(Component.text(content))
             .build()
     }
+    private var commandAliases: List<String> = emptyList()
     private var alwaysVisible: Boolean = false
     private var passthrough: Boolean = false
     private var discordChannelId: String = ""
@@ -77,6 +78,11 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
         return this
     }
 
+    override fun commandAliases(commandAliases: List<String>): ChatChannel.Builder {
+        this.commandAliases = commandAliases
+        return this
+    }
+
     override fun alwaysVisible(visible: Boolean): ChatChannel.Builder {
         this.alwaysVisible = visible
         return this
@@ -98,6 +104,7 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
         nameFormat,
         contentFormat,
         messageFormat,
+        commandAliases,
         alwaysVisible,
         passthrough,
         discordChannelId,

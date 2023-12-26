@@ -16,41 +16,35 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.proxy.registrar
+package org.anvilpowered.catalyst.proxy.command.channel
 
 import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.ProxyServer
-import org.anvilpowered.catalyst.proxy.command.CatalystCommandFactory
-import org.anvilpowered.catalyst.proxy.command.broadcast.BroadcastCommandFactory
-import org.anvilpowered.catalyst.proxy.command.channel.ChannelCommandFactory
-import org.anvilpowered.catalyst.proxy.command.message.MessageCommandFactory
-import org.anvilpowered.catalyst.proxy.command.message.ReplyCommandFactory
-import org.anvilpowered.catalyst.proxy.command.nickname.NicknameCommandFactory
+import org.anvilpowered.anvil.core.config.Registry
+import org.anvilpowered.catalyst.api.config.CatalystKeys
+import org.anvilpowered.catalyst.proxy.chat.ChannelSwitchFrontend
+import org.anvilpowered.catalyst.proxy.registrar.Registrar
 import org.anvilpowered.kbrig.brigadier.toBrigadier
 import org.anvilpowered.kbrig.tree.LiteralCommandNode
 import org.apache.logging.log4j.Logger
 
-class CommandRegistrar(
+class ChannelAliasCommandRegistrar(
     private val proxyServer: ProxyServer,
     private val logger: Logger,
-    private val catalystCommandFactory: CatalystCommandFactory,
-    private val channelCommandFactory: ChannelCommandFactory,
-    private val broadcastCommandFactory: BroadcastCommandFactory,
-    private val messageCommandFactory: MessageCommandFactory,
-    private val nicknameCommandFactory: NicknameCommandFactory,
-    private val replyCommandFactory: ReplyCommandFactory,
+    private val registry: Registry,
+    private val catalystKeys: CatalystKeys,
+    private val channelSwitchFrontend: ChannelSwitchFrontend,
 ) : Registrar {
     private fun LiteralCommandNode<CommandSource>.register() = proxyServer.commandManager.register(BrigadierCommand(toBrigadier()))
 
     override fun register() {
-        logger.info("Building command trees and registering commands...")
-        broadcastCommandFactory.create().register()
-        catalystCommandFactory.create().register()
-        channelCommandFactory.create().register()
-        messageCommandFactory.create().register()
-        nicknameCommandFactory.create().register()
-        replyCommandFactory.create().register()
-        logger.info("Finished registering commands.")
+        logger.info("Building channel alias command trees and registering commands...")
+        registry[catalystKeys.CHAT_CHANNELS].values.forEach { channel ->
+            channel.commandAliases.forEach { alias ->
+                ChannelAliasCommandFactory(registry, catalystKeys, channelSwitchFrontend, alias, channel).create().register()
+            }
+        }
+        logger.info("Finished registering channel alias commands.")
     }
 }

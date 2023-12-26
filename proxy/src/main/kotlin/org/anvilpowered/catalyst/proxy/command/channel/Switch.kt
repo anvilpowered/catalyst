@@ -16,25 +16,17 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.anvilpowered.catalyst.api.chat
+package org.anvilpowered.catalyst.proxy.command.channel
 
-import com.velocitypowered.api.proxy.Player
-import org.anvilpowered.catalyst.api.config.ChatChannel
-import java.util.UUID
+import com.velocitypowered.api.command.CommandSource
+import org.anvilpowered.anvil.velocity.command.extractPlayerSourceOrAbort
+import org.anvilpowered.kbrig.argument.StringArgumentType
+import org.anvilpowered.kbrig.builder.ArgumentBuilder
+import org.anvilpowered.kbrig.context.executesScoped
+import org.anvilpowered.kbrig.tree.ArgumentCommandNode
 
-interface ChannelService {
-
-    val defaultChannel: ChatChannel
-
-    operator fun get(channelId: String): ChatChannel?
-
-    fun getForPlayer(playerId: UUID): ChatChannel
-
-    fun getAllForPlayer(player: Player? = null): List<ChatChannel>
-
-    fun getPlayers(channelId: String): Sequence<Player>
-
-    fun switch(userUUID: UUID, channelId: String)
-
-    fun moveUsersToChannel(sourceChannel: String, targetChannel: String)
-}
+fun ChannelCommandFactory.createSwitch(): ArgumentCommandNode<CommandSource, String> =
+    ArgumentBuilder.required<CommandSource, String>("channel", StringArgumentType.SingleWord)
+        .suggestChannelArgument(channelService) { extractPlayerSourceOrAbort() }
+        .executesScoped { channelSwitchFrontend.executeChannelSwitch() }
+        .build()

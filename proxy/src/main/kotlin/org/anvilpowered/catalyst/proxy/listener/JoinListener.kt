@@ -21,6 +21,9 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PostLoginEvent
 import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.chat.ChannelService
@@ -71,9 +74,20 @@ class JoinListener(
             proxyServer.sendMessage(joinMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))
         }
+        val channel = channelService.getForPlayer(user.player.uniqueId)
         if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
-            val discordChannel = channelService.getForPlayer(user.player.uniqueId)
-            webhookSender.sendSpecialMessage(user, discordChannel.discordChannelId, catalystKeys.JOIN_MESSAGE_NORMAL)
+            webhookSender.sendSpecialMessage(user, channel.discordChannelId, catalystKeys.JOIN_MESSAGE_NORMAL)
         }
+
+        player.sendMessage(
+            Component.text()
+                .append(Component.text("Welcome to the server, ", NamedTextColor.GRAY, TextDecoration.ITALIC))
+                .append(Component.text(player.username, NamedTextColor.GOLD, TextDecoration.BOLD))
+                .append(Component.text("!", NamedTextColor.GRAY, TextDecoration.ITALIC))
+                .append(Component.newline())
+                .append(Component.text("You are currently chatting in channel ", NamedTextColor.AQUA, TextDecoration.ITALIC))
+                .append(channel.name)
+                .build(),
+        )
     }
 }
