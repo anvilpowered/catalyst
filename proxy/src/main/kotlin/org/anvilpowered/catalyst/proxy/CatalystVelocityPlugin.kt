@@ -45,15 +45,16 @@ class CatalystVelocityPlugin(
     }
 
     private val dbDriver = mapOf(
-        "postgres" to "org.postgresql.Driver",
+        "postgresql" to "org.postgresql.Driver",
         "mariadb" to "org.mariadb.jdbc.Driver",
     )
 
     private fun connectDatabase() {
         logger.info("Connecting to database...")
         val dbDriver = checkNotNull(dbDriver[registry[catalystKeys.DB_TYPE]]) {
-            "Unknown db type ${registry[catalystKeys.DB_TYPE]}. Available: postgres, mariadb."
+            "Unknown db type ${registry[catalystKeys.DB_TYPE]}. Available: postgresql, mariadb."
         }
+        logger.info("Using database driver $dbDriver")
         Database.connect(
             registry[catalystKeys.DB_URL],
             driver = dbDriver,

@@ -14,7 +14,7 @@ services:
       POSTGRES_USER: catalyst_docker_compose
       POSTGRES_PASSWORD: catalyst_docker_compose
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - ./postgresql:/var/lib/postgresql/data
 
   pg-admin:
     image: dpage/pgadmin4:8.2
@@ -24,9 +24,25 @@ services:
       PGADMIN_DEFAULT_EMAIL: catalyst@example.com
       PGADMIN_DEFAULT_PASSWORD: catalyst
 
+  # Sample mariadb container
+  # Don't forget to update references in this file and the ../config/velocity-patch-set.json LP storage method
+  # Comment out postgres images above (db and pg-admin)
+  #  db:
+  #    image: mariadb:11.2
+  #    ports:
+  #      - "3306:3306"
+  #    environment:
+  #      MYSQL_DATABASE: catalyst_docker_compose
+  #      MYSQL_USER: catalyst_docker_compose
+  #      MYSQL_PASSWORD: catalyst_docker_compose
+  #      MARIADB_RANDOM_ROOT_PASSWORD: true
+  #    volumes:
+  #      - ./mariadb:/var/lib/mysql
+
   lp:
     image: ghcr.io/luckperms/luckperms:v5.4.117
     environment:
+      # LUCKPERMS_STORAGE_METHOD: mariadb
       LUCKPERMS_STORAGE_METHOD: postgresql
       LUCKPERMS_DATA_ADDRESS: db
       # Use a different database and credentials in production
@@ -46,7 +62,9 @@ services:
         https://download.luckperms.net/1530/velocity/LuckPerms-Velocity-5.4.117.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/eeGwpMZV/SignedVelocity-Proxy-1.2.3.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json
-      CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
+      # CATALYST_DB_TYPE: mariadb # default: postgresql
+      # CATALYST_DB_URL: jdbc:mariadb://db/catalyst_docker_compose
+      CATALYST_DB_URL: jdbc:postgresql://db/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
       CATALYST_DB_PASSWORD: catalyst_docker_compose
       CATALYST_DISCORD_ENABLED: false
