@@ -79,7 +79,7 @@ class CatalystKeys(
     }
 
     val DB_TYPE by Key.buildingSimple {
-        fallback("postgres")
+        fallback("postgresql")
     }
 
     val DB_URL by Key.buildingSimple {
