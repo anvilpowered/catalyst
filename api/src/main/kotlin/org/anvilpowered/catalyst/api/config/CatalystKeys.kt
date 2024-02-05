@@ -78,6 +78,10 @@ class CatalystKeys(
         fallback(blocks.map { builder.build(it) })
     }
 
+    val DB_TYPE by Key.buildingSimple {
+        fallback("postgres")
+    }
+
     val DB_URL by Key.buildingSimple {
         fallback("jdbc:postgresql://db:5432/catalyst")
     }
