@@ -31,6 +31,7 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
     private var nameFormat: OnlineUserFormat = OnlineUserFormat.build {
         Component.text()
             .append(Component.text("[${backend.name}]").color(NamedTextColor.GOLD))
+            .append(Component.space())
             .append(Component.text(prefix))
             .append(Component.space())
             .append(Component.text(displayname))
