@@ -17,7 +17,7 @@ services:
       - ./db:/var/lib/postgresql/data
 
   pg-admin:
-    image: dpage/pgadmin4:8.0
+    image: dpage/pgadmin4:8.2
     ports:
       - "8080:80"
     environment:
@@ -25,7 +25,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: catalyst
 
   lp:
-    image: ghcr.io/luckperms/luckperms:v5.4.113
+    image: ghcr.io/luckperms/luckperms:v5.4.117
     environment:
       LUCKPERMS_STORAGE_METHOD: postgresql
       LUCKPERMS_DATA_ADDRESS: db
@@ -41,10 +41,10 @@ services:
     environment:
       TYPE: VELOCITY
       VELOCITY_VERSION: 3.3.0-SNAPSHOT
-      VELOCITY_BUILD_ID: 310
+      VELOCITY_BUILD_ID: 346
       PLUGINS: |
-        https://download.luckperms.net/1526/velocity/LuckPerms-Velocity-5.4.113.jar
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/fUJtz3XS/SignedVelocity-Proxy-1.2.2.jar
+        https://download.luckperms.net/1530/velocity/LuckPerms-Velocity-5.4.117.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/eeGwpMZV/SignedVelocity-Proxy-1.2.3.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json
       CATALYST_DB_URL: jdbc:postgresql://db:5432/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
@@ -90,7 +90,7 @@ services:
       - ./proxy/plugins:/server/plugins
 
   paper-0:
-    image: itzg/minecraft-server:2023.11.1-java21
+    image: itzg/minecraft-server:2024.2.1-java21
     expose:
       - 25565
     environment:
@@ -100,13 +100,13 @@ services:
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
       PLUGINS: |
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/iL7nlFlA/SignedVelocity-Paper-1.2.2.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/ngDdLdWA/SignedVelocity-Paper-1.2.3.jar
     volumes:
       - ./paper-0:/data
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
 
   paper-1:
-    image: itzg/minecraft-server:2023.11.1-java21
+    image: itzg/minecraft-server:2024.2.1-java21
     expose:
       - 25565
     environment:
@@ -116,7 +116,7 @@ services:
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
       PLUGINS: |
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/iL7nlFlA/SignedVelocity-Paper-1.2.2.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/ngDdLdWA/SignedVelocity-Paper-1.2.3.jar
     volumes:
       - ./paper-1:/data
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
