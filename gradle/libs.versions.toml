@@ -7,7 +7,7 @@ adventure-bom = "net.kyori:adventure-bom:4.15.0"
 anvil-core = { module = "org.anvilpowered:anvil-core", version.ref = "anvil" }
 anvil-velocity = { module = "org.anvilpowered:anvil-velocity", version.ref = "anvil" }
 brigadier = "com.mojang:brigadier:1.0.18"
-discord-jda = "net.dv8tion:JDA:5.0.0-beta.18"
+discord-jda = "net.dv8tion:JDA:5.0.0-beta.20"
 discord-webhooks = "club.minnced:discord-webhooks:0.8.4"
 kotest = "io.kotest:kotest-runner-junit5-jvm:5.5.4"
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
