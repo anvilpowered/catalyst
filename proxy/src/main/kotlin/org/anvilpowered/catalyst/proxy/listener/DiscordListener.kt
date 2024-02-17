@@ -108,8 +108,6 @@ class DiscordListener(
             .hoverEvent(HoverEvent.showText(registry[catalystKeys.CHAT_DISCORD_HOVER_MESSAGE]))
             .build()
 
-        for (player in channelService.getPlayers(targetChannel.id)) {
-            player.sendMessage(finalMessage)
-        }
+        channelService.getReceivers(targetChannel.id).forEach { it.sendMessage(finalMessage) }
     }
 }

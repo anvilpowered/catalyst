@@ -57,10 +57,7 @@ class ChatListener(
     @Subscribe
     fun onPlayerChat(event: PlayerChatEvent) = runBlocking {
         val player = event.player
-        if (!registry[catalystKeys.CHAT_ENABLED] ||
-            chatService.isDisabledForPlayer(player) ||
-            channelService.getForPlayer(player.uniqueId).passthrough
-        ) {
+        if (!registry[catalystKeys.CHAT_ENABLED] || chatService.isDisabledForPlayer(player)) {
             return@runBlocking
         }
         event.result = PlayerChatEvent.ChatResult.denied()

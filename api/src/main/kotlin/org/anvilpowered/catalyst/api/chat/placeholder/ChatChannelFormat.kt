@@ -34,7 +34,7 @@ class ChatChannelFormat(
                 { replaceText { it.matchLiteral(placeholders.id).replacement(channel.id) } },
                 { replaceText { it.matchLiteral(placeholders.name).replacement(channel.name) } },
                 { replaceText { it.matchLiteral(placeholders.alwaysVisible).replacement(channel.alwaysVisible.toString()) } },
-                { replaceText { it.matchLiteral(placeholders.passthrough).replacement(channel.passthrough.toString()) } },
+                { replaceText { it.matchLiteral(placeholders.availableByDefault).replacement(channel.availableByDefault.toString()) } },
                 { replaceText { it.matchLiteral(placeholders.discordChannelId).replacement(channel.discordChannelId) } },
             ).fold(format) { acc, transform -> transform(acc) }
         }
@@ -59,7 +59,7 @@ class ChatChannelFormat(
         val id: Placeholder = "%${pathPrefix}id%"
         val name: Placeholder = "%${pathPrefix}name%"
         val alwaysVisible: Placeholder = "%${pathPrefix}alwaysVisible%"
-        val passthrough: Placeholder = "%${pathPrefix}passthrough%"
+        val availableByDefault: Placeholder = "%${pathPrefix}availableByDefault%"
         val discordChannelId: Placeholder = "%${pathPrefix}discordChannelId%"
     }
 }

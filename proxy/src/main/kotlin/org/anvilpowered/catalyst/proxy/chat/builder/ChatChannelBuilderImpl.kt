@@ -51,7 +51,7 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
     }
     private var commandAliases: List<String> = emptyList()
     private var alwaysVisible: Boolean = false
-    private var passthrough: Boolean = false
+    private var availableByDefault: Boolean = false
     private var discordChannelId: String = ""
 
     override fun id(id: String): ChatChannel.Builder {
@@ -84,13 +84,13 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
         return this
     }
 
-    override fun alwaysVisible(visible: Boolean): ChatChannel.Builder {
-        this.alwaysVisible = visible
+    override fun alwaysVisible(alwaysVisible: Boolean): ChatChannel.Builder {
+        this.alwaysVisible = alwaysVisible
         return this
     }
 
-    override fun passThrough(passThrough: Boolean): ChatChannel.Builder {
-        this.passthrough = passThrough
+    override fun availableByDefault(availableByDefault: Boolean): ChatChannel.Builder {
+        this.availableByDefault = availableByDefault
         return this
     }
 
@@ -107,7 +107,7 @@ internal class ChatChannelBuilderImpl : ChatChannel.Builder {
         messageFormat,
         commandAliases,
         alwaysVisible,
-        passthrough,
+        availableByDefault,
         discordChannelId,
     )
 

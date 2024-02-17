@@ -59,7 +59,7 @@ class ChannelCommandFactory(
                         .append(
                             Component.join(
                                 JoinConfiguration.newlines(),
-                                channelService.getAllForPlayer(player).map { channel ->
+                                channelService.getAvailable(player).map { channel ->
                                     Component.text()
                                         .append(channel.name)
                                         .append(Component.space())

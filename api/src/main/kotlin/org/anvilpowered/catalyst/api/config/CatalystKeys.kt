@@ -224,8 +224,8 @@ class CatalystKeys(
                     name(Component.text("[Global]").color(NamedTextColor.GREEN))
                     commandAliases(listOf("g", "global"))
                     alwaysVisible(true)
+                    availableByDefault(true)
                     discordChannelId("123456789")
-                    passThrough(false)
                 },
                 "staff" to chatChannelBuilderFactory.build {
                     id("staff")
@@ -242,8 +242,8 @@ class CatalystKeys(
                     }
                     commandAliases(listOf("s", "staff"))
                     alwaysVisible(true)
+                    availableByDefault(false)
                     discordChannelId("123456789")
-                    passThrough(false)
                 },
             ),
         )

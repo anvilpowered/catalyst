@@ -82,7 +82,7 @@ services:
                "global"
             ],
             "alwaysVisible": true,
-            "passthrough": false,
+            "availableByDefault": true,
             "discordChannelId": "123456789"
           },
           "staff": {
@@ -96,7 +96,7 @@ services:
                "staffchat"
             ],
             "alwaysVisible": true,
-            "passthrough": false,
+            "availableByDefault": false,
             "discordChannelId": "123456789"
           }
         }

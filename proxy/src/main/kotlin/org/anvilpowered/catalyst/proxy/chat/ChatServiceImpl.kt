@@ -49,12 +49,23 @@ class ChatServiceImpl(
         val channelId = message.backing.channel.id
         val sourceUserId = message.backing.source.player.uniqueId
 
-        proxyServer.allPlayers.asSequence()
-            .filter {
-                it.hasPermission(registry[catalystKeys.PERMISSION_CHANNEL_SPYALL]) ||
-                    channelService.getForPlayer(it.uniqueId).id == channelId
-            }.filterNot { isIgnored(it.uniqueId, sourceUserId) }
-            .forEach { it.sendMessage(playerFormatResolver.resolve(message.formatted, it)) }
+        val spyAllPlayers = proxyServer.allPlayers
+            .filter { it.hasPermission(registry[catalystKeys.PERMISSION_CHANNEL_SPYALL]) }
+            .toMutableList()
+
+        channelService.getReceivers(channelId)
+            .filterNot { isIgnored(it.uniqueId, sourceUserId) }
+            .onEach { spyAllPlayers.remove(it) }
+            .forEach { player -> player.sendMessage(playerFormatResolver.resolve(message.formatted, player)) }
+
+        spyAllPlayers.forEach { player ->
+            player.sendMessage(
+                Component.text()
+                    .append(Component.text("[SPYALL] ", NamedTextColor.DARK_GRAY))
+                    .append(playerFormatResolver.resolve(message.formatted, player))
+                    .build(),
+            )
+        }
     }
 
     override fun ignore(playerUUID: UUID, targetPlayerUUID: UUID): Component {

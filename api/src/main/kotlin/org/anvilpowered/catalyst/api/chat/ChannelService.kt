@@ -30,11 +30,9 @@ interface ChannelService {
 
     fun getForPlayer(playerId: UUID): ChatChannel
 
-    fun getAllForPlayer(player: Player? = null): List<ChatChannel>
+    fun getAvailable(player: Player? = null): List<ChatChannel>
 
-    fun getPlayers(channelId: String): Sequence<Player>
+    fun getReceivers(channelId: String): Sequence<Player>
 
     fun switch(userUUID: UUID, channelId: String)
-
-    fun moveUsersToChannel(sourceChannel: String, targetChannel: String)
 }

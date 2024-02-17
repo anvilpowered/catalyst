@@ -54,8 +54,8 @@ data class ChatChannel(
     @Comment("Whether the channel should always be visible, regardless of whether the player is in it or not")
     val alwaysVisible: Boolean,
     @Setting
-    @Comment("Whether the channel should pass through messages from other channels")
-    val passthrough: Boolean,
+    @Comment("Whether the channel should be available by default to players (without having to explicitly set the permission)")
+    val availableByDefault: Boolean,
     @Setting
     @Comment("The Discord channel ID to send messages to")
     val discordChannelId: String,
@@ -75,9 +75,9 @@ data class ChatChannel(
 
         fun commandAliases(commandAliases: List<String>): Builder
 
-        fun alwaysVisible(visible: Boolean): Builder
+        fun alwaysVisible(alwaysVisible: Boolean): Builder
 
-        fun passThrough(passThrough: Boolean): Builder
+        fun availableByDefault(availableByDefault: Boolean): Builder
 
         fun discordChannelId(discordChannelId: String): Builder
 

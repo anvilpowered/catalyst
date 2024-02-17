@@ -18,6 +18,7 @@
 
 package org.anvilpowered.catalyst.proxy.chat
 
+import com.velocitypowered.api.permission.Tristate
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import org.anvilpowered.anvil.core.config.Registry
@@ -38,6 +39,9 @@ class ChannelServiceImpl(
         }
     }
 
+    /**
+     * Maps players to the channel to which they send messages.
+     */
     private var playerChannelMapping = mutableMapOf<UUID, String>()
 
     private var defaultChannelId = registry[catalystKeys.CHAT_DEFAULT_CHANNEL]
@@ -45,21 +49,30 @@ class ChannelServiceImpl(
 
     override operator fun get(channelId: String): ChatChannel? = registry[catalystKeys.CHAT_CHANNELS][channelId]
     override fun getForPlayer(playerId: UUID): ChatChannel = playerChannelMapping[playerId]?.let { get(it) } ?: defaultChannel
-    override fun getAllForPlayer(player: Player?): List<ChatChannel> {
-        val prefix = registry[catalystKeys.PERMISSION_CHANNEL_PREFIX]
-        return registry[catalystKeys.CHAT_CHANNELS].values.filter { player?.hasPermission("$prefix.${it.id}") != false }
+    override fun getAvailable(player: Player?): List<ChatChannel> {
+        return if (player == null) {
+            registry[catalystKeys.CHAT_CHANNELS].values.toList()
+        } else {
+            registry[catalystKeys.CHAT_CHANNELS].values.filter { channel ->
+                player.canAccess(channel)
+            }
+        }
     }
 
-    override fun getPlayers(channelId: String): Sequence<Player> =
-        proxyServer.allPlayers.asSequence().filter { player -> getForPlayer(player.uniqueId).id == channelId }
+    override fun getReceivers(channelId: String): Sequence<Player> {
+        // TODO: Optimize by not recalculating on each chat message
+        val channel = checkNotNull(get(channelId)) { "Channel $channelId does not exist" }
+        return proxyServer.allPlayers.asSequence()
+            .filter { getForPlayer(it.uniqueId).id == channelId || (it.canAccess(channel) && channel.alwaysVisible) }
+    }
 
     override fun switch(userUUID: UUID, channelId: String) {
         playerChannelMapping[userUUID] = channelId
     }
 
-    override fun moveUsersToChannel(sourceChannel: String, targetChannel: String) {
-        for (player in getPlayers(sourceChannel)) {
-            switch(player.uniqueId, targetChannel)
-        }
+    private fun Player.canAccess(channel: ChatChannel): Boolean {
+        val permissionValue = getPermissionValue("${registry[catalystKeys.PERMISSION_CHANNEL_PREFIX]}.${channel.id}")
+        return permissionValue == Tristate.TRUE ||
+            (channel.availableByDefault && permissionValue != Tristate.FALSE)
     }
 }
