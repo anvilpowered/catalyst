@@ -46,7 +46,7 @@ class CatalystVelocityBootstrap @Inject constructor(private val injector: Inject
         plugin = koinApplication {
             modules(
                 anvilApi.module,
-                CatalystApi.create(injector, anvilApi.logger).module,
+                CatalystApi.create(anvilApi).module,
                 module { single { CatalystVelocityPlugin(get(), get(), get(), getAll()) } },
             )
         }.koin.get()
