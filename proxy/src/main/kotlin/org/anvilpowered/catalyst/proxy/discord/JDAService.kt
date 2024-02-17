@@ -54,6 +54,8 @@ class JDAService(
         if (!registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
             logger.warn("The discord bot is disabled! Chat will not be transmitted from in-game to discord.")
             return
+        } else {
+            logger.info("The discord bot is enabled!")
         }
         if (isLoaded) {
             jda?.shutdownNow()
@@ -92,6 +94,7 @@ class JDAService(
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+        logger.info("Successfully connected to discord")
     }
 
     private fun updateTopic(): Runnable {
