@@ -67,8 +67,8 @@ services:
       CATALYST_DB_URL: jdbc:postgresql://db/catalyst_docker_compose
       CATALYST_DB_USER: catalyst_docker_compose
       CATALYST_DB_PASSWORD: catalyst_docker_compose
-      CATALYST_DISCORD_ENABLED: false
-      CATALYST_DISCORD_BOT_TOKEN: "<token here>"
+      CATALYST_CHAT_DISCORD_ENABLED: false
+      CATALYST_CHAT_DISCORD_BOT_TOKEN: "<token here>"
       CATALYST_CHAT_CHANNELS: |
         {
           "global": {
