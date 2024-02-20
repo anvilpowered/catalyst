@@ -3,7 +3,7 @@ anvil = "0.4.0-SNAPSHOT"
 kotlin = "1.9.21"
 
 [libraries]
-adventure-bom = "net.kyori:adventure-bom:4.15.0"
+adventure-bom = "net.kyori:adventure-bom:4.16.0"
 anvil-core = { module = "org.anvilpowered:anvil-core", version.ref = "anvil" }
 anvil-velocity = { module = "org.anvilpowered:anvil-velocity", version.ref = "anvil" }
 brigadier = "com.mojang:brigadier:1.0.18"
