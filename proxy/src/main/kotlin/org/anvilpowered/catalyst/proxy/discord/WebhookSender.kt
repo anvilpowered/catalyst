@@ -37,7 +37,7 @@ class WebhookSender(
 ) {
 
     suspend fun sendChannelMessage(user: MinecraftUser.Online, content: Component, discordChannelId: String) {
-        val client = getWebhookClient(discordChannelId) ?: return
+        val client = getWebhookClient(discordChannelId)
         val builder = WebhookMessageBuilder()
         builder.setAvatarUrl(registry[catalystKeys.CHAT_DISCORD_BOT_AVATAR].replace("%uuid%", user.player.uniqueId.toString()))
         builder.setUsername(
@@ -54,7 +54,7 @@ class WebhookSender(
         discordChannelId: String,
         messageKey: SimpleKey<OnlineUserFormat>,
     ) {
-        val client = getWebhookClient(discordChannelId) ?: return
+        val client = getWebhookClient(discordChannelId)
         val builder = WebhookMessageBuilder()
         builder.setAvatarUrl(registry[catalystKeys.CHAT_DISCORD_BOT_AVATAR].replace("%uuid%", user.player.uniqueId.toString()))
         builder.setUsername("System")
