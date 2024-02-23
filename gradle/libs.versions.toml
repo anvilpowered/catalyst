@@ -12,7 +12,7 @@ discord-webhooks = "club.minnced:discord-webhooks:0.8.4"
 driver-mariadb = "org.mariadb.jdbc:mariadb-java-client:3.3.2"
 driver-postgresql = "org.postgresql:postgresql:42.7.1"
 kotest = "io.kotest:kotest-runner-junit5-jvm:5.5.4"
-kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
+kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 luckperms = "net.luckperms:api:5.4"
 velocity = "com.velocitypowered:velocity-api:3.1.1"
 
