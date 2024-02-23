@@ -74,9 +74,12 @@ class JoinListener(
             proxyServer.sendMessage(joinMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))
         }
-        val channel = channelService.getForPlayer(user.player.uniqueId)
+
+        val availableChannels = channelService.getAvailable(user.player)
         if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
-            webhookSender.sendSpecialMessage(user, channel.discordChannelId, catalystKeys.JOIN_MESSAGE_NORMAL)
+            availableChannels.forEach { channel ->
+                webhookSender.sendSpecialMessage(user, channel.discordChannelId, catalystKeys.JOIN_MESSAGE_NORMAL)
+            }
         }
 
         player.sendMessage(
@@ -86,7 +89,7 @@ class JoinListener(
                 .append(Component.text("!", NamedTextColor.GRAY, TextDecoration.ITALIC))
                 .append(Component.newline())
                 .append(Component.text("You are currently chatting in channel ", NamedTextColor.AQUA, TextDecoration.ITALIC))
-                .append(channel.name)
+                .append(channelService.getForPlayer(user.player.uniqueId).name)
                 .build(),
         )
     }

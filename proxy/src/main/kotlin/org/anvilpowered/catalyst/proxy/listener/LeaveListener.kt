@@ -57,9 +57,12 @@ class LeaveListener(
             proxyServer.sendMessage(leaveMessage)
             logger.info(PlainTextComponentSerializer.plainText().serialize(leaveMessage))
         }
+
+        val availableChannels = channelService.getAvailable(user.player)
         if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
-            val discordChannel = channelService.getForPlayer(user.player.uniqueId)
-            webhookSender.sendSpecialMessage(user, discordChannel.discordChannelId, catalystKeys.LEAVE_MESSAGE)
+            availableChannels.forEach { channel ->
+                webhookSender.sendSpecialMessage(user, channel.discordChannelId, catalystKeys.LEAVE_MESSAGE)
+            }
         }
     }
 }
