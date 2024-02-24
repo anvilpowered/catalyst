@@ -9,7 +9,7 @@ anvil-velocity = { module = "org.anvilpowered:anvil-velocity", version.ref = "an
 brigadier = "com.mojang:brigadier:1.0.18"
 discord-jda = "net.dv8tion:JDA:5.0.0-beta.20"
 discord-webhooks = "club.minnced:discord-webhooks:0.8.4"
-driver-mariadb = "org.mariadb.jdbc:mariadb-java-client:3.3.2"
+driver-mariadb = "org.mariadb.jdbc:mariadb-java-client:3.3.3"
 driver-postgresql = "org.postgresql:postgresql:42.7.2"
 kotest = "io.kotest:kotest-runner-junit5-jvm:5.8.0"
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
