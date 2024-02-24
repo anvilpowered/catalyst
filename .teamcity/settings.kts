@@ -114,7 +114,6 @@ class Test : BuildType() {
 
         steps {
             gradle {
-                id = "gradle_runner"
                 tasks = "test"
                 gradleParams = "--refresh-dependencies"
             }
@@ -135,7 +134,6 @@ class Style : BuildType() {
 
         steps {
             gradle {
-                id = "gradle_runner"
                 tasks = "ktlintCheck"
             }
         }
@@ -162,7 +160,7 @@ class PluginJar : BuildType() {
 
         steps {
             gradle {
-                id = "gradle_runner"
+                name = "Build jar"
                 tasks = "clean shadowJar"
                 gradleParams = "--refresh-dependencies"
             }
@@ -196,9 +194,8 @@ class Publish(test: BuildType, style: BuildType) : BuildType() {
 
         steps {
             gradle {
-                id = "gradle_runner"
                 tasks = "publish"
-                gradleParams = "--refresh-dependencies"
+                gradleParams = "--refresh-dependencies -PrawVersion"
             }
         }
     }
