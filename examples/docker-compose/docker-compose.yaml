@@ -6,7 +6,7 @@ version: "3.8"
 
 services:
   db:
-    image: postgres:15.5
+    image: postgres:15.6
     ports:
       - "5432:5432"
     environment:
@@ -17,7 +17,7 @@ services:
       - ./postgresql:/var/lib/postgresql/data
 
   pg-admin:
-    image: dpage/pgadmin4:8.2
+    image: dpage/pgadmin4:8.3
     ports:
       - "8080:80"
     environment:
@@ -40,7 +40,7 @@ services:
   #      - ./mariadb:/var/lib/mysql
 
   lp:
-    image: ghcr.io/luckperms/luckperms:v5.4.117
+    image: ghcr.io/luckperms/luckperms:v5.4.119
     environment:
       # LUCKPERMS_STORAGE_METHOD: mariadb
       LUCKPERMS_STORAGE_METHOD: postgresql
@@ -57,9 +57,9 @@ services:
     environment:
       TYPE: VELOCITY
       VELOCITY_VERSION: 3.3.0-SNAPSHOT
-      VELOCITY_BUILD_ID: 346
+      VELOCITY_BUILD_ID: 363
       PLUGINS: |
-        https://download.luckperms.net/1530/velocity/LuckPerms-Velocity-5.4.117.jar
+        https://download.luckperms.net/1532/velocity/LuckPerms-Velocity-5.4.119.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/eeGwpMZV/SignedVelocity-Proxy-1.2.3.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json
       # CATALYST_DB_TYPE: mariadb # default: postgresql
@@ -108,7 +108,7 @@ services:
       - ./proxy/plugins:/server/plugins
 
   paper-0:
-    image: itzg/minecraft-server:2024.2.1-java21
+    image: itzg/minecraft-server:2024.2.2-java21
     expose:
       - 25565
     environment:
@@ -124,7 +124,7 @@ services:
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
 
   paper-1:
-    image: itzg/minecraft-server:2024.2.1-java21
+    image: itzg/minecraft-server:2024.2.2-java21
     expose:
       - 25565
     environment:
