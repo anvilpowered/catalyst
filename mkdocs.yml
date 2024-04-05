@@ -30,12 +30,14 @@ theme:
     - content.code.select
 
 nav:
-  - Overview:
-      - What is Catalyst?: overview/what-is-catalyst.md
+  - Welcome to Catalyst: index.md
   - Getting Started:
       - Docker Compose Setup: getting-started/docker-compose.md
       - Kubernetes Setup: getting-started/kubernetes.md
       - Legacy Setup: getting-started/legacy.md
+  - Features:
+      - Formatting: features/formatting.md
+      - Placeholders: features/placeholders.md
 
 #nav:
 #  - Vorbereitung:
