@@ -23,27 +23,21 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.ResultRow
 import java.util.UUID
 
-internal object UserTable : UUIDTable("catalyst_users") {
+internal object Users : UUIDTable("catalyst_users") {
     val username = varchar("username", 255).uniqueIndex()
     val email = varchar("email", 255).uniqueIndex().nullable()
     val discordUserId = long("discord_user_id").uniqueIndex().nullable()
-    val minecraftUserId = optReference("minecraft_user_id", MinecraftUserTable)
+    val minecraftUserId = optReference("minecraft_user_id", MinecraftUsers)
 }
 
-internal class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    var username: String by UserTable.username
-    var email: String? by UserTable.email
-    var discordUserId: Long? by UserTable.discordUserId
-    var minecraftUser: MinecraftUserEntity? by MinecraftUserEntity optionalReferencedOn UserTable.minecraftUserId
+internal class DBUser(id: EntityID<UUID>) : UUIDEntity(id), User {
+    override val uuid: UUID = id.value
+    override var username: String by Users.username
+    override var email: String? by Users.email
+    override var discordUserId: Long? by Users.discordUserId
+    override var minecraftUser: DBMinecraftUser? by DBMinecraftUser optionalReferencedOn Users.minecraftUserId
 
-    companion object : UUIDEntityClass<UserEntity>(UserTable)
+    companion object : UUIDEntityClass<DBUser>(Users)
 }
-
-internal fun ResultRow.toUser() = User(
-    uuid = this[UserTable.id].value,
-    username = this[UserTable.username],
-    email = this[UserTable.email],
-)

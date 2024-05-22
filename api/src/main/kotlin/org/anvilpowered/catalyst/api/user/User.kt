@@ -29,13 +29,12 @@ import java.util.UUID
  *
  * Represents a single universal user across all games and platforms.
  */
-data class User(
-    override val uuid: UUID,
-    val username: String,
-    val email: String? = null,
-    val discordUserId: Long? = null,
-    val minecraftUserId: UUID? = null,
-) : DomainEntity, DomainFacet<User> {
+interface User : DomainEntity, DomainFacet<User> {
+
+    val username: String
+    val email: String?
+    val discordUserId: Long?
+    val minecraftUser: MinecraftUser?
 
     data class CreateDto(
         val username: String,
@@ -48,9 +47,6 @@ data class User(
      * Operations scoped within a platform context.
      */
     interface PlatformScope {
-
-        val User.minecraftUser: MinecraftUser
-
         val User.player: Player?
     }
 

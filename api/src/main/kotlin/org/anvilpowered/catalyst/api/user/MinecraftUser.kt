@@ -28,12 +28,10 @@ import java.util.UUID
  *
  * Represents a single user of a game.
  */
-data class MinecraftUser(
-    override val uuid: UUID,
-    val username: String,
-    val ipAddress: String,
-    val nickname: String? = null,
-) : DomainEntity {
+interface MinecraftUser : DomainEntity {
+    val username: String
+    val ipAddress: String
+    val nickname: String?
 
     data class CreateDto(
         val id: UUID,

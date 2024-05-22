@@ -83,7 +83,7 @@ suspend fun CommandExecutionScope<CommandSource>.extractMinecraftUserSource(
     minecraftUserRepository: MinecraftUserRepository,
 ): MinecraftUser {
     val player = extractPlayerSource()
-    val user = minecraftUserRepository.getById(player.uniqueId)
+    val user = minecraftUserRepository.findById(player.uniqueId)
     if (user == null) {
         context.source.sendMessage(
             Component.text()

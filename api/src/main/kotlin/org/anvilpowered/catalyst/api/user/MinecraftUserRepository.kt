@@ -37,5 +37,5 @@ interface MinecraftUserRepository : MutableRepository<MinecraftUser, MinecraftUs
 }
 
 suspend fun MinecraftUserRepository.getOnlineUser(player: Player): MinecraftUser.Online =
-    getById(player.uniqueId)?.let { MinecraftUser.Online(it, player) }
+    findById(player.uniqueId)?.let { MinecraftUser.Online(it, player) }
         ?: throw IllegalStateException("User ${player.username} with id ${player.uniqueId} is not in the database!")

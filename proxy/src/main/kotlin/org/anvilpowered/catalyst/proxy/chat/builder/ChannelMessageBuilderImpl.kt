@@ -55,7 +55,7 @@ internal class ChannelMessageBuilderImpl(
     }
 
     override suspend fun userId(userId: UUID): ChannelMessage.Builder =
-        user(requireNotNull(minecraftUserRepository.getById(userId)) { "Could not find user with id $userId" })
+        user(requireNotNull(minecraftUserRepository.findById(userId)) { "Could not find user with id $userId" })
 
     override fun channel(channel: ChatChannel): ChannelMessage.Builder {
         this.channel = channel
