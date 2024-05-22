@@ -30,7 +30,7 @@ import java.util.UUID
  * Represents a single universal user across all games and platforms.
  */
 data class User(
-    override val id: UUID,
+    override val uuid: UUID,
     val username: String,
     val email: String? = null,
     val discordUserId: Long? = null,

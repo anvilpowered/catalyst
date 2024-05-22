@@ -48,8 +48,8 @@ internal class ChannelMessageBuilderImpl(
     private var rawContent: Component? = null
 
     override fun user(user: MinecraftUser): ChannelMessage.Builder {
-        player = proxyServer.getPlayer(user.id)
-            .orElseThrow { IllegalStateException("User ${user.username} with id ${user.id} is not on the server!") }
+        player = proxyServer.getPlayer(user.uuid)
+            .orElseThrow { IllegalStateException("User ${user.username} with id ${user.uuid} is not on the server!") }
         this.user = user
         return this
     }

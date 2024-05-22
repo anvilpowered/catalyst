@@ -41,7 +41,7 @@ internal class MinecraftUserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 }
 
 internal fun ResultRow.toMinecraftUser() = MinecraftUser(
-    id = this[MinecraftUserTable.id].value,
+    uuid = this[MinecraftUserTable.id].value,
     username = this[MinecraftUserTable.username],
     ipAddress = this[MinecraftUserTable.ipAddress],
     nickname = this[MinecraftUserTable.nickname],

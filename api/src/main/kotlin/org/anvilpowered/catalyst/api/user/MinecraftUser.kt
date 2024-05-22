@@ -29,7 +29,7 @@ import java.util.UUID
  * Represents a single user of a game.
  */
 data class MinecraftUser(
-    override val id: UUID,
+    override val uuid: UUID,
     val username: String,
     val ipAddress: String,
     val nickname: String? = null,

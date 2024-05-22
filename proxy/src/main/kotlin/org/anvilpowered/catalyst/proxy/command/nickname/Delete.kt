@@ -73,7 +73,7 @@ fun NicknameCommandFactory.createDelete(): LiteralCommandNode<CommandSource> =
                             .append(Component.text("You don't have permission to delete other players' nicknames!", NamedTextColor.RED)),
                     )
                     yieldError()
-                } else if (minecraftUserRepository.deleteNickname(minecraftUser.id)) {
+                } else if (minecraftUserRepository.deleteNickname(minecraftUser.uuid)) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of ", NamedTextColor.RED))

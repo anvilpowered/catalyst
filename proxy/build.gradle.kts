@@ -4,7 +4,13 @@ plugins {
 }
 dependencies {
     api(libs.anvil.core)
-    api(platform("net.kyori:adventure-bom:4.16.0"))
+
+    api(platform(libs.exposed.bom))
+    api(libs.bundles.exposed) {
+        exclude(group = "org.slf4j")
+    }
+
+    api(platform(libs.adventure.bom))
     api("net.kyori:adventure-text-serializer-legacy")
     api("net.kyori:adventure-text-serializer-plain")
 

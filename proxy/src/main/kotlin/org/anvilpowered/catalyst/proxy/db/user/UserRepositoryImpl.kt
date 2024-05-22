@@ -51,7 +51,7 @@ class UserRepositoryImpl(
         val user = checkNotNull(result) { "Failed to create User ${item.username}" }
             .single().toUser()
 
-        logger.info("Created new User ${user.id} with data $item")
+        logger.info("Created new User ${user.uuid} with data $item")
 
         user
     }
@@ -62,25 +62,25 @@ class UserRepositoryImpl(
             MutableRepository.PutResult(create(item), created = true)
         } else {
             // update the existing User
-            logger.info("Found existing User ${existingUser.id} with username ${existingUser.username}")
+            logger.info("Found existing User ${existingUser.uuid} with username ${existingUser.username}")
 
             if (existingUser.email != item.email) {
-                UserTable.update({ UserTable.id eq existingUser.id }) {
-                    logger.info("Updating email for User ${existingUser.id} from ${existingUser.email} to ${item.email}")
+                UserTable.update({ UserTable.id eq existingUser.uuid }) {
+                    logger.info("Updating email for User ${existingUser.uuid} from ${existingUser.email} to ${item.email}")
                     it[email] = item.email
                 }
             }
 
             if (existingUser.discordUserId != item.discordUserId) {
-                UserTable.update({ UserTable.id eq existingUser.id }) {
-                    logger.info("Updating discordUserId for User ${existingUser.id} from ${existingUser.discordUserId} to ${item.discordUserId}")
+                UserTable.update({ UserTable.id eq existingUser.uuid }) {
+                    logger.info("Updating discordUserId for User ${existingUser.uuid} from ${existingUser.discordUserId} to ${item.discordUserId}")
                     it[discordUserId] = item.discordUserId
                 }
             }
 
             if (existingUser.minecraftUserId != item.minecraftUserId) {
-                UserTable.update({ UserTable.id eq existingUser.id }) {
-                    logger.info("Updating minecraftUserId for User ${existingUser.id} from ${existingUser.minecraftUserId} to ${item.minecraftUserId}")
+                UserTable.update({ UserTable.id eq existingUser.uuid }) {
+                    logger.info("Updating minecraftUserId for User ${existingUser.uuid} from ${existingUser.minecraftUserId} to ${item.minecraftUserId}")
                     it[minecraftUserId] = item.minecraftUserId
                 }
             }

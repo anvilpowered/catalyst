@@ -43,7 +43,7 @@ internal class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 }
 
 internal fun ResultRow.toUser() = User(
-    id = this[UserTable.id].value,
+    uuid = this[UserTable.id].value,
     username = this[UserTable.username],
     email = this[UserTable.email],
 )

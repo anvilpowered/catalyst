@@ -19,15 +19,17 @@
 package org.anvilpowered.catalyst.proxy.db.user
 
 import org.anvilpowered.anvil.core.db.MutableRepository
+import org.anvilpowered.anvil.core.db.SizedIterable
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.anvilpowered.catalyst.api.user.User
+import org.anvilpowered.catalyst.proxy.db.wrap
 import org.apache.logging.log4j.Logger
-import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.mapLazy
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.update
 import java.util.UUID
@@ -63,7 +65,7 @@ class MinecraftUserRepositoryImpl(
                 minecraftUser = newUser
             }.let { User(it.id.value, item.username, minecraftUserId = item.id) }
 
-            logger.info("Created new MinecraftUser ${item.id} with data $item and accompanying User ${user.id}")
+            logger.info("Created new MinecraftUser ${item.id} with data $item and accompanying User ${user.uuid}")
 
             MutableRepository.PutResult(MinecraftUser(newUser.id.value, item.username, item.ipAddress), created = true)
         } else {
@@ -107,10 +109,10 @@ class MinecraftUserRepositoryImpl(
 
     override suspend fun getAllUsernames(startWith: String): SizedIterable<String> = newSuspendedTransaction {
         MinecraftUserEntity.find { MinecraftUserTable.username like "$startWith%" }.mapLazy { it.username }
-    }
+    }.wrap()
 
     override suspend fun getByUsername(username: String): MinecraftUser? = newSuspendedTransaction {
-        MinecraftUserTable.select { MinecraftUserTable.username eq username }
+        MinecraftUserTable.selectAll().where { MinecraftUserTable.username eq username }
             .firstOrNull()
             ?.toMinecraftUser()
     }
