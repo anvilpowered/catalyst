@@ -37,5 +37,5 @@ internal class DBMinecraftUser(id: EntityID<UUID>) : UUIDEntity(id), MinecraftUs
     override var ipAddress: String by MinecraftUsers.ipAddress
     override var nickname: String? by MinecraftUsers.nickname
 
-    companion object : UUIDEntityClass<DBMinecraftUser>(MinecraftUsers)
+    companion object : UUIDEntityClass<DBMinecraftUser>(MinecraftUsers, DBMinecraftUser::class.java, ::DBMinecraftUser)
 }

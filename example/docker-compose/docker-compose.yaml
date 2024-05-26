@@ -51,7 +51,7 @@ services:
       LUCKPERMS_DATA_PASSWORD: catalyst_docker_compose
 
   proxy:
-    image: itzg/bungeecord:java17
+    image: itzg/bungeecord:latest
     ports:
       - "25565:25565"
     environment:
