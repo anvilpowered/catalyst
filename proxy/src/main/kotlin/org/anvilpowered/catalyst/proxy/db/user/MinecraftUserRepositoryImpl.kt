@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.mapLazy
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.update
 import java.util.UUID
@@ -86,7 +86,7 @@ class MinecraftUserRepositoryImpl(private val logger: Logger) : MinecraftUserRep
     }
 
     override suspend fun getNickname(id: UUID): String? = newSuspendedTransaction {
-        MinecraftUsers.select { MinecraftUsers.id eq id }
+        MinecraftUsers.selectAll().where { MinecraftUsers.id eq id }
             .firstOrNull()
             ?.getOrNull(MinecraftUsers.nickname)
     }
