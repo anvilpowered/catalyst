@@ -10,7 +10,6 @@ import jetbrains.buildServer.configs.kotlin.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.project
 import jetbrains.buildServer.configs.kotlin.projectFeatures.githubIssues
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
-import jetbrains.buildServer.configs.kotlin.version
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -34,10 +33,7 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 'Debug' option is available in the context menu for the task.
 */
 
-version = "2023.11"
-
 project {
-
     val test = Test()
     val style = Style()
     val pluginJar = PluginJar()
@@ -70,7 +66,16 @@ fun BuildType.configureVcs() {
 fun BuildType.configureTriggers() {
     triggers {
         vcs {
-            branchFilter = "+:*"
+            triggerRules = """
+                +:**.java
+                +:**.kt
+                +:**.kts
+                -:comment=^\\[ci skip\\].*
+            """.trimIndent()
+            branchFilter = """
+                +:*
+                -:gh-pages
+                """.trimIndent()
         }
     }
 }
