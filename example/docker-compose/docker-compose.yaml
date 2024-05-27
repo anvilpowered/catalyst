@@ -61,6 +61,7 @@ services:
       PLUGINS: |
         https://download.luckperms.net/1532/velocity/LuckPerms-Velocity-5.4.119.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/eeGwpMZV/SignedVelocity-Proxy-1.2.3.jar
+        https://cdn.modrinth.com/data/1iWA0pjH/versions/rEHcRyPV/MCKotlinVelocity-1.4.0-k1.9.21.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json
       # CATALYST_DB_TYPE: mariadb # default: postgresql
       # CATALYST_DB_URL: jdbc:mariadb://db/catalyst_docker_compose
