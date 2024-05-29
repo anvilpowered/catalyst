@@ -2,11 +2,10 @@
 # how Catalyst may be deployed in a container environment.
 # Carefully read and understand the entire configuration before using any part of it.
 # By using this file, you are indicating your acceptance of the Minecraft EULA (https://www.minecraft.net/en-us/eula).
-version: "3.8"
 
 services:
   db:
-    image: postgres:15.6
+    image: postgres:15.7
     ports:
       - "5432:5432"
     environment:
@@ -17,7 +16,7 @@ services:
       - ./postgresql:/var/lib/postgresql/data
 
   pg-admin:
-    image: dpage/pgadmin4:8.3
+    image: dpage/pgadmin4:8.6
     ports:
       - "8080:80"
     environment:
@@ -40,7 +39,7 @@ services:
   #      - ./mariadb:/var/lib/mysql
 
   lp:
-    image: ghcr.io/luckperms/luckperms:v5.4.119
+    image: ghcr.io/luckperms/luckperms:v5.4.130
     environment:
       # LUCKPERMS_STORAGE_METHOD: mariadb
       LUCKPERMS_STORAGE_METHOD: postgresql
@@ -57,7 +56,7 @@ services:
     environment:
       TYPE: VELOCITY
       VELOCITY_VERSION: 3.3.0-SNAPSHOT
-      VELOCITY_BUILD_ID: 363
+      VELOCITY_BUILD_ID: 394
       PLUGINS: |
         https://download.luckperms.net/1543/velocity/LuckPerms-Velocity-5.4.130.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/eeGwpMZV/SignedVelocity-Proxy-1.2.3.jar
@@ -109,12 +108,12 @@ services:
       - ./proxy/plugins:/server/plugins
 
   paper-0:
-    image: itzg/minecraft-server:2024.2.2-java21
+    image: itzg/minecraft-server:latest
     expose:
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.4"
+      VERSION: "1.20.6"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
@@ -125,12 +124,12 @@ services:
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
 
   paper-1:
-    image: itzg/minecraft-server:2024.2.2-java21
+    image: itzg/minecraft-server:latest
     expose:
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.4"
+      VERSION: "1.20.6"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
