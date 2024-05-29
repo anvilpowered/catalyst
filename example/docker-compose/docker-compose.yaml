@@ -5,7 +5,7 @@
 
 services:
   db:
-    image: postgres:15.7
+    image: postgres:16.3
     ports:
       - "5432:5432"
     environment:
