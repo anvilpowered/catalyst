@@ -156,6 +156,12 @@ class PluginJar : BuildType() {
         configureVcs()
         triggers {
             vcs {
+                triggerRules = """
+                    +:**.java
+                    +:**.kt
+                    +:**.kts
+                    -:comment=^\\[ci skip\\].*
+                """.trimIndent()
                 branchFilter = "+:master"
             }
         }
