@@ -16,7 +16,7 @@ exposed-core = { module = "org.jetbrains.exposed:exposed-core" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc" }
 exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time" }
-kotest = "io.kotest:kotest-runner-junit5-jvm:5.8.0"
+kotest = "io.kotest:kotest-runner-junit5-jvm:5.9.1"
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 logging-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 logging-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
