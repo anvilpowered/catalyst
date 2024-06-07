@@ -2,6 +2,7 @@
 # how Catalyst may be deployed in a container environment.
 # Carefully read and understand the entire configuration before using any part of it.
 # By using this file, you are indicating your acceptance of the Minecraft EULA (https://www.minecraft.net/en-us/eula).
+name: catalyst
 
 services:
   db:
