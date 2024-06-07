@@ -21,7 +21,7 @@ docker-compose down # Stop servers
 ```
 
 For a full working example with Catalyst already set up,
-you can check out the [Catalyst Example](https://github.com/anvilpowered/catalyst/tree/master/examples).
+you can check out the [Catalyst Example](https://github.com/anvilpowered/catalyst/tree/master/example).
 By downloading the repository, building Catalyst and running `docker-compose up` in the `examples/docker-compose` directory,
 you can start the servers.
 Remember to restart the servers once before joining. See
@@ -44,7 +44,7 @@ which tells Docker which servers to start and how to configure them.
 services:
   # Velocity Proxy
   proxy:
-    image: itzg/bungeecord:java21
+    image: itzg/bungeecord:latest
     ports: # Expose ports to the host system
       - "25565:25565"
     environment:
@@ -52,23 +52,23 @@ services:
 
   # Paper 0
   paper-0:
-    image: itzg/minecraft-server:java21
+    image: itzg/minecraft-server:latest
     expose: # Only expose ports within docker network and not externally
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.4"
+      VERSION: "1.20.6"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
 
   # Paper 1
   paper-1:
-    image: itzg/minecraft-server:java21
+    image: itzg/minecraft-server:latest
     expose: # Only expose ports within docker network and not externally
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.4"
+      VERSION: "1.20.6"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
 ```
@@ -92,7 +92,7 @@ stateDiagram-v2
 </div>
 
 These images have *extensive* customization support and their own [docs](https://docker-minecraft-server.readthedocs.io/en/latest/) along
-with a discord server for any questions related to the images themselves.
+with a [discord server](https://discord.gg/DXfKpjB) for any questions related to the images themselves.
 This page will only cover the details relevant for a Catalyst deployment.
 
 ## Adding config patches
@@ -151,19 +151,17 @@ Here is an example of a simple two backend-server configuration with a velocity 
 using
 
 ```yaml
-version: "3.8"
-
 services:
   proxy:
-    image: itzg/bungeecord:java21
+    image: itzg/bungeecord:latest
     ports:
       - "25565:25565"
     environment:
       TYPE: VELOCITY
       VELOCITY_VERSION: 3.3.0-SNAPSHOT
-      VELOCITY_BUILD_ID: 363
+      VELOCITY_BUILD_ID: 390
       PLUGINS: |
-        https://download.luckperms.net/1532/velocity/LuckPerms-Velocity-5.4.119.jar
+        https://download.luckperms.net/1543/velocity/LuckPerms-Velocity-5.4.130.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/eeGwpMZV/SignedVelocity-Proxy-1.2.3.jar
     volumes:
       - ../config/velocity.toml:/server/velocity.toml
@@ -172,12 +170,12 @@ services:
       - ./proxy/plugins:/server/plugins
 
   paper-0:
-    image: itzg/minecraft-server:java21
+    image: itzg/minecraft-server:latest
     expose:
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.4"
+      VERSION: "1.20.6"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
@@ -188,12 +186,12 @@ services:
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
 
   paper-1:
-    image: itzg/minecraft-server:2024.2.2-java21
+    image: itzg/minecraft-server:latest
     expose:
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.4"
+      VERSION: "1.20.6"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
