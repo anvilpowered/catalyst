@@ -39,5 +39,5 @@ internal class DBUser(id: EntityID<UUID>) : UUIDEntity(id), User {
     override var discordUserId: Long? by Users.discordUserId
     override var minecraftUser: DBMinecraftUser? by DBMinecraftUser optionalReferencedOn Users.minecraftUserId
 
-    companion object : UUIDEntityClass<DBUser>(Users)
+    companion object : UUIDEntityClass<DBUser>(Users, DBUser::class.java, ::DBUser)
 }
