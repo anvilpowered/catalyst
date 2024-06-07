@@ -77,7 +77,7 @@ fun NicknameCommandFactory.createSet(): LiteralCommandNode<CommandSource> =
                             .append(Component.text("You don't have permission to set other players' nicknames!", NamedTextColor.RED)),
                     )
                     yieldError()
-                } else if (minecraftUserRepository.updateNickname(minecraftUser.id, context["nickname"])) {
+                } else if (minecraftUserRepository.updateNickname(minecraftUser.uuid, context["nickname"])) {
                     context.source.sendMessage(
                         PluginMessages.pluginPrefix
                             .append(Component.text("The nickname of '", NamedTextColor.GRAY))

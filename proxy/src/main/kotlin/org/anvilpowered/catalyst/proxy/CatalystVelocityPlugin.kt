@@ -20,8 +20,8 @@ package org.anvilpowered.catalyst.proxy
 
 import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.config.CatalystKeys
-import org.anvilpowered.catalyst.proxy.db.user.MinecraftUserTable
-import org.anvilpowered.catalyst.proxy.db.user.UserTable
+import org.anvilpowered.catalyst.proxy.db.user.MinecraftUsers
+import org.anvilpowered.catalyst.proxy.db.user.Users
 import org.anvilpowered.catalyst.proxy.registrar.Registrar
 import org.apache.logging.log4j.Logger
 import org.jetbrains.exposed.sql.Database
@@ -65,8 +65,8 @@ class CatalystVelocityPlugin(
         logger.info("Creating tables...")
         transaction {
             SchemaUtils.createMissingTablesAndColumns(
-                MinecraftUserTable,
-                UserTable,
+                MinecraftUsers,
+                Users,
             )
         }
         logger.info("Finished creating tables.")

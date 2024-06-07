@@ -18,32 +18,24 @@
 
 package org.anvilpowered.catalyst.proxy.db.user
 
-import org.anvilpowered.catalyst.api.user.User
+import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.ResultRow
 import java.util.UUID
 
-internal object UserTable : UUIDTable("catalyst_users") {
+internal object MinecraftUsers : UUIDTable("catalyst_minecraft_users") {
     val username = varchar("username", 255).uniqueIndex()
-    val email = varchar("email", 255).uniqueIndex().nullable()
-    val discordUserId = long("discord_user_id").uniqueIndex().nullable()
-    val minecraftUserId = optReference("minecraft_user_id", MinecraftUserTable)
+    val ipAddress = varchar("ip_address", 255)
+    val nickname = varchar("nickname", 255).nullable()
 }
 
-internal class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    var username: String by UserTable.username
-    var email: String? by UserTable.email
-    var discordUserId: Long? by UserTable.discordUserId
-    var minecraftUser: MinecraftUserEntity? by MinecraftUserEntity optionalReferencedOn UserTable.minecraftUserId
+internal class DBMinecraftUser(id: EntityID<UUID>) : UUIDEntity(id), MinecraftUser {
+    override val uuid: UUID = id.value
+    override var username: String by MinecraftUsers.username
+    override var ipAddress: String by MinecraftUsers.ipAddress
+    override var nickname: String? by MinecraftUsers.nickname
 
-    companion object : UUIDEntityClass<UserEntity>(UserTable)
+    companion object : UUIDEntityClass<DBMinecraftUser>(MinecraftUsers, DBMinecraftUser::class.java, ::DBMinecraftUser)
 }
-
-internal fun ResultRow.toUser() = User(
-    id = this[UserTable.id].value,
-    username = this[UserTable.username],
-    email = this[UserTable.email],
-)

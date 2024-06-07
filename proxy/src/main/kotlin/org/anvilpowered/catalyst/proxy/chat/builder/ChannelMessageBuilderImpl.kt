@@ -48,14 +48,14 @@ internal class ChannelMessageBuilderImpl(
     private var rawContent: Component? = null
 
     override fun user(user: MinecraftUser): ChannelMessage.Builder {
-        player = proxyServer.getPlayer(user.id)
-            .orElseThrow { IllegalStateException("User ${user.username} with id ${user.id} is not on the server!") }
+        player = proxyServer.getPlayer(user.uuid)
+            .orElseThrow { IllegalStateException("User ${user.username} with id ${user.uuid} is not on the server!") }
         this.user = user
         return this
     }
 
     override suspend fun userId(userId: UUID): ChannelMessage.Builder =
-        user(requireNotNull(minecraftUserRepository.getById(userId)) { "Could not find user with id $userId" })
+        user(requireNotNull(minecraftUserRepository.findById(userId)) { "Could not find user with id $userId" })
 
     override fun channel(channel: ChatChannel): ChannelMessage.Builder {
         this.channel = channel

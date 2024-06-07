@@ -44,10 +44,10 @@ class PrivateMessageService(
     private var replyMap = mutableMapOf<UUID, UUID>()
 
     suspend fun sendMessage(source: Player, recipient: Player, content: Component) {
-        val sourceUser = minecraftUserRepository.getById(source.uniqueId)?.let { MinecraftUser.Online(it, source) }
+        val sourceUser = minecraftUserRepository.findById(source.uniqueId)?.let { MinecraftUser.Online(it, source) }
             ?: throw IllegalStateException("User ${source.username} with id ${source.uniqueId} is not in the database!")
 
-        val recipientUser = minecraftUserRepository.getById(recipient.uniqueId)?.let { MinecraftUser.Online(it, recipient) }
+        val recipientUser = minecraftUserRepository.findById(recipient.uniqueId)?.let { MinecraftUser.Online(it, recipient) }
             ?: throw IllegalStateException("User ${recipient.username} with id ${recipient.uniqueId} is not in the database!")
 
         val message = PrivateMessage(sourceUser, recipientUser, content)

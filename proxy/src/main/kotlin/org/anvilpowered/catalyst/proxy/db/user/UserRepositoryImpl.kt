@@ -23,35 +23,28 @@ import org.anvilpowered.anvil.core.db.Pagination
 import org.anvilpowered.catalyst.api.user.User
 import org.anvilpowered.catalyst.api.user.UserRepository
 import org.apache.logging.log4j.Logger
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
-class UserRepositoryImpl(
-    private val logger: Logger,
-) : UserRepository {
+class UserRepositoryImpl(private val logger: Logger) : UserRepository {
     override suspend fun paginate(): Pagination<User> {
         TODO("Not yet implemented")
     }
 
     override suspend fun create(item: User.CreateDto): User = newSuspendedTransaction {
-        val result = UserTable.insert {
-            it[username] = item.username
-            it[email] = item.email
-            it[discordUserId] = item.discordUserId
-            it[minecraftUserId] = item.minecraftUserId
-        }.resultedValues
+        val itemMinecraftUser = item.minecraftUserId?.let { id -> DBMinecraftUser.findById(id) }
 
-        val user = checkNotNull(result) { "Failed to create User ${item.username}" }
-            .single().toUser()
+        val user = DBUser.new {
+            username = item.username
+            email = item.email
+            discordUserId = item.discordUserId
+            minecraftUser = itemMinecraftUser
+        }
 
-        logger.info("Created new User ${user.id} with data $item")
+        logger.info("Created new User ${user.uuid} with data $item")
 
         user
     }
@@ -62,25 +55,25 @@ class UserRepositoryImpl(
             MutableRepository.PutResult(create(item), created = true)
         } else {
             // update the existing User
-            logger.info("Found existing User ${existingUser.id} with username ${existingUser.username}")
+            logger.info("Found existing User ${existingUser.uuid} with username ${existingUser.username}")
 
             if (existingUser.email != item.email) {
-                UserTable.update({ UserTable.id eq existingUser.id }) {
-                    logger.info("Updating email for User ${existingUser.id} from ${existingUser.email} to ${item.email}")
+                Users.update({ Users.id eq existingUser.uuid }) {
+                    logger.info("Updating email for User ${existingUser.uuid} from ${existingUser.email} to ${item.email}")
                     it[email] = item.email
                 }
             }
 
             if (existingUser.discordUserId != item.discordUserId) {
-                UserTable.update({ UserTable.id eq existingUser.id }) {
-                    logger.info("Updating discordUserId for User ${existingUser.id} from ${existingUser.discordUserId} to ${item.discordUserId}")
+                Users.update({ Users.id eq existingUser.uuid }) {
+                    logger.info("Updating discordUserId for User ${existingUser.uuid} from ${existingUser.discordUserId} to ${item.discordUserId}")
                     it[discordUserId] = item.discordUserId
                 }
             }
 
-            if (existingUser.minecraftUserId != item.minecraftUserId) {
-                UserTable.update({ UserTable.id eq existingUser.id }) {
-                    logger.info("Updating minecraftUserId for User ${existingUser.id} from ${existingUser.minecraftUserId} to ${item.minecraftUserId}")
+            if (existingUser.minecraftUser?.uuid != item.minecraftUserId) {
+                Users.update({ Users.id eq existingUser.uuid }) {
+                    logger.info("Updating minecraftUserId for User ${existingUser.uuid} from ${existingUser.minecraftUser?.uuid} to ${item.minecraftUserId}")
                     it[minecraftUserId] = item.minecraftUserId
                 }
             }
@@ -89,24 +82,33 @@ class UserRepositoryImpl(
         }
     }
 
-    private suspend fun getOneWhere(condition: SqlExpressionBuilder.() -> Op<Boolean>): User? = newSuspendedTransaction {
-        UserTable.select { condition() }.firstOrNull()?.toUser()
+    override suspend fun findById(id: UUID): User? = newSuspendedTransaction {
+        DBUser.findById(id)
     }
 
-    override suspend fun getById(id: UUID): User? = getOneWhere { UserTable.id eq id }
-    override suspend fun getByUsername(username: String): User? = getOneWhere { UserTable.username eq username }
-    override suspend fun getByEmail(email: String): User? = getOneWhere { UserTable.email eq email }
-    override suspend fun getByDiscordUserId(id: Long): User? = getOneWhere { UserTable.discordUserId eq id }
+    override suspend fun getByUsername(username: String): User? = newSuspendedTransaction {
+        DBUser.find { Users.username eq username }.firstOrNull()
+    }
 
-    override suspend fun getByMinecraftUserId(id: UUID): User? = getOneWhere { UserTable.minecraftUserId eq id }
+    override suspend fun getByEmail(email: String): User? = newSuspendedTransaction {
+        DBUser.find { Users.email eq email }.firstOrNull()
+    }
 
-    override suspend fun countAll(): Long = newSuspendedTransaction { UserEntity.all().count() }
+    override suspend fun getByDiscordUserId(id: Long): User? = newSuspendedTransaction {
+        DBUser.find { Users.discordUserId eq id }.firstOrNull()
+    }
+
+    override suspend fun getByMinecraftUserId(id: UUID): User? = newSuspendedTransaction {
+        DBUser.find { Users.minecraftUserId eq id }.firstOrNull()
+    }
+
+    override suspend fun countAll(): Long = newSuspendedTransaction { DBUser.all().count() }
 
     override suspend fun exists(id: UUID): Boolean = newSuspendedTransaction {
-        UserEntity.findById(id) != null
+        DBUser.findById(id) != null
     }
 
     override suspend fun deleteById(id: UUID): Boolean = newSuspendedTransaction {
-        UserTable.deleteWhere { UserTable.id eq id } > 0
+        Users.deleteWhere { Users.id eq id } > 0
     }
 }
