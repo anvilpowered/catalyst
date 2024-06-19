@@ -40,7 +40,7 @@ services:
   #      - ./mariadb:/var/lib/mysql
 
   lp:
-    image: ghcr.io/luckperms/luckperms:v5.4.130
+    image: ghcr.io/luckperms/luckperms:v5.4.134
     environment:
       # LUCKPERMS_STORAGE_METHOD: mariadb
       LUCKPERMS_STORAGE_METHOD: postgresql
@@ -51,15 +51,15 @@ services:
       LUCKPERMS_DATA_PASSWORD: catalyst_docker_compose
 
   proxy:
-    image: itzg/bungeecord:latest
+    image: itzg/mc-proxy:latest
     ports:
       - "25565:25565"
     environment:
       TYPE: VELOCITY
       VELOCITY_VERSION: 3.3.0-SNAPSHOT
-      VELOCITY_BUILD_ID: 394
+      VELOCITY_BUILD_ID: 400
       PLUGINS: |
-        https://download.luckperms.net/1543/velocity/LuckPerms-Velocity-5.4.130.jar
+        https://download.luckperms.net/1549/velocity/LuckPerms-Velocity-5.4.134.jar
         https://cdn.modrinth.com/data/7IbzD4Zm/versions/eeGwpMZV/SignedVelocity-Proxy-1.2.3.jar
         https://cdn.modrinth.com/data/1iWA0pjH/versions/rEHcRyPV/MCKotlinVelocity-1.4.0-k1.9.21.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json
