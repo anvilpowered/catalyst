@@ -4,7 +4,7 @@ kotlin = "2.0.0"
 log4j = "2.23.1"
 
 [libraries]
-adventure-bom = "net.kyori:adventure-bom:4.16.0"
+adventure-bom = "net.kyori:adventure-bom:4.18.0"
 anvil-core = { module = "org.anvilpowered:anvil-core", version.ref = "anvil" }
 anvil-velocity = { module = "org.anvilpowered:anvil-velocity", version.ref = "anvil" }
 discord-jda = "net.dv8tion:JDA:5.2.2"
