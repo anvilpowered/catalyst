@@ -45,10 +45,6 @@ allprojects {
             )
         }
     }
-
-    java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-    }
 }
 
 // for uber jar
