@@ -6,7 +6,7 @@ name: catalyst
 
 services:
   db:
-    image: postgres:15.7
+    image: postgres:15.10
     ports:
       - "5432:5432"
     environment:
@@ -17,7 +17,7 @@ services:
       - ./postgresql:/var/lib/postgresql/data
 
   pg-admin:
-    image: dpage/pgadmin4:8.6
+    image: dpage/pgadmin4:8.14
     ports:
       - "8080:80"
     environment:
@@ -40,7 +40,7 @@ services:
   #      - ./mariadb:/var/lib/mysql
 
   lp:
-    image: ghcr.io/luckperms/luckperms:v5.4.134
+    image: ghcr.io/luckperms/luckperms:v5.4.151
     environment:
       # LUCKPERMS_STORAGE_METHOD: mariadb
       LUCKPERMS_STORAGE_METHOD: postgresql
@@ -51,16 +51,16 @@ services:
       LUCKPERMS_DATA_PASSWORD: catalyst_docker_compose
 
   proxy:
-    image: itzg/mc-proxy:latest
+    image: itzg/mc-proxy:2024.6.0
     ports:
       - "25565:25565"
     environment:
       TYPE: VELOCITY
-      VELOCITY_VERSION: 3.3.0-SNAPSHOT
-      VELOCITY_BUILD_ID: 400
+      VELOCITY_VERSION: 3.4.0-SNAPSHOT
+      VELOCITY_BUILD_ID: 458
       PLUGINS: |
-        https://download.luckperms.net/1549/velocity/LuckPerms-Velocity-5.4.134.jar
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/eeGwpMZV/SignedVelocity-Proxy-1.2.3.jar
+        https://download.luckperms.net/1568/velocity/LuckPerms-Velocity-5.4.151.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/Jp1p9BHR/SignedVelocity-Proxy-1.3.0.jar
         https://cdn.modrinth.com/data/1iWA0pjH/versions/rEHcRyPV/MCKotlinVelocity-1.4.0-k1.9.21.jar
       PATCH_DEFINITIONS: /server/velocity-patch-set.json
       # CATALYST_DB_TYPE: mariadb # default: postgresql
@@ -109,33 +109,37 @@ services:
       - ./proxy/plugins:/server/plugins
 
   paper-0:
-    image: itzg/minecraft-server:latest
+    image: itzg/minecraft-server:2024.12.1
     expose:
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.6"
+      VERSION: "1.21.4"
+      PAPER_CHANNEL: "experimental"
+      PAPER_BUILD: "68"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
       PLUGINS: |
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/ngDdLdWA/SignedVelocity-Paper-1.2.3.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/TKC72r9l/SignedVelocity-Paper-1.3.0.jar
     volumes:
       - ./paper-0:/data
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
 
   paper-1:
-    image: itzg/minecraft-server:latest
+    image: itzg/minecraft-server:2024.12.1
     expose:
       - 25565
     environment:
       TYPE: PAPER
-      VERSION: "1.20.6"
+      VERSION: "1.21.4"
+      PAPER_CHANNEL: "experimental"
+      PAPER_BUILD: "68"
       EULA: true # By using this environment variable, you are indicating your acceptance of the Minecraft EULA
       ONLINE_MODE: false
       PATCH_DEFINITIONS: /config/paper-patch-set.json
       PLUGINS: |
-        https://cdn.modrinth.com/data/7IbzD4Zm/versions/ngDdLdWA/SignedVelocity-Paper-1.2.3.jar
+        https://cdn.modrinth.com/data/7IbzD4Zm/versions/TKC72r9l/SignedVelocity-Paper-1.3.0.jar
     volumes:
       - ./paper-1:/data
       - ../config/paper-patch-set.json:/config/paper-patch-set.json:ro
