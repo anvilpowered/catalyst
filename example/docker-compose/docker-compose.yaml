@@ -51,7 +51,7 @@ services:
       LUCKPERMS_DATA_PASSWORD: catalyst_docker_compose
 
   proxy:
-    image: itzg/mc-proxy:2024.6.0
+    image: itzg/mc-proxy:2025.6.0
     ports:
       - "25565:25565"
     environment:
