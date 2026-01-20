@@ -24,31 +24,34 @@ import org.anvilpowered.anvil.core.db.DomainFacet
 import org.anvilpowered.anvil.core.user.Player
 import java.util.UUID
 
-/**
- * A user of the Anvil platform.
- *
- * Represents a single universal user across all games and platforms.
- */
-trait User : DomainEntity, DomainFacet[User] {
+/** A user of the Anvil platform.
+  *
+  * Represents a single universal user across all games and platforms.
+  */
+case class User(
+    val username: String,
+    val email: Option[String],
+    val discordUserId: Option[Long],
+) extends DomainEntity {
 
-    val username: String
-    val email: String?
-    val discordUserId: Long?
-    val minecraftUser: MinecraftUser?
+  /** The potentially-offline user object specific one minecraft server instance.
+   */
+  val minecraftUser: MinecraftUser
+}
 
-    data class CreateDto(
-        val username: String,
-        val email: String? = null,
-        val discordUserId: Long? = null,
-        val minecraftUserId: UUID? = null,
-    ) : Creates[User]
+object User {
+  case class CreateDto(
+      val username: String,
+      val email: Option[String] = None,
+      val discordUserId: Option[Long] = None,
+      val minecraftUserId: Option[UUID] = None,
+  ) extends Creates[User]
 
-    /**
-     * Operations scoped within a platform context.
-     */
-    trait PlatformScope {
-        val User.player: Player?
+  /** Operations scoped within a platform context.
+    */
+  trait PlatformScope {
+    extension (user: User) {
+      def player: Option[Player]
     }
-
-    override suspend def getOriginal(): User = this
+  }
 }

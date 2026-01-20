@@ -18,29 +18,32 @@
 
 package org.anvilpowered.catalyst.api.user
 
-import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.core.db.Creates
 import org.anvilpowered.anvil.core.db.DomainEntity
+import org.anvilpowered.anvil.core.user.Player
+
 import java.util.UUID
 
-/**
- * A user of a game of the Anvil platform.
- *
- * Represents a single user of a game.
- */
-trait MinecraftUser : DomainEntity {
-    val username: String
-    val ipAddress: String
-    val nickname: String?
+/** A user of a game of the Anvil platform.
+  *
+  * Represents a single user of a game.
+  */
+case class MinecraftUser(
+    override val id: UUID,
+    username: String,
+    ipAddress: String,
+    nickname: Option[String],
+) extends DomainEntity
 
-    data class CreateDto(
-        val id: UUID,
-        val username: String,
-        val ipAddress: String,
-    ) : Creates[MinecraftUser]
+object MinecraftUser {
+  case class CreateDto(
+      val uuid: UUID,
+      val username: String,
+      val ipAddress: String,
+  ) extends Creates[MinecraftUser]
 
-    data class Online(
-        val user: MinecraftUser,
-        val player: Player,
-    )
+  case class Online(
+      val user: MinecraftUser,
+      val player: Player,
+  )
 }

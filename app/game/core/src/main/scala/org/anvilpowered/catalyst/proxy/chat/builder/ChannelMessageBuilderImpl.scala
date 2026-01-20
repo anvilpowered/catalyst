@@ -18,8 +18,6 @@
 
 package org.anvilpowered.catalyst.proxy.chat.builder
 
-import com.velocitypowered.api.proxy.Player
-import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 import org.anvilpowered.catalyst.api.chat.ChannelService
@@ -31,8 +29,9 @@ import org.anvilpowered.catalyst.api.user.MinecraftUser
 import org.anvilpowered.catalyst.api.user.MinecraftUserRepository
 import org.apache.logging.log4j.Logger
 import java.util.UUID
+import cats.effect.kernel.Async
 
-internal class ChannelMessageBuilderImpl(
+class ChannelMessageBuilderImpl(
     private val proxyServer: ProxyServer,
     private val logger: Logger,
     private val luckpermsService: LuckpermsService,
@@ -40,72 +39,77 @@ internal class ChannelMessageBuilderImpl(
     private val channelService: ChannelService,
     private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
     private val messageContentFormatResolver: MessageContentFormat.Resolver,
-) : ChannelMessage.Builder {
+) extends ChannelMessage.Builder {
 
-    private var user: MinecraftUser? = null
-    private var player: Player? = null
-    private var channel: ChatChannel? = null
-    private var rawContent: Component? = null
+  private var user: Option[MinecraftUser] = None
+  private var player: Option[Player] = None
+  private var channel: Option[ChatChannel] = None
+  private var rawContent: Option[Component] = None
 
-    override def user(user: MinecraftUser): ChannelMessage.Builder {
-        player = proxyServer.getPlayer(user.uuid)
-            .orElseThrow { IllegalStateException("User ${user.username} with id ${user.uuid} is not on the server!") }
-        this.user = user
-        return this
-    }
+  override def user(user: MinecraftUser): ChannelMessage.Builder = {
+    player = proxyServer
+      .getPlayer(user.uuid)
+      .orElseThrow { IllegalStateException(s"User ${user.username} with id ${user.uuid} is not on the server!") }
+    this.user = user
+    return this
+  }
 
-    override suspend def userId(userId: UUID): ChannelMessage.Builder =
-        user(requireNotNull(minecraftUserRepository.findById(userId)) { "Could not find user with id $userId" })
+  override def userId[F[_]: Async](userId: UUID): ChannelMessage.Builder =
+    user(requireNotNull(minecraftUserRepository.findById(userId)) { s"Could not find user with id $userId" })
 
-    override def channel(channel: ChatChannel): ChannelMessage.Builder {
-        this.channel = channel
-        return this
-    }
+  override def channel(channel: ChatChannel): ChannelMessage.Builder = {
+    this.channel = channel
+    return this
+  }
 
-    override suspend def channelId(channelId: String): ChannelMessage.Builder =
-        channel(requireNotNull(channelService.get(channelId)) { "Could not find channel with id $channelId" })
+  override def channelId[F[_]: Async](channelId: String): ChannelMessage.Builder =
+    channel(requireNotNull(channelService.get(channelId)) { s"Could not find channel with id $channelId" })
 
-    override def rawContent(rawContent: Component): ChannelMessage.Builder {
-        this.rawContent = rawContent
-        return this
-    }
+  override def rawContent(rawContent: Component): ChannelMessage.Builder = {
+    this.rawContent = rawContent
+    return this
+  }
 
-    override suspend def build(): ChannelMessage {
-        val user = requireNotNull(user) { "User is null" }
-        val player = requireNotNull(player) { "Player is null" }
-        val channel = requireNotNull(channel) { "Channel is null" }
-        val rawContent = requireNotNull(rawContent) { "Content is null" }
+  override def build[F[_]: Async]: ChannelMessage = {
+    val user = requireNotNull(user) { "User is null" }
+    val player = requireNotNull(player) { "Player is null" }
+    val channel = requireNotNull(channel) { "Channel is null" }
+    val rawContent = requireNotNull(rawContent) { "Content is null" }
 
-        val name = onlineUserFormatResolver.resolve(
-            format = luckpermsService.nameFormat(player.uniqueId, channel.id) ?: channel.nameFormat,
-            MinecraftUser.Online(user, player),
-        )
+    val name = onlineUserFormatResolver.resolve(
+      format = luckpermsService.nameFormat(player.uniqueId, channel.id) ?: channel.nameFormat,
+      MinecraftUser.Online(user, player),
+    )
 
-        val content = messageContentFormatResolver.resolve(
-            format = luckpermsService.getMessageContentFormat(player.uniqueId, channel.id) ?: channel.contentFormat,
-            rawContent,
-        )
+    val content = messageContentFormatResolver.resolve(
+      format = luckpermsService.getMessageContentFormat(player.uniqueId, channel.id) ?: channel.contentFormat,
+      rawContent,
+    )
 
-        return ChannelMessage(MinecraftUser.Online(user, player), channel, name, content)
-    }
+    return ChannelMessage(MinecraftUser.Online(user, player), channel, name, content)
+  }
 
-    class Factory(
-        private val proxyServer: ProxyServer,
-        private val logger: Logger,
-        private val luckpermsService: LuckpermsService,
-        private val minecraftUserRepository: MinecraftUserRepository,
-        private val channelService: ChannelService,
-        private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
-        private val messageContentFormatResolver: MessageContentFormat.Resolver,
-    ) : ChannelMessage.Builder.Factory {
-        override def builder(): ChannelMessage.Builder = ChannelMessageBuilderImpl(
-            proxyServer,
-            logger,
-            luckpermsService,
-            minecraftUserRepository,
-            channelService,
-            onlineUserFormatResolver,
-            messageContentFormatResolver,
-        )
-    }
+}
+
+object ChannelMessageBuilderImpl {
+
+  class Factory(
+      private val proxyServer: ProxyServer,
+      private val logger: Logger,
+      private val luckpermsService: LuckpermsService,
+      private val minecraftUserRepository: MinecraftUserRepository,
+      private val channelService: ChannelService,
+      private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
+      private val messageContentFormatResolver: MessageContentFormat.Resolver,
+  ) extends ChannelMessage.Builder.Factory {
+    override def builder(): ChannelMessage.Builder = ChannelMessageBuilderImpl(
+      proxyServer,
+      logger,
+      luckpermsService,
+      minecraftUserRepository,
+      channelService,
+      onlineUserFormatResolver,
+      messageContentFormatResolver,
+    )
+  }
 }

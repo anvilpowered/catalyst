@@ -18,21 +18,21 @@
 
 package org.anvilpowered.catalyst.api.chat
 
-import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import java.util.UUID
+import org.anvilpowered.anvil.core.user.Player
 
 trait ChannelService {
 
-    val defaultChannel: ChatChannel
+  val defaultChannel: ChatChannel
 
-    operator def get(channelId: String): ChatChannel?
+  def apply(channelId: String): Option[ChatChannel]
 
-    def getForPlayer(playerId: UUID): ChatChannel
+  def getForPlayer(playerId: UUID): ChatChannel
 
-    def getAvailable(player: Player? = null): List[ChatChannel]
+  def getAvailable(player: Option[Player] = None): Seq[ChatChannel]
 
-    def getReceivers(channelId: String): Sequence[Player]
+  def getReceivers(channelId: String): Seq[Player]
 
-    def switch(userUUID: UUID, channelId: String)
+  def switch(userUUID: UUID, channelId: String): Unit
 }

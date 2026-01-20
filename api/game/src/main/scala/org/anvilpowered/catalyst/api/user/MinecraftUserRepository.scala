@@ -18,24 +18,35 @@
 
 package org.anvilpowered.catalyst.api.user
 
-import com.velocitypowered.api.proxy.Player
 import org.anvilpowered.anvil.core.db.MutableRepository
 import org.anvilpowered.anvil.core.db.SizedIterable
 import java.util.UUID
+import cats.data.OptionT
+import cats.effect.Async
+import org.anvilpowered.anvil.core.user.Player
 
-trait MinecraftUserRepository : MutableRepository[MinecraftUser, MinecraftUser.CreateDto] {
+trait MinecraftUserRepository extends MutableRepository[MinecraftUser, MinecraftUser.CreateDto] {
 
-    suspend def getNickname(id: UUID): String?
+  def getNickname[F[_]: Async](id: UUID): OptionT[F, String]
 
-    suspend def updateNickname(id: UUID, nickname: String): Boolean
+  def updateNickname[F[_]: Async](id: UUID, nickname: String): F[Boolean]
 
-    suspend def deleteNickname(id: UUID): Boolean
+  def deleteNickname[F[_]: Async](id: UUID): F[Boolean]
 
-    suspend def getAllUsernames(startWith: String = ""): SizedIterable[String]
+  def getAllUsernames[F[_]: Async](startWith: String = ""): fs2.Stream[F, String]
 
-    suspend def getByUsername(username: String): MinecraftUser?
+  def getByUsername[F[_]: Async](username: String): OptionT[F, MinecraftUser]
 }
 
-suspend def MinecraftUserRepository.getOnlineUser(player: Player): MinecraftUser.Online =
-    findById(player.uniqueId)?.let { MinecraftUser.Online(it, player) }
-        ?: throw IllegalStateException("User ${player.username} with id ${player.uniqueId} is not in the database!")
+object MinecraftUserRepository {
+  extension (repository: MinecraftUserRepository) {
+    def getOnlineUser[F[_]](player: Player)(using F: Async[F]): F[MinecraftUser.Online] =
+      repository
+        .findById(player.id)
+        .foldF(
+          F.raiseError(IllegalStateException(s"User ${player.username} with id ${player.id} is not in the database!"))
+        ) { user =>
+          F.pure(MinecraftUser.Online(user, player))
+        }
+  }
+}

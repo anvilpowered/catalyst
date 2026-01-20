@@ -21,16 +21,17 @@ package org.anvilpowered.catalyst.api.user
 import org.anvilpowered.anvil.core.db.MutableRepository
 import org.anvilpowered.anvil.core.db.Pagination
 import java.util.UUID
+import cats.effect.Async
 
-trait UserRepository : MutableRepository[User, User.CreateDto] {
+trait UserRepository extends MutableRepository[User, User.CreateDto] {
 
     /**
      * For listing use.
      */
-    suspend def paginate(): Pagination[User]
+    def paginate[F[_]: Async]: Pagination[User]
 
-    suspend def getByUsername(username: String): User?
-    suspend def getByEmail(email: String): User?
-    suspend def getByDiscordUserId(id: Long): User?
-    suspend def getByMinecraftUserId(id: UUID): User?
+    def getByUsername[F[_]: Async](username: String): Option[User]
+    def getByEmail[F[_]: Async](email: String): Option[User]
+    def getByDiscordUserId[F[_]: Async](id: Long): Option[User]
+    def getByMinecraftUserId[F[_]: Async](id: UUID): Option[User]
 }

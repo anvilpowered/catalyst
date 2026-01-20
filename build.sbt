@@ -18,6 +18,7 @@ lazy val apiGame = (project in file("api/game"))
       "org.typelevel" %% "cats-effect" % "3.6.3",
       "org.typelevel" %% "log4cats-slf4j" % "2.7.1",
       "org.tpolecat" %% "skunk-core" % "0.6.5",
+      "net.luckperms" % "api" % "5.5",
     ) ++ Seq(
       "net.kyori" % "adventure-api",
       "net.kyori" % "adventure-text-minimessage",

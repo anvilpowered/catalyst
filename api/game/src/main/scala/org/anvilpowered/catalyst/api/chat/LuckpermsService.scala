@@ -29,31 +29,42 @@ import net.luckperms.api.query.QueryOptions
 import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import java.util.UUID
+import scala.jdk.OptionConverters.*
 
 class LuckpermsService {
 
-    private def String.toMiniComponent(): Component = MiniMessage.miniMessage().deserialize(this)
+  extension (string: String) {
+    private def toMiniComponent: Component = MiniMessage.miniMessage().deserialize(string, Seq.empty*)
+  }
 
-    private val userManager: UserManager = LuckPermsProvider.get().userManager
-    private val contextManager: ContextManager = LuckPermsProvider.get().contextManager
+  private val userManager: UserManager = LuckPermsProvider.get.getUserManager
+  private val contextManager: ContextManager = LuckPermsProvider.get.getContextManager
 
-    private def cachedPlayerData(userId: UUID): CachedMetaData? {
-        val user = userManager.getUser(userId)
-        return user?.cachedData?.getMetaData(queryOptions(user))
-    }
+  private def cachedPlayerData(userId: UUID): Option[CachedMetaData] =
+    for {
+      user <- Some(userManager.getUser(userId))
+      cachedData <- Some(user.getCachedData) // TODO: Check if nullable
+    } yield cachedData.getMetaData(queryOptions(user))
 
-    private def queryOptions(user: User): QueryOptions =
-        contextManager.getQueryOptions(user).orElseGet { contextManager.staticQueryOptions }
+  private def queryOptions(user: User): QueryOptions =
+    contextManager.getQueryOptions(user).toScala.getOrElse { contextManager.getStaticQueryOptions }
 
-    def prefix(userId: UUID): Component = cachedPlayerData(userId)?.prefix?.toMiniComponent() ?: Component.empty()
-    def suffix(userId: UUID): Component = cachedPlayerData(userId)?.suffix?.toMiniComponent() ?: Component.empty()
-    def group(userId: UUID): Component = cachedPlayerData(userId)?.primaryGroup?.toMiniComponent() ?: Component.empty()
+  def prefix(userId: UUID): Component =
+    cachedPlayerData(userId).map(_.getPrefix.toMiniComponent).getOrElse { Component.empty }
 
-    def nameFormat(userId: UUID, channelId: String): OnlineUserFormat? =
-        cachedPlayerData(userId)?.getMetaValue("channel.$channelId.name-format")
-            ?.let { OnlineUserFormat(MiniMessage.miniMessage().deserialize(it)) }
+  def suffix(userId: UUID): Component =
+    cachedPlayerData(userId).map(_.getSuffix.toMiniComponent).getOrElse { Component.empty }
 
-    def getMessageContentFormat(userId: UUID, channelId: String): MessageContentFormat? =
-        cachedPlayerData(userId)?.getMetaValue("channel.$channelId.message-content-format")
-            ?.let { MessageContentFormat(MiniMessage.miniMessage().deserialize(it)) }
+  def group(userId: UUID): Component =
+    cachedPlayerData(userId).map(_.getPrimaryGroup.toMiniComponent).getOrElse { Component.empty }
+
+  def nameFormat(userId: UUID, channelId: String): Option[OnlineUserFormat] =
+    cachedPlayerData(userId)
+      .map(_.getMetaValue("channel.$channelId.name-format"))
+      .map { x => OnlineUserFormat(x.toMiniComponent) }
+
+  def getMessageContentFormat(userId: UUID, channelId: String): Option[OnlineUserFormat] =
+    cachedPlayerData(userId)
+      .map(_.getMetaValue("channel.$channelId.message-content-format"))
+      .map { x => OnlineUserFormat(x.toMiniComponent) }
 }

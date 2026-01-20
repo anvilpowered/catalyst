@@ -30,33 +30,30 @@ class ChannelMessage(
     val channel: ChatChannel,
     val name: Component,
     val content: Component,
-) {
+)
 
-    trait Builder {
-        /**
-         * Use [Builder.userId] if you only have a userId.
-         */
-        def user(user: MinecraftUser): Builder
+object ChannelMessage {
+  trait Builder {
 
-        suspend def userId(userId: UUID): Builder
+    /** Use [Builder.userId] if you only have a userId.
+      */
+    def user(user: MinecraftUser): Builder
 
-        /**
-         * Use [Builder.channelId] if you only have a channelId.
-         */
-        def channel(channel: ChatChannel): Builder
+    def userId[F[_]](userId: UUID): Builder
 
-        suspend def channelId(channelId: String): Builder
+    /** Use [Builder.channelId] if you only have a channelId.
+      */
+    def channel(channel: ChatChannel): Builder
 
-        def rawContent(rawContent: Component): Builder
-        suspend def build(): ChannelMessage
+    def channelId[F[_]](channelId: String): Builder
 
-        trait Factory {
-            def builder(): Builder
-        }
+    def rawContent(rawContent: Component): Builder
+    def build(): ChannelMessage
+
+    trait Factory {
+      def builder(): Builder
     }
-
-    data class Resolved(val backing: ChannelMessage, val formatted: PlayerFormat)
+  }
+  case class Resolved(val backing: ChannelMessage, val formatted: PlayerFormat)
 }
 
-suspend inline def ChannelMessage.Builder.Factory.build(block: ChannelMessage.Builder.() -] Unit): ChannelMessage =
-    builder().apply(block).build()

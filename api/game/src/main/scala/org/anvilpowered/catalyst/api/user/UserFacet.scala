@@ -18,9 +18,9 @@
 
 package org.anvilpowered.catalyst.api.user
 
-trait UserFacet {
-
-    suspend def getUserOrNull(): User?
-
-    suspend def getUser(): User = getUserOrNull() ?: throw IllegalStateException("User not found")
-}
+// trait UserFacet {
+//
+//     suspend def getUserOrNull(): User?
+//
+//     suspend def getUser(): User = getUserOrNull() ?: throw IllegalStateException("User not found")
+// }
