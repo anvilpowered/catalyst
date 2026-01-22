@@ -36,15 +36,15 @@ class ListenerRegistrar(
     private val discordListener: DiscordListener,
     private val joinListener: JoinListener,
     private val leaveListener: LeaveListener,
-) : Registrar {
+) extends Registrar {
 
-    override def register() {
-        logger.info("Registering listeners...")
-        proxyServer.eventManager.register(pluginContainer, chatListener)
-        proxyServer.eventManager.register(pluginContainer, commandListener)
-        proxyServer.eventManager.register(pluginContainer, discordListener)
-        proxyServer.eventManager.register(pluginContainer, joinListener)
-        proxyServer.eventManager.register(pluginContainer, leaveListener)
-        logger.info("Finished registering listeners.")
-    }
+  override def register = {
+    logger.info("Registering listeners...")
+    proxyServer.eventManager.register(pluginContainer, chatListener)
+    proxyServer.eventManager.register(pluginContainer, commandListener)
+    proxyServer.eventManager.register(pluginContainer, discordListener)
+    proxyServer.eventManager.register(pluginContainer, joinListener)
+    proxyServer.eventManager.register(pluginContainer, leaveListener)
+    logger.info("Finished registering listeners.")
+  }
 }

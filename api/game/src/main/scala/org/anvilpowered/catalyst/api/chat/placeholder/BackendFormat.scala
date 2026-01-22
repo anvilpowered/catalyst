@@ -18,9 +18,9 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
-import org.anvilpowered.catalyst.api.server.RegisteredServer
 import org.anvilpowered.catalyst.api.chat.placeholder.BackendFormat.Placeholders
 import net.kyori.adventure.text.Component
+import org.anvilpowered.anvil.core.server.RegisteredServer
 
 // @Serializable(with = BackendFormat.Serializer::class)
 class BackendFormat(
@@ -31,8 +31,8 @@ class BackendFormat(
     class Resolver {
         def resolve(format: Component, placeholders: Placeholders, server: RegisteredServer): Component = {
             val ops = Seq[Component => Component](
-            { c => c.replaceText { _.matchLiteral(placeholders.name).replacement(server.serverInfo.name) } },
-            { c => c.replaceText { _.matchLiteral(placeholders.address).replacement(server.serverInfo.address.hostString) } },
+            { _.replaceText { _.matchLiteral(placeholders.name).replacement(server.serverInfo.name) } },
+            { _.replaceText { _.matchLiteral(placeholders.address).replacement(server.serverInfo.address.getHostString) } },
             )
             return if (
                 format.contains(Component.text(placeholders.version)) ||
@@ -51,10 +51,10 @@ class BackendFormat(
         }
     }
 
-
     object Serializer extends MessageFormat.Serializer[BackendFormat](::BackendFormat)
 
 }
+
 object BackendFormat {
     object Builder extends MessageFormat.Builder[Placeholders, BackendFormat] {
     override def build(block: Placeholders.() -] Component): BackendFormat {

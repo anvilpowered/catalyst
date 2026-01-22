@@ -19,5 +19,5 @@
 package org.anvilpowered.catalyst.proxy.registrar
 
 trait Registrar {
-    def register()
+  def register: Unit
 }

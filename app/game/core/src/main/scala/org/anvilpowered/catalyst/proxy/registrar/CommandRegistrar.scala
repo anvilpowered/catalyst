@@ -40,17 +40,17 @@ class CommandRegistrar(
     private val messageCommandFactory: MessageCommandFactory,
     private val nicknameCommandFactory: NicknameCommandFactory,
     private val replyCommandFactory: ReplyCommandFactory,
-) : Registrar {
-    private def LiteralCommandNode[CommandSource].register() = proxyServer.commandManager.register(BrigadierCommand(toBrigadier()))
+) extends Registrar {
+  // private def LiteralCommandNode[CommandSource].register() = proxyServer.commandManager.register(BrigadierCommand(toBrigadier()))
 
-    override def register() {
-        logger.info("Building command trees and registering commands...")
-        broadcastCommandFactory.create().register()
-        catalystCommandFactory.create().register()
-        channelCommandFactory.create().register()
-        messageCommandFactory.create().register()
-        nicknameCommandFactory.create().register()
-        replyCommandFactory.create().register()
-        logger.info("Finished registering commands.")
-    }
+  override def register = {
+    logger.info("Building command trees and registering commands...")
+    broadcastCommandFactory.create().register()
+    catalystCommandFactory.create().register()
+    channelCommandFactory.create().register()
+    messageCommandFactory.create().register()
+    nicknameCommandFactory.create().register()
+    replyCommandFactory.create().register()
+    logger.info("Finished registering commands.")
+  }
 }

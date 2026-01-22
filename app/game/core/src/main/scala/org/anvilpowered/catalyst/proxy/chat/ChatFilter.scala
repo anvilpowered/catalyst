@@ -28,67 +28,72 @@ class ChatFilter(
     private val catalystKeys: CatalystKeys,
 ) {
 
-    private def stripMessage(checkMessage: String): String {
-        return checkMessage.lowercase(Locale.getDefault())
-            .replace("[*()/.,;'#~^+\\-]".toRegex(), " ").replace("[0@]".toRegex(), "o")
-            .replace("1".toRegex(), "i").replace("\\$".toRegex(), "s")
-    }
+  private def stripMessage(checkMessage: String): String = {
+    return checkMessage
+      .lowercase(Locale.getDefault())
+      .replace("[*()/.,;'#~^+\\-]".toRegex(), " ")
+      .replace("[0@]".toRegex(), "o")
+      .replace("1".toRegex(), "i")
+      .replace("\\$".toRegex(), "s")
+  }
 
-    private def findSpacePositions(message: String, noSpaces: String): List[Int] {
-        val spacePositions: MutableList[Int] = ArrayList()
-        var regularIndex = 0
-        for (noSpacesIndex in noSpaces.indices) {
-            if (message[regularIndex] == ' ') {
-                spacePositions.add(noSpacesIndex - 1)
-                regularIndex++
+  private def findSpacePositions(message: String, noSpaces: String): List[Int] = {
+    val spacePositions: MutableList[Int] = ArrayList()
+    var regularIndex = 0
+    for (noSpacesIndex <- noSpaces.indices) {
+      if (message[regularIndex] == ' ') {
+        spacePositions.add(noSpacesIndex - 1)
+        regularIndex ++
+      }
+      regularIndex ++
+    }
+    return spacePositions
+  }
+
+  private def findSwears(message: String, spacePositions: List[Int]): List[Pair[Int, Int]] = {
+    val swearList: MutableList[Pair[Int, Int]] = ArrayList()
+    val exceptions = registry[catalystKeys.CHAT_FILTER_EXCEPTIONS].map { it.lowercase(Locale.getDefault()) }
+    for (bannedWord <- registry[catalystKeys.CHAT_FILTER_SWEARS]) {
+      if (message.contains(bannedWord) && !exceptions.contains(bannedWord)) {
+        var startIndex = message.indexOf(bannedWord)
+        while (startIndex != -1) {
+          val endIndex = startIndex + bannedWord.length - 1
+          val extraStartSpace = spacePositions.indexOf(startIndex - 1) + 1
+          var extraEndSpace = spacePositions.indexOf(endIndex)
+          if (spacePositions.containsAll(listOf(startIndex - 1, endIndex))) {
+            swearList.add(startIndex + extraStartSpace to endIndex + extraEndSpace + 1)
+          } else if (
+            (spacePositions.contains(startIndex - 1) || startIndex == 0) &&
+            (endIndex == message.length - 1 || spacePositions.contains(endIndex))
+          ) {
+            if (endIndex == message.length - 1) {
+              extraEndSpace = spacePositions.size
             }
-            regularIndex++
+            swearList.add(startIndex + extraStartSpace to endIndex + extraEndSpace + 1)
+          }
+          startIndex = message.indexOf(bannedWord, startIndex + 1)
         }
-        return spacePositions
+      }
     }
+    return swearList
+  }
 
-    private def findSwears(message: String, spacePositions: List[Int]): List[Pair[Int, Int]] {
-        val swearList: MutableList[Pair[Int, Int]] = ArrayList()
-        val exceptions = registry[catalystKeys.CHAT_FILTER_EXCEPTIONS].map { it.lowercase(Locale.getDefault()) }
-        for (bannedWord in registry[catalystKeys.CHAT_FILTER_SWEARS]) {
-            if (message.contains(bannedWord) && !exceptions.contains(bannedWord)) {
-                var startIndex = message.indexOf(bannedWord)
-                while (startIndex != -1) {
-                    val endIndex = startIndex + bannedWord.length - 1
-                    val extraStartSpace = spacePositions.indexOf(startIndex - 1) + 1
-                    var extraEndSpace = spacePositions.indexOf(endIndex)
-                    if (spacePositions.containsAll(listOf(startIndex - 1, endIndex))) {
-                        swearList.add(startIndex + extraStartSpace to endIndex + extraEndSpace + 1)
-                    } else if ((spacePositions.contains(startIndex - 1) || startIndex == 0) &&
-                        (endIndex == message.length - 1 || spacePositions.contains(endIndex))
-                    ) {
-                        if (endIndex == message.length - 1) {
-                            extraEndSpace = spacePositions.size
-                        }
-                        swearList.add(startIndex + extraStartSpace to endIndex + extraEndSpace + 1)
-                    }
-                    startIndex = message.indexOf(bannedWord, startIndex + 1)
-                }
-            }
-        }
-        return swearList
-    }
-
-    def replaceSwears(message: Component): Component {
-        // TODO: Exceptions
+  def replaceSwears(message: Component): Component = {
+    // TODO: Exceptions
 //        val rawMessage = PlainTextComponentSerializer.plainText().serialize(message)
 //        val strippedMessage = stripMessage(rawMessage)
 //        val noSpacesMessage = strippedMessage.replace(" ".toRegex(), "")
 //        val spacePositions = findSpacePositions(strippedMessage, noSpacesMessage)
 //        val swearPositions = findSwears(noSpacesMessage, spacePositions)
 
-        message.replaceText {
-            it.match(registry[catalystKeys.CHAT_FILTER_SWEARS].joinToString("|"))
-            it.replacement { matchResult, builder -]
-                builder.append(Component.text("*".repeat(matchResult.end() - matchResult.start())))
-                builder.build()
-            }
-        }
-        return message
-    }
+    // message.replaceText {
+    //     it.match(registry[catalystKeys.CHAT_FILTER_SWEARS].joinToString("|"))
+    //     it.replacement { matchResult, builder -]
+    //         builder.append(Component.text("*".repeat(matchResult.end() - matchResult.start())))
+    //         builder.build()
+    //     }
+    // }
+    // return message
+    ???
+  }
 }

@@ -18,9 +18,6 @@
 
 package org.anvilpowered.catalyst.proxy.listener
 
-import com.velocitypowered.api.event.Subscribe
-import com.velocitypowered.api.event.player.PlayerChatEvent
-import com.velocitypowered.api.proxy.ProxyServer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -54,49 +51,50 @@ class ChatListener(
     private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
     private val channelMessageFormatResolver: ChannelMessageFormat.Resolver,
 ) {
-    @Subscribe
-    def onPlayerChat(event: PlayerChatEvent) = runBlocking {
-        val player = event.player
-        if (!registry[catalystKeys.CHAT_ENABLED] || chatService.isDisabledForPlayer(player)) {
-            return@runBlocking
-        }
-        event.result = PlayerChatEvent.ChatResult.denied()
-        val rawMessage = if (player.hasPermission(registry[catalystKeys.PERMISSION_CHAT_COLOR])) {
-            MiniMessage.miniMessage().deserialize(event.message)
-        } else {
-            Component.text(event.message)
-        }
-        // TODO: Move this to dedicated class
-        var rawContent = chatService.highlightPlayerNames(player, rawMessage)
-        if (!player.hasPermission(registry[catalystKeys.PERMISSION_LANGUAGE_ADMIN]) &&
-            registry[catalystKeys.CHAT_FILTER_ENABLED]
-        ) {
-            rawContent = chatFilter.replaceSwears(rawContent)
-        }
-
-        val user = minecraftUserRepository.getOnlineUser(player)
-
-        // TODO: Properly resolve player written placeholders (and/or escape)
-        // Idea: %search% -] google.com/search?q=%search%
-        val formattedRawContent = onlineUserFormatResolver.resolve(rawContent, OnlineUserFormat.Placeholders(listOf("source")), user)
-
-        val channel = channelService.getForPlayer(player.uniqueId)
-
-        val channelMessage = channelMessageBuilderFactory.build {
-            user(user.user)
-            channel(channel)
-            rawContent(formattedRawContent)
-        }
-
-        val formatted = channelMessageFormatResolver.resolve(channel.messageFormat, channelMessage)
-        val resolved = ChannelMessage.Resolved(channelMessage, formatted)
-        chatService.sendMessage(resolved)
-        if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
-            webhookSender.sendChannelMessage(
-                user,
-                resolved.backing.content, // TODO: Format for discord, create Player indirection
-                resolved.backing.channel.discordChannelId,
-            )
-        }
+  // @Subscribe TODO: Paper
+  def onPlayerChat(event: PlayerChatEvent) = {
+    val player = event.player
+    if (!registry(catalystKeys.CHAT_ENABLED) || chatService.isDisabledForPlayer(player)) {
+      return
     }
+    event.result = PlayerChatEvent.ChatResult.denied()
+    val rawMessage = if (player.hasPermission(registry[catalystKeys.PERMISSION_CHAT_COLOR])) {
+      MiniMessage.miniMessage().deserialize(event.message)
+    } else {
+      Component.text(event.message)
+    }
+    // TODO: Move this to dedicated class
+    var rawContent = chatService.highlightPlayerNames(player, rawMessage)
+    if (
+      !player.hasPermission(registry[catalystKeys.PERMISSION_LANGUAGE_ADMIN]) &&
+      registry[catalystKeys.CHAT_FILTER_ENABLED]
+    ) {
+      rawContent = chatFilter.replaceSwears(rawContent)
+    }
+
+    val user = minecraftUserRepository.getOnlineUser(player)
+
+    // TODO: Properly resolve player written placeholders (and/or escape)
+    // Idea: %search% -] google.com/search?q=%search%
+    val formattedRawContent = onlineUserFormatResolver.resolve(rawContent, OnlineUserFormat.Placeholders(listOf("source")), user)
+
+    val channel = channelService.getForPlayer(player.uniqueId)
+
+    val channelMessage = channelMessageBuilderFactory.build {
+      user(user.user)
+      channel(channel)
+      rawContent(formattedRawContent)
+    }
+
+    val formatted = channelMessageFormatResolver.resolve(channel.messageFormat, channelMessage)
+    val resolved = ChannelMessage.Resolved(channelMessage, formatted)
+    chatService.sendMessage(resolved)
+    if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
+      webhookSender.sendChannelMessage(
+        user,
+        resolved.backing.content, // TODO: Format for discord, create Player indirection
+        resolved.backing.channel.discordChannelId,
+      )
+    }
+  }
 }

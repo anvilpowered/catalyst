@@ -45,69 +45,73 @@ class DiscordListener(
     private val channelService: ChannelService,
     private val jdaService: JDAService,
     commandExecutor: CommandExecutor,
-) : ListenerAdapter() {
+) extends ListenerAdapter() {
 
-    private val loggingCommandExecutor = commandExecutor.withLogging(logger, "discord")
+  private val loggingCommandExecutor = commandExecutor.withLogging(logger, "discord")
 
-    override def onMessageReceived(event: MessageReceivedEvent) {
-        if (event.isWebhookMessage || event.author.isBot) {
-            return
-        }
-        val messageRaw = event.message.contentRaw
-        val member = event.member ?: run {
-            logger.error("Discord member is null in chat listener, ignoring message $messageRaw")
-            return
-        }
-        if (member.hasPermission(Permission.ADMINISTRATOR) && messageRaw.contains("!cmd")) {
-            val command = event.message.contentRaw.replace("!cmd ", "")
-            // TODO: Use coroutines properly
-            runBlocking {
-                loggingCommandExecutor.execute(
-                    DiscordCommandSource(
-                        checkNotNull(jdaService.jda) { "JDA is not initialized" },
-                        event.channel.id,
-                    ).toAnvilCommandSource(),
-                    command,
-                )
-            }
-            return
-        } else if (messageRaw.startsWith("!list")) {
-            val onlinePlayers = proxyServer.allPlayers
-            val playerNames: String = if (onlinePlayers.isEmpty()) {
-                "```There are currently no players online!```"
-            } else {
-                onlinePlayers.joinToString(
-                    separator = ", ",
-                    prefix = "**Online Players:**```",
-                    postfix = "```",
-                ) { it.username }
-            }
-            event.channel.sendMessage(playerNames).queue()
-            return
-        }
-        sendMessage(event.channel.id, messageRaw, event.member!!.effectiveName)
-        logger.info("[Discord] " + event.member!!.effectiveName + " : " + event.message.contentDisplay)
+  override def onMessageReceived(event: MessageReceivedEvent) = {
+    if (event.isWebhookMessage || event.author.isBot) {
+      return
     }
-
-    private def sendMessage(channelId: String, content: String, username: String) {
-        val targetChannel = registry[catalystKeys.CHAT_CHANNELS].values.firstOrNull { it.discordChannelId == channelId }
-            ?: return
-
-        // TODO: Get userId for discord user
-        val finalMessage = Component.text()
-            .append(
-                registry[catalystKeys.CHAT_DISCORD_MESSAGE_FORMAT].replaceText {
-                    it.matchLiteral("%channel.name%").replacement(targetChannel.name)
-                }.replaceText {
-                    it.matchLiteral("%content%").replacement(content)
-                }.replaceText {
-                    it.matchLiteral("%name%").replacement(username)
-                },
-            )
-            .clickEvent(ClickEvent.openUrl(registry[catalystKeys.CHAT_DISCORD_INVITE]))
-            .hoverEvent(HoverEvent.showText(registry[catalystKeys.CHAT_DISCORD_HOVER_MESSAGE]))
-            .build()
-
-        channelService.getReceivers(targetChannel.id).forEach { it.sendMessage(finalMessage) }
+    val messageRaw = event.message.contentRaw
+    val member = event.member ?: run {
+      logger.error("Discord member is null in chat listener, ignoring message $messageRaw")
+      return
     }
+    if (member.hasPermission(Permission.ADMINISTRATOR) && messageRaw.contains("!cmd")) {
+      val command = event.message.contentRaw.replace("!cmd ", "")
+      // TODO: Use coroutines properly
+      runBlocking {
+        loggingCommandExecutor.execute(
+          DiscordCommandSource(
+            checkNotNull(jdaService.jda) { "JDA is not initialized" },
+            event.channel.id,
+          ).toAnvilCommandSource(),
+          command,
+        )
+      }
+      return
+    } else if (messageRaw.startsWith("!list")) {
+      val onlinePlayers = proxyServer.allPlayers
+      val playerNames: String = if (onlinePlayers.isEmpty()) {
+        "```There are currently no players online!```"
+      } else {
+        onlinePlayers.joinToString(
+          separator = ", ",
+          prefix = "**Online Players:**```",
+          postfix = "```",
+        ) { it.username }
+      }
+      event.channel.sendMessage(playerNames).queue()
+      return
+    }
+    sendMessage(event.channel.id, messageRaw, event.member.effectiveName)
+    logger.info("[Discord] " + event.member.effectiveName + " : " + event.message.contentDisplay)
+  }
+
+  private def sendMessage(channelId: String, content: String, username: String) = {
+    val targetChannel = registry[catalystKeys.CHAT_CHANNELS].values.firstOrNull { it.discordChannelId == channelId }
+    // ?: return
+
+    // TODO: Get userId for discord user
+    val finalMessage = Component
+      .text()
+      .append(
+        registry[catalystKeys.CHAT_DISCORD_MESSAGE_FORMAT]
+          .replaceText {
+            it.matchLiteral("%channel.name%").replacement(targetChannel.name)
+          }
+          .replaceText {
+            it.matchLiteral("%content%").replacement(content)
+          }
+          .replaceText {
+            it.matchLiteral("%name%").replacement(username)
+          },
+      )
+      .clickEvent(ClickEvent.openUrl(registry[catalystKeys.CHAT_DISCORD_INVITE]))
+      .hoverEvent(HoverEvent.showText(registry[catalystKeys.CHAT_DISCORD_HOVER_MESSAGE]))
+      .build()
+
+    channelService.getReceivers(targetChannel.id).forEach { it.sendMessage(finalMessage) }
+  }
 }

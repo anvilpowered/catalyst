@@ -43,26 +43,26 @@ class LeaveListener(
     private val minecraftUserRepository: MinecraftUserRepository,
     private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
 ) {
-    @Subscribe
-    def onPlayerLeave(event: DisconnectEvent) = runBlocking {
-        if (event.loginStatus == DisconnectEvent.LoginStatus.PRE_SERVER_JOIN) {
-            return@runBlocking
-        }
-        val player = event.player
-        val user = minecraftUserRepository.getOnlineUser(player)
-        staffListService.removeStaffNames(player.username)
-        val leaveMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.LEAVE_MESSAGE], user)
-
-        if (registry[catalystKeys.LEAVE_LISTENER_ENABLED]) {
-            proxyServer.sendMessage(leaveMessage)
-            logger.info(PlainTextComponentSerializer.plainText().serialize(leaveMessage))
-        }
-
-        val availableChannels = channelService.getAvailable(user.player)
-        if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
-            availableChannels.forEach { channel -]
-                webhookSender.sendSpecialMessage(user, channel.discordChannelId, catalystKeys.LEAVE_MESSAGE)
-            }
-        }
+  @Subscribe
+  def onPlayerLeave(event: DisconnectEvent) = {
+    if (event.loginStatus == DisconnectEvent.LoginStatus.PRE_SERVER_JOIN) {
+      return
     }
+    val player = event.player
+    val user = minecraftUserRepository.getOnlineUser(player)
+    staffListService.removeStaffNames(player.username)
+    val leaveMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.LEAVE_MESSAGE], user)
+
+    if (registry[catalystKeys.LEAVE_LISTENER_ENABLED]) {
+      proxyServer.sendMessage(leaveMessage)
+      logger.info(PlainTextComponentSerializer.plainText().serialize(leaveMessage))
+    }
+
+    val availableChannels = channelService.getAvailable(user.player)
+    if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
+      availableChannels.forEach { channel =>
+        webhookSender.sendSpecialMessage(user, channel.discordChannelId, catalystKeys.LEAVE_MESSAGE)
+      }
+    }
+  }
 }

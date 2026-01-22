@@ -31,13 +31,17 @@ class CommandListener(
     private val catalystKeys: CatalystKeys,
 ) {
 
-    @Subscribe
-    def onCommandExecution(event: CommandExecuteEvent) {
-        if (registry[catalystKeys.COMMAND_LOGGING_ENABLED]) {
-            val commandList = registry[catalystKeys.COMMAND_LOGGING_FILTER]
-            if (commandList.size == 1 && commandList[0] == "*" || commandList.contains(event.command)) {
-                logger.info((event.commandSource as? Player)?.username + " executed command : " + event.command)
-            }
-        }
+  // @Subscribe TODO: Paper
+  def onCommandExecution(event: CommandExecuteEvent) = {
+    if (registry[catalystKeys.COMMAND_LOGGING_ENABLED]) {
+      val commandList = registry(catalystKeys.COMMAND_LOGGING_FILTER)
+      if (commandList.size == 1 && commandList[0] == "*" || commandList.contains(event.command)) {
+        val username = event.commandSource match
+          case player: Player => player.username
+          case _              => ""
+
+          // logger.info((event.commandSource as? Player)?.username + " executed command : " + event.command)
+      }
     }
+  }
 }

@@ -25,93 +25,95 @@ import org.anvilpowered.catalyst.api.chat.placeholder.MessageContentFormat
 import org.anvilpowered.catalyst.api.chat.placeholder.OnlineUserFormat
 import org.anvilpowered.catalyst.api.config.ChatChannel
 
-internal class ChatChannelBuilderImpl : ChatChannel.Builder {
-    private var id: String = ""
-    private var name: Component? = null
-    private var nameFormat: OnlineUserFormat = OnlineUserFormat.build {
-        Component.text()
-            .append(Component.text("[${backend.name}]").color(NamedTextColor.GOLD))
-            .append(Component.space())
-            .append(Component.text(prefix))
-            .append(Component.space())
-            .append(Component.text(displayname))
-            .build()
-    }
-    private var contentFormat: MessageContentFormat = MessageContentFormat.build {
-        Component.text(content)
-    }
-    private var messageFormat: ChannelMessageFormat = ChannelMessageFormat.build {
-        Component.text()
-            .append(Component.text(channel.name))
-            .append(Component.space())
-            .append(Component.text(name))
-            .append(Component.text(": "))
-            .append(Component.text(content))
-            .build()
-    }
-    private var commandAliases: List[String] = emptyList()
-    private var alwaysVisible: Boolean = false
-    private var availableByDefault: Boolean = false
-    private var discordChannelId: String = ""
+class ChatChannelBuilderImpl extends ChatChannel.Builder {
+  private var id: String = ""
+  private var name: Option[Component] = None
+  private var nameFormat: OnlineUserFormat = OnlineUserFormat.build {
+    Component
+      .text()
+      .append(Component.text("[${backend.name}]").color(NamedTextColor.GOLD))
+      .append(Component.space())
+      .append(Component.text(prefix))
+      .append(Component.space())
+      .append(Component.text(displayname))
+      .build()
+  }
+  private var contentFormat: MessageContentFormat = MessageContentFormat.build {
+    Component.text(content)
+  }
+  private var messageFormat: ChannelMessageFormat = ChannelMessageFormat.build {
+    Component
+      .text()
+      .append(Component.text(channel.name))
+      .append(Component.space())
+      .append(Component.text(name))
+      .append(Component.text(": "))
+      .append(Component.text(content))
+      .build()
+  }
+  private var commandAliases: List[String] = emptyList()
+  private var alwaysVisible: Boolean = false
+  private var availableByDefault: Boolean = false
+  private var discordChannelId: String = ""
 
-    override def id(id: String): ChatChannel.Builder {
-        this.id = id
-        return this
-    }
+  override def id(id: String): ChatChannel.Builder = {
+    this.id = id
+    return this
+  }
 
-    override def name(name: Component): ChatChannel.Builder {
-        this.name = name
-        return this
-    }
+  override def name(name: Component): ChatChannel.Builder = {
+    this.name = name
+    return this
+  }
 
-    override def nameFormat(nameFormat: OnlineUserFormat): ChatChannel.Builder {
-        this.nameFormat = nameFormat
-        return this
-    }
+  override def nameFormat(nameFormat: OnlineUserFormat): ChatChannel.Builder = {
+    this.nameFormat = nameFormat
+    return this
+  }
 
-    override def contentFormat(contentFormat: MessageContentFormat): ChatChannel.Builder {
-        this.contentFormat = contentFormat
-        return this
-    }
+  override def contentFormat(contentFormat: MessageContentFormat): ChatChannel.Builder = {
+    this.contentFormat = contentFormat
+    return this
+  }
 
-    override def messageFormat(messageFormat: ChannelMessageFormat): ChatChannel.Builder {
-        this.messageFormat = messageFormat
-        return this
-    }
+  override def messageFormat(messageFormat: ChannelMessageFormat): ChatChannel.Builder = {
+    this.messageFormat = messageFormat
+    return this
+  }
 
-    override def commandAliases(commandAliases: List[String]): ChatChannel.Builder {
-        this.commandAliases = commandAliases
-        return this
-    }
+  override def commandAliases(commandAliases: List[String]): ChatChannel.Builder = {
+    this.commandAliases = commandAliases
+    return this
+  }
 
-    override def alwaysVisible(alwaysVisible: Boolean): ChatChannel.Builder {
-        this.alwaysVisible = alwaysVisible
-        return this
-    }
+  override def alwaysVisible(alwaysVisible: Boolean): ChatChannel.Builder = {
+    this.alwaysVisible = alwaysVisible
+    return this
+  }
 
-    override def availableByDefault(availableByDefault: Boolean): ChatChannel.Builder {
-        this.availableByDefault = availableByDefault
-        return this
-    }
+  override def availableByDefault(availableByDefault: Boolean): ChatChannel.Builder = {
+    this.availableByDefault = availableByDefault
+    return this
+  }
 
-    override def discordChannelId(discordChannelId: String): ChatChannel.Builder {
-        this.discordChannelId = discordChannelId
-        return this
-    }
+  override def discordChannelId(discordChannelId: String): ChatChannel.Builder = {
+    this.discordChannelId = discordChannelId
+    return this
+  }
 
-    override def build(): ChatChannel = ChatChannel(
-        id,
-        name ?: Component.text(id),
-        nameFormat,
-        contentFormat,
-        messageFormat,
-        commandAliases,
-        alwaysVisible,
-        availableByDefault,
-        discordChannelId,
-    )
+  override def build(): ChatChannel = ChatChannel(
+    id,
+    name.getOrElse(Component.text(id)),
+    nameFormat,
+    contentFormat,
+    messageFormat,
+    commandAliases,
+    alwaysVisible,
+    availableByDefault,
+    discordChannelId,
+  )
 
-    class Factory : ChatChannel.Builder.Factory {
-        override def builder(): ChatChannel.Builder = ChatChannelBuilderImpl()
-    }
+  class Factory extends ChatChannel.Builder.Factory {
+    override def builder(): ChatChannel.Builder = ChatChannelBuilderImpl()
+  }
 }

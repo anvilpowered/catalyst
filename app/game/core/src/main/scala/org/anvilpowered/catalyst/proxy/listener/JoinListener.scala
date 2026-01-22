@@ -17,10 +17,6 @@
  */
 package org.anvilpowered.catalyst.proxy.listener
 
-import com.velocitypowered.api.event.Subscribe
-import com.velocitypowered.api.event.connection.PostLoginEvent
-import com.velocitypowered.api.proxy.ProxyServer
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -46,51 +42,52 @@ class JoinListener(
     private val minecraftUserRepository: MinecraftUserRepository,
     private val onlineUserFormatResolver: OnlineUserFormat.Resolver,
 ) {
-    @Subscribe
-    def onPlayerJoin(event: PostLoginEvent) = runBlocking {
-        val player = event.player
-        val result = minecraftUserRepository.put(
-            MinecraftUser.CreateDto(
-                id = player.uniqueId,
-                username = player.username,
-                ipAddress = player.remoteAddress.hostString,
-            ),
-        )
+  @Subscribe
+  def onPlayerJoin(event: PostLoginEvent) = runBlocking {
+    val player = event.player
+    val result = minecraftUserRepository.put(
+      MinecraftUser.CreateDto(
+        id = player.uniqueId,
+        username = player.username,
+        ipAddress = player.remoteAddress.hostString,
+      ),
+    )
 
-        val user = MinecraftUser.Online(result.entity, player)
+    val user = MinecraftUser.Online(result.entity, player)
 
-        if (result.created && registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
-            proxyServer.sendMessage(onlineUserFormatResolver.resolve(registry[catalystKeys.JOIN_MESSAGE_FIRST], user))
-        }
-
-        staffListService.getStaffNames(
-            player.username,
-            player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_ADMIN]),
-            player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_STAFF]),
-            player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_OWNER]),
-        )
-        val joinMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.JOIN_MESSAGE_NORMAL], user)
-        if (registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
-            proxyServer.sendMessage(joinMessage)
-            logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))
-        }
-
-        val availableChannels = channelService.getAvailable(user.player)
-        if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
-            availableChannels.forEach { channel -]
-                webhookSender.sendSpecialMessage(user, channel.discordChannelId, catalystKeys.JOIN_MESSAGE_NORMAL)
-            }
-        }
-
-        player.sendMessage(
-            Component.text()
-                .append(Component.text("Welcome to the server, ", NamedTextColor.GRAY, TextDecoration.ITALIC))
-                .append(Component.text(player.username, NamedTextColor.GOLD, TextDecoration.BOLD))
-                .append(Component.text("!", NamedTextColor.GRAY, TextDecoration.ITALIC))
-                .append(Component.newline())
-                .append(Component.text("You are currently chatting in channel ", NamedTextColor.AQUA, TextDecoration.ITALIC))
-                .append(channelService.getForPlayer(user.player.uniqueId).name)
-                .build(),
-        )
+    if (result.created && registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
+      proxyServer.sendMessage(onlineUserFormatResolver.resolve(registry[catalystKeys.JOIN_MESSAGE_FIRST], user))
     }
+
+    staffListService.getStaffNames(
+      player.username,
+      player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_ADMIN]),
+      player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_STAFF]),
+      player.hasPermission(registry[catalystKeys.PERMISSION_STAFFLIST_OWNER]),
+    )
+    val joinMessage = onlineUserFormatResolver.resolve(registry[catalystKeys.JOIN_MESSAGE_NORMAL], user)
+    if (registry[catalystKeys.JOIN_LISTENER_ENABLED]) {
+      proxyServer.sendMessage(joinMessage)
+      logger.info(PlainTextComponentSerializer.plainText().serialize(joinMessage))
+    }
+
+    val availableChannels = channelService.getAvailable(user.player)
+    if (registry[catalystKeys.CHAT_DISCORD_ENABLED]) {
+      availableChannels.forEach { channel =>
+        webhookSender.sendSpecialMessage(user, channel.discordChannelId, catalystKeys.JOIN_MESSAGE_NORMAL)
+      }
+    }
+
+    player.sendMessage(
+      Component
+        .text()
+        .append(Component.text("Welcome to the server, ", NamedTextColor.GRAY, TextDecoration.ITALIC))
+        .append(Component.text(player.username, NamedTextColor.GOLD, TextDecoration.BOLD))
+        .append(Component.text("!", NamedTextColor.GRAY, TextDecoration.ITALIC))
+        .append(Component.newline())
+        .append(Component.text("You are currently chatting in channel ", NamedTextColor.AQUA, TextDecoration.ITALIC))
+        .append(channelService.getForPlayer(user.player.uniqueId).name)
+        .build(),
+    )
+  }
 }

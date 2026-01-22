@@ -68,83 +68,75 @@ import org.anvilpowered.catalyst.proxy.registrar.CommandRegistrar
 import org.anvilpowered.catalyst.proxy.registrar.ListenerRegistrar
 import org.anvilpowered.catalyst.proxy.registrar.Registrar
 import org.anvilpowered.catalyst.proxy.tab.GlobalTab
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.createdAtStart
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.withOptions
-import org.koin.dsl.module
 import org.spongepowered.configurate.serialize.TypeSerializerCollection
 
 trait CatalystApi {
-    val module: Module
-
-    companion object
+  val module: Module
 }
 
-def CatalystApi.Companion.create(anvilApi: AnvilApi): CatalystApi {
-    val velocityModule = module {
-        val serializers = TypeSerializerCollection.defaults().childBuilder()
-            .register(BackendFormat.Serializer)
-            .register(ChannelMessageFormat.Serializer)
-            .register(ChatChannelFormat.Serializer)
-            .register(MessageContentFormat.Serializer)
-            .register(OnlineUserFormat.Serializer)
-            .register(PlayerFormat.Serializer)
-            .register(PrivateMessageFormat.Serializer)
-            .register(ProxyFormat.Serializer)
-            .register(MiniMessageSerializer)
-            .build()
-
-        Registry.configureDefaults(anvilApi, serializers)
-        singleOf(::LuckpermsService)
-        singleOf(::WebhookSender)
-        singleOf(::ChatFilter)
-        singleOf(ChatChannelBuilderImpl::Factory) { bind[ChatChannel.Builder.Factory]() }
-        singleOf(ChannelMessageBuilderImpl::Factory) { bind[ChannelMessage.Builder.Factory]() }
-        singleOf(::ChannelServiceImpl) { bind[ChannelService]() }
-        singleOf(::ChannelSwitchFrontend)
-        singleOf(::ChatServiceImpl) { bind[ChatService]() }
-        singleOf(::PrivateMessageService)
-        singleOf(::ChatListener)
-        singleOf(::CatalystKeys).withOptions {
-            bind[KeyNamespace]()
-        }
-        singleOf(::CommandListener)
-        singleOf(::JoinListener)
-        singleOf(::LeaveListener)
-        singleOf(::DiscordListener)
-        singleOf(::JDAService)
-        singleOf(::StaffListService)
-        singleOf(::MinecraftUserRepositoryImpl) { bind[MinecraftUserRepository]() }
-        singleOf(::UserRepositoryImpl) { bind[UserRepository]() }
-
-        singleOf(BackendFormat::Resolver)
-        singleOf(ChannelMessageFormat::Resolver)
-        singleOf(ChatChannelFormat::Resolver)
-        singleOf(MessageContentFormat::Resolver)
-        singleOf(OnlineUserFormat::Resolver)
-        singleOf(PlayerFormat::Resolver)
-        singleOf(PrivateMessageFormat::Resolver)
-        singleOf(ProxyFormat::Resolver)
-
-        singleOf(::GlobalTab).withOptions {
-            createdAtStart()
-        }
-
-        singleOf(::BroadcastCommandFactory)
-        singleOf(::CatalystCommandFactory)
-        singleOf(::ChannelCommandFactory)
-        singleOf(::MessageCommandFactory)
-        singleOf(::NicknameCommandFactory)
-        singleOf(::ReplyCommandFactory)
-
-        singleOf(::CommandRegistrar) { bind[Registrar]() }
-        singleOf(::ListenerRegistrar) { bind[Registrar]() }
-        singleOf(::ChannelAliasCommandRegistrar) { bind[Registrar]() }
-    }
-
-    return object : CatalystApi {
-        override val module: Module = velocityModule
-    }
-}
+// def CatalystApi.Companion.create(anvilApi: AnvilApi): CatalystApi {
+//     val velocityModule = module {
+//         val serializers = TypeSerializerCollection.defaults().childBuilder()
+//             .register(BackendFormat.Serializer)
+//             .register(ChannelMessageFormat.Serializer)
+//             .register(ChatChannelFormat.Serializer)
+//             .register(MessageContentFormat.Serializer)
+//             .register(OnlineUserFormat.Serializer)
+//             .register(PlayerFormat.Serializer)
+//             .register(PrivateMessageFormat.Serializer)
+//             .register(ProxyFormat.Serializer)
+//             .register(MiniMessageSerializer)
+//             .build()
+//
+//         Registry.configureDefaults(anvilApi, serializers)
+//         singleOf(::LuckpermsService)
+//         singleOf(::WebhookSender)
+//         singleOf(::ChatFilter)
+//         singleOf(ChatChannelBuilderImpl::Factory) { bind[ChatChannel.Builder.Factory]() }
+//         singleOf(ChannelMessageBuilderImpl::Factory) { bind[ChannelMessage.Builder.Factory]() }
+//         singleOf(::ChannelServiceImpl) { bind[ChannelService]() }
+//         singleOf(::ChannelSwitchFrontend)
+//         singleOf(::ChatServiceImpl) { bind[ChatService]() }
+//         singleOf(::PrivateMessageService)
+//         singleOf(::ChatListener)
+//         singleOf(::CatalystKeys).withOptions {
+//             bind[KeyNamespace]()
+//         }
+//         singleOf(::CommandListener)
+//         singleOf(::JoinListener)
+//         singleOf(::LeaveListener)
+//         singleOf(::DiscordListener)
+//         singleOf(::JDAService)
+//         singleOf(::StaffListService)
+//         singleOf(::MinecraftUserRepositoryImpl) { bind[MinecraftUserRepository]() }
+//         singleOf(::UserRepositoryImpl) { bind[UserRepository]() }
+//
+//         singleOf(BackendFormat::Resolver)
+//         singleOf(ChannelMessageFormat::Resolver)
+//         singleOf(ChatChannelFormat::Resolver)
+//         singleOf(MessageContentFormat::Resolver)
+//         singleOf(OnlineUserFormat::Resolver)
+//         singleOf(PlayerFormat::Resolver)
+//         singleOf(PrivateMessageFormat::Resolver)
+//         singleOf(ProxyFormat::Resolver)
+//
+//         singleOf(::GlobalTab).withOptions {
+//             createdAtStart()
+//         }
+//
+//         singleOf(::BroadcastCommandFactory)
+//         singleOf(::CatalystCommandFactory)
+//         singleOf(::ChannelCommandFactory)
+//         singleOf(::MessageCommandFactory)
+//         singleOf(::NicknameCommandFactory)
+//         singleOf(::ReplyCommandFactory)
+//
+//         singleOf(::CommandRegistrar) { bind[Registrar]() }
+//         singleOf(::ListenerRegistrar) { bind[Registrar]() }
+//         singleOf(::ChannelAliasCommandRegistrar) { bind[Registrar]() }
+//     }
+//
+//     return object : CatalystApi {
+//         override val module: Module = velocityModule
+//     }
+// }
