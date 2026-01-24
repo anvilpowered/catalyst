@@ -18,7 +18,6 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
-import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -26,11 +25,10 @@ import org.anvilpowered.anvil.core.config.Registry
 import org.anvilpowered.catalyst.api.config.CatalystKeys
 import org.anvilpowered.catalyst.api.user.MinecraftUser
 
-@Serializable(with = OnlineUserFormat.Serializer::class)
 class OnlineUserFormat(
     override val format: Component,
     private val placeholders: Placeholders = Placeholders(),
-) : MessageFormat {
+) extends MessageFormat {
 
     class Resolver(
         private val registry: Registry,
@@ -75,4 +73,9 @@ class OnlineUserFormat(
 
         val displayname: Placeholder = "%${pathPrefix}displayname%"
     }
+}
+
+object OnlineUserFormat {
+  given codec: Codec[OnlineUserFormat] = MessageFormat.codec(OnlineUserFormat(_))
+  given typeSerializer: TypeSerializer[OnlineUserFormat] = MessageFormat.serializer(OnlineUserFormat(_))
 }

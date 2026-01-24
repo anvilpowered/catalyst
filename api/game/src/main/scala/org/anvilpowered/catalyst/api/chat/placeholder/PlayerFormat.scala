@@ -18,35 +18,35 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
-import com.velocitypowered.api.proxy.Player
-import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.LuckpermsService
-import org.apache.logging.log4j.Logger
+import cats.effect.Async
+import org.anvilpowered.anvil.core.user.Player
 
-@Serializable(with = PlayerFormat.Serializer::class)
+// @Serializable(with = PlayerFormat.Serializer::class)
 open class PlayerFormat(
     override val format: Component,
     private val placeholders: ConcretePlaceholders = ConcretePlaceholders(),
-) : MessageFormat {
+) extends MessageFormat {
 
     class Resolver(
-        private val logger: Logger,
         private val luckpermsService: LuckpermsService,
-        private val backendFormatResolver: BackendFormat.Resolver,
-        private val proxyFormatResolver: ProxyFormat.Resolver,
+        private val serverFormat: ServerFormat,
     ) {
-        suspend def resolve(format: Component, placeholders: ConcretePlaceholders, player: Player): Component {
-            val backendFormat: (suspend Component.() -] Component)? = player.currentServer.orElse(null)?.server?.let {
-                { backendFormatResolver.resolve(format, placeholders.backend, it) }
-            }
+        def resolve[F[_]: Async](format: Component, placeholders: ConcretePlaceholders, player: Player): F[Component] = {
+            // val serverFormat: (suspend Component.() -] Component)? = player.currentServer.orElse(null)?.server?.let {
+            //     { serverFormatResolver.resolve(format, placeholders.backend, it) }
+            // }
 
-            if (backendFormat == null) {
+            // val serverFormat = player.
+
+
+            if (serverFormat == null) {
                 logger.error("Could not resolve backend placeholders for ${player.username} because they are not connected to a server.")
             }
 
             return sequenceOf(
-                backendFormat,
+                serverFormat,
                 { proxyFormatResolver.resolve(this, placeholders.proxy) },
                 { replaceText { it.matchLiteral(placeholders.latency).replacement(player.ping.toString()) } },
                 { replaceText { it.matchLiteral(placeholders.username).replacement(player.username) } },
@@ -66,7 +66,7 @@ open class PlayerFormat(
         }
     }
 
-    object Serializer : MessageFormat.Serializer[PlayerFormat](::PlayerFormat)
+    // object Serializer : MessageFormat.Serializer[PlayerFormat](::PlayerFormat)
 
     trait Placeholders {
         val backend: BackendFormat.Placeholders

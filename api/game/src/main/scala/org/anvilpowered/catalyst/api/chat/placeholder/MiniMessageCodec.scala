@@ -32,16 +32,11 @@ object MiniMessageCodec { // KSerializer[Component], TypeSerializer[Component] {
     Decoder.decodeString.map { MiniMessage.miniMessage().deserialize(_, Seq.empty*) },
     Encoder.encodeString.contramap { MiniMessage.miniMessage().serialize(_) },
   )
-  //
-  // override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Component", PrimitiveKind.STRING)
-  // override def deserialize(decoder: Decoder): Component = MiniMessage.miniMessage().deserialize(decoder.decodeString())
-  // override def serialize(encoder: Encoder, value: Component) = encoder.encodeString(MiniMessage.miniMessage().serialize(value))
-  //
-  // override def deserialize(type: Type, node: ConfigurationNode): Component {
-  //     return MiniMessage.miniMessage().deserialize(checkNotNull(node.string) { "Unable to parse String from node ${node.path()}" })
-  // }
-  //
-  // override def serialize(type: Type, obj: Component?, node: ConfigurationNode) {
-  //     node.set(obj?.let { MiniMessage.miniMessage().serialize(it) })
-  // }
+
+  given typeSerializer: TypeSerializer[Component] with {
+    override def deserialize(`type`: Type, node: ConfigurationNode): Component =
+      MiniMessage.miniMessage().deserialize(node.getString(), Seq.empty*)
+    override def serialize(`type`: Type, obj: Component, node: ConfigurationNode): Unit =
+      node.set(MiniMessage.miniMessage().serialize(obj))
+  }
 }

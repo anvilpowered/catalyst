@@ -24,6 +24,7 @@ import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.lang.reflect.Type
 import io.circe.Codec
+import net.kyori.adventure.text.minimessage.MiniMessage
 
 type Placeholder = String
 
@@ -31,25 +32,22 @@ trait MessageFormat {
 
   val format: Component
 
-  // trait Builder[+P, +M <: MessageFormat] {
-  //     def build(block: P.() -> Component): M
-  // }
-
-
-  // open class Serializer[T <: MessageFormat](private val constructor: (format: Component) => T) extends Codec[T], TypeSerializer[T] {
-  //   override val descriptor: SerialDescriptor = MiniMessageSerializer.descriptor
-  //   override def deserialize(decoder: Decoder): T = constructor(MiniMessageSerializer.deserialize(decoder))
-  //   override def serialize(encoder: Encoder, value: T) = MiniMessageSerializer.serialize(encoder, value.format)
-  //   override def deserialize(typ: Type, node: ConfigurationNode): T =
-  //     constructor(MiniMessageSerializer.deserialize(classOf[Component], node))
-  //
-  //   override def serialize(typ: Type, obj: Option[T], node: ConfigurationNode) = MiniMessageSerializer.serialize(typ, obj.map(_.format), node)
-  // }
 }
 
 object MessageFormat {
-
   trait Placeholders[-M <: MessageFormat]
+  trait Builder[+P, +M <: MessageFormat] {
+    def build(block: P ?=> Component): M
+  }
+  def codec[T <: MessageFormat](constructor: (format: Component) => T): Codec[T] =
+    MiniMessageCodec.codec.iemap(c => Right(constructor(c)))(_.format)
+
+  def serializer[T <: MessageFormat](constructor: (format: Component) => T): TypeSerializer[T] = new TypeSerializer[T] {
+    override def deserialize(`type`: Type, node: ConfigurationNode): T =
+      constructor(MiniMessageCodec.typeSerializer.deserialize(`type`, node))
+    override def serialize(`type`: Type, obj: T, node: ConfigurationNode): Unit =
+      MiniMessageCodec.typeSerializer.serialize(`type`, obj.format, node)
+  }
 }
 
 // inline def [reified T] TypeSerializerCollection.Builder.register(serializer: TypeSerializer[T]): TypeSerializerCollection.Builder {

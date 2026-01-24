@@ -18,30 +18,30 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
-import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.PrivateMessage
+import cats.effect.Async
 
-@Serializable(with = PrivateMessageFormat.Serializer::class)
 class PrivateMessageFormat(
     override val format: Component,
     private val placeholders: Placeholders = Placeholders(),
-) : MessageFormat {
+) extends MessageFormat {
 
     class Resolver(private val onlineUserFormatResolver: OnlineUserFormat.Resolver) {
-        suspend def resolve(
+        def resolve[F[_]: Async](
             format: Component,
             placeholders: Placeholders,
             message: PrivateMessage,
-        ): Component {
-            return sequenceOf[suspend Component.() -] Component](
+        ): F[Component] =
+          for {
+            Seq[Component => Component](
                 { onlineUserFormatResolver.resolve(this, placeholders.source, message.source) },
                 { onlineUserFormatResolver.resolve(this, placeholders.recipient, message.recipient) },
                 { replaceText { it.matchLiteral(placeholders.content).replacement(message.content) } },
             ).fold(format) { acc, transform -] transform(acc) }
         }
 
-        suspend def resolve(format: PrivateMessageFormat, message: PrivateMessage): Component =
+        def resolve(format: PrivateMessageFormat, message: PrivateMessage): Component =
             resolve(format.format, format.placeholders, message)
     }
 
