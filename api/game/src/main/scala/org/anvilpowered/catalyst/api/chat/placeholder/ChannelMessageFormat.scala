@@ -18,15 +18,13 @@
 
 package org.anvilpowered.catalyst.api.chat.placeholder
 
-import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
 
-@Serializable(with = ChannelMessageFormat.Serializer::class)
 class ChannelMessageFormat(
     override val format: Component,
     private val placeholders: Placeholders = Placeholders(),
-) : MessageFormat {
+) extends MessageFormat {
 
     class Resolver(private val chatChannelFormatResolver: ChatChannelFormat.Resolver) {
         suspend def resolve(format: Component, placeholders: Placeholders, message: ChannelMessage): PlayerFormat {

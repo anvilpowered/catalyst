@@ -1,6 +1,6 @@
 /*
  *   Catalyst - AnvilPowered.org
- *   Copyright (C) 2019-2024 Contributors
+ *   Copyright (C) 2019-2026 Contributors
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published by
@@ -33,16 +33,22 @@ class ServerFormat(
     private val placeholders: Placeholders = Placeholders(),
 ) extends MessageFormat {
 
-  def resolve[F[_]: Async as F](format: Component, placeholders: Placeholders, server: Server)(using ps: ServerPingService): F[Component] =
-    for {
-      ping <- server.ping[F]
-      ops = Seq[Component => Component](
-        { _.replaceText { _.matchLiteral(placeholders.name).replacement(server.name) } },
-        { _.replaceText { _.matchLiteral(placeholders.address).replacement(server.address.getHostString) } },
-        { _.replaceText { _.matchLiteral(placeholders.playerCount).replacement(ping.players.online.toString()) } },
-        { _.replaceText { _.matchLiteral(placeholders.description).replacement(ping.description) } },
-      )
-    } yield ops.foldl(format) { (acc, transform) => transform(acc) }
+  def resolve[F[_]: Async as F](format: Component, placeholders: Placeholders, server: Server)(using ps: ServerPingService): F[Component] = {
+    val ops = Seq[Component => Component](
+      { _.replaceText { _.matchLiteral(placeholders.name).replacement(server.name) } },
+      { _.replaceText { _.matchLiteral(placeholders.address).replacement(server.address.getHostString) } },
+    )
+    (if (Seq(placeholders.playerCount, placeholders.description).map(Component.text).exists(format.contains)) {
+      for (ping <- server.ping[F]) yield {
+        ops ++ Seq(
+          { _.replaceText { _.matchLiteral(placeholders.playerCount).replacement(ping.players.online.toString()) } },
+          { _.replaceText { _.matchLiteral(placeholders.description).replacement(ping.description) } },
+        )
+      }
+    } else {
+      F.pure(ops)
+    }).map { _.foldl(format) { (acc, transform) => transform(acc) } }
+  }
 }
 
 object ServerFormat {
@@ -60,7 +66,6 @@ object ServerFormat {
 
     val name: Placeholder = s"%${pathPrefix}name%"
     val address: Placeholder = s"%${pathPrefix}address%"
-    val version: Placeholder = s"%${pathPrefix}version%"
     val playerCount: Placeholder = s"%${pathPrefix}playerCount%"
     val description: Placeholder = s"%${pathPrefix}description%"
   }
