@@ -1,6 +1,6 @@
 /*
  *   Catalyst - AnvilPowered.org
- *   Copyright (C) 2019-2024 Contributors
+ *   Copyright (C) 2019-2026 Contributors
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published by
@@ -47,7 +47,7 @@ class ChannelMessageFormat(
         }
     }
 
-    object Serializer : MessageFormat.Serializer[ChannelMessageFormat](::ChannelMessageFormat)
+    object Serializer extends MessageFormat.Serializer[ChannelMessageFormat](::ChannelMessageFormat)
 
     open class Placeholders internal constructor(path: List[String] = listOf()) : MessageFormat.Placeholders[ChannelMessageFormat] {
 
