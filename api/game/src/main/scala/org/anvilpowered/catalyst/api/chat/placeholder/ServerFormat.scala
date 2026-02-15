@@ -19,14 +19,14 @@
 package org.anvilpowered.catalyst.api.chat.placeholder
 
 import net.kyori.adventure.text.Component
-import org.anvilpowered.anvil.core.platform.Server
-import org.anvilpowered.anvil.core.platform.ServerPingService
-import org.anvilpowered.anvil.core.platform.ServerPingService.ping
 import cats.effect.Async
 import cats.syntax.all.*
 import io.circe.Codec
 import org.spongepowered.configurate.serialize.TypeSerializer
 import org.anvilpowered.catalyst.api.chat.placeholder.ServerFormat.Placeholders
+import org.anvilpowered.anvil.platform.ServerPingService
+import org.anvilpowered.anvil.platform.Server
+import org.anvilpowered.anvil.platform.ServerPingService.ping
 
 class ServerFormat(
     override val format: Component,

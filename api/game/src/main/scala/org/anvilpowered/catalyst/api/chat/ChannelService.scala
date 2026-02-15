@@ -20,7 +20,7 @@ package org.anvilpowered.catalyst.api.chat
 
 import org.anvilpowered.catalyst.api.config.ChatChannel
 import java.util.UUID
-import org.anvilpowered.anvil.core.user.Player
+import org.anvilpowered.anvil.platform.user.Player
 
 trait ChannelService {
 

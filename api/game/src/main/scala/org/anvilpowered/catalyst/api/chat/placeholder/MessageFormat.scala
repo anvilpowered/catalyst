@@ -25,13 +25,13 @@ import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.lang.reflect.Type
 import io.circe.Codec
 import net.kyori.adventure.text.minimessage.MiniMessage
+import org.anvilpowered.anvil.chat.MiniMessageCodec
 
 type Placeholder = String
 
 trait MessageFormat {
 
   val format: Component
-
 }
 
 object MessageFormat {

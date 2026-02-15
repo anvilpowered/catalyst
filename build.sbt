@@ -4,6 +4,12 @@ ThisBuild / scalacOptions ++= Seq(
   "-Wnonunit-statement",
   "-deprecation",
 )
+
+ThisBuild / resolvers ++= Seq(
+  "papermc" at "https://repo.papermc.io/repository/maven-public/",
+  "sponge" at "https://repo.spongepowered.org/repository/maven-public/",
+)
+
 ThisBuild / libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-effect" % "3.6.3",
   "org.typelevel" %% "log4cats-slf4j" % "2.7.1",
@@ -27,19 +33,24 @@ lazy val root = (project in file("."))
     name := "catalyst",
   )
 
-lazy val libDomain = (project in file("lib/domain"))
+lazy val libdomain = (project in file("lib/domain"))
   .settings(
     name := "domain",
     libraryDependencies ++= Seq(
       "org.tpolecat" %% "skunk-core" % "0.6.5",
-    )
+    ),
+  )
+
+lazy val libcommand = (project in file("lib/command"))
+  .settings(
+    name := "command",
   )
 
 lazy val apiGame = (project in file("api/game"))
   .settings(
     name := "catalyst-api-game",
     libraryDependencies ++= Seq(
-//      "org.anvilpowered" %% "anvil-core" % "0.4.0-SNAPSHOT",
+      "org.anvilpowered" %% "anvil-platform" % "0.4.0-SNAPSHOT",
       "net.luckperms" % "api" % "5.5",
     ) ++ Seq(
       "net.kyori" % "adventure-api",
@@ -48,11 +59,20 @@ lazy val apiGame = (project in file("api/game"))
       "org.spongepowered" % "configurate-core",
       "org.spongepowered" % "configurate-hocon",
       "org.spongepowered" % "configurate-yaml",
-    ).map(_ % "4.2.0")
+    ).map(_ % "4.2.0"),
   )
 
 lazy val appGameCore = (project in file("app/game/core"))
   .dependsOn(apiGame)
 
 lazy val appGamePaper = (project in file("app/game/paper"))
+  .dependsOn(appGameCore)
+
+lazy val appGameSponge = (project in file("app/game/sponge"))
+  .settings(
+    name := "catalyst-game-sponge",
+    libraryDependencies ++= Seq(
+      "org.spongepowered" % "spongeapi" % "17.0.0"
+    ),
+  )
   .dependsOn(appGameCore)

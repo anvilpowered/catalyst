@@ -20,42 +20,49 @@ package org.anvilpowered.catalyst.api.chat.placeholder
 
 import net.kyori.adventure.text.Component
 import org.anvilpowered.catalyst.api.chat.ChannelMessage
+import cats.effect.Async
+import io.circe.Codec
+import org.anvilpowered.catalyst.api.chat.placeholder.ChannelMessageFormat.Placeholders
 
 class ChannelMessageFormat(
     override val format: Component,
     private val placeholders: Placeholders = Placeholders(),
 ) extends MessageFormat {
+  def resolve[F[_]: Async as F](format: Component, placeholders: Placeholders, message: ChannelMessage): PlayerFormat = {
+    ???
+    // val resultFormat = sequenceOf[suspend Component.() -] Component](
+    //     { chatChannelFormatResolver.resolve(this, placeholders.channel, message.channel) },
+    //     { replaceText { it.matchLiteral(placeholders.name).replacement(message.name) } },
+    //     { replaceText { it.matchLiteral(placeholders.content).replacement(message.content) } },
+    // ).fold(format) { acc, transform -] transform(acc) }
+    // return PlayerFormat(resultFormat, PlayerFormat.ConcretePlaceholders(listOf("recipient")))
+  }
 
-    class Resolver(private val chatChannelFormatResolver: ChatChannelFormat.Resolver) {
-        suspend def resolve(format: Component, placeholders: Placeholders, message: ChannelMessage): PlayerFormat {
-            val resultFormat = sequenceOf[suspend Component.() -] Component](
-                { chatChannelFormatResolver.resolve(this, placeholders.channel, message.channel) },
-                { replaceText { it.matchLiteral(placeholders.name).replacement(message.name) } },
-                { replaceText { it.matchLiteral(placeholders.content).replacement(message.content) } },
-            ).fold(format) { acc, transform -] transform(acc) }
-            return PlayerFormat(resultFormat, PlayerFormat.ConcretePlaceholders(listOf("recipient")))
-        }
+  // class Resolver(private val chatChannelFormatResolver: ChatChannelFormat.Resolver) {
 
-        suspend def resolve(format: ChannelMessageFormat, message: ChannelMessage): PlayerFormat =
-            resolve(format.format, format.placeholders, message)
+  // suspend def resolve(format: ChannelMessageFormat, message: ChannelMessage): PlayerFormat =
+  //     resolve(format.format, format.placeholders, message)
+  // }
+
+  // object Serializer extends MessageFormat.Serializer[ChannelMessageFormat](::ChannelMessageFormat)
+
+}
+
+object ChannelMessageFormat {
+  given codec: Codec[ChannelMessageFormat] = MessageFormat.codec(ChannelMessageFormat(_))
+  object Builder extends MessageFormat.Builder[Placeholders, ChannelMessageFormat] {
+    override def build(block: Placeholders ?=> Component): ChannelMessageFormat = {
+      val placeholders = Placeholders()
+      // ChannelMessageFormat(block(using placeholders), placeholders)
+      ???
     }
+  }
 
-    companion object Builder : MessageFormat.Builder[Placeholders, ChannelMessageFormat] {
-        override def build(block: Placeholders.() -] Component): ChannelMessageFormat {
-            val placeholders = Placeholders()
-            return ChannelMessageFormat(block(placeholders), placeholders)
-        }
-    }
+  class Placeholders(path: List[String] = List()) extends MessageFormat.Placeholders[ChannelMessageFormat] {
 
-    object Serializer extends MessageFormat.Serializer[ChannelMessageFormat](::ChannelMessageFormat)
-
-    open class Placeholders internal constructor(path: List[String] = listOf()) : MessageFormat.Placeholders[ChannelMessageFormat] {
-
-        private val pathPrefix = path.joinToString("") { "$it." }
-
-        // TODO: Replace with tag resolver
-        val channel = ChatChannelFormat.Placeholders(path + "channel")
-        val name: Placeholder = "%${pathPrefix}name%"
-        val content: Placeholder = "%${pathPrefix}content%"
-    }
+    private val pathPrefix = path.map(e => s"$e.").mkString("")
+    val channel = ChatChannelFormat.Placeholders(path :+ "channel")
+    val name: Placeholder = "%${pathPrefix}name%"
+    val content: Placeholder = "%${pathPrefix}content%"
+  }
 }
