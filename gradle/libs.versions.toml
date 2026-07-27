@@ -21,7 +21,7 @@ kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 logging-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 logging-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 luckperms = "net.luckperms:api:5.4"
-velocity = "com.velocitypowered:velocity-api:3.3.0-SNAPSHOT"
+velocity = "com.velocitypowered:velocity-api:3.5.1"
 
 [bundles]
 exposed = ["exposed-core", "exposed-dao", "exposed-jdbc", "exposed-java-time"]
